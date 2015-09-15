@@ -3,20 +3,11 @@
 \label{sec:alg}
 
 In this section we provide an algorithm for reconciliation. The reconciler
-algorithm takes sequences leading from the original filesystem to the
+algorithm takes the sequences leading from the original filesystem to the
 replicas (\(S_1, S_2, \ldots S_n\)) and creates sequences of commands for
 each replica \(S_1^*, S_2^*, \ldots S_n^*\) which make the
 filesystems as close as possible. 
-%%%\(S_i^*\) contains all
-%%%non--conflicting commands from \(S_1, S_2, \ldots S_n\) which is not
-%%%already applied to \(S_i\). 
-%%%\begin{notrsi}
-%%%We also would like to be sure that if there
-%%%are no conflicting commands, then after synchronization, all replicas
-%%%should be the same.
-%%%\end{notrsi}
 
-%%%Thus, 
 When creating the algorithm, we keep in mind the following:\\
 \emph{a command 
 \(C\in {S}_1\cup{S}_2\cup\ldots\cup{S}_n\) 
@@ -27,40 +18,38 @@ should be propagated to replica \(R_i\) iff:}
 \item there are no conflicts on any command which must precede \(C\) 
 \end{itemize}
 
-\medskip
-{\small{
+\medskip\noindent{\small{
 Why do we need the last criterion? Consider the following case: in the
-original replica we had \(O(\pi)=\cfile{X}\). 
+original replica we had \(O(\pi)=\cfile{W}\). 
 We modified replica \(A\) with the following
-commands: \(edit(\pi,\cdir{Y}); create(\pi\cdot p,\cfile{W})\).
-Replica \(B\) was modified by the command \(edit(\pi,\cfile{Z})\).
-Now \(edit(\pi,\cdir{Y})\) and \(edit(\pi,\cfile{Z})\) are
-conflicting commands, so we cannot apply \(edit(\pi,\cdir{Y})\) to replica
-\(B\). But that way, we cannot propagate
-\(create(\pi\cdot p,\cfile{W})\) to it either.
-\remark{However, if \(O(\pi)\) was a directory, it could be.}
+commands: \(edit(\pi,\cdir{X}); create(\pi\cdot p,\cfile{Z})\).
+Replica \(B\) was modified by the command \(edit(\pi,\cdir{Y})\).
+A third replica \(C\) was not modified.
+Now \(edit(\pi,\cdir{X})\) and \(edit(\pi,\cdir{Y})\) are
+conflicting commands. \(create(\pi\cdot p,\cfile{Z})\) has no conflicts.
+Although we could propagate this \(create\) to replica \(B\), we
+cannot apply it to replica \(C\) as we would not know whether to apply
+\(edit(\pi,\cdir{X})\) from \(A\) or \(edit(\pi,\cdir{Y})\) from \(B\) to
+it. I thank Bill Zissimopoulos for calling my attention to the third
+condition in the reconciliation algorithm. --- EC, 2015
 }}\medskip
 
-%We also need to determine which commands must precede another
-%one. Clearly
-A
-command \(C_1\) must precede command \(C_2\) iff 
-\(\neg(C_1; C_2\eqifnbr C_2; C_1)\), it originally preceded \(C_2\),
+A command \(C_1\) must precede command \(C_2\) iff 
+\(C_1; C_2\neqifnbr C_2; C_1\), it originally preceded \(C_2\),
 and they appear in the same sequence \(S_i\). 
 %Note that we define this property only
 %if \(C_1\) and \(C_2\) are from the same sequence since otherwise they
 %would be conflicting commands.
 
 Now, in order to preserve the order of commands in sequences 
-\(S_1, S_2, \ldots S_n\), we define the algorithm as follows:
+\(S_1, S_2, \ldots S_n\), we define the reconciliation algorithm as follows:
 \begin{notrsi}
 \\
 \emph{To determine \(S_i^*\):}
 \begin{enumerate}
 \item Detect conflicting commands between sequences
-\item Detect must--follow conflicting commands
+\item Detect commands which must follow conflicting commands
 \item Omit these commands from all sequences
-\item Omit commands in \(S_i\) from all other sequences
 \item Define \(S_i^*\) as 
 \(S_1; S_2; \ldots S_{i-1}; S_{i+1}; \ldots S_n\)
 \end{enumerate}
@@ -68,16 +57,16 @@ Or, more formally:
 \end{notrsi}
 \begin{alltt}
 FOR every sequence \(S\sb{i}\)
-  FOR each command \(C\in S\sb{i}\)  
+  FOR each command \(C\in{S}\sb{i}\)  
     FOR every sequence \(S\sb{j}\)
       IF \(C\) should be propagated to replica \(R\sb{j}\) THEN
         append \(C\) to \(S\sb{j}\sp{*}\).
 \end{alltt}
 
-We can get the sequence of conflicting commands using a similar
-algorithm. The reconciler produces two sequences for every replica: the
+We can get sequences of conflicting commands using a similar
+algorithm. This way the reconciler can produce two sequences for every replica: the
 first one (\(S_i^*\)) can be applied to the replica immediately, while
-the second one (conflicting commands, \(S_i^C\)) needs the user's or
+the second one containing the conflicting commands (\(S_i^C\)) needs the user's or
 other algorithms' help to be resolved.
 
 See Appendix~\ref{app:impl} for test result of the implementation of the

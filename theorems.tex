@@ -241,8 +241,8 @@ that the sequences act the same on filesystems.
 It can be proven that for every two sequences of commands
 \(S\) and \(S^*\) 
 \begin{gather*}
-\forall F: S\equiv S^* \implies SF=S^*F,\\
-\forall F: (S\eqexp S^*)\wedge(SF\ne\ud)\implies SF=S^*F.
+S\equiv S^* \implies \forall F: SF=S^*F,\\
+S\eqexp S^* \implies \forall F: (SF\ne\ud \implies SF=S^*F).
 \end{gather*}
 The proofs for the two cases are very similar. We use induction on the
 number of times the inference rules are applied to the sequences.
@@ -250,6 +250,12 @@ The soundness of each individual law
 (by investigating individual cases)
 and that of the inference rules are shown separately.
 For the detailed proof see Appendix \ref{app:theosound}.
+
+\medskip\noindent{\small{As special consequences of the soundness theorem, we know
+that both \(S\equiv break\)
+and \(S\eqexp break\) means that \(S\) breaks all filesystems.
+--- EC, 2015
+}}
 
 \subsection{Theorem of completeness}
 \label{theorem:completeness}
@@ -283,8 +289,8 @@ where \(G\) and \(F\) refer to filesystems.
 In the proof we define \emph{minimal sequences} in the following way:
 Consider the set of sequences \(\wp_S = \{ S^* | S \eqexp S^*\}\).
 Because of our preconditions, the sequence \(break\) is not in
-\(\wp_S\) (if it was, that is, \(S\eqexp break\), \(\forall F:SF=\ud\) would hold
-by definition).
+\(\wp_S\) (if it was, that is, \(S\eqexp break\), \(\forall F:SF=\ud\) would
+hold).
 
 Let \(S_0\) be (one of) the shortest sequence(s) in \(\wp_S\) and
 similarly

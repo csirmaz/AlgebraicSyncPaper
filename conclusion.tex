@@ -1,22 +1,22 @@
 %% Conclusion
 \section{Conclusion}
 
-We built an algebra of commands on filesystems. Then we proved that the
-algebra is sound and complete, that is, commands which are algebraically
-equivalent commands are also equivalent on real filesystems, and vice
+We have built an algebra of commands on filesystems. We have proved that the
+algebra is sound and complete, that is, sequences of commands which are algebraically
+equivalent are also equivalent on real filesystems, and vice
 versa.
 
-We defined conflicts with the help of this algebra, then we defined
-algorithms for update--detection and reconciliation. Finally, we
-implemented these algorithms and tested it on numerous cases (see
-Appendix \ref{app:impl}). The results were always in accordance with what
+We have defined conflicts with the help of this algebra, and defined
+algorithms for update detection and reconciliation. We have also
+implemented these algorithms and tested them on numerous cases (see
+Appendix \ref{app:impl}). The results have always been in accordance with what
 we expected from the philosophy ``propagate every command possible on
-every replica''.  Because of that, using algebraical methods in file
-synchronization turned out to be an effective solution.
+every replica''.  Using algebraical methods in file
+synchronization has turned out to be an effective solution.
 
-We also gained some information about the provability of such theorems and
-algebras. The methods we used in the proofs are likely be able to be used
-in proofs for other algebras as well, so that we would be able to create a
-more general theory of synchronization.
+We have also gained some information about the provability of such theorems and
+algebras. The methods we have used in the proofs are likely be able to be used
+in proofs for other algebras as well, thus they may form the basis for
+a more general theory of synchronization.
 
 

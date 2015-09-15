@@ -2,13 +2,13 @@
 \section{Definition of conflicting commands}
 \label{cbp:defconfl}
 
-We define conflicting updates using minimal sequences made by the
-update detector algorithm. Actually, we define conflicting \emph{pairs
+We define conflicting updates using minimal sequences provided by an
+update detector algorithm. More specifically, we define conflicting \emph{pairs
 of commands} since only two modifications can interfere with each other.
-Later we will mark every command as a conflicting command if
-it was a member of a conflicting pair. 
+Later, every command will be marked as conflicting if it is a member of a
+conflicting pair.
 
-Consider two commands, \(C_A(\pi)\in S_A\) and \(C_B(\gamma)\in S_B\) 
+Let us consider two commands, \(C_A(\pi)\in S_A\) and \(C_B(\gamma)\in S_B\) 
 where \(S_A\) is the minimal sequence which
 leads the original filesystem \(O\) to replica \(A\) and similarly,
 \(S_B\) leads \(O\) to replica \(B\).
@@ -19,21 +19,21 @@ Now \(C_A\) and \(C_B\) are conflicting commands iff
 \emph{and} one of the following holds:\\\medskip
 \begin{minipage}{12cm}
 \begin{itemize}
-\item \(\neg(C_A(\pi); C_B(\gamma) \eqifnbr C_B(\gamma); C_A(\pi))\)
+\item \(C_A(\pi); C_B(\gamma) \neqifnbr C_B(\gamma); C_A(\pi)\)
  (they do not commute), \emph{or}
 \item \(C_A(\pi); C_B(\gamma) \equiv break\), \emph{or}
-\(C_B(\gamma); C_A(\pi) \equiv break\)\\(they break every
-filesystem).
+\(C_B(\gamma); C_A(\pi) \equiv break\)\\(they are equivalent to \(break\);
+from which we know they break every filesystem).
 \end{itemize}\end{minipage}
 \end{center}
 
 We write \(C_1\confl C_2\) if \(C_1\) and \(C_2\) are conflicting
 commands.
 \begin{notrsi}
-Clearly this relation is symmetrical i.e.,
+Clearly this relation is symmetrical, i.e.
 \(C_1\confl C_2\implies C_2\confl C_1\).
 \end{notrsi}
 
-In appendix \ref{cbp:bp} we try to find a relation between this
+In appendix \ref{cbp:bp} we determine the relation between this
 definition and another one found in \BP.
 

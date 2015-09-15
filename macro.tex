@@ -3,7 +3,6 @@
 %%Remarks
 %% \remark{ ... }
 %% \begin{CMNT} ... \end{CMNT}
-%% \QM
 \newcommand{\ShowRemarks}{%
 \def\remark##1{{\marginpar{\raggedright\hbadness=10000%
 \def\baselinestretch{0.8}\center\tiny%
@@ -16,13 +15,11 @@
 \newenvironment{CMNT}{\remark{\bf !}%
 \begingroup\vskip 0.25cm\noindent\Beginrule\vskip 0cm\fbox{?}\it\small}%
 {\vskip 0cm\noindent\Endrule\vskip 0.25cm\endgroup}
-\newcommand{\QM}{\fbox{\bf ?}}
 }
 
 \newcommand{\HideRemarks}{%
 \excludecomment{CMNT}%
 \def\remark##1{}%
-\newcommand{\QM}{}%
 }
 
 %%Notation
@@ -44,6 +41,7 @@
 %%conflicting commands
 \newcommand{\confl}{\leftrightarrow}
 \newcommand{\eqifnbr}{\parallel}
+\newcommand{\neqifnbr}{\nparallel}
 \newcommand{\eqexp}{\sqsubseteq}
 \newcommand{\eqshr}{\sqsupseteq}
 \renewcommand{\cdot}{/}
