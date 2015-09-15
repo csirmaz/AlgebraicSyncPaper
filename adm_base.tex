@@ -1,0 +1,60 @@
+\makeatletter
+%%%%%%%%%[
+\newcommand{\Bigafourpaper}[3]{                    %In preamble
+% elso arg. lehet 'd' vagy 'h' vagy 'x' vagy 'n'
+% d: default ertekek
+% h: masodik es harmadik arg. legyen a headheight es a footskip (*baselineskip) 
+% x: - " -, de szorzas nelkul
+% n: nem bantja az ertekeket
+\if#1d \else 
+\if#1h \else
+\if#1x \else
+\if#1n \else
+\errmessage{***SETUP BIG A4 PAPER: Illegal option. Use d,h,x or n !}
+\fi \fi \fi \fi
+\setlength{\paperheight}{29.7cm}
+\setlength{\paperwidth}{21cm}
+%Fuggoleges:
+\setlength{\voffset}{0cm}
+\setlength{\topmargin}{0cm}     %teteje: 1in+voffset+topmargin
+\if#1d
+\setlength{\headheight}{1.5\baselineskip} 
+\setlength{\footskip}{3\baselineskip}
+\fi \if#1h
+\setlength{\headheight}{#2\baselineskip} 
+\setlength{\footskip}{#3\baselineskip}
+\fi \if#1x
+\setlength{\headheight}{#2} 
+\setlength{\footskip}{#3}
+\fi
+\setlength{\headsep}{1.5\baselineskip}
+\setlength{\textheight}{24.5cm}
+\addtolength{\textheight}{-\topmargin}
+\addtolength{\textheight}{-\headheight} 
+\addtolength{\textheight}{-\headsep}
+\addtolength{\textheight}{-\footskip}
+% Viszintes:
+\setlength{\hoffset}{0cm}
+\setlength{\oddsidemargin}{0cm} %bal oldalon: 1in+hoffset+oddsidemargin
+\setlength{\textwidth}{15cm}    %body width
+\setlength{\marginparsep}{9pt}  %body es marginal notes kozott
+\setlength{\marginparwidth}{3cm}        %marginal notes (jobb oldal)
+\setlength{\marginparpush}{5pt} %2 marginal note kozti hely
+}
+%%%%%%%%%%%%%%%%]
+
+\newcommand{\Hfont}{\fontsize{9}{10}\selectfont}
+\newcommand{\Hfontit}{\fontsize{9}{10}\fontshape{it}\selectfont}
+\newcommand{\Hfontbf}{\fontsize{9}{10}\fontseries{bx}\selectfont}
+\newcommand{\Sethf}[1]{%
+\setlength{\headheight}{28pt}%
+\renewcommand{\@oddhead}{%
+\vbox to \headheight{%
+\hbox to \textwidth{\Hfont Elod Pal Csirmaz%
+\hfill%
+{\Hfontbf #1}\hfill\hskip 2cm%
+{\Hfont{\thepage}}}%
+}}%
+\renewcommand{\@oddfoot}{\vbox to \footskip{\vfill\hbox to \textwidth{\relax}}}%
+}
+\makeatother
