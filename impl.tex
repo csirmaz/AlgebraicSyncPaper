@@ -1,0 +1,113 @@
+%% Description of implementation
+\section{Implementation}
+\label{app:impl}
+
+We created an implementation based on the algorithms described in Section
+\ref{sec:alg} and Appendix \ref{app:upd}. Its main purpose was to
+verify that the algorithms are implementable and they work as we expect
+them. The program is written in Perl and it runs under UNIX
+systems. It handles two replicas and does not modify the filesystem; it
+only detects updates and conflicts among commands. Then it provides the
+sequences of commands which should be applied to the replicas.
+
+It has no archives of the filesystem, therefore we must also provide it
+the original version of the filesystems. This is because the
+implementation was built to examine the algorithms, not to make a complete
+synchronizer. It also does not simplify the outcoming sequences with
+\(move\) commands or commands on subtrees.
+
+When referring to the contents of directories, it looks at the writable
+flags of a directory. That is, the contents of two directories are
+different if one of them is writable for the program and the other one is
+not.
+
+The brief description of its method is the following:
+\begin{enumerate}
+\item Creates flat representations of the original filesystem and the
+replicas \(O(), A(), B()\).
+\item Update--detection: defines the minimal sequences \(S_A, S_B\) for
+which \(S_AO=A\) and
+\(S_BO=B\).
+\item Orders these sequences using the method discussed in 
+section \ref{app:upd}.
+\item Reconciling: detects conflicting commands in sequences.
+\item Provides sequences \(S_A^*\) and \(S_B^*\) for
+reconciliation.
+\item Provides a list of paths where conflicts occurred.
+\end{enumerate}
+
+\subsection{Equivalence of \emph{edit} and \emph{create} commands} 
+
+To be able to determine whether two \(edit\) or \(create\) commands are
+equivalent, we introduced a \emph{list of samples} in the program, which
+is a list of paths.
+When the program detects an \(edit(\pi,X)\) or a
+\(create(\pi,X)\) command as an update, it looks for a path \(\gamma\) in
+the list for
+which \(A(\pi)=A(\gamma)\) (in case it is detecting updates at replica
+\(A\)). If it finds such a \(\gamma\), it will attach its number in the
+list to the command. If not, it appends \(\pi\) to the list and attaches
+the new number.
+
+That way, two \(edit\) or \(create\) commands are equivalent if and only
+if they are applied to the same path and they have the same
+sample--number.
+
+\subsection{Notation}
+
+The program uses the ordinary \texttt{directory/directory/file} notation
+for paths. For commands, it uses:
+\begin{center}\begin{tabular}{rcl}
+\texttt{EF0/path} &for& \(edit(path,\cfile{X})\) \\
+\texttt{ED0/path} &for& \(edit(path,\cdir{X})\) \\
+\texttt{CF0/path} &for& \(create(path,\cfile{X})\) \\
+\texttt{CD0/path} &for& \(create(path,\cdir{X})\) \\
+\texttt{RM/path} &for& \(remove(path)\), 
+\end{tabular}\end{center}
+where \texttt{0} is the sample--number for which 
+\(A(Samplelist(\texttt{0}))=A(\texttt{path})\).
+
+When marking conflicting commands, it uses `\texttt{<->A3}' if the command
+conflicts with the 3\({}^{rd}\) command in sequence \(S_A\) and
+`\texttt{==>A3}' if the command \(S_A[3]\) must precede the current
+command but it already conflicts, so the current command cannot be
+applied.
+
+\subsection{Examples}
+
+In this section we provide some examples of how the program runs. In the
+first section of the output the program lists the flat representation of
+the filesystems (the original and the two replicas). The next section is
+the result of the detection of updates and conflicting commands. It lists
+the samples and the sequences of commands (\(S_A\) and \(S_B\)). Then
+sequences \(S_A^*\) and \(S_B^*\) follow which should be applied to
+replicas to propagate non--conflicting commands. In the last section it
+lists paths where there were conflicts.
+
+\begin{forrsi*}  
+\begin{singlesp}
+\end{forrsi*}
+%%\begin{multicols}{2}
+\subsubsection{Example 1}
+This example is the case we discussed in section \ref{subsec:pathimplcom}.
+\begin{center}
+{\small{
+\begin{alltt}\input{exp1}\end{alltt}
+}}
+\end{center}
+As we can see, a situation like this does not cause conflicting updates.
+\subsubsection{Example 2}
+This example shows a case when we have conflicts because a conflicting
+command must precede another. \texttt{/dir/file} was modified in replica
+\(A\).
+\begin{center}
+{\small{
+\begin{alltt}\input{exp4}\end{alltt}
+}}
+\end{center}
+Actually, in this case the synchronizer cannot do anything, because all
+commands conflicted.
+%%\end{multicols}
+\begin{forrsi*}
+\end{singlesp}
+\end{forrsi*}  

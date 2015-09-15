@@ -1,0 +1,343 @@
+%% Algebra, laws, inference rule, description of theorems
+\section{Algebra on commands}
+\label{theorem:laws}
+
+In order to reason about commands, we define \emph{algebraic laws} on
+commands. We use formal logic to build a proof system which is sound and
+complete for its intended interpretation.
+
+For sequences \(S_1\) and \(S_2\), we have two kinds of judgements:
+\begin{itemize}
+\item \(S_1\equiv S_2\), or \emph{\(S_1\) is algebraically equivalent to
+\(S_2\)}. Its intended interpretation is that they act the same on all
+filesystems, i.e. \(\forall F: S_1F=S_2F\).
+\item \(S_1\eqexp S_2\), or \emph{\(S_2\) extends \(S_1\)}; its intended
+interpretation is the following: if \(S_1\eqexp S_2\) and 
+\(S_1F\ne\ud\) then \(S_1F=S_2F\).
+%%%
+%%% Transitivity? == => =C ?
+%%%
+\end{itemize}
+
+%%%% REF!!
+The axioms of our proof system are the laws listed in Table 1. We have two
+inference rules, one for each judgement.
+
+\subsection{The laws}
+
+We created the laws with the help of pairs of commands.
+Lines in the last section are not axioms; they are written
+there to list all possible pairs.
+
+\begin{notrsi}
+\medskip
+{\small{
+How many pairs do we have? 
+For the first group of laws which contain a pair of commands from
+\(edit\), \(create\) and \(remove\), we can choose a pair 9 ways.
+We have four types of
+path-pairs: \(\pi;\pi\), \(\pisub;\pi\), \(\pi;\pisub\)
+and \(\pi;\varphi\). That makes \(4\times9\) cases. With \(break\), we have
+\(3\times 2\) cases
+with an other non--break command (there are 3 types and they can follow
+or precede \(break\)) and one case when we have a pair made of two
+\(break\)s. Thus, we have \(4\times 9+3\times2+1=43\) pairs. 
+}}
+\medskip
+\end{notrsi}
+
+We subdivide some laws containing \(edit\) because of \(edit\)'s different
+behavior when modifying paths to files or to directories. These laws are
+numbered with A or B.
+Extension laws (that is, where the relation is \(\eqexp\), not
+\(\equiv\)) are marked with \(E\).
+%%%
+%%% reference
+%%%
+(See table 1 for the laws.)
+
+\ifnum\Textsize=1%
+\def\crlw{\)\\\indent\(}%
+\else%
+\def\crlw{\relax}%
+\fi%
+\newcommand{\lawsection}[1]{\par\medskip{\bf{#1}}\medskip\\}%
+\def\lawi{1}%
+\def\lawip{2}%
+\def\lawiib{4A${}_E$}%
+\def\lawiibp{3A}% not true semilaw
+\def\lawiiia{5A}%
+\def\lawiiiap{6A}%
+\def\lawiv{7}%
+\def\lawv{8}%
+\def\lawvi{9}%
+\def\lawvp{10}%
+\def\lawvii{11}%
+\def\lawviii{12}%
+\def\lawvip{13}%
+\def\lawviiip{14}%
+\def\lawix{15}%
+\def\lawiia{3B}%
+\def\lawiiap{4B}%
+\def\lawiiib{5B}%
+\def\lawx{16}%
+\def\lawxi{17}%
+\def\lawxii{18}%
+\def\lawxiii{19}%
+\def\lawxiv{20}%
+\def\lawxv{21}%
+\def\lawxvi{22}%
+\def\lawxvii{23}%
+\def\lawxviii{24}%
+\def\lawxix{25}%
+\def\lawxx{26}%
+\def\lawxxi{27}%
+\def\lawxxii{28}%
+\def\lawxxiii{29}%
+\def\lawxxiv{30${}_E$}%
+\def\lawxxv{31}%
+\def\lawxxvi{32}%
+\def\lawxxvii{33${}_E$}%
+\def\lawxxviii{34${}_E$}%
+\def\lawxxix{35}%
+\def\lawxxx{36}%
+\def\lawxxxi{37}%
+\def\lawxxxii{38}%
+\def\lawxxxiii{39}%
+\def\lawxxxiv{40}%
+\def\lawxxxv{41}%
+\def\lawiiic{6B}%
+\def\lawxxxvi{42}%
+\def\lawxxxvii{43}%
+%%%
+\ifnum\Textsize=1
+%%\begin{forrsi*}
+\afterpage{\clearpage}
+\begin{table}[H]
+\singlespacing
+\else
+%%\end{forrsi*}
+%%\begin{notrsi*}
+\begin{table}[thb]
+\fi
+%%\end{notrsi*}
+\relax
+\label{table:laws}
+\relax
+\framebox{
+{\small{
+\begin{minipage}{8.3cm}
+\setlength{\rightskip}{0cm plus 7cm}
+\lawsection{Commuting laws}
+\lawi. \(edit(\pi,X); edit(\pisub,Y) \equiv\crlw
+edit(\pisub,Y); edit(\pi,X)\)\\
+\lawip. \(edit(\pisub,Y); edit(\pi,X) \equiv\crlw
+edit(\pi,X); edit(\pisub,Y)\)\\
+%2. \(edit(\pi,X); create(\pisub,Y) \equiv
+%create(\pisub,Y); edit(\pi,X)\)\\
+%%\lawiibp. \(edit(\pi,\cdir{X}); create(\pisub,Y)\eqshr\)\\\indent\(%
+%%create(\pisub,Y); edit(\pi,\cdir{X})\)\\
+\lawiib. \(create(\pisub,Y); edit(\pi,\cdir{X})\eqexp\)\\\indent\(%
+edit(\pi,\cdir{X}); create(\pisub,Y)\)\\
+\lawiiia. \(edit(\pi,\cdir{X}); remove(\pisub) \equiv\)\\\indent\(%
+remove(\pisub); edit(\pi,\cdir{X})\)\\
+\lawiiiap. \(remove(\pisub); edit(\pi,\cdir{X})\equiv\)\\\indent\(%
+edit(\pi,\cdir{X}); remove(\pisub)\)\\
+\lawiv. \(edit(\pi,X); edit(\varphi,Y) \equiv
+edit(\varphi,Y); edit(\pi,X)\)\\
+\lawv. \(edit(\pi,X); create(\varphi,Y) \equiv\crlw
+create(\varphi,Y); edit(\pi,X)\)\\
+\lawvi. \(edit(\pi,X); remove(\varphi) \equiv\crlw
+remove(\varphi); edit(\pi,X)\)\\
+\lawvp. \(create(\varphi,Y); edit(\pi,X) \equiv\crlw
+edit(\pi,X); create(\varphi,Y)\)\\
+\lawvii. \(create(\pi,X); create(\varphi,Y) \equiv\)\\\indent\(%
+create(\varphi,Y); create(\pi,X)\)\\
+\lawviii. \(create(\pi,X); remove(\varphi) \equiv\crlw
+remove(\varphi); create(\pi,X)\)\\
+\lawvip. \(remove(\varphi); edit(\pi,X) \equiv\crlw
+edit(\pi,X); remove(\varphi)\)\\
+\lawviiip. \(remove(\varphi); create(\pi,X) \equiv\crlw
+create(\pi,X); remove(\varphi)\)\\
+\lawix. \(remove(\pi); remove(\varphi) \equiv\crlw
+remove(\varphi); remove(\pi)\)
+\lawsection{Breaking laws}
+%1*. \(edit(\pi,\cfile{X}); edit(\pisub,Y) \equiv 
+%edit(\pisub,Y); edit(\pi,\cfile{X}) \equiv break\)\\
+\lawiia. \(edit(\pi,\cfile{X}); create(\pisub,Y) \equiv
+break\)\\
+\lawiiap. \(create(\pisub,Y); edit(\pi,\cfile{X}) \equiv
+break\)\\
+\lawiiib. \(edit(\pi,\cfile{X}); remove(\pisub) \equiv break\)\\
+\lawx. \(edit(\pi,X); create(\pi,Y) \equiv break\)\\
+\lawxi. \(edit(\pisub,X); create(\pi,Y) \equiv break\)\\
+\lawxii. \(edit(\pisub,X); remove(\pi) \equiv break\)\\
+\lawxiii. \(create(\pi,X); edit(\pisub,Y) \equiv break\)\\
+\lawxiv. \(create(\pi,X); create(\pi,Y) \equiv break\)\\
+\end{minipage}\begin{minipage}{7.2cm}\setlength{\rightskip}{0cm plus 7cm}
+\lawxv. \(create(\pisub,X); create(\pi,Y) \equiv break\)\\
+\lawxvi. \(create(\pi,X); remove(\pisub) \equiv break\)\\
+\lawxvii. \(create(\pisub,X); remove(\pi) \equiv break\)\\
+\lawxviii. \(remove(\pi); edit(\pi,X) \equiv break\)\\
+\lawxix. \(remove(\pi); edit(\pisub,X) \equiv break\)\\
+\lawxx. \(remove(\pi); create(\pisub,X) \equiv break\)\\
+\lawxxi. \(remove(\pisub); create(\pi,X) \equiv break\)\\
+\lawxxii. \(remove(\pi); remove(\pi) \equiv break\)\\
+\lawxxiii. \(remove(\pi); remove(\pisub) \equiv break\)
+\lawsection{Simplifying laws}
+\lawxxiv. \(edit(\pi,X); edit(\pi,Y) \eqexp edit(\pi,Y)\)\\
+\lawxxv. \(edit(\pi,X); remove(\pi) \equiv remove(\pi)\)\\ 
+\lawxxvi. \(create(\pi,X); edit(\pi,Y) \equiv create(\pi,Y)\)\\
+\lawxxvii. \(create(\pi,X); remove(\pi) \eqexp \emptyseq\)\\
+\lawxxviii. \(remove(\pi); create(\pi,X) \eqexp edit(\pi,X)\)
+\lawsection{Laws for \(break\)}
+\lawxxix. \(break; edit(\pi,X) \equiv break\)\\
+\lawxxx. \(break; create(\pi,X) \equiv break\)\\
+\lawxxxi. \(break; remove(\pi) \equiv break\)\\
+\lawxxxii. \(edit(\pi,X); break \equiv break\)\\
+\lawxxxiii. \(create(\pi,X); break \equiv break\)\\
+\lawxxxiv. \(remove(\pi); break \equiv break\)\\
+\lawxxxv. \(break; break \equiv break\)
+\lawsection{Remaining pairs\\(no substitution)}
+\lawiibp. \(edit(\pi,\cdir{X}); create(\pisub,Y)\eqshr\)\\\indent\(%
+create(\pisub,Y); edit(\pi,\cdir{X})\)\\
+\lawiiic. \(remove(\pisub); edit(\pi,\cfile{X})\)\\
+\lawxxxvi. \(create(\pi,X); create(\pisub,Y)\)\\
+\lawxxxvii. \(remove(\pisub); remove(\pi)\)
+\end{minipage}
+}}
+}
+%\begin{forrsi}
+%\doublespacing
+%\end{forrsi}
+\caption{Algebraic laws}
+\end{table}
+%}
+
+\subsection{Inference rules}
+
+An inference rule makes it possible to derive new statements from 
+statements already true or from the axioms. 
+Our inference rules are:\\
+\emph{For any sequences \(S_1, S_2, S, S'\):}
+\begin{itemize}
+\item if \(S_1\equiv S_2\) then \(S;S_1;S'\equiv S;S_2;S'\)
+\item if \(S_1\eqexp S_2\) then \(S;S_1;S'\eqexp S;S_2;S'\)
+\item if \(S_1\equiv S_2\) then \(S_1\eqexp S_2\).
+\end{itemize}
+As we can see, the first inference rules are mere substitutions of a part
+of the sequence to another sequence. 
+%%\remark{``...'' is only for app. \ref{app:theosound}}
+If ``\(S_1\equiv S_2\)'' or 
+``\(S_1\eqexp S_2\)'' is a law itself, we say that we applied that law to
+the sequence \(S;S_1;S'\).
+
+\subsection{Soundness theorem}
+\label{theorem:soundness}
+In order to be able to use our algebra,
+we must show that algebraic relation between sequences also means
+that the sequences act the same on filesystems.
+%
+It can be proven that for every two sequences of commands 
+\begin{gather*}
+S\equiv S^* \implies \forall F: SF=S^*F,\\
+(S\eqexp S^*)\wedge(SF\ne\ud)\implies \forall F: SF=S^*F.%\\
+%S\eqifnbr S^*\wedge SF\ne\ud \wedge S^*F\ne\ud 
+%\implies \forall F: SF=S^*F.
+\end{gather*}
+%%%\begin{forrsi}
+The proof for the two cases are very similar. We use induction on the
+number of times the inference rules were applied to the sequences. 
+We obtain these results by
+showing the soundness of each individual law (which can be done by
+investigating numerous cases) and the inference rules.
+
+The detailed proof can be found in Appendix \ref{app:theosound}.
+%%%\end{forrsi}
+%%%\begin{notrsi}
+%%%\input{sound}
+%%%\end{notrsi}
+
+\subsection{Theorem of completeness}
+\label{theorem:completeness}
+In this section, we show that our proof system is complete for its
+interpretation. This is also mandatory to be able to use our algebra.
+
+Let us introduce some notation. We write 
+\(S_1\eqifnbr S_2\), or \emph{\(S_1\) and \(S_2\) have a common upper 
+bound} iff
+\(\exists S^*: S_1\eqexp S^* \wedge S_2\eqexp S^*\), that is, iff
+both \(S_1\) and \(S_2\) can be extended to the same sequence.
+It is a symmetric relation, but not transitive.
+
+\(S_1\equiv S_2\implies S_1\eqexp S_2\implies S_1\eqifnbr S_2\) also
+holds.
+
+%To show that we have enough laws to describe the algebra of
+%filesystems,
+Now we prove that if 
+two sequences of commands act the same on any filesystem neither of
+them breaks, \emph{and} there is a filesystem neither of them
+breaks then they have a common upper bound.
+Formally, 
+\[\begin{array}{r@{}l}
+\forall S,S':&\\ 
+&((\forall G: (SG\ne\ud\wedge S'G\ne\ud)\implies SG=S'G)\\
+&\wedge\\
+&(\exists F: SF\ne\ud\wedge S'F\ne\ud)\\
+&\implies S \eqifnbr S'),
+\end{array}\]
+where \(G\) and \(F\) refer to filesystems. 
+
+%%%\begin{notrsi}
+%%%\input{compl}
+%%%\end{notrsi}
+%%%\begin{forrsi}
+
+In the proof we define \emph{minimal sequences} in the following way:
+Consider the set of sequences \(\wp_S = \{ S^* | S \eqexp S^*\}\).
+Because of our preconditions, the sequence \(break\) is not in
+\(\wp_S\) (if it was, that is, \(S\eqexp break\), \(SF=\ud\) would hold
+since by definition \(SF=(break)F\) if \(SF\ne\ud\)).
+
+Let \(S_0\) be (one of) the shortest sequence(s) in \(\wp_S\) and
+similarly
+\(S^\prime_0\) (one of) the shortest sequence(s) in \(\wp_{S^\prime}\). 
+These sequences are called minimal sequences. It can be shown that for
+every \(G\) which satisfies the condition \(SG\ne\ud\wedge S'G\ne\ud\), 
+\(S_0G=S'_0G\ne\ud\) applies.
+As a special case, we know that \(S_0F=S'_0F\ne\ud\).
+
+The proof has three main steps.
+\begin{itemize}
+\item[i.]
+We have some constraints on \(S_0\) and \(S'_0\). Since they do not break
+every filesystem, no breaking laws can be applied to them. And since
+they have minimal length, we cannot apply a simplifying law either. From
+these properties we can prove that there is at most one command on each
+path in a minimal sequence. (If there were more, such a law would
+be appliable.)
+\item[ii.]
+We know that a command on path \(\pi\) only affects the filesystem at
+\(\pi\) if it does not break the filesystem. Therefore \(S_0\) and
+\(S'_0\) must contain commands on the same paths since
+they do not break \(F\) and \(S_0F=S'_0F\), so they modify \(F\) at 
+the same points. 
+And we can also prove that the sequences must contain the same
+commands on each path from the fact that they act the same on every \(G\).
+Therefore they consist of the very same commands.
+\item[iii.]
+We prove that \(S_0\) and \(S'_0\) can be reordered by commuting
+laws so that they would be the same sequences. That is, a sequence
+\(S^*\) exists for which \(S_0\eqexp S^*\eqshr S'_0\). It means that
+\(S\eqexp S_0\eqexp S^*\eqshr S'_0\eqshr S'\), i.e. \(S\eqifnbr S'\).
+\end{itemize}
+
+In appendix \ref{app:compl} we provide the detailed version of the
+proof.
+
+\medskip
+Now, since we know that our algebra is sound and complete for its
+intended interpretation, we can use it to define the specification of the
+file synchronizer.
+%%%\end{forrsi}

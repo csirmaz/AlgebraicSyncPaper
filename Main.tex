@@ -1,0 +1,86 @@
+%\def\Textforrsi 0=exclude 1=include 2=mark
+%\def\Textnotrsi 0=exclude 1=include 2=mark
+%\def\Textremark 0=exclude 1=include
+%\def\Textsize 0=10pt 1=12pt,dbsp
+
+%%%\ifnum\Textsize=1\documentclass[12pt]{article}\fi
+\documentclass[10pt]{article}
+
+\usepackage{alltt}
+%\usepackage{verbatim}
+\usepackage{comment}
+\usepackage{multicol}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{setspace}%?
+\usepackage{fullpage}%!!!
+\usepackage{graphicx}%?
+\usepackage{boxedminipage}
+\usepackage{afterpage}
+
+\input{macro}
+
+\ifnum\Textremark=0\HideRemarks\fi
+\ifnum\Textremark=1\ShowRemarks\fi
+\ifnum\Textsize=1\doublespacing\fi
+
+\ifnum\Textforrsi=0
+  \excludecomment{forrsi}
+  \excludecomment{forrsi*}\fi
+\ifnum\Textforrsi=1
+  \includecomment{forrsi}
+  \includecomment{forrsi*}\fi
+\ifnum\Textforrsi=2
+  \excludecomment{forrsi*}
+  \newenvironment{forrsi}{$\big|\big($}{$\big)\big|$}\fi
+
+\ifnum\Textnotrsi=0
+  \excludecomment{notrsi}
+  \excludecomment{notrsi*}\fi
+\ifnum\Textnotrsi=1
+  \includecomment{notrsi}
+  \includecomment{notrsi*}\fi
+\ifnum\Textnotrsi=2
+  \includecomment{notrsi*}
+  \newenvironment{notrsi}{$\big|\big[$}{$\big]\big|$}\fi
+
+\sloppypar
+\begin{notrsi*}
+\setcounter{tocdepth}{2}
+\end{notrsi*}
+\begin{forrsi*}
+\setcounter{tocdepth}{1}
+\end{forrsi*}
+\input{cover}
+
+% Header
+\input{adm_base}
+\Sethf{Theory of File Synchronization}
+
+
+\begin{document}%
+\maketitle%
+\eject%
+\begin{abstract}\input{abstract}\end{abstract}%
+\eject%
+\tableofcontents%
+\eject%
+\input{intro}%
+\input{definition}%
+\input{theorems}%
+\input{confl}%
+\input{algorithm}%
+\input{conclusion}%
+\input{ack}%
+\input{biblio}%
+\eject%
+\appendix%
+%\begin{forrsi}
+\input{sound}%
+\input{compl}%
+%\end{forrsi}
+\input{udetect-move}%
+\input{bp}%
+\input{impl}%
+\input{lawproof}%
+\end{document}

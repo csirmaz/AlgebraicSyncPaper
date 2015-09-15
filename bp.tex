@@ -1,0 +1,165 @@
+%% Comparing our definition to B&P
+\section{Equivalence of definitions of conflicting updates}
+\label{cbp:bp}
+
+In this section we try to find a relation between
+a definition for conflicting updates found in \BP~(\cite{BP:whatis}) and
+our definition.
+
+\subsection{Detecting conflicts using ``dirtiness''}
+\label{subsec:defdirty}
+
+In \BP, we can read about an update--detection method whose result when
+applied to filesystems \(O\) and \(A\) is a set
+\(dirty_A\) for which the following holds:
+\begin{itemize}
+\item
+\(\pi\not\in dirty_A \implies A(\pi)=O(\pi)\) holds where \(O\) is the
+original filesystem (Definition 3.1.1 in \BP).
+\item
+\(dirty_F\) is up--closed for any filesystem,
+that is, if \(\pi\preceq\piesub\) and \(\piesub\in dirty_F\) then \(\pi\in
+dirty_F\) (Fact 3.1.3).
+\end{itemize}
+This set is a \emph{safe estimate} of paths where updates have been
+made, that is, it may contain paths where the replica has not
+changed.
+
+According to the paper, there's a conflict at path \(\pi\) iff
+\(\pi\in dirty_A, dirty_B\) and \(A(\pi)\neq B(\pi)\) and
+\((A(\pi)\neq\cdir{X})\vee(B(\pi)\neq\cdir{Y})\).
+We write \(conflict(\pi)\) if there are conflicting updates at
+path \(\pi\) according to this definition. (Definition 4.1.2)
+
+\subsection{Does a conflict at paths imply that there are
+conflicting commands?}
+\label{subsec:pathimplcom}
+
+Consider the following case. 
+We have the original filesystem:
+\[\begin{array}{r@{}l@{}l}
+O=\{&root&\mapsto\cdir{X};\\
+&root\cdot dir&\mapsto\cdir{Y};\\
+&root\cdot dir\cdot file&\mapsto\cfile{Z}\}\end{array}\]
+In replica A, we apply the following commands to \(O\): 
+\(remove(root\cdot dir\cdot file); remove(root\cdot dir)\).
+In replica B, we use
+\(remove(root\cdot dir\cdot file)\).
+Now, according to the definitions in subsection
+\ref{subsec:defdirty}, \(root\cdot dir\cdot file\in dirty_A\) and 
+\(root\cdot dir\in dirty_A\). We know that \(root\cdot dir\cdot file\in
+dirty_B\) and therefore \(root\cdot dir\in dirty_B\) (\(dirty_B\) is
+up--closed). Thus we have a conflicting command at path 
+\(root\cdot dir\), because it's dirty in both replicas and 
+\(A(root\cdot dir)=\ud\), so one of the filesystem entries at that path is
+not a directory.
+
+If we investigate this case using sequences, there's no conflict. Since we
+know that 
+\(S_A=remove(root\cdot dir\cdot file); remove(root\cdot dir)\) and
+\(S_B=remove(root\cdot dir\cdot file)\), we can apply the second
+command in \(S_A\) to replica \(B\) because it does not conflict
+with any command in \(S_B\). (We think this case is not a conflicting
+update, however, some file synchronizers, like \emph{unison}, detect such
+an update here.)
+
+Therefore, unfortunately, conflicting paths do not imply 
+conflicting commands.
+
+\subsection{A conflict at commands implies a conflict at paths}
+\label{subsec:comimplpath}
+
+%Again, consider the following case.
+%
+%In this example we show problems which emerge when we try to edit
+%directories or distinguish between them by their contents (properties).
+%Suppose that we have an original filesystem \(O\) with one directory
+%\(D\). Then we change the properties of this directory in replica
+%\(A\) in
+%a different way than in replica \(B\) (for example we modify the
+%permissions of it). Clearly path \(D\) is dirty in both
+%replicas. But the definition does consider this neither a conflict nor a
+%resolvable update according to the specification of the reconciler
+%provided in section 4.1.2 in \BP~since both \(A(D)\) and \(B(D)\) are
+%directories. In other words, this specification does not refer to such a
+%case.
+%
+%This is why we disallow editing directories or telling them apart 
+%by comparing their contents. Therefore we modify or model for the
+%proof such that
+%\remark{I'm not sure this is enough How to formalize this?}
+%the contents of every directories are the same and directories cannot be
+%modified, that is, if \(F(\pi)=\cdir{X}\) then 
+%\(edit(\pi,\cdir{Y})F=\ud\).
+
+We prove this theorem for two replicas.
+
+We prove that if we have filesystems \(O,A,B\neq\ud\) and we have
+the minimal sequences \(S_A\) and \(S_B\) and the dirty--sets
+\(dirty_A\) and \(dirty_B\) from the update--detectors then if we have
+conflicting commands in the sequences we have dirty--conflicts too.
+
+The fact that we gained the sequences from update--detectors allows us to
+assume that there are no superfluous commands in the sequences, e.g. a
+command which leaves the filesystem in the same state.
+
+Since we cannot distinguish between directories by their contents in the
+model of \BP, we have some preconditions.
+
+Our theorem is true if:
+\begin{itemize}
+\item commands do not modify directories to directories (that is,
+\(O(\pi)=\cdir{X}\implies edit(\pi,\cdir{Y})\not\in\) \(S_A\) or
+\(S_B\)) 
+\emph{and}
+\item all directories have the same contents (that is, for any \(F\) and
+\(G\), if
+\(F(\pi)\) is a directory and \(G(\gamma)\) is a directory then
+\(F(\pi)=G(\gamma)\));
+\item and there are no superfluous commands in \(S_A\) and \(S_B\).
+\end{itemize} 
+
+First of all, notice that \(C_A(\pi)\confl C_B(\gamma)\) can be true only
+if \(\pi\preceq\gamma\) or \(\gamma\preceq\pi\). (Otherwise they
+would commute.) Without loss of generality suppose the first
+one is true. Now we know: \(C_A(\pi)\confl C_B(\piesub)\), where
+\(\piesub=\gamma\).
+
+Our theorem is that 
+\[\mbox{\bf if~} C_A(\pi)\confl C_B(\piesub) \mbox{~\bf then~}
+conflict(\pi),\]
+that is, there's a dirty--conflict at path \(\pi\).
+
+\emph{Proof.} We know that \(C_A(\pi)\in S_A\) therefore 
+\(O(\pi)\neq S_AO(\pi)\) where \(O\) is the original filesystem (remember
+that we don't have superfluous commands). 
+Hence \(\pi\in dirty_A\) according to the definition of this set.
+
+The same holds for \(C_B(\piesub)\) therefore \(\piesub\in dirty_B\). This
+implies that \(\pi\in dirty_B\) since \(dirty_B\) is up--closed.
+
+Now we need to show that \(A(\pi)\) or \(B(\pi)\) is not a
+directory. Suppose that both of them are directories. That is,
+\(A(\pi)=S_AO(\pi)=\cdir{X}\). In other words (\(S_A\) is
+minimal) \(C_A(\pi)O(\pi)=\cdir{X}\) since there are no other
+command on this path. 
+Thus \(C_A(\pi)\) is \(create(\pi,\cdir{X})\) 
+or \(edit(\pi,\cdir{X})\), but we can be sure that 
+\(O(\pi)\neq\cdir{X}\) because otherwise we would edit (modify) a
+directory to a directory, and by assumption we cannot do that.
+
+We also know that \(B(\pi)=S_BO(\pi)=\cdir{X}\) since we don't distinguish
+between directories. Since we know that \(O(\pi)\neq\cdir{X}\),
+we must have a command on \(\pi\) in \(S_B\), namely \(C_B^*(\pi)\). 
+This command can be either \(create(\pi,\cdir{X})\) or
+\(edit(\pi,\cdir{X})\) but it is equivalent to \(C_A(\pi)\) since
+we must use \(create\) in both cases if \(O(\pi)=\ud\) and \(edit\) if
+\(O(\pi)=\cfile{X}\). But then \(C_A(\pi)\in S_B\) since
+\(C_A(\pi)=C_B^*(\pi)\in S_B\) which
+contradicts the definition of conflicting commands.
+
+We also need to show that \(A(\pi)\neq B(\pi)\). If so, similarly
+to the above, \(C_A(\pi)=C_B^*(\pi)\) would hold.
+
+Now we know that every condition of a dirty--conflict holds. Our theorem
+is proved.

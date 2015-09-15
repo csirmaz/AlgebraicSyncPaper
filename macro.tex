@@ -1,0 +1,52 @@
+%% Macro definitions
+
+%%Remarks
+%% \remark{ ... }
+%% \begin{CMNT} ... \end{CMNT}
+%% \QM
+\newcommand{\ShowRemarks}{%
+\def\remark##1{{\marginpar{\raggedright\hbadness=10000%
+\def\baselinestretch{0.8}\center\tiny%
+\vskip 0cm\Beginrule\vskip 0cm\it ##1%
+\vskip 0cm\Endrule\par}}}
+\marginparsep=5pt
+\newcommand{\Beginrule}{\rule[-0.1cm]{0.5pt}{0.1cm}\hrulefill%
+\rule[-0.1cm]{0.5pt}{0.1cm}}
+\newcommand{\Endrule}{\rule{0.5pt}{0.1cm}\hrulefill\rule{0.5pt}{0.1cm}}
+\newenvironment{CMNT}{\remark{\bf !}%
+\begingroup\vskip 0.25cm\noindent\Beginrule\vskip 0cm\fbox{?}\it\small}%
+{\vskip 0cm\noindent\Endrule\vskip 0.25cm\endgroup}
+\newcommand{\QM}{\fbox{\bf ?}}
+}
+
+\newcommand{\HideRemarks}{%
+\excludecomment{CMNT}%
+\def\remark##1{}%
+\newcommand{\QM}{}%
+}
+
+%%Notation
+%\renewcommand{\cdot}{\raisebox{0.5ex}{.}}
+\newcommand{\ud}{\bot}
+\newcommand{\pisup}{\pi^{sup}}
+\newcommand{\pisub}{\pi_{sub}}
+%%\renewcommand{\pisub}{{\pi\mathord/\pi'}}  %% suggestion
+\newcommand{\piesup}{\pi^{\varepsilon sup}}
+%%suggestion: \pi_+
+\newcommand{\piesub}{\pi_{\varepsilon sub}}
+%\newcommand{\implies}{\Rightarrow}
+\newcommand\emptyseq{\mathit{skip}}
+%%\newcommand\emptyseq{\{\}}
+\newcommand{\cfile}[1]{#1_{File}}
+\newcommand{\cdir}[1]{#1_{Dir}}
+%\newcommand{\BP}{\cite{BP:whatis}}
+\newcommand{\BP}{the paper of Balasubramaniam and Pierce}
+%%conflicting commands
+\newcommand{\confl}{\leftrightarrow}
+\newcommand{\eqifnbr}{\parallel}
+\newcommand{\eqexp}{\sqsubseteq}
+\newcommand{\eqshr}{\sqsupseteq}
+\renewcommand{\cdot}{/}
+
+\sloppypar
+\newenvironment{singlesp}{\begingroup\singlespacing}{\endgroup}

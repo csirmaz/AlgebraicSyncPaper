@@ -1,0 +1,170 @@
+%% Definitions: filesystem, path, commands
+\section{Definitions}
+\label{theorem:def}
+\subsection{The filesystem}
+We introduce some known notations on filesystems and paths.
+
+A filesystem can be \emph{broken} (\(F=\ud\))
+or it can be a function mapping whole paths to their
+contents. The filesystem is broken if a command caused an error, for
+example deleting a directory with files under it.
+
+A \emph{path} is either empty (/), or a finite sequence of names
+separated by \(\cdot\). The concatenation of paths \(\pi\) and
+\(\varphi\) can be written as \(\pi\cdot\varphi\).
+We write
+\(\pi\preceq\gamma\) iff \(\pi\) is a prefix of \(\gamma\), i.e., if
+\(\gamma=\pi\cdot\alpha\) for some path \(\alpha\) which might be
+empty. We also write
+\(\pi\prec\gamma\) if \(\pi\) is a proper prefix of \(\gamma\), that is,
+\(\pi\preceq\gamma\) and \(\pi\ne\gamma\). If we refer to the contents of
+path \(\pi\) in filesystem \(F\), we write simply \(F(\pi)\).
+
+In the paper, \(\pisub\) always refers to a file or directory under
+\(\pi\), that is, \(\pi\prec\pisub\). For \(\piesub\),
+\(\pi\preceq\piesub\) holds. The same for the opposite direction:
+\(\pisup\prec\pi\) and \(\piesup\preceq\pi\). Paths \(\pi\) and
+\(\varphi\) are usually incomparable paths.
+
+In a filesystem, the contents of a path can be broken (\(F(\pi)=\ud\),
+if the file or directory does not exist), they can be
+a file (\(F(\pi)=\cfile{X}\)) or a directory (\(F(\pi)=\cdir{Y}\)).  
+We also write \(X\) or \(Y\) for some unspecified but non-\(\ud\)
+contents.
+\begin{notrsi} 
+Both files and directories can carry additional information
+(modtimes, permissions, the bytes in a file, etc.), which we leave
+unspecified, simply writing the contents as shown above.
+\end{notrsi}
+
+Filesystems are functions and are compared using extensional equality.
+Two filesystems \(F_1\) and \(F_2\) are equivalent iff
+\((F_1=\ud)\wedge(F_2=\ud)\),
+\emph{or} \(\forall\pi: F_1(\pi)=F_2(\pi)\).
+
+We write \(F\{\pi \mapsto X\}\) for the function that is like \(F\),
+except it maps \(\pi\) to \(X\).
+\begin{notrsi}
+So
+\[F\{\pi \mapsto X\}(\gamma)=
+\begin{cases}
+X,&\mbox{if $\pi=\gamma$}\\
+F(\gamma), &\mbox{otherwise}
+\end{cases}\]
+\end{notrsi}
+
+We write \(childless_F(\pi)\) iff \(F(\pi)\) has no descendants,
+i.e. \(\forall\gamma: \pi\prec\gamma\implies F(\gamma)=\ud\).
+
+\(parent(\pi)\) denotes the path which immediately precedes \(pi\), that
+is, for some name \(\mathbf{p}\), \(parent(\pi)\cdot \mathbf{p}=\pi\).
+
+\(S\) always refers to sequences of commands. \(SF\) is the filesystem
+obtained by applying all commands in \(S\) to \(F\). We may also write a
+command instead of \(S\). \(S_1;S_2\) refers to the concatenation of
+sequences \(S_1\) and \(S_2\).
+
+We have some restrictions on filesystems: all filesystems must satisfy
+the \emph{tree property}, that
+is, if \(\pi\prec\gamma\) and \(F(\gamma)\neq\ud\) then
+\(F(\pi)=\cdir{X}\). It means that every path which has a descendant must
+be a directory.
+
+\subsection{Commands}
+
+Now we introduce the basis of our algebra: the commands on filesystems.
+
+At first, we
+thought about using four commands: \(create\), \(remove\), \(edit\) and
+\(move\), as the most common commands on a filesystem. Later, \(move\)
+turned out to be hard to handle in the algebra. We decided to introduce
+this command only in the user interface, after running the synchronizer.
+We also needed a command to reason about commands that cause errors
+(\(break\)). So we took another set of commands; it consists of the
+commands \(create\), \(remove\), \(edit\) and \(break\). In appendix
+\ref{app:update-move} we provide an argument to justify using a
+move--free
+algebra.
+
+\begin{notrsi}
+All the commands have the following property: if applied to a filesystem,
+then it either breaks the system (\(command(\pi,X)F=\ud\)) or 
+\(command(\pi,X)F=F\{\pi\mapsto X\}\); that is, if a command does not
+break the filesystem, it only affects the filesystem at the path on which
+it was applied. 
+\end{notrsi}
+
+Now we define the exact behavior of each command.
+%We have four commands: \emph{create, edit, remove} and \emph{break.} 
+Applied to the broken filesystem, they all have the same effect:  leaving
+the filesystem in the broken state. Otherwise, 
+the definition of their effect is the following: 
+
+\begin{notrsi}
+\begin{itemize}
+\item
+\(create(\pi,X)\) modifies \(F(\pi)\) to \(X\) iff
+\(F(\pi)\) is broken and its parent is a directory; i.e.
+\[create(\pi,X)F=
+\begin{cases}
+F\{\pi\mapsto X\}, &\mbox{iff~} F(\pi)=\ud
+\wedge F(parent(\pi))=\cdir{Y}\\
+\ud, &\mbox{otherwise.}
+\end{cases}\]
+\item
+The command \(edit\) can change the type of a path (file or
+directory), according to its second argument.
+Since the tree--property must be preserved, the definition is:
+\begin{align*}
+edit(\pi,\cdir{X})F&=
+\begin{cases}
+F\{\pi\mapsto \cdir{X}\}, &\mbox{iff~}
+F(\pi)\neq\ud\\
+\ud &\mbox{otherwise;}
+\end{cases}\\
+edit(\pi,\cfile{X})F&=
+\begin{cases}
+F\{\pi\mapsto\cfile{X}\} &\mbox{iff~}
+F(\pi)\neq\ud\wedge childless_F(\pi)\\
+\ud &\mbox{otherwise.}
+\end{cases}
+\end{align*}
+\item
+\(remove(\pi)\) only removes files or directories without files:
+\[remove(\pi)F=
+\begin{cases}  
+F\{\pi\mapsto\ud\} &\mbox{iff~}
+F(\pi)\neq\ud \wedge childless_F(\pi)\\
+\ud &\mbox{otherwise.}
+\end{cases}\]
+\item
+\(break\) breaks the filesystem:
+\[\begin{array}{r@{}ll}
+breakF&{}=\ud &\mbox{for every $F$.}\end{array}\]
+\end{itemize}
+\end{notrsi}
+%
+\begin{forrsi}
+{\small{
+%\begin{align}
+\begin{gather*}\begin{array}{r@{}ll}
+create(\pi,X)F&{}=F\{\pi\mapsto X\}, 
+&\mbox{iff~}(F(\pi)=\ud)\wedge(F(parent(\pi))=\cdir{Y})\\
+&{}=\ud, &\mbox{otherwise.}\\
+edit(\pi,\cdir{X})F&{}=F\{\pi\mapsto \cdir{X}\}, 
+&\mbox{iff~}F(\pi)\neq\ud\\
+&{}=\ud &\mbox{otherwise;}\\
+edit(\pi,\cfile{X})F&{}=F\{\pi\mapsto\cfile{X}\} 
+&\mbox{iff~}(F(\pi)\neq\ud)\wedge(childless_F(\pi))\\  
+&{}=\ud &\mbox{otherwise.}\\
+remove(\pi)F&{}=F\{\pi\mapsto\ud\} 
+&\mbox{iff~}(F(\pi)\neq\ud)\wedge(childless_F(\pi))\\
+&{}=\ud &\mbox{otherwise.}\\
+breakF&{}=\ud &\mbox{for every $F$.}
+\end{array}\end{gather*}
+%\end{align}
+}}
+\end{forrsi}
+%%%%%%%%%% TAGS!
+We write \(\emptyseq\) for the empty sequence of commands.
+

@@ -1,0 +1,428 @@
+%% Proof for completeness theorem +foreword
+%%%\begin{forrsi}
+\section{Proof of the completeness theorem}
+\label{app:compl}
+
+Let us repeat our theorem and introduce minimal sequences again:
+\[\begin{array}{r@{}l}
+\forall S,S':&\\
+&((\forall G: (SG\ne\ud\wedge S'G\ne\ud)\implies SG=S'G)\\
+&\wedge\\
+&(\exists F: SF\ne\ud\wedge S'F\ne\ud\wedge SF=S'F)\\
+&\implies S \eqifnbr S'),
+\end{array}\]
+where \(G\) and \(F\) refer to filesystems.
+%%%\end{forrsi}
+%%%%%%%%%%%%%%%%%
+%%%\begin{notrsi*}
+%%%\newcommand{\varsection}[1]{\subsubsection{#1}}%
+%%%\end{notrsi*}
+%%%\begin{forrsi*}
+\newcommand{\varsection}[1]{\subsection{#1}}%
+%%%\end{forrsi*}
+
+In the proof, by \(F\), we
+mean a filesystem which satisfies the second condition. By \(G\), we
+refer to any filesystem which satisfies \(SG\ne\ud\wedge S'G\ne\ud\).
+
+Now consider the set of sequences \(\wp_S = \{ S^* | S \eqexp S^*\}\).
+Because of our preconditions, the sequence \(break\) is not in
+\(\wp_S\) (if it was, that is, \(S\eqexp break\), \(SF=\ud\) would hold
+since by definition \(SF=(break)F\) if \(SF\ne\ud\)).
+
+Let \(S_0\) be (one of) the shortest sequence(s) in \(\wp_S\) and
+similarly
+\(S^\prime_0\) (one of) the shortest sequence(s) in \(\wp_{S^\prime}\). 
+%
+The following holds for these sequences:
+\[(SG\ne\ud\wedge S'G\ne\ud\implies) \quad SG=S'G=S_0G=S'_0G\ne\ud.\]
+\begin{notrsi}
+\emph{Proof.} Since 
+\(SG\ne\ud\wedge S\eqexp S_0\implies SG=S_0G\) and
+\(S'G\ne\ud\wedge S'\eqexp S'_0\implies S'G=S'_0G\); and since
+\(SG\ne\ud\wedge S'G\ne\ud\) by assumption \(SG=S'G\ne\ud\) holds,
+we have \(S_0G=SG=S'G=S'_0G\ne\ud\).
+
+As a special case, we also know that \(SF=S'F=S_0F=S'_0F\ne\ud\).
+
+\medskip
+\end{notrsi}
+Now let's investigate these ``minimal'' sequences. 
+
+\varsection{Investigating the command \emph{edit}}
+
+We know that the command \(edit(\pi,\cdir{X})\) commutes or collapses
+(i.e., a commuting or a simplifying law can be applied to it) with
+every command on its left side (see Laws \lawi, \lawip, \lawiv,
+\lawvp, \lawvip,
+\lawiiiap, \lawxiii, \lawxviii, \lawxix, \lawxxiv, \lawxxvi, \lawiib).
+%
+We also know that \(edit(\pi,\cfile{X})\) does the same on its right side
+(see Laws \lawi, \lawip, \lawiv, \lawv, \lawvi, \lawiia, \lawiiib, \lawx,
+\lawxi, \lawxii, \lawxxiv, \lawxxv).
+%
+From Laws \lawi, \lawip~and \lawxxiv~we know that \(edit\)s commute
+amongst each other.
+
+Therefore in a minimal sequence all \(edit(\pi,\cdir{X})\) commands can be
+moved to the beginning, and all \(edit(\pi,\cfile{X})\) commands to the
+end of the sequence. Since they commute amongst themselves, we can order
+the two groups alphabetically. Therefore if there were two commands on
+the same path, they would be neighbors and would be simplified by the
+algebraic laws. 
+Therefore we can be sure that there are at most one
+\(edit(\pi,\cfile{X})\) or \(edit(\pi,\cdir{X})\) command on each path.
+
+That way we also separated these commands from the other ones.
+Now we focus on the remaining part: on the \(create\) and 
+\(remove\) commands.
+
+\varsection{Investigating \emph{create} and \emph{remove}}
+\label{theorem:crrm}
+
+We will prove some lemmas about minimal sequences.
+\begin{description}
+%%\begin{notrsi*} 
+\item[Lemma 0]
+%%\end{notrsi*}
+%%\begin{notrsi}
+If a sequence is minimal, then it cannot have any pairs that match the
+left-hand sides of Laws \lawx--\lawxxxv, \lawiia, \lawiiap, \lawiiib.
+Also, if we apply any of the
+commutative laws 
+(\lawi, \lawip, \lawiib, \lawiiia, \lawiiiap, \lawiv--\lawix),
+the resulting sequence is still minimal.
+
+\emph{Proof.}
+For the first part, the laws mentioned all give an equivalent shorter
+sequence, but by hypothesis, there is no equivalent shorter sequence.
+For the second part, the commutative laws don't change the length of a
+sequence.
+%%\end{notrsi}
+
+\item[Lemma 1] {\bf It is impossible that a command
+\(remove(\pi)\) precedes (not necessarily as a neighbor) a command
+\(remove(\piesub)\) in a minimal sequence.} 
+\begin{notrsi}
+(A parent can't be removed before any descendant, or
+more precisely, \(\not\exists i,j: i<j \land S[i] = remove(\pi) \land
+S[j] = remove(\pi') \land \pi \preceq \pi'\).)
+\end{notrsi}
+\begin{notrsi}
+\begin{center}
+\begin{tabular}{c|c|c|c|c|c|c|c|c}
+\hline
+\(\cdots\) & & \(S[i]: remove(\pi)\) & & & & &
+\(S[j]: remove(\piesub)\) & \(\cdots\) \\
+\hline
+\end{tabular}
+\end{center}
+\end{notrsi}
+\emph{Proof.}
+By contradiction; we assume there is such an \(i\) and \(j\), and we show
+that implies \(S \eqexp break\).
+
+We show the contradiction by induction on \(j-i\).
+The base case is \(j = i+1\).
+In this case, by Laws \lawxxii~and~\lawxxiii, 
+\(S[i]; S[i+1] \eqexp break\),
+and therefore \(S\eqexp break\).
+
+For the induction step, we perform a case analysis on \(S[j-1]\).
+\begin{itemize}
+\item
+If it mentions a path that is disjoint with \(\piesub\),
+%or if $\pi \prec \piesub$ and it is $edit(\pi, \cdir X)$,
+we can swap it
+with \(S[j]\) to get an equivalent sequence, and by the induction   
+hypothesis and transitivity of equivalence, \(S\eqexp break\).
+%\item
+%By Lemma 0 (Laws~3B, 12, and~25), it cannot be any other edit operation.
+\item
+Also by Lemma 0 (Laws~\lawxvi, \lawxvii, and~\lawxxvii), it cannot be a
+non-disjoint create operation. (Note that there are no \(edit\) operations
+in this part of the sequence according to our preconditions.)
+\item
+If $S[j-1] =remove(\hat\pi)$, if $\hat\pi \preceq \piesub$, then by laws
+\lawxxii~and~\lawxxiii, $S[j-1]; S[j] \equiv \{break\}$, and therefore 
+$S\eqexp\{break\}$.
+But if $\piesub \prec \hat\pi$, then by transitivity $\pi \preceq
+\hat\pi$, so the induction hypothesis applies, and again 
+$S \eqexp break$.
+\end{itemize}
+
+\begin{forrsi}
+The following lemmas can be proved with a similar method.
+%For the sake of brevity, the proofs are omitted.
+\end{forrsi}
+\item[Lemma 2]
+{\bf A command \(create(\pi)\) can not precede a command  
+\(remove(\piesub)\).} 
+\begin{notrsi}
+\emph{Proof.} 
+This can be proved the same way, only
+the base case differs; now 
+\(create(\pi); remove({\piesub})\) equals \(break\) or expands 
+to \(skip\) by Law \lawxvi~and \lawxxvii.
+The induction step is the same.
+\end{notrsi}
+
+\item[Lemma 3]
+{\bf A command \(remove(\piesub)\) can not precede a command
+\(create(\pi)\).} 
+\begin{notrsi}
+\emph{Proof.} This can be proved similarly, in this 
+case the base step is
+\(remove(\piesub); create({\pi})\) equals \(break\) or
+expands to \(edit\) (Law \lawxxi~and \lawxxviii);
+in the induction step we can prove that if
+\(S[j-1]=create(\pisup)\) precedes \(S[j]=create(\pi)\), according to
+the induction hypothesis, \(S\eqexp break\) 
+(we know that \(\pisup\prec\pi\)). Otherwise the commands
+would be able to be simplified (which contradicts the condition being
+minimal sequence) or commuted (and therefore the induction hypothesis
+still holds). (Laws \lawvii,
+\lawviii, \lawxiv, \lawxv, \lawxx, \lawxxi, \lawxxviii.)
+\end{notrsi}
+
+\item[Lemma 4]
+{\bf A command \(create(\piesub)\) can not precede a command
+\(create(\pi)\).} 
+\begin{notrsi}
+\emph{Proof.} 
+We obtain this result from Lemma 3: the base step is 
+\(create(\piesub); create({\pi}) \equiv (\eqexp) break\) (Law 15); the
+induction step is the same.
+\end{notrsi}
+
+\item[Lemma 5]
+{\bf A command \(create(\piesub)\) can not precede a command
+\(remove(\pi)\).} 
+\begin{notrsi}
+\emph{Proof.} 
+Our base step now is 
+\(S[j-1];S[j]=create({\piesub}); remove(\pi)\eqexp skip\) or equals
+\(break\) according to Laws \lawxxvii~and \lawxvii.
+But in our induction step, we go in the opposite direction and perform
+analysis on \(S[i+1]\).
+If \(S[i+1]=create({\piesub}_{sub})\) follows \(S[i]=create(\piesub)\),
+the induction hypothesis applies, therefore \(S\eqexp break\). Otherwise
+the commands could be simplified or commuted (Laws \lawxviii, \lawxiv,
+\lawxv, \lawxvi, \lawxvii, \lawxxvii.)
+\end{notrsi}
+
+\item[Lemma 6] 
+{\bf It is impossible that a command \(remove(\pi)\)
+precedes a command \(create(\piesub)\).} 
+\begin{notrsi}
+\emph{Proof.} 
+Now our base step is
+\(remove(\pi); create(\piesub)\eqexp edit\) or equals to
+\(break\) (Laws \lawxxviii~and \lawxx). In the induction step we
+examine command \(S[i+1]\). 
+If it's not commutable or simplifyable,
+it can be only \(remove(\pisup)\).
+In that case the induction hypothesis applies.
+\end{notrsi}
+\end{description}
+
+\varsection{More lemmas on commands}
+
+Now we go back to \(edit\) commands. We will prove two additional lemmas.
+\begin{description}
+\item[Lemma E1] {\bf A command \(remove(\pi)\) cannot precede a command
+\(edit(\pi,\cfile{X})\).} \emph{Proof.} 
+By contradiction; we assume there are such two commands in the sequence,
+\(S[i]=remove(\pi)\) and \(S[j]=edit(\pi,\cfile{X})\) where \(i<j\). We
+use induction on \(j-i\). The base
+step is when \(j-i=1\). Now, according to Law \lawxviii, \(S\equiv
+break\) which contradicts our condition on \(S\).
+For the induction step, we assume that \(S\eqexp break\) if
+\(S[j-1]=edit(\pi,\cfile{X})\). Now we investigate \(S[j-1]\). If it is
+not \(remove(\pisub)\), then a commuting (or simplifying) law can be
+applied to \(S[j-1];S[j]\). That way
+\(S[j-1]\) would be \(edit(\pi,\cfile{X})\), and according to the
+induction hypothesis \(S\eqexp break\). If \(S[j-1]\) is
+\(remove(\pisub)\), we have the same result by Lemma 1.
+
+\begin{forrsi}
+The following lemmas can be proved similarly.
+\end{forrsi}
+\item[Lemma E2] {\bf A command \(create(\pi)\) cannot precede a command 
+\(edit(\pi)\).} 
+\begin{notrsi}
+\emph{Proof.} The same; last step is made according to
+Lemma 2.
+\end{notrsi}
+
+\item[Lemma E3] {\bf A command \(remove(\pi)\) cannot follow a
+command \(edit(\pi,\cdir{X})\).} 
+\begin{notrsi}
+\emph{Proof.} 
+This proof is also very similar to the aboves. The base step is 
+\(edit(\pi,\cdir{X}); remove(\pi)\equiv remove(\pi)\) (Law \lawxxv). In the
+induction step we investigate command \(S[i+1]\). If it was not
+\(create(\pisub)\), a commuting (or simplifying) law could be applied. If
+it is, we have \(S\eqexp break\) according to Lemma 5.
+\end{notrsi}
+
+\item[Lemma E4] {\bf A command \(create(\pi)\) cannot follow a
+command \(edit(\pi,\cdir{X})\).} 
+\begin{notrsi}
+\emph{Proof.} The same; last step
+according to Lemma 4.
+\end{notrsi}
+\end{description}
+
+\noindent
+Keeping in mind that we have all the \(edit\) commands at the ends of the
+sequence, it follows from Lemma E1, E2, E3 and E4 that there cannot be an
+\(edit\) and another command on the same path.
+
+\begin{description}
+\item[Lemma E5] {\bf A command \(edit(\pi,\cdir{X})\) cannot precede a law
+\(edit(\pi,\cfile{X})\).} \emph{Proof.} Now we know that between these
+commands there are no commands on path \(\pi\). We also know from Lemmas
+1---6 that there is at most one \(remove\) or \(create\) command on each
+path. Therefore
+there cannot be a \(create(\pisub)\) command since we would have to
+remove it before modifying \(\pi\) to a file.
+Thus we could have moved \(edit(\pi,\cdir{X})\) to the end of the sequence
+and simplify it with \(edit(\pi,\cfile{X})\).
+\end{description}
+
+\varsection{Conclusions}
+\label{theorem:conc}
+
+As a result of the lemmas we know that
+\emph{there is at most one command on each path in a minimal sequence.}
+
+Now we prove that \(C\in S_0\Longleftrightarrow C\in S'_0\) for any
+command \(C\). (Without loss of generality, it is enough to prove that 
+\(C\in S_0\implies C\in S'_0\).)
+\begin{itemize}
+\item \(create(\pi,X)\in S_0\implies create(\pi,X)\in S'_0\). 
+\emph{Proof.} By contradiction. First of all, we know that
+\(F(\pi)=\ud\) otherwise \(S_0\) would break \(F\) and that would
+contradict our assumption. Now assume that 
+\(create(\pi,X)\not\in S'_0\). 
+We have three cases. If there is no command on path \(\pi\) in
+\(S'_0\) then \(S'_0F(\pi)=\ud\) and therefore 
+\(S_0F(\pi)\ne S'_0F(\pi)\), that is, \(S_0F\ne S'_0F\) which contradicts
+our assumption that \(S_0F=S'_0F\). If there was a command \(edit\) or
+\(remove\) on path \(\pi\), it would break \(F\) since \(F(\pi)=\ud\) and
+that again contradicts the precondition.
+
+\item \(remove(\pi)\in S_0\implies remove(\pi)\in S'_0\).
+\emph{Proof.} 
+\begin{forrsi}
+It can be done similarly to the case of \(create\).
+\end{forrsi}
+\begin{notrsi}
+Now we can be sure that \(F(\pi)\ne\ud\) and
+\(S_0F(\pi)=\ud\). If (instead of
+\(remove\)) there was no command on \(\pi\) in \(S'_0\) then 
+\(S'_0F(\pi)\ne\ud\)  would hold. In case of \(edit\), 
+\(S'_0F(\pi)\ne\ud\) would hold (contradicting
+\(S_0F(\pi)=\ud\)). \(create\) would break \(F\) since
+\(F(\pi)\ne\ud\). Again, we have contradiction in all cases.
+\end{notrsi}
+
+\item \(edit(\pi,X)\in S_0\implies edit(\pi,X)\in S'_0\).
+\emph{Proof.} Similarly we cannot have \(create\) or \(remove\) on path
+\(\pi\) in sequence \(S'_0\) since \(F(\pi)\ne\ud\) and 
+\(S'F(\pi)=SF(\pi)\ne\ud\). 
+But now we might have no commands on
+\(\pi\) in \(S'_0\): that way if \(F(\pi)=X\) then \(S_0F(\pi)=X\) and
+\(S'_0F(\pi)=X\), too. 
+But clearly \(\neg(S_0\eqifnbr S'_0)\). To prove that this is also
+impossible, we need the first condition about all filesystems. 
+
+Define
+\(H\) as \(F\{\pi\mapsto Y\}\) where \(Y\) has the same type
+(file/directory) as \(F(\pi)\). If \(SF\ne\ud\) then \(SH\ne\ud\) since no
+command breaks the filesystem because of the contents (not the type) of a
+file or directory. Also, \(S'F\ne\ud\implies S'H\ne\ud\). Now, as a
+special case of \(S_0G=S'_0G\) (note that 
+\(SH\ne\ud\wedge S'H\ne\ud\) holds) we know
+that \(S_0H=S'_0H\). But \(S_0H(\pi)=edit(\pi,X)H(\pi)=X\) and
+\(S'_0H(\pi)=H(\pi)=Y\). We have a contradiction, therefore the lemma is
+proved.
+\end{itemize}
+
+This means that
+\emph{\(S_0\) and \(S^\prime_0\) contain the same commands;} they can be
+different only in the order of the commands.
+
+\medskip
+Now we will show that they can be made exactly the same by the
+commuting algebraic laws. 
+
+We know that \(edit\)s can be moved to the ends of the sequences and
+ordered. Let's suppose they are arranged this way.
+Since we know that the two sequences contain the same
+commands, these parts of the sequences is the same.
+Therefore we can omit them in the discussion. Now we focus on
+\(create\)s and \(remove\)s as we did above.
+
+%%%\begin{notrsi}
+If there are two commands in a minimal sequence
+referring to comparable directories, according to the lemmas, they
+can only be
+%not be
+%\begin{itemize}
+%\item \(remove(\pi) \ldots remove(\pisub)\)
+%\item \(remove(\pi) \ldots create(\pisub)\)
+%\item \(create(\pisub) \ldots create(\pi)\)
+%\item \(create(\pisub) \ldots remove(\pi)\)
+%\item \(create(\pi) \ldots remove(\pisub)\)
+%\item \(remove(\pisub) \ldots create(\pi)\).
+%\end{itemize}
+%The remaining possibilities are:
+\begin{itemize}
+\item \(create(\pi) \ldots create(\pisub)\)
+\item \(remove(\pisub) \ldots remove(\pi)\).
+\end{itemize}
+
+Therefore any two \(create\) or \(remove\) commands in a (minimal)
+sequence can be freely interchanged if they refer to incomparable
+directories, but they have a well--defined order otherwise. (Keep in
+mind that we have no \(edit\) commands in this part of the sequences.)
+That is, we have a partial order over the set of these commands. Note
+that we cannot have cycles in this order (since that way \(\pi\) would 
+be equal to one of its descendants). Because of this, there is always
+a minimal element, which has no predecessors. Also, this ordering is the
+same on both sequences. 
+%%%\end{notrsi}
+
+We prove that the commands can be ordered the same way by induction on the
+length of the sequences. If it
+is \(1\), the problem can be solved easily. If the length of the sequences
+are \(i>1\), we can choose a command from \(S_0\) which has no
+preceding commands (i.e., a command which must precede it).
+It is sure that it has no precedents in \(S'_0\). Now we
+can move this command to the front of the sequences. Now the rest of
+the sequences have length \(i-1\) therefore we can order them according to
+the induction hypothesis.
+
+We obtain \(S_0^*\) by applying this method to \(S_0\) and
+\({S^\prime_0}^*\) from \(S^\prime_0\). Since they contain the same
+commands, and the resulting order is the same,
+\(S_0^*\) and
+\({S^\prime_0}^*\) are \emph{exactly the same}. Now we have
+\(S\eqexp S_0\eqexp S_0^*\equiv{S^\prime_0}^*\eqshr S^\prime_0\eqshr
+S^\prime\), that is, \(S\eqifnbr S^\prime\). Our theorem is proved.
+\begin{forrsi}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+\end{forrsi}
+
+\begin{CMNT}
+It is also can be shown that 
+\(S\equiv S'\). \emph{Proof.} We already know
+that \(S\eqifnbr S'\). It means that we have a chain of sequences, 
+\(S\eqexp S_1\eqexp S_2\ldots S'\) so that we gained each sequence by
+applying a law to the preceding one. If \(S\not\equiv S'\), we used
+somewhere an `\(E\)'--marked law, namely \(S_i\eqexp S_{i+1}\). It could 
+be Law \lawiib, \lawxxiv, \lawxxvii~or \lawxxviii. [??...]
+\end{CMNT}
+

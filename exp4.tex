@@ -1,0 +1,28 @@
+File Synchronizer 
+  by Elod Csirmaz 21.07.2000
+#==List of filesystems============
+---Original Filesystem------------
+FS-O/dir/
+FS-O/dir/file
+---Replica A----------------------
+FS-A/dir/
+FS-A/dir/file
+---Replica B----------------------
+
+
+#==Update-detection and conflicts=
+---Edit Samples-------------------
+0:FS-A/dir/file
+---Sequence O->A------------------
+0:EF0/dir/file <->B0
+---Sequence O->B------------------
+0:RM/dir/file <->A0
+1:RM/dir/ ==>B0
+
+#==Reconciliation=================
+---Sequence A->O'-----------------
+---Sequence B->O'-----------------
+#==Paths of conflicting commands==
+dir/
+dir/file
+==================================

@@ -1,0 +1,164 @@
+%% Case investigation for sample law--proof
+\newcommand{\ExplainFS}[6]
+{#1\\#2\\#3\\#4\\#5\\#6\par}
+\def\ExplainUD{BROKEN\par}
+\newcommand{\Case}[1]{\medskip Case #1\\}
+\def\Expi{After edit(pisub,dir):\\}
+\def\Expii{After edit(pisub,dir) and remove(pi):\\}%
+\def\Expiv{}%
+\Case{0}%
+\ExplainFS{\(F(parent(\pi))=\ud\)}{\(F(\pi)=\ud\)}{\(childless(\pi)\)}{\(F(parent(\pisub))=\ud\)}{\(F(\pisub)=\ud\)}{\(childless(\pisub)\)}%
+\Expi%
+\ExplainUD%
+\Expii%
+\ExplainUD%
+\Expiv%
+\Case{1}%
+\ExplainFS{\(F(parent(\pi))=\cfile{A}\)}{\(F(\pi)=\ud\)}{\(childless(\pi)\)}{\(F(parent(\pisub))=\ud\)}{\(F(\pisub)=\ud\)}{\(childless(\pisub)\)}%
+\Expi%
+\ExplainUD%
+\Expii%
+\ExplainUD%
+\Expiv%
+\Case{2}%
+\ExplainFS{\(F(parent(\pi))=\cdir{A}\)}{\(F(\pi)=\ud\)}{\(childless(\pi)\)}{\(parent(\pisub)=\pi\)}{\(F(\pisub)=\ud\)}{\(childless(\pisub)\)}%
+\Expi%
+\ExplainUD%
+\Expii%
+\ExplainUD%
+\Expiv%
+\Case{3}%
+\ExplainFS{\(F(parent(\pi))=\cdir{A}\)}{\(F(\pi)=\ud\)}{\(childless(\pi)\)}{\(F(parent(\pisub))=\ud\)}{\(F(\pisub)=\ud\)}{\(childless(\pisub)\)}%
+\Expi%
+\ExplainUD%
+\Expii%
+\ExplainUD%
+\Expiv%
+\Case{4}%
+\ExplainFS{\(F(parent(\pi))=\cdir{A}\)}{\(F(\pi)=\cfile{o}\)}{\(childless(\pi)\)}{\(parent(\pisub)=\pi\)}{\(F(\pisub)=\ud\)}{\(childless(\pisub)\)}%
+\Expi%
+\ExplainUD%
+\Expii%
+\ExplainUD%
+\Expiv%
+\Case{5}%
+\ExplainFS{\(F(parent(\pi))=\cdir{A}\)}{\(F(\pi)=\cfile{o}\)}{\(childless(\pi)\)}{\(F(parent(\pisub))=\ud\)}{\(F(\pisub)=\ud\)}{\(childless(\pisub)\)}%
+\Expi%
+\ExplainUD%
+\Expii%
+\ExplainUD%
+\Expiv%
+\Case{6}%
+\ExplainFS{\(F(parent(\pi))=\cdir{A}\)}{\(F(\pi)=\cdir{o}\)}{\(childless(\pi)\)}{\(parent(\pisub)=\pi\)}{\(F(\pisub)=\ud\)}{\(childless(\pisub)\)}%
+\Expi%
+\ExplainUD%
+\Expii%
+\ExplainUD%
+\Expiv%
+\Case{7}%
+\ExplainFS{\(F(parent(\pi))=\cdir{A}\)}{\(F(\pi)=\cdir{o}\)}{\(childless(\pi)\)}{\(F(parent(\pisub))=\ud\)}{\(F(\pisub)=\ud\)}{\(childless(\pisub)\)}%
+\Expi%
+\ExplainUD%
+\Expii%
+\ExplainUD%
+\Expiv%
+\Case{8}%
+\ExplainFS{\(F(parent(\pi))=\cdir{A}\)}{\(F(\pi)=\cdir{o}\)}{\(children(\pi)\)}{\(parent(\pisub)=\pi\)}{\(F(\pisub)=\ud\)}{\(childless(\pisub)\)}%
+\Expi%
+\ExplainUD%
+\Expii%
+\ExplainUD%
+\Expiv%
+\Case{9}%
+\ExplainFS{\(F(parent(\pi))=\cdir{A}\)}{\(F(\pi)=\cdir{o}\)}{\(children(\pi)\)}{\(parent(\pisub)=\pi\)}{\(F(\pisub)=\cfile{o}\)}{\(childless(\pisub)\)}%
+\Expi%
+\ExplainFS{\(F(parent(\pi))=\cdir{A}\)}{\(F(\pi)=\cdir{o}\)}{\(children(\pi)\)}{\(parent(\pisub)=\pi\)}{\(F(\pisub)=\cdir{x}\)}{\(childless(\pisub)\)}%
+\Expii%
+\ExplainUD%
+\Expiv%
+\Case{10}%
+\ExplainFS{\(F(parent(\pi))=\cdir{A}\)}{\(F(\pi)=\cdir{o}\)}{\(children(\pi)\)}{\(parent(\pisub)=\pi\)}{\(F(\pisub)=\cdir{o}\)}{\(childless(\pisub)\)}%
+\Expi%
+\ExplainFS{\(F(parent(\pi))=\cdir{A}\)}{\(F(\pi)=\cdir{o}\)}{\(children(\pi)\)}{\(parent(\pisub)=\pi\)}{\(F(\pisub)=\cdir{x}\)}{\(childless(\pisub)\)}%
+\Expii%
+\ExplainUD%
+\Expiv%
+\Case{11}%
+\ExplainFS{\(F(parent(\pi))=\cdir{A}\)}{\(F(\pi)=\cdir{o}\)}{\(children(\pi)\)}{\(parent(\pisub)=\pi\)}{\(F(\pisub)=\cdir{o}\)}{\(children(\pisub)\)}%
+\Expi%
+\ExplainFS{\(F(parent(\pi))=\cdir{A}\)}{\(F(\pi)=\cdir{o}\)}{\(children(\pi)\)}{\(parent(\pisub)=\pi\)}{\(F(\pisub)=\cdir{x}\)}{\(children(\pisub)\)}%
+\Expii%
+\ExplainUD%
+\Expiv%
+\Case{12}%
+\ExplainFS{\(F(parent(\pi))=\cdir{A}\)}{\(F(\pi)=\cdir{o}\)}{\(children(\pi)\)}{\(F(parent(\pisub))=\ud\)}{\(F(\pisub)=\ud\)}{\(childless(\pisub)\)}%
+\Expi%
+\ExplainUD%
+\Expii%
+\ExplainUD%
+\Expiv%
+\Case{13}%
+\ExplainFS{\(F(parent(\pi))=\cdir{A}\)}{\(F(\pi)=\cdir{o}\)}{\(children(\pi)\)}{\(F(parent(\pisub))=\cfile{A}\),\(parent(\pisub)\ne \pi\)}{\(F(\pisub)=\ud\)}{\(childless(\pisub)\)}%
+\Expi%
+\ExplainUD%
+\Expii%
+\ExplainUD%
+\Expiv%
+\Case{14}%
+\ExplainFS{\(F(parent(\pi))=\cdir{A}\)}{\(F(\pi)=\cdir{o}\)}{\(children(\pi)\)}{\(F(parent(\pisub))=\cdir{A}\),\(parent(\pisub)\ne \pi\)}{\(F(\pisub)=\ud\)}{\(childless(\pisub)\)}%
+\Expi%
+\ExplainUD%
+\Expii%
+\ExplainUD%
+\Expiv%
+\Case{15}%
+\ExplainFS{\(F(parent(\pi))=\cdir{A}\)}{\(F(\pi)=\cdir{o}\)}{\(children(\pi)\)}{\(F(parent(\pisub))=\cdir{A}\),\(parent(\pisub)\ne \pi\)}{\(F(\pisub)=\cfile{o}\)}{\(childless(\pisub)\)}%
+\Expi%
+\ExplainFS{\(F(parent(\pi))=\cdir{A}\)}{\(F(\pi)=\cdir{o}\)}{\(children(\pi)\)}{\(F(parent(\pisub))=\cdir{A}\),\(parent(\pisub)\ne \pi\)}{\(F(\pisub)=\cdir{x}\)}{\(childless(\pisub)\)}%
+\Expii%
+\ExplainUD%
+\Expiv%
+\Case{16}%
+\ExplainFS{\(F(parent(\pi))=\cdir{A}\)}{\(F(\pi)=\cdir{o}\)}{\(children(\pi)\)}{\(F(parent(\pisub))=\cdir{A}\),\(parent(\pisub)\ne \pi\)}{\(F(\pisub)=\cdir{o}\)}{\(childless(\pisub)\)}%
+\Expi%
+\ExplainFS{\(F(parent(\pi))=\cdir{A}\)}{\(F(\pi)=\cdir{o}\)}{\(children(\pi)\)}{\(F(parent(\pisub))=\cdir{A}\),\(parent(\pisub)\ne \pi\)}{\(F(\pisub)=\cdir{x}\)}{\(childless(\pisub)\)}%
+\Expii%
+\ExplainUD%
+\Expiv%
+\Case{17}%
+\ExplainFS{\(F(parent(\pi))=\cdir{A}\)}{\(F(\pi)=\cdir{o}\)}{\(children(\pi)\)}{\(F(parent(\pisub))=\cdir{A}\),\(parent(\pisub)\ne \pi\)}{\(F(\pisub)=\cdir{o}\)}{\(children(\pisub)\)}%
+\Expi%
+\ExplainFS{\(F(parent(\pi))=\cdir{A}\)}{\(F(\pi)=\cdir{o}\)}{\(children(\pi)\)}{\(F(parent(\pisub))=\cdir{A}\),\(parent(\pisub)\ne \pi\)}{\(F(\pisub)=\cdir{x}\)}{\(children(\pisub)\)}%
+\Expii%
+\ExplainUD%
+\Expiv%
+\Case{18}%
+\ExplainFS{\(F(parent(\pi))=\cdir{A}\)}{\(F(\pi)=\cdir{o}\)}{\(children(\pi)\), only one}{\(parent(\pisub)=\pi\)}{\(F(\pisub)=\cfile{o}\)}{\(childless(\pisub)\)}%
+\Expi%
+\ExplainFS{\(F(parent(\pi))=\cdir{A}\)}{\(F(\pi)=\cdir{o}\)}{\(children(\pi)\), only one}{\(parent(\pisub)=\pi\)}{\(F(\pisub)=\cdir{x}\)}{\(childless(\pisub)\)}%
+\Expii%
+\ExplainUD%
+\Expiv%
+\Case{19}%
+\ExplainFS{\(F(parent(\pi))=\cdir{A}\)}{\(F(\pi)=\cdir{o}\)}{\(children(\pi)\), only one}{\(parent(\pisub)=\pi\)}{\(F(\pisub)=\cdir{o}\)}{\(childless(\pisub)\)}%
+\Expi%
+\ExplainFS{\(F(parent(\pi))=\cdir{A}\)}{\(F(\pi)=\cdir{o}\)}{\(children(\pi)\), only one}{\(parent(\pisub)=\pi\)}{\(F(\pisub)=\cdir{x}\)}{\(childless(\pisub)\)}%
+\Expii%
+\ExplainUD%
+\Expiv%
+\Case{20}%
+\ExplainFS{\(F(parent(\pi))=\cdir{A}\)}{\(F(\pi)=\cdir{o}\)}{\(children(\pi)\), only one}{\(parent(\pisub)=\pi\)}{\(F(\pisub)=\cdir{o}\)}{\(children(\pisub)\)}%
+\Expi%
+\ExplainFS{\(F(parent(\pi))=\cdir{A}\)}{\(F(\pi)=\cdir{o}\)}{\(children(\pi)\), only one}{\(parent(\pisub)=\pi\)}{\(F(\pisub)=\cdir{x}\)}{\(children(\pisub)\)}%
+\Expii%
+\ExplainUD%
+\Expiv%
+\Case{21}%
+\ExplainUD%
+\Expi%
+\ExplainUD%
+\Expii%
+\ExplainUD%
+\Expiv%
+
+

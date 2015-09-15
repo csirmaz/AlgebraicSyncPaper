@@ -1,0 +1,27 @@
+%% Abstract
+The problem of file synchronization (making two, differently modified
+copies of a filesystem the same again without losing information) emerges
+in many cases, and is solved in many different ways. Our goal was to
+create a \emph{general mathematical model} for file synchronization and
+use it as a basis to define the behavior of a synchronizer.
+
+We developed a specific algebraic model on filesystem commands and proved
+that it is sound and complete for its intended interpretation on real
+systems, that is, if commands are considered to be equivalent according to
+the algebra then they are equivalent when applied to a real filesystem and
+vice versa.
+
+Then we defined algorithms for synchronization using our algebra and
+created an implementation which was tested on various filesystems. This
+method turned out to be an effective way to create the specification of a
+synchronizer since it simplified both the definition and the
+implementation.
+
+The methods used in the proofs for soundness and completeness are likely
+be usable on other algebras, too. Thus using algebraic approach could make
+it possible to extend the synchronizer to other types of datasystems and
+to create a general theory of synchronization in the future.
+
+
+
+

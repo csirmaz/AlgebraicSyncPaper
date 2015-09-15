@@ -1,0 +1,113 @@
+%% Reconcilation algorithm
+\section{Algorithm for reconciliation}
+\label{sec:alg}
+
+In this section we provide an algorithm for reconciliation. The reconciler
+algorithm takes sequences leading from the original filesystem to the
+replicas (\(S_1, S_2, \ldots S_n\)) and creates sequences of commands for
+each replica \(S_1^*, S_2^*, \ldots S_n^*\) which make the
+filesystems as close as possible. 
+%%%\(S_i^*\) contains all
+%%%non--conflicting commands from \(S_1, S_2, \ldots S_n\) which is not
+%%%already applied to \(S_i\). 
+%%%\begin{notrsi}
+%%%We also would like to be sure that if there
+%%%are no conflicting commands, then after synchronization, all replicas
+%%%should be the same.
+%%%\end{notrsi}
+
+%%%Thus, 
+When creating the algorithm, we keep in mind the following:\\
+\emph{a command 
+\(C\in {S}_1\cup{S}_2\cup\ldots\cup{S}_n\) 
+should be propagated to replica \(R_i\) iff:}
+\begin{itemize}
+\item \(C\) is not already applied to \(R_i\)
+\item there are no conflicts on command \(C\)
+\item there are no conflicts on any command which must precede \(C\) 
+\end{itemize}
+
+\medskip
+{\small{
+Why do we need the last criterion? Consider the following case: in the
+original replica we had \(O(\pi)=\cfile{X}\). 
+We modified replica \(A\) with the following
+commands: \(edit(\pi,\cdir{Y}); create(\pi\cdot p,\cfile{W})\).
+Replica \(B\) was modified by the command \(edit(\pi,\cfile{Z})\).
+Now \(edit(\pi,\cdir{Y})\) and \(edit(\pi,\cfile{Z})\) are
+conflicting commands, so we cannot apply \(edit(\pi,\cdir{Y})\) to replica
+\(B\). But that way, we cannot propagate
+\(create(\pi\cdot p,\cfile{W})\) to it either.
+\remark{However, if \(O(\pi)\) was a directory, it could be.}
+}}\medskip
+
+%We also need to determine which commands must precede another
+%one. Clearly
+A
+command \(C_1\) must precede command \(C_2\) iff 
+\(\neg(C_1; C_2\eqifnbr C_2; C_1)\), it originally preceded \(C_2\),
+and they appear in the same sequence \(S_i\). 
+%Note that we define this property only
+%if \(C_1\) and \(C_2\) are from the same sequence since otherwise they
+%would be conflicting commands.
+
+Now, in order to preserve the order of commands in sequences 
+\(S_1, S_2, \ldots S_n\), we define the algorithm as follows:
+\begin{notrsi}
+\\
+\emph{To determine \(S_i^*\):}
+\begin{enumerate}
+\item Detect conflicting commands between sequences
+\item Detect must--follow conflicting commands
+\item Omit these commands from all sequences
+\item Omit commands in \(S_i\) from all other sequences
+\item Define \(S_i^*\) as 
+\(S_1; S_2; \ldots S_{i-1}; S_{i+1}; \ldots S_n\)
+\end{enumerate}
+Or, more formally:
+\end{notrsi}
+\begin{alltt}
+FOR every sequence \(S\sb{i}\)
+  FOR each command \(C\in S\sb{i}\)  
+    FOR every sequence \(S\sb{j}\)
+      IF \(C\) should be propagated to replica \(R\sb{j}\) THEN
+        append \(C\) to \(S\sb{j}\sp{*}\).
+\end{alltt}
+
+We can get the sequence of conflicting commands using a similar
+algorithm. The reconciler produces two sequences for every replica: the
+first one (\(S_i^*\)) can be applied to the replica immediately, while
+the second one (conflicting commands, \(S_i^C\)) needs the user's or
+other algorithms' help to be resolved.
+
+See Appendix~\ref{app:impl} for test result of the implementation of the
+algorithm.
+
+\begin{comment}
+\subsection{Move and subtree-detection}
+
+In order that we should apply less commands on the filesystem or the user
+would have to deal with smaller amount of conflicting commands we should
+try to detect operations on whole subtrees (e.g. removing a directory not
+by removing all files under it first, but by using one delete command).
+
+Also, to ease the user that no information will be lost if a file has been
+moved we should detect the move operation rather than use delete and
+create commands. 
+
+Both of these problems can be solved easily.
+Subtree--detection by majority voting which means that we should use
+an operation on a subtree if the same operation would be applied to the
+majority of its descendants.
+
+Move--detection can be done by tracking the contents of files.
+We use data--fingerprints, a compressed identification string for each
+file to determine whether the contents of a new file 
+%which should be created
+are the same as that of a file already present in the replica, say 
+\(contents_F(\pi)=contents_F(\varphi)\). Suppose that we are about to
+create \(F(\pi)\). If (according to the sequence of commands) we should
+remove \(F(\varphi)\), we will use \(move(\varphi\to\pi)\). If not, we can
+use \(copy\). In both cases, we avoided to transmit a huge amount of data 
+between the replicas.
+\end{comment}

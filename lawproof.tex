@@ -1,0 +1,39 @@
+%% Example proof for law
+\section{Soundness proofs for individual laws}
+\label{app:soundness}
+
+%{\small{
+In this section we provide examples how algebraic laws can be proved.
+The method we use is to consider as many cases as necessary to be able to
+predict the result of each command in the law. For example, if the law
+contains paths \(\pi\) and \(\pisub\) then we'll consider 
+22 cases; see below.
+\remark{...}
+(Note that we listed all cases considering how \(\pisub\) can relate to
+\(\pi\) and if they have children or a parent. Also, we considered the
+case when \(F(\pi)\) has
+only one child and it is \(F(\pisub)\) since in that case, modifying
+\(F(\pisub)\) can make \(F(\pi)\) childless.)
+
+If the law contains an \(edit\) command, we also distinguish
+between files and directories. If we determine the result of the sequence
+of commands of the left side in each case and this is the same as that of
+the right side, then the law holds.
+
+Now we provide an example proof on law 18. We will only investigate the
+left side of the law, since the right side always gives the broken
+filesystem. 
+
+\begin{forrsi*}
+\begin{singlesp}
+\end{forrsi*}
+\begin{multicols}{3}
+{\tiny{
+\input{cases}
+}}
+\end{multicols}
+\begin{forrsi*}   
+\end{singlesp}
+\end{forrsi*}
+%}}
+

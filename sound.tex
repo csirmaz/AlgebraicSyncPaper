@@ -1,0 +1,57 @@
+%% Proof for the soundness theorem + foreword
+%%%\begin{forrsi}
+\section{Proof for the soundness theorem}
+\label{app:theosound}
+
+Let us repeat our statement:
+We prove that for every two sequences of commands 
+\begin{gather*}
+S\equiv S^* \implies \forall F: SF=S^*F,\\
+S\eqexp S^*\wedge SF\ne\ud \implies \forall F: SF=S^*F.%\\
+%S\eqifnbr S^*\wedge SF\ne\ud \wedge S^*F\ne\ud 
+%\implies \forall F: SF=S^*F.
+\end{gather*}
+%%%\end{forrsi}
+
+Both statement is true if our axioms and inference rules are sound since
+we can only gain equivalent (or extending) sequences from axioms
+or by using inference rules.
+
+First, we prove the soundness of our inference rules. The proof for the
+first two inference rules are quite similar. For the first one, we know
+that the intended interpretation of \(S_1\equiv S_2\) is true and our
+statement is that for every \(S,S'\), the interpretation of
+\(S;S_1;S'\equiv S;S_2;S'\) holds. 
+We know that for every filesystem
+\(F\), \((S;S_1;S')F=S'(S_1(SF))\) and similarly
+\(((S;S_2;S')F=S'(S_2(SF))\). We know that for every
+\(G\), \(S_1G=S_2G\) holds, and therefore
+as a special case \(S_1(SF)=S_2(SF)\). Thus
+\(\forall F: (S;S_1;S')F=((S;S_2;S')F\). This is the interpretation of our
+statement.
+
+For the second law, we now that the interpretation of 
+\(S_1\eqexp S_2\) is true and we show that in that
+case \(S;S_1;S'\eqexp S;S_2;S'\) also true for filesystems. 
+We know that for every \(F\) if \(S_1F\ne\ud\) then \(S_1F=S_2F\). If
+\((S;S_1;S')F=\ud\) then the relation is clearly true (since it refers to
+only the case if the filesystem is not broken). In the other case, if
+\((S;S_1;S')F=S'(S_1(SF))\ne\ud\), we know that \(SF\ne\ud\) since
+%%\remark{`defined' is not quite defined}
+a filesystem cannot be made non--broken again by applying commands to it.
+Now since \(S_1\eqexp S_2\) is true therefore either 
+\(S_1(SF)=\ud\) and the relation is true similarly to the case above;
+or \(S_1(SF)\ne\ud\) and therefore
+\(S_1(SF)=S_2(SF)\ne\ud\) and \(S'(S_1(SF))=S'(S_2(SF))\ne\ud\).
+
+The soundness proof of the third law is quite simple since if two
+sequences act the same on \emph{all} filesystems then they act the same on
+a subset of the filesystems, too.
+
+It remains to show the soundness of each individual law,
+but all the laws were derived from the definitions of the
+commands. For precise proofs,
+Appendix~\ref{app:soundness} shows an example.
+
+Our theorem is proved.
+

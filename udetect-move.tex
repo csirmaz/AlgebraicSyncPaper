@@ -1,0 +1,184 @@
+%% Why don't we use move; Update-detector algorithm
+\section{A solution for update-detection for a move--free algebra}
+\label{app:update-move}
+
+\begin{comment}
+\subsection{A simple way}
+\remark{Do we need this in the paper?}
+A ``simple way'' means that when determining the commands which lead from
+the
+original to the present state of the filesystems we do not use commands
+like moving a whole subtree or removing a subtree. Commands only allowed
+at leaves of the tree of the filesystem, e.g. files or directories
+containing no files.
+
+Consider the original state, called \(O\) and the present state called
+\(A\). In order to be able to determine the \emph{move} operations, we'd
+like to compare the containings of two files in the original and in the
+present state. It doesn't mean that we have to store the original
+filesystem. This can be achieved by a method called
+\emph{data--fingerprint} with which we can compare contents of files
+without comparing the whole amount of data stored in them. 
+
+A function called \(origin(\pi)\) gives
+us a path for a file in the filesystem \(O\) which has the same contents 
+as the file \(A\cdot\pi\), or empty--file (\(\perp\)) if such a file does
+not exist. Note that more files may be found in \(O\) with the same
+contents.
+
+Another function, \(\#(\pi)\) gives the number of paths \(\varphi\) for
+which \(origin(\varphi)=\pi\) holds.
+
+Then to gain a possible sequence of commands, compare \(O\cdot\pi\) and
+\(A\cdot\pi\). (For this purpose, we can use timestamps, inode numbers,
+or any other data on files provided by the operation system.) 
+If they're the same, we
+don't need to do anything. If not, we have three cases. First, if the
+file \(A\cdot\pi\) has been deleted, we can delete this file iff
+\(\#(\pi)=0\). If the file exists in \(A\) it may have an origin or not.
+If it has, and \(\#(\pi)=0\), than we can \emph{move} \(origin(\pi)\) to
+\(\pi\) iff \(\#(origin(\pi))=1\), or \emph{copy} it if
+\(\#(origin(\pi))>1\). In both cases, we should decrease
+\(\#(origin(\pi))\) by one.
+
+If we couldn't do anything because \(\#(\pi)\) was greater than \(0\), we
+can do one of the followings: wait till it decreases due to another
+commands, or, if there's a \emph{loop} of file displacings (for example
+\(origin(a)=b\) and \(origin(b)=a\)) than we should rename the origin of
+one of the files in order to be able to continue (solving the
+example: \emph{move} \(b\to b^\prime\), \(a\to b\) and \(b^\prime\to
+a\)).
+
+That way we gained a possible sequence of commands which if we apply
+to 
+filesystem \(O\) we'll get filesystem \(A\).
+\end{comment}
+
+First, we provide an example which explains why we chose working on
+move--free algebra.
+
+\subsection{Moving and removing subtrees}
+
+When trying to determine the minimal sequence of commands which was
+applied to the original filesystem \(O\) so that we get its present state
+\(A\) we should try to move
+or remove subtrees instead of (re)moving all files in it
+in order to gain the most simple sequence possible.
+We can achieve
+this by counting the files under a directory and how many of
+them should be (re)moved. If there are many files to be moved, we should
+move the subtree first and then the other files back to their place
+(majority voting).
+
+\subsection{Problems with move}
+
+But, unfortunately, difficulties emerge when using such commands.
+
+First of all, consider the following situation: we have files \(X\cdot1,
+X\cdot2, X\cdot3, X\cdot4, X\cdot5, X\cdot6\) in filesystem \(O\). In
+replica A, we have moved \(X\cdot1, \ldots X\cdot4\) to \(Y\cdot1, \ldots
+Y\cdot4\). In replica B, we have moved only \(X\cdot1, X\cdot2\) under
+the new directory \(Y\).
+
+In replica \(A\), without using commands on subtrees, we'd
+have \emph{move} \(X\cdot1\to Y\cdot1, X\cdot2\to Y\cdot2,
+X\cdot3\to Y\cdot3, X\cdot4\to Y\cdot4\). But using subtree--moving,
+we'll
+notice that using \emph{move} \(X\to Y, Y\cdot5\to X\cdot5,
+Y\cdot6\to X\cdot6\) would be shorter, so this is our sequence of
+commands. In replica \(B\), \emph{move}
+\(X\cdot1\to Y\cdot1, X\cdot2\to Y\cdot2\) is the shortest way.
+
+Now we want to choose commands from each sequence so that they would not
+cause a conflicting update if propagated on other replicas.
+It is easily provable that such subsequences of commands
+do not exist. 
+\remark{Proof?}
+We reached the conclusion that not always the
+shortest sequence should be used to generate the interleaving; or, in
+other words, we should be able to change the sequences according to the
+algebraic laws before choosing. It'd make the problem much more
+complicated since we have a lot of possibilities here as well as at
+choosing the subsequences.  Using \(move\), we also have a very 
+complicated relationship among the commands considering which two can
+commute and which two not. (Note that \(move\) is the only function
+which modifies \emph{two} paths at the same time.)
+
+%We can solve this problem by \emph{delaying
+%the subtree--detection} to the end of the update--detection and
+%reconciliation.
+
+Therefore, we decided to focus on a \emph{move--free} algebra and delay
+detecting possibilities of simplification (subtree--detection) until
+after the update--detection and reconciliation.
+
+\subsection{A simple algorithm for update--detection}
+\label{app:upd}
+
+With no \(move\)s and subtree--commands, a simple algorithm can be
+used for update--detection. It takes information from the filesystems
+and gives a minimal sequence of commands which will make one similar to
+the other. 
+
+Let \(P_O\) be all the paths in the original
+filesystem, \(P_A\) all the paths in the current state of the replica. 
+(We assume \(O,A\ne\ud\).)
+For
+every \(\pi\in P_O\cup P_A\) add the following command to sequence \(S\):
+\begin{itemize}
+\item \(create(\pi,X)\) iff \(O(\pi)=\ud\) and \(A(\pi)=X\ne\ud\),
+\item \(edit(\pi,X)\) iff \(O(\pi)\ne\ud\) and \(A(\pi)=X\ne\ud\) and
+\(X\ne O(\pi)\),
+\item \(remove(\pi)\) iff \(O(\pi)\ne\ud\) and \(A(\pi)=\ud\).
+\end{itemize}
+Then arrange the commands so that
+\begin{itemize}
+\item all \(edit(\pi,\cdir{X})\) commands precede all other commands, 
+\item all \(edit(\pi,\cfile{X})\) commands follow all other commands,
+\item \(create(\pi,X)\) commands precede \(create(\pisub,Y)\) commands,
+\item \(remove(\pisub,X)\) commands precede \(remove(\pi,Y)\) commands.
+\end{itemize}
+This can be done by the method discussed below.
+
+First, we move all \(edit(\pi,\cdir{X})\) commands to the front and then
+all \(edit(\pi,\cfile{X})\) commands to the end of the sequence. Now for
+the middle part, we know the following:
+
+Since there is only one command on each path, we have a partial
+ordering on the set of the commands (see section
+\ref{theorem:conc}) showing us which command must precede another one.
+Two commands can be interchanged if they refer to incomparable
+paths; otherwise, they are one of the following:
+\begin{itemize}
+\item \(create(\pi) \ldots create(\pisub)\)
+\item \(remove(\pisub) \ldots remove(\pi)\).
+\end{itemize}
+That is, every \(create\) must precede all other \(create\)s on its
+descendants and all \(remove\)s must precede \(remove\)s on its parents.
+
+This ordering can be represented by a graph. This graph is a tree (or
+forest). It's worth remarking that every tree of the forest is formed
+from the same commands, \(remove\)s or \(create\)s, since two different
+types of commands cannot show up at comparable paths. 
+
+Starting at the leaves of the trees, we move the leaves as close as
+possible to their parent. (They will form a row at the left side of the
+branch--command at the \(remove\)--trees and at the other side at
+\(create\)--trees.) Then we order them alphabetically and form a
+\emph{group--command} from the leaves and the branch. This
+group--command
+will act like a single command since all of its members commute the
+same commands. Then we continue this method until every tree is
+grouped into one meta-group--command. We order these groups again.
+That way we gain an order of the commands. It's worth remarking that
+we gain the same order for the same set of commands every time.
+
+We know that \(SO=A\) since because of the ordering it does not break the
+filesystem. Also, \(S\) is a minimal sequence. \emph{Proof.} 
+By contradiction.
+If \(S'\) is shorter than \(S\), then we have a path \(\varphi\) on which
+we have a command in \(S\) but not in \(S'\) since all paths are different
+in \(S\). Now we know that \(SF(\varphi)\ne F(\varphi)\) but 
+\(S'F(\varphi)=F(\varphi)\). (Note that we have no superfluous commands
+in \(S\) since we gained it from the update detector algorithm.)
+
