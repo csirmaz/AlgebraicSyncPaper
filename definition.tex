@@ -2,23 +2,23 @@
 \section{Definitions}
 \label{theorem:def}
 \subsection{The filesystem}
-We introduce some known notations on filesystems and paths.
+We introduce some notation on filesystems and paths.
 
 A filesystem can be \emph{broken} (\(F=\ud\))
 or it can be a function mapping whole paths to their
-contents. The filesystem is broken if a command caused an error, for
-example deleting a directory with files under it.
+contents. The filesystem is broken if a command has caused an error, for
+example attempted to delete a directory with files under it.
 
-A \emph{path} is either empty (/), or a finite sequence of names
+A \emph{path} is either empty (/), or is a finite sequence of names
 separated by \(\cdot\). The concatenation of paths \(\pi\) and
 \(\varphi\) can be written as \(\pi\cdot\varphi\).
 We write
 \(\pi\preceq\gamma\) iff \(\pi\) is a prefix of \(\gamma\), i.e., if
-\(\gamma=\pi\cdot\alpha\) for some path \(\alpha\) which might be
+\(\gamma=\pi\cdot\alpha\) for some path \(\alpha\) which may be
 empty. We also write
 \(\pi\prec\gamma\) if \(\pi\) is a proper prefix of \(\gamma\), that is,
 \(\pi\preceq\gamma\) and \(\pi\ne\gamma\). If we refer to the contents of
-path \(\pi\) in filesystem \(F\), we write simply \(F(\pi)\).
+path \(\pi\) in filesystem \(F\), we simply write \(F(\pi)\).
 
 In the paper, \(\pisub\) always refers to a file or directory under
 \(\pi\), that is, \(\pi\prec\pisub\). For \(\piesub\),
@@ -32,9 +32,9 @@ a file (\(F(\pi)=\cfile{X}\)) or a directory (\(F(\pi)=\cdir{Y}\)).
 We also write \(X\) or \(Y\) for some unspecified but non-\(\ud\)
 contents.
 \begin{notrsi} 
-Both files and directories can carry additional information
-(modtimes, permissions, the bytes in a file, etc.), which we leave
-unspecified, simply writing the contents as shown above.
+In real-life filesystems, files and directories can carry additional information
+like modification times, permissions, etc.
+Here we consider these included in the contents. 
 \end{notrsi}
 
 Filesystems are functions and are compared using extensional equality.
@@ -64,10 +64,11 @@ obtained by applying all commands in \(S\) to \(F\). We may also write a
 command instead of \(S\). \(S_1;S_2\) refers to the concatenation of
 sequences \(S_1\) and \(S_2\).
 
-We have some restrictions on filesystems: all filesystems must satisfy
+All filesystems must satisfy
 the \emph{tree property}, that
-is, if \(\pi\prec\gamma\) and \(F(\gamma)\neq\ud\) then
-\(F(\pi)=\cdir{X}\). It means that every path which has a descendant must
+is, if \(F(\gamma)\neq\ud\) then for every \(\pi\) either
+\(childless_F(\pi)\) or \(F(\pi)=\cdir{X}\).
+This means that every path which has a descendant must
 be a directory.
 
 \subsection{Commands}
@@ -75,9 +76,9 @@ be a directory.
 Now we introduce the basis of our algebra: the commands on filesystems.
 
 At first, we
-thought about using four commands: \(create\), \(remove\), \(edit\) and
+considered using four commands: \(create\), \(remove\), \(edit\) and
 \(move\), as the most common commands on a filesystem. Later, \(move\)
-turned out to be hard to handle in the algebra. We decided to introduce
+turned out to be too complicated to handle in the algebra. We decided to introduce
 this command only in the user interface, after running the synchronizer.
 We also needed a command to reason about commands that cause errors
 (\(break\)). So we took another set of commands; it consists of the
@@ -87,18 +88,17 @@ move--free
 algebra.
 
 \begin{notrsi}
-All the commands have the following property: if applied to a filesystem,
-then it either breaks the system (\(command(\pi,X)F=\ud\)) or 
-\(command(\pi,X)F=F\{\pi\mapsto X\}\); that is, if a command does not
-break the filesystem, it only affects the filesystem at the path on which
-it was applied. 
+All commands have the following property: if applied to a filesystem,
+they either break the system (\(command(\pi,X)F=\ud\)) or 
+\(command(\pi,X)F=F\{\pi\mapsto X\}\); that is, they only affect the filesystem at the path on which
+they were applied. 
 \end{notrsi}
 
 Now we define the exact behavior of each command.
 %We have four commands: \emph{create, edit, remove} and \emph{break.} 
-Applied to the broken filesystem, they all have the same effect:  leaving
+Applied to the broken filesystem, they all leave
 the filesystem in the broken state. Otherwise, 
-the definition of their effect is the following: 
+the definition of their effect is as follows: 
 
 \begin{notrsi}
 \begin{itemize}
@@ -113,8 +113,8 @@ F\{\pi\mapsto X\}, &\mbox{iff~} F(\pi)=\ud
 \end{cases}\]
 \item
 The command \(edit\) can change the type of a path (file or
-directory), according to its second argument.
-Since the tree--property must be preserved, the definition is:
+directory) according to its second argument.
+Since the tree property must be preserved, the definition is:
 \begin{align*}
 edit(\pi,\cdir{X})F&=
 \begin{cases}

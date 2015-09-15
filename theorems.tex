@@ -12,8 +12,8 @@ For sequences \(S_1\) and \(S_2\), we have two kinds of judgements:
 \(S_2\)}. Its intended interpretation is that they act the same on all
 filesystems, i.e. \(\forall F: S_1F=S_2F\).
 \item \(S_1\eqexp S_2\), or \emph{\(S_2\) extends \(S_1\)}; its intended
-interpretation is the following: if \(S_1\eqexp S_2\) and 
-\(S_1F\ne\ud\) then \(S_1F=S_2F\).
+interpretation is that if \(S_1\) does not break a filesystem, then they act
+the same on it, i.e. \(\forall F: S_1F\ne\ud \implies S_1F=S_2F\).
 %%%
 %%% Transitivity? == => =C ?
 %%%
@@ -33,14 +33,15 @@ there to list all possible pairs.
 \medskip
 {\small{
 How many pairs do we have? 
-For the first group of laws which contain a pair of commands from
-\(edit\), \(create\) and \(remove\), we can choose a pair 9 ways.
-We have four types of
-path-pairs: \(\pi;\pi\), \(\pisub;\pi\), \(\pi;\pisub\)
-and \(\pi;\varphi\). That makes \(4\times9\) cases. With \(break\), we have
-\(3\times 2\) cases
-with an other non--break command (there are 3 types and they can follow
-or precede \(break\)) and one case when we have a pair made of two
+From
+\(edit\), \(create\) and \(remove\), we can choose a pair in 9 ways.
+Moreover, there are four types of
+path-pairs: equivalence \(\pi;\pi\), subordination \(\pisub;\pi\),
+superordination \(\pi;\pisub\)
+and incomparable paths \(\pi;\varphi\). These make \(4\times9\) cases. With \(break\), we have
+\(3\times 2\) additional cases
+with another non--break command (there are 3 types and they can follow
+or precede \(break\)), and one case when we have a pair made of two
 \(break\)s. Thus, we have \(4\times 9+3\times2+1=43\) pairs. 
 }}
 \medskip
@@ -54,7 +55,7 @@ Extension laws (that is, where the relation is \(\eqexp\), not
 %%%
 %%% reference
 %%%
-(See table 1 for the laws.)
+% (See table 1 for the laws.)
 
 \ifnum\Textsize=1%
 \def\crlw{\)\\\indent\(}%
@@ -217,46 +218,38 @@ create(\pisub,Y); edit(\pi,\cdir{X})\)\\
 \subsection{Inference rules}
 
 An inference rule makes it possible to derive new statements from 
-statements already true or from the axioms. 
-Our inference rules are:\\
+the axioms or from statements already known to be true. 
+The inference rules are:\\
 \emph{For any sequences \(S_1, S_2, S, S'\):}
 \begin{itemize}
 \item if \(S_1\equiv S_2\) then \(S;S_1;S'\equiv S;S_2;S'\)
 \item if \(S_1\eqexp S_2\) then \(S;S_1;S'\eqexp S;S_2;S'\)
 \item if \(S_1\equiv S_2\) then \(S_1\eqexp S_2\).
 \end{itemize}
-As we can see, the first inference rules are mere substitutions of a part
-of the sequence to another sequence. 
-%%\remark{``...'' is only for app. \ref{app:theosound}}
+Te first two inference rules merely substitute part of a sequence for
+another sequence.
 If ``\(S_1\equiv S_2\)'' or 
-``\(S_1\eqexp S_2\)'' is a law itself, we say that we applied that law to
+``\(S_1\eqexp S_2\)'' is a law, we say that we applied that law to
 the sequence \(S;S_1;S'\).
 
 \subsection{Soundness theorem}
 \label{theorem:soundness}
 In order to be able to use our algebra,
-we must show that algebraic relation between sequences also means
+we must show that an algebraic relation between sequences also means
 that the sequences act the same on filesystems.
 %
-It can be proven that for every two sequences of commands 
+It can be proven that for every two sequences of commands
+\(S\) and \(S^*\) 
 \begin{gather*}
-S\equiv S^* \implies \forall F: SF=S^*F,\\
-(S\eqexp S^*)\wedge(SF\ne\ud)\implies \forall F: SF=S^*F.%\\
-%S\eqifnbr S^*\wedge SF\ne\ud \wedge S^*F\ne\ud 
-%\implies \forall F: SF=S^*F.
+\forall F: S\equiv S^* \implies SF=S^*F,\\
+\forall F: (S\eqexp S^*)\wedge(SF\ne\ud)\implies SF=S^*F.
 \end{gather*}
-%%%\begin{forrsi}
-The proof for the two cases are very similar. We use induction on the
-number of times the inference rules were applied to the sequences. 
-We obtain these results by
-showing the soundness of each individual law (which can be done by
-investigating numerous cases) and the inference rules.
-
-The detailed proof can be found in Appendix \ref{app:theosound}.
-%%%\end{forrsi}
-%%%\begin{notrsi}
-%%%\input{sound}
-%%%\end{notrsi}
+The proofs for the two cases are very similar. We use induction on the
+number of times the inference rules are applied to the sequences.
+The soundness of each individual law
+(by investigating individual cases)
+and that of the inference rules are shown separately.
+For the detailed proof see Appendix \ref{app:theosound}.
 
 \subsection{Theorem of completeness}
 \label{theorem:completeness}
@@ -269,44 +262,38 @@ bound} iff
 \(\exists S^*: S_1\eqexp S^* \wedge S_2\eqexp S^*\), that is, iff
 both \(S_1\) and \(S_2\) can be extended to the same sequence.
 It is a symmetric relation, but not transitive.
-
 \(S_1\equiv S_2\implies S_1\eqexp S_2\implies S_1\eqifnbr S_2\) also
 holds.
 
-%To show that we have enough laws to describe the algebra of
-%filesystems,
 Now we prove that if 
 two sequences of commands act the same on any filesystem neither of
 them breaks, \emph{and} there is a filesystem neither of them
-breaks then they have a common upper bound.
+breaks, then they are also related algebraically; namely, they have a common upper bound.
 Formally, 
 \[\begin{array}{r@{}l}
 \forall S,S':&\\ 
-&((\forall G: (SG\ne\ud\wedge S'G\ne\ud)\implies SG=S'G)\\
+&(\forall G: (SG\ne\ud\wedge S'G\ne\ud)\implies SG=S'G)\\
 &\wedge\\
 &(\exists F: SF\ne\ud\wedge S'F\ne\ud)\\
-&\implies S \eqifnbr S'),
+&\implies S \eqifnbr S',
 \end{array}\]
 where \(G\) and \(F\) refer to filesystems. 
 
-%%%\begin{notrsi}
-%%%\input{compl}
-%%%\end{notrsi}
-%%%\begin{forrsi}
 
 In the proof we define \emph{minimal sequences} in the following way:
 Consider the set of sequences \(\wp_S = \{ S^* | S \eqexp S^*\}\).
 Because of our preconditions, the sequence \(break\) is not in
-\(\wp_S\) (if it was, that is, \(S\eqexp break\), \(SF=\ud\) would hold
-since by definition \(SF=(break)F\) if \(SF\ne\ud\)).
+\(\wp_S\) (if it was, that is, \(S\eqexp break\), \(\forall F:SF=\ud\) would hold
+by definition).
 
 Let \(S_0\) be (one of) the shortest sequence(s) in \(\wp_S\) and
 similarly
 \(S^\prime_0\) (one of) the shortest sequence(s) in \(\wp_{S^\prime}\). 
-These sequences are called minimal sequences. It can be shown that for
+We will call these minimal sequences. It can be shown that for
 every \(G\) which satisfies the condition \(SG\ne\ud\wedge S'G\ne\ud\), 
 \(S_0G=S'_0G\ne\ud\) applies.
-As a special case, we know that \(S_0F=S'_0F\ne\ud\).
+As a special case, we know that \(S_0F=S'_0F\ne\ud\) where \(F\) is the
+fileystem from the formalization of the theorem above.
 
 The proof has three main steps.
 \begin{itemize}
@@ -315,19 +302,19 @@ We have some constraints on \(S_0\) and \(S'_0\). Since they do not break
 every filesystem, no breaking laws can be applied to them. And since
 they have minimal length, we cannot apply a simplifying law either. From
 these properties we can prove that there is at most one command on each
-path in a minimal sequence. (If there were more, such a law would
-be appliable.)
+path in a minimal sequence. (If there were more, a breaking or simplifying law
+could be applied.)
 \item[ii.]
 We know that a command on path \(\pi\) only affects the filesystem at
 \(\pi\) if it does not break the filesystem. Therefore \(S_0\) and
 \(S'_0\) must contain commands on the same paths since
-they do not break \(F\) and \(S_0F=S'_0F\), so they modify \(F\) at 
+they do not break \(F\) and \(S_0F=S'_0F\), that is, they modify \(F\) at 
 the same points. 
 And we can also prove that the sequences must contain the same
 commands on each path from the fact that they act the same on every \(G\).
 Therefore they consist of the very same commands.
 \item[iii.]
-We prove that \(S_0\) and \(S'_0\) can be reordered by commuting
+We prove that \(S_0\) and \(S'_0\) can be reordered using commuting
 laws so that they would be the same sequences. That is, a sequence
 \(S^*\) exists for which \(S_0\eqexp S^*\eqshr S'_0\). It means that
 \(S\eqexp S_0\eqexp S^*\eqshr S'_0\eqshr S'\), i.e. \(S\eqifnbr S'\).
@@ -340,4 +327,3 @@ proof.
 Now, since we know that our algebra is sound and complete for its
 intended interpretation, we can use it to define the specification of the
 file synchronizer.
-%%%\end{forrsi}

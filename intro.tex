@@ -4,7 +4,7 @@
 If we have multiple copies (called \emph{replicas}) of a filesystem or a
 part of a filesystem (for example on a laptop and on a desktop
 computer), it is often the case that changes are made to each
-replica independently and as a result they do not contain the same
+replica independently and as a result they no longer contain the same
 information. In that case, a \emph{file synchronizer} is used to make them
 similar (consistent) again, without losing any information.
 
@@ -19,13 +19,13 @@ formalized mathematical model for describing file synchronization.
 
 We investigated algebraic models of synchronization in a specific case to
 see the properties of such a system and the method of proving theorems in
-it which will hopefully aid us to create a general theory of
-synchronization based on algebraic structure in the future. This specific
+it, which will hopefully aid us to create a general theory of
+synchronization based on algebraic structures in the future. This specific
 case was the synchronization of filesystems.
 
 In the paper we develop an algebraic representation of filesystem
 commands. Then we show that this model is both complete and sound,
-and after that we define the expected behavior of a file synchronizer and
+and we define the expected behavior of a file synchronizer and
 create its specification with the help of our algebra. 
 
 This method will
@@ -35,60 +35,62 @@ other types of datasystems, such as mail folders or databases.
 
 \subsection{The main idea of synchronization}
 
-In general, two phases of a synchronizer's task can be separated: the
+In general, there are two phases of synchronization:
 \emph{update detection}, when the program recognizes where updates have
-been made since the last synchronization and \emph{reconciliation}, when
+been made since the last synchronization, and \emph{reconciliation}, when
 it combines updates to yield a new, synchronized version of each replica.
 If there are no conflicting updates, then at the end of the
-synchronization the replicas will be the same. Otherwise a synchronizer
+synchronization the replicas will be the same. Otherwise, a synchronizer
 may leave them unchanged at paths where conflicts occurred and warn the
-user about them.
-
+user.
 In this paper,
 we focus on the commands that were applied to these replicas while they
-were modified independently. The main aim of a synchronizer is to perform
-\emph{all} commands on \emph{all} replicas.
+were modified independently, as the main aim of a synchronizer is to
+propagate and perform
+the most possible commands on all replicas.
 
 %\remark{Explanation why we DO need O?}
 Let us introduce some notation. We have the original system, \(O\); 
-and the present replicas \(R_1, R_2, \ldots R_n\).
-Somehow we know the sequences of commands which were applied to
-\(O\) in each replica (for example from the update detector). They are
-\(S_1, S_2, \ldots S_n\). The synchronizer algorithm will provide us
-commands on each replica (\(S_1^*, S_2^*, \cdots S_n^*\)) which lead each
-replica to a common state \(O'\) if possible.
+and the current replicas \(R_1, R_2, \ldots R_n\).
+Let us assume that we already know the sequences of commands which have been applied to
+\(O\) in each replica (for example, from the update detector). These
+sequences are
+\(S_1, S_2, \ldots S_n\). The synchronizer algorithm will neeed to provide us
+with new sequences of commands for each replica (\(S_1^*, S_2^*, \cdots S_n^*\))
+that will move each
+replica to a common state \(O'\), or as close to it as possible.
 %, that is, 
 %\(S_1^*R_1=S_2^*R_2=\cdots=S_n^*R_n=O'\).
 
 In order to determine each sequence \(S_i^*\), we take all commands
 applied
-to the systems (\(S_1\cup S_2\cup \cdots\cup S_n\)) then omit commands
-in \(S_i\) which were already applied to replica \(R_i\). 
+to the systems (\(S_1\cup S_2\cup \cdots\cup S_n\)) and omit commands
+in \(S_i\) which have already been applied to replica \(R_i\). 
 
-But that way we only gain a \emph{set} of commands without order. We
-must order it somehow to be able to apply the commands to the
-system. But it is possible that some orders cause errors in a filesystem
+However, this way we only gain a \emph{set} of commands which we
+need to order to be able to apply the commands to the
+system. It is possible that some orders cause errors in a filesystem
 (for example, trying to remove a directory before removing the files in
 it). It is also possible that not all error--free orders have the same
 effect on the filesystem. For example, modifying the contents of a file to
-``xxx'' and modifying them to ``yyy'' are not commutable commands: they
-leave the system in different states if applied in different order to it.
+``xxx'' and modifying them to ``yyy'' in a different replica are not commutable commands: they
+leave the system in different states if applied in different order.
 In this case the synchronizer cannot synchronize the systems fully, since
-``last modifying wins'' is not a good solution in every case.  
-Therefore the aim of the synchronizer is to find commands for which 
+``last modification wins'' is not a preferable solution in every case.  
+Therefore, a better aim of the synchronizer is to find commands for which 
 \emph{all error--free orders have
-the same effect} and apply them to the system.
+the same effect} and apply these to the system.
 
 The reason we may have two differently ordered sequences of commands which
 do not lead a system to the same state is that we have incommutable pairs
 of commands in them. This is because if all pairs of commands
-commuted (that is, pair of commands \(C_1; C_2\) had the same effect on
+commuted (that is, a pair of commands \(C_1; C_2\) had the same effect on
 a system as \(C_2; C_1\)) then clearly one of the sequences could be
-changed to the other one by commuting commands
+transformed into the other one by commuting commands
 without any change in the effect of the sequence on the system. 
 
-Because of this, we focused on the commutability of pairs of commands.  
-We defined this property with the help of an algebraic 
+Because of this, we focus on the commutability of pairs of commands.  
+We define this property with the help of an algebraic 
 proof system on commands.% for commutivity. %%%
 
 %\subsection{Synchronizing filesystems}
