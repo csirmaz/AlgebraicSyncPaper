@@ -1,10 +1,10 @@
 %% Why don't we use move; Update-detector algorithm
-\section{A solution for update-detection for a move--free algebra}
+\section{A solution for update-detection in a move--free algebra}
 \label{app:update-move}
 
+% TODO v
 \begin{comment}
 \subsection{A simple way}
-\remark{Do we need this in the paper?}
 A ``simple way'' means that when determining the commands which lead from
 the
 original to the present state of the filesystems we do not use commands
@@ -53,22 +53,23 @@ That way we gained a possible sequence of commands which if we apply
 to 
 filesystem \(O\) we'll get filesystem \(A\).
 \end{comment}
+% TODO ^
 
 First, we provide an example which explains why we chose working on
-move--free algebra.
+a move--free algebra.
 
 \subsection{Moving and removing subtrees}
 
-When trying to determine the minimal sequence of commands which was
-applied to the original filesystem \(O\) so that we get its present state
-\(A\) we should try to move
-or remove subtrees instead of (re)moving all files in it
+When trying to determine the minimal sequence of commands which has been
+applied to the original filesystem \(O\) to arrive at its present state
+\(A\), we should try to move
+or remove subtrees instead of (re)moving all files in them
 in order to gain the most simple sequence possible.
 We can achieve
 this by counting the files under a directory and how many of
-them should be (re)moved. If there are many files to be moved, we should
-move the subtree first and then the other files back to their place
-(majority voting).
+them need to be (re)moved. Then by majority voting, if there are enough files to be moved, 
+we should move the subtree first and then the remaining files back to their
+places.
 
 \subsection{Problems with move}
 
@@ -80,36 +81,33 @@ replica A, we have moved \(X\cdot1, \ldots X\cdot4\) to \(Y\cdot1, \ldots
 Y\cdot4\). In replica B, we have moved only \(X\cdot1, X\cdot2\) under
 the new directory \(Y\).
 
-In replica \(A\), without using commands on subtrees, we'd
+In replica \(A\), without using commands on subtrees, we would
 have \emph{move} \(X\cdot1\to Y\cdot1, X\cdot2\to Y\cdot2,
-X\cdot3\to Y\cdot3, X\cdot4\to Y\cdot4\). But using subtree--moving,
-we'll
-notice that using \emph{move} \(X\to Y, Y\cdot5\to X\cdot5,
-Y\cdot6\to X\cdot6\) would be shorter, so this is our sequence of
-commands. In replica \(B\), \emph{move}
-\(X\cdot1\to Y\cdot1, X\cdot2\to Y\cdot2\) is the shortest way.
+X\cdot3\to Y\cdot3, X\cdot4\to Y\cdot4\). But with subtree--moving,
+we will
+notice that the sequence \emph{move} \(X\to Y, Y\cdot5\to X\cdot5,
+Y\cdot6\to X\cdot6\) is shorter. In replica \(B\), \emph{move}
+\(X\cdot1\to Y\cdot1, X\cdot2\to Y\cdot2\) is the shortest sequence.
 
-Now we want to choose commands from each sequence so that they would not
-cause a conflicting update if propagated on other replicas.
-It is easily provable that such subsequences of commands
-do not exist. 
-\remark{Proof?}
-We reached the conclusion that not always the
-shortest sequence should be used to generate the interleaving; or, in
-other words, we should be able to change the sequences according to the
-algebraic laws before choosing. It'd make the problem much more
-complicated since we have a lot of possibilities here as well as at
-choosing the subsequences.  Using \(move\), we also have a very 
-complicated relationship among the commands considering which two can
-commute and which two not. (Note that \(move\) is the only function
-which modifies \emph{two} paths at the same time.)
-
-%We can solve this problem by \emph{delaying
-%the subtree--detection} to the end of the update--detection and
-%reconciliation.
+The next step is to choose commands from each sequence so that they would not
+cause conflicting updates when propagated to other replicas.
+It is easily to prove that such subsequences of commands
+do not exist.
+ 
+We reached the conclusion that it is not always the
+shortest sequence that should be used to generate the interleaving; or, in
+other words, that we should be able to modify the sequences according to the
+algebraic laws before choosing the one used.
+% It would make the problem much more
+% complicated since we have a lot of possibilities here as well as at
+% choosing the subsequences.  
+Using \(move\), we also have a 
+complicated relationship among the commands when considering which pairs
+commute and which do not as \(move\) is the only command
+that modifies two paths at the same time.
 
 Therefore, we decided to focus on a \emph{move--free} algebra and delay
-detecting possibilities of simplification (subtree--detection) until
+detecting possibilities of simplification (e.g. subtree--detection) until
 after the update--detection and reconciliation.
 
 \subsection{A simple algorithm for update--detection}
@@ -117,11 +115,11 @@ after the update--detection and reconciliation.
 
 With no \(move\)s and subtree--commands, a simple algorithm can be
 used for update--detection. It takes information from the filesystems
-and gives a minimal sequence of commands which will make one similar to
+and gives a minimal sequence of commands which transforms one into
 the other. 
 
 Let \(P_O\) be all the paths in the original
-filesystem, \(P_A\) all the paths in the current state of the replica. 
+filesystem, and \(P_A\) all the paths in the current state of the replica. 
 (We assume \(O,A\ne\ud\).)
 For
 every \(\pi\in P_O\cup P_A\) add the following command to sequence \(S\):
@@ -141,14 +139,12 @@ Then arrange the commands so that
 This can be done by the method discussed below.
 
 First, we move all \(edit(\pi,\cdir{X})\) commands to the front and then
-all \(edit(\pi,\cfile{X})\) commands to the end of the sequence. Now for
-the middle part, we know the following:
-
-Since there is only one command on each path, we have a partial
+all \(edit(\pi,\cfile{X})\) commands to the end of the sequence. 
+Regarding the middle part, since there is only one command on each path, we have a partial
 ordering on the set of the commands (see section
-\ref{theorem:conc}) showing us which command must precede another one.
-Two commands can be interchanged if they refer to incomparable
-paths; otherwise, they are one of the following:
+\ref{theorem:conc}) determining which command must precede another one.
+Two commands can be interchanged freely if they refer to incomparable
+paths; otherwise, they will be ordered in one of the following ways:
 \begin{itemize}
 \item \(create(\pi) \ldots create(\pisub)\)
 \item \(remove(\pisub) \ldots remove(\pi)\).
@@ -157,28 +153,29 @@ That is, every \(create\) must precede all other \(create\)s on its
 descendants and all \(remove\)s must precede \(remove\)s on its parents.
 
 This ordering can be represented by a graph. This graph is a tree (or
-forest). It's worth remarking that every tree of the forest is formed
-from the same commands, \(remove\)s or \(create\)s, since two different
-types of commands cannot show up at comparable paths. 
+forest). It is worth remarking that every tree of the forest is formed
+from the same commands, \(remove\)s or \(create\)s, since 
+we cannot have two different
+types of commands at comparable paths. 
 
-Starting at the leaves of the trees, we move the leaves as close as
-possible to their parent. (They will form a row at the left side of the
-branch--command at the \(remove\)--trees and at the other side at
-\(create\)--trees.) Then we order them alphabetically and form a
-\emph{group--command} from the leaves and the branch. This
+Starting at the leaves of the trees, let us move the leaves as close as
+possible to their parents to form a row on the left side of the
+parent command in \(remove\) trees and on the other side in
+\(create\) trees. Then we order the commands alphabetically and create a
+\emph{group--command} from them and their parent. This
 group--command
-will act like a single command since all of its members commute the
-same commands. Then we continue this method until every tree is
-grouped into one meta-group--command. We order these groups again.
-That way we gain an order of the commands. It's worth remarking that
-we gain the same order for the same set of commands every time.
+will act similarly to a single command as all of its members commute with the
+same commands. We continue this method until every tree is
+grouped into one group--command, and order these groups again.
+This way we gain a complete order of the commands. It is worth noting that
+this is a deterministic ordering.
 
 We know that \(SO=A\) since because of the ordering it does not break the
 filesystem. Also, \(S\) is a minimal sequence. \emph{Proof.} 
 By contradiction.
 If \(S'\) is shorter than \(S\), then we have a path \(\varphi\) on which
 we have a command in \(S\) but not in \(S'\) since all paths are different
-in \(S\). Now we know that \(SF(\varphi)\ne F(\varphi)\) but 
+in \(S\). We know that \(SF(\varphi)\ne F(\varphi)\) but 
 \(S'F(\varphi)=F(\varphi)\). (Note that we have no superfluous commands
-in \(S\) since we gained it from the update detector algorithm.)
+in \(S\) since we generated it using the update detector algorithm.)
 
