@@ -42,7 +42,7 @@ class Content:
         return (self.type == EMPTY)
 
 
-def ContentFactory(value):
+def ContentFactory(value='Unknown'):
     """Constructs all possible contents"""
     yield Content(EMPTY)
     yield Content(FILE, value)
@@ -82,31 +82,32 @@ class Node:
         return "(" + "".join(r) + ")"
         
     def isSame(self, node):
-        return (
-                (self.isBroken() and node.isBroken())
-                or
-                (self.has_parent == node.has_parent and self.content.isSame(node.content) and self.has_child == node.has_child)
-            )
+        if self.isBroken() and node.isBroken(): return True
+        if self.isBroken() or node.isBroken(): return False
+        return (self.has_parent == node.has_parent and self.content.isSame(node.content) and self.has_child == node.has_child)
 
     def isBroken(self):
         return not self.broken is None
         
-    def isDir(self):
-        return self.content.isDir()
+    def setBroken(self, reason='unknown'):
+        self.broken = reason
+        return self
+
+    def getContent(self):
+        return self.content
         
-    def isFile(self):
-        return self.content.isFile()
-        
-    def isEmpty(self):
-        return self.content.isEmpty()
-        
-    def setHasChild(self):
-        self.has_child = True
+    def setContent(self, content):
+        self.content = content
         self.checkTreeProperty()
         return self
         
-    def setHasNoChild(self):
-        self.has_child = False
+    def setHasChild(self, v):
+        self.has_child = v
+        self.checkTreeProperty()
+        return self
+        
+    def setHasParent(self, v):
+        self.has_parent = v
         self.checkTreeProperty()
         return self
         
@@ -116,15 +117,6 @@ class Node:
             self.broken = 'tree-nonempty-noparent'
         if self.has_child and not self.content.isDir():
             self.broken = 'tree-notdir-haschild'
-        return self
-        
-    def apply(self, command):
-        """Apply a command to this path"""
-        if self.content.getType() != command.getStart().getType():
-            self.broken = 'command-start'
-            return self
-        self.content = command.getEnd()
-        self.checkTreeProperty()
         return self
         
     def assertDescendant(self):
@@ -208,11 +200,9 @@ class Filesystem:
         return self.__class__(self.p1.clone(), self.p2.clone(), self.rel)
         
     def isSame(self, fs):
-        return (
-                (self.isBroken() and fs.isBroken())
-                or
-                (self.p1.isSame(fs.p1) and self.p2.isSame(fs.p2) and self.rel == fs.rel)
-            )
+        if self.isBroken() and fs.isBroken(): return True
+        if self.isBroken() or fs.isBroken(): return False
+        return (self.p1.isSame(fs.p1) and self.p2.isSame(fs.p2) and self.rel == fs.rel)
     
     def isBroken(self):
         return (self.p1.isBroken() or self.p2.isBroken())
@@ -231,48 +221,63 @@ class Filesystem:
             
         only = self.rel in [DIRECT_CHILD_ONLY, DIRECT_PARENT_ONLY]
     
-        if not child.isEmpty():
+        if not child.getContent().isEmpty():
             # print "child not empty"
             parent.assertDescendant()
 
-        if not parent.isEmpty():
+        if not parent.getContent().isEmpty():
             # print "parent not empty"
             child.assertParent()
         else:
             # print "parent empty"
             child.assertNoParent()
 
-        if only and child.isEmpty():
+        if only and child.getContent().isEmpty():
             # print "only child and child empty"
             parent.assertNoDescendants()
             
             
     def applyCommand(self, command):
+
+        command_path = command.getPath()
+        new_content = command.getEnd()
+
         # If we apply a command to the (direct) child path,
         # then we may need to update the has_child flag of the parent
         if self.rel != SEPARATE:
             if self.rel in [DIRECT_CHILD, DIRECT_CHILD_ONLY]:
                 childpath = PATH2
+                child = self.p2
+                parentpath = PATH1
                 parent = self.p1
             else:
                 childpath = PATH1
-                parent = self.p2
+                child = self.p1
+                parentpath = PATH2
+                parent = self.p2                
 
-            if command.getPath() == childpath:
+            if command_path == childpath:
                 
                 # If the child will have content, the parent will have a child
-                if not command.getEnd().isEmpty():
-                    parent.setHasChild()
+                if not new_content.isEmpty():
+                    parent.setHasChild(True)
                 
                 # If the only child is deleted, the parent will have no child
-                if self.rel in [DIRECT_CHILD_ONLY, DIRECT_PARENT_ONLY] and command.getEnd().isEmpty():
-                    parent.setHasNoChild()         
+                if self.rel in [DIRECT_CHILD_ONLY, DIRECT_PARENT_ONLY] and new_content.isEmpty():
+                    parent.setHasChild(False)
+                    
+            if command_path == parentpath:
+            
+                # If the parent is deleted, the child will have no parent
+                if new_content.isEmpty():
+                    child.setHasParent(False)
+                
+                # If the parent is created, the child will have a parent
+                else:
+                    child.setHasParent(True)
   
-        # Here the command is always applied to a different path than 'parent' above      
-        if command.getPath() == PATH1:
-            self.p1.apply(command)
-        else:
-            self.p2.apply(command)
+        # Here the command is always applied to a different path than the one we changed above
+        command.applyToNode(self.p1 if command_path == PATH1 else self.p2)
             
         return self
         
@@ -315,11 +320,16 @@ class Command:
     def getPath(self):        
         return self.path
         
-    def getStart(self):
-        return self.start
-
     def getEnd(self):
         return self.end
+
+    def applyToNode(self, node):
+        """Apply the command to a node"""
+        if node.getContent().getType() != self.start.getType():
+            node.setBroken('command-start')
+            return self
+        node.setContent(self.end)
+        return self
 
 
 def CommandFactory(path, value):
@@ -357,7 +367,7 @@ def SequenceFactory():
     for c1 in CommandFactory(PATH1, 'New1'):
         for c2 in CommandFactory(PATH2, 'New2'):
             yield Sequence([c1, c2])
-    
+
 
 for sq in SequenceFactory():
     for fs in FilesystemFactory():
@@ -377,5 +387,5 @@ for sq in SequenceFactory():
         fs_rev_res.applySequence(sq_rev)
         print "  " + fs_rev_res.info()
         
-        print "SAME" if fs_res.isSame(fs_rev_res) else "DIFFERENT"
+        print ("SAME" if fs_res.isSame(fs_rev_res) else "DIFFERENT")
         
