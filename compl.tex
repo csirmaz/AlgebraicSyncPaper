@@ -145,26 +145,19 @@ But if $\piesub \prec \hat\pi$, then by transitivity $\pi \preceq
 $S \eqexp break$.
 \end{itemize}
 
-\begin{forrsi}
-The following lemmas can be proved with a similar method.
-%For the sake of brevity, the proofs are omitted.
-\end{forrsi}
 \item[Lemma 2]
 {\bf A command \(create(\pi)\) can not precede a command  
 \(remove(\piesub)\).} 
-\begin{notrsi}
 \emph{Proof.} 
 This can be proved the same way, only
 the base case differs; now 
 \(create(\pi); remove({\piesub})\) equals \(break\) or expands 
 to \(skip\) by Law \lawxvi~and \lawxxvii.
 The induction step is the same.
-\end{notrsi}
 
 \item[Lemma 3]
 {\bf A command \(remove(\piesub)\) can not precede a command
 \(create(\pi)\).} 
-\begin{notrsi}
 \emph{Proof.} This can be proved similarly, in this 
 case the base step is
 \(remove(\piesub); create({\pi})\) equals \(break\) or
@@ -176,22 +169,18 @@ the induction hypothesis, \(S\eqexp break\)
 shorten the sequence (which contradicts our precondition) or commuted (and therefore the induction hypothesis
 still holds). (Laws \lawvii,
 \lawviii, \lawxiv, \lawxv, \lawxx, \lawxxi, \lawxxviii.)
-\end{notrsi}
 
 \item[Lemma 4]
 {\bf A command \(create(\piesub)\) can not precede a command
 \(create(\pi)\).} 
-\begin{notrsi}
 \emph{Proof.} 
 We obtain this result from Lemma 3: the base step is 
 \(create(\piesub); create({\pi}) \equiv (\eqexp) break\) (Law 15); the
 induction step is the same.
-\end{notrsi}
 
 \item[Lemma 5]
 {\bf A command \(create(\piesub)\) can not precede a command
 \(remove(\pi)\).} 
-\begin{notrsi}
 \emph{Proof.} 
 Our base step now is 
 \(S[j-1];S[j]=create({\piesub}); remove(\pi)\eqexp skip\) or equals
@@ -202,12 +191,10 @@ If \(S[i+1]=create({\piesub}_{sub})\) follows \(S[i]=create(\piesub)\),
 the induction hypothesis applies, therefore \(S\eqexp break\). Otherwise
 the commands could be simplified or commuted (Laws \lawxviii, \lawxiv,
 \lawxv, \lawxvi, \lawxvii, \lawxxvii.)
-\end{notrsi}
 
 \item[Lemma 6] 
 {\bf It is impossible that a command \(remove(\pi)\)
 precedes a command \(create(\piesub)\).} 
-\begin{notrsi}
 \emph{Proof.} 
 Now our base step is
 \(remove(\pi); create(\piesub)\eqexp edit\) or equals to
@@ -216,7 +203,6 @@ examine command \(S[i+1]\).
 If it's not commutable or simplifyable,
 it can be only \(remove(\pisup)\).
 In that case the induction hypothesis applies.
-\end{notrsi}
 \end{description}
 
 \varsection{More lemmas on commands}
@@ -238,33 +224,24 @@ applied to \(S[j-1];S[j]\). That way
 induction hypothesis \(S\eqexp break\). If \(S[j-1]\) is
 \(remove(\pisub)\), we have the same result by Lemma 1.
 
-\begin{forrsi}
-The following lemmas can be proved similarly.
-\end{forrsi}
 \item[Lemma E2] {\bf A command \(create(\pi)\) cannot precede a command 
 \(edit(\pi)\).} 
-\begin{notrsi}
 \emph{Proof.} The same; last step is made according to
 Lemma 2.
-\end{notrsi}
 
 \item[Lemma E3] {\bf A command \(remove(\pi)\) cannot follow a
 command \(edit(\pi,\cdir{X})\).} 
-\begin{notrsi}
 \emph{Proof.} 
 This proof is also very similar to the aboves. The base step is 
 \(edit(\pi,\cdir{X}); remove(\pi)\equiv remove(\pi)\) (Law \lawxxv). In the
 induction step we investigate command \(S[i+1]\). If it was not
 \(create(\pisub)\), a commuting (or simplifying) law could be applied. If
 it is, we have \(S\eqexp break\) according to Lemma 5.
-\end{notrsi}
 
 \item[Lemma E4] {\bf A command \(create(\pi)\) cannot follow a
 command \(edit(\pi,\cdir{X})\).} 
-\begin{notrsi}
 \emph{Proof.} The same; last step
 according to Lemma 4.
-\end{notrsi}
 \end{description}
 
 \noindent
@@ -308,10 +285,6 @@ that again contradicts the precondition.
 
 \item \(remove(\pi)\in S_0\implies remove(\pi)\in S'_0\).
 \emph{Proof.} 
-\begin{forrsi}
-It can be done similarly to the case of \(create\).
-\end{forrsi}
-\begin{notrsi}
 Now we can be sure that \(F(\pi)\ne\ud\) and
 \(S_0G(\pi)=\ud\). If (instead of
 \(remove\)) there was no command on \(\pi\) in \(S'_0\) then 
@@ -319,7 +292,6 @@ Now we can be sure that \(F(\pi)\ne\ud\) and
 \(S'_0G(\pi)\ne\ud\) would hold (contradicting
 \(S_0G(\pi)=\ud\)). \(create\) would break \(G\) since
 \(G(\pi)\ne\ud\). Again, we have contradiction in all cases.
-\end{notrsi}
 
 \item \(edit(\pi,X)\in S_0\implies edit(\pi,X)\in S'_0\).
 \emph{Proof.} Similarly we cannot have \(create\) or \(remove\) on path
