@@ -31,11 +31,9 @@ if the file or directory does not exist), they can be
 a file (\(F(\pi)=\cfile{X}\)) or a directory (\(F(\pi)=\cdir{Y}\)).  
 We also write \(X\) or \(Y\) for some unspecified but non-\(\ud\)
 contents.
-\begin{notrsi} 
 In real-life filesystems, files and directories can carry additional information
 like modification times, permissions, etc.
 Here we consider these included in the contents. 
-\end{notrsi}
 
 Filesystems are functions and are compared using extensional equality.
 Two filesystems \(F_1\) and \(F_2\) are equivalent iff
@@ -100,7 +98,6 @@ Applied to the broken filesystem, they all leave
 the filesystem in the broken state. Otherwise, 
 the definition of their effect is as follows: 
 
-\begin{notrsi}
 \begin{itemize}
 \item
 \(create(\pi,X)\) modifies \(F(\pi)\) to \(X\) iff
@@ -142,29 +139,6 @@ F(\pi)\neq\ud \wedge childless_F(\pi)\\
 \[\begin{array}{r@{}ll}
 breakF&{}=\ud &\mbox{for every $F$.}\end{array}\]
 \end{itemize}
-\end{notrsi}
-%
-\begin{forrsi}
-{\small{
-%\begin{align}
-\begin{gather*}\begin{array}{r@{}ll}
-create(\pi,X)F&{}=F\{\pi\mapsto X\}, 
-&\mbox{iff~}(F(\pi)=\ud)\wedge(F(parent(\pi))=\cdir{Y})\\
-&{}=\ud, &\mbox{otherwise.}\\
-edit(\pi,\cdir{X})F&{}=F\{\pi\mapsto \cdir{X}\}, 
-&\mbox{iff~}F(\pi)\neq\ud\\
-&{}=\ud &\mbox{otherwise;}\\
-edit(\pi,\cfile{X})F&{}=F\{\pi\mapsto\cfile{X}\} 
-&\mbox{iff~}(F(\pi)\neq\ud)\wedge(childless_F(\pi))\\  
-&{}=\ud &\mbox{otherwise.}\\
-remove(\pi)F&{}=F\{\pi\mapsto\ud\} 
-&\mbox{iff~}(F(\pi)\neq\ud)\wedge(childless_F(\pi))\\
-&{}=\ud &\mbox{otherwise.}\\
-breakF&{}=\ud &\mbox{for every $F$.}
-\end{array}\end{gather*}
-%\end{align}
-}}
-\end{forrsi}
-%%%%%%%%%% TAGS!
+
 We write \(\emptyseq\) for the empty sequence of commands.
 
