@@ -370,22 +370,38 @@ def SequenceFactory():
 
 
 for sq in SequenceFactory():
+
+    sq_rev = sq.getReverse()
+    print ""
+    print sq.info()
+    print sq_rev.info() # Reverse sequence
+    
+    extends = False
+    narrows = False
+    differs = False
+
     for fs in FilesystemFactory():
-        print ""
-        print fs.info()
+        # print "   " + fs.info()
         
         # Investigate the original sequence
-        print "    " + sq.info()
         fs_res = fs.clone()
         fs_res.applySequence(sq)
-        print "  " + fs_res.info()
+        # print "  " + fs_res.info()
         
         # Investigate the reverse sequence
-        sq_rev = sq.getReverse()
-        print "    " + sq_rev.info()
         fs_rev_res = fs.clone()
         fs_rev_res.applySequence(sq_rev)
-        print "  " + fs_rev_res.info()
+        # print "  " + fs_rev_res.info()
         
-        print ("SAME" if fs_res.isSame(fs_rev_res) else "DIFFERENT")
+        if not fs_res.isSame(fs_rev_res):
+            if fs_res.isBroken():
+                extends = True
+            elif fs_rev_res.isBroken():
+                narrows = True
+            else:
+                differs = True
+        
+            # print ("SAME" if fs_res.isSame(fs_rev_res) else "DIFFERENT")
+            
+    print "::" + ("EXTENDS " if extends else "") + ("NARROWS " if narrows else "") + ("DIFFERS " if differs else "")
         
