@@ -166,6 +166,7 @@ DIRECT_CHILD       = 'DirectChild'       # p2 is the child of p2
 DIRECT_CHILD_ONLY  = 'DirectChildOnly'   # p2 is the child of p1 and p2 is the only child
 SEPARATE           = 'Separate'          # all other cases
 
+SAME               = 'Same'              # two paths are the same (used for command pairs)
 
 class Filesystem:
     """Models a filesystem focusing on two paths to emulate the results of commands
@@ -285,6 +286,7 @@ class Filesystem:
         sequence.map(lambda x: self.applyCommand(x))
 
 
+# TODO Specify relationship
 def FilesystemFactory():
     yield Filesystem(Node(broken=True), Node(broken=True), SEPARATE)
     for rel in [SEPARATE, DIRECT_CHILD, DIRECT_CHILD_ONLY, DIRECT_PARENT, DIRECT_PARENT_ONLY]:
@@ -361,12 +363,43 @@ class Sequence:
         return map(func, self.commands)
 
 
-# TODO add commands on same paths? (but will never have them from update detector)
-def SequenceFactory():
-    """Constructs all 2-long sequences"""
+
+class CommandPair(Sequence):
+    """ Represents a pair of commands
+   
+    see parent class
+    rel = DIRECT_PARENT or DIRECT_PARENT_ONLY or DIRECT_CHILD or DIRECT_CHILD_ONLY or SEPARATE or SAME
+    """
+    # There is no need to consider any other relationship, e.g. when one path is a parent,
+    # but not a direct parent of the other one, as unless there is a direct relationship,
+    # the command on one path is not going to change the environment of the other.
+
+    def __init__(self, command1, command2, rel):
+        self.commands = [command1, command2]
+        self.rel = rel
+
+    def getReverse(self):
+        tmp = Sequence.getReverse(self)
+        if self.rel == DIRECT_PARENT:
+            tmp.rel = DIRECT_CHILD
+        elif self.rel == DIRECT_PARENT_ONLY
+            tmp.rel = DIRECT_CHILD_ONLY
+        elif self.rel == DIRECT_CHILD
+            tmp.rel = DIRECT_PARENT
+        elif self.rel == DIRECT_CHILD_ONLY
+            tmp.rel = DIRECT_PARENT_ONLY
+        else
+            tmp.rel = SAME
+
+
+def CommandPairFactory():
+    """Constructs all 2-long command sequences"""
     for c1 in CommandFactory(PATH1, 'New1'):
-        for c2 in CommandFactory(PATH2, 'New2'):
-            yield Sequence([c1, c2])
+        for rel in [SEPARATE, DIRECT_CHILD, DIRECT_CHILD_ONLY, DIRECT_PARENT, DIRECT_PARENT_ONLY]:
+            for c2 in CommandFactory(PATH2, 'New2'):
+                yield CommandPair(c1, c2, rel)
+        for c2 in CommandFactory(PATH1, 'New2');
+            yield CommandPair(c1, c2, SAME);
 
 
 for sq in SequenceFactory():
