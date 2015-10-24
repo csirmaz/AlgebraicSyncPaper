@@ -195,7 +195,7 @@ class Filesystem:
         if self.rel == DIRECT_PARENT:
             return self.p2.info(debug) + " ~~~<> " + self.p1.info(debug)
         if self.rel == DIRECT_PARENT_ONLY:
-            return self.p2.info(debug) + " ~~~>> " + self.p1.info(debug)        
+            return self.p2.info(debug) + " ~~~>> " + self.p1.info(debug)
     
     def clone(self):
         return self.__class__(self.p1.clone(), self.p2.clone(), self.rel)
@@ -286,15 +286,13 @@ class Filesystem:
         sequence.map(lambda x: self.applyCommand(x))
 
 
-# TODO Specify relationship
-def FilesystemFactory():
-    yield Filesystem(Node(broken=True), Node(broken=True), SEPARATE)
-    for rel in [SEPARATE, DIRECT_CHILD, DIRECT_CHILD_ONLY, DIRECT_PARENT, DIRECT_PARENT_ONLY]:
-        for p1_source in NodeFactory('Old1'):
-            for p2 in NodeFactory('Old2'):
-                fs = Filesystem(p1_source.clone(), p2, rel)  # the constructor may break the p1 node, so we need to clone
-                if not fs.isBroken():
-                    yield fs
+def FilesystemFactory(rel):
+    yield Filesystem(Node(broken=True), Node(broken=True), rel)
+    for p1_source in NodeFactory('Old1'):
+        for p2 in NodeFactory('Old2'):
+            fs = Filesystem(p1_source.clone(), p2, rel)  # the constructor may break the p1 node, so we need to clone
+            if not fs.isBroken():
+                yield fs
 
 
 # Constants for Command.path:
@@ -354,10 +352,13 @@ class Sequence:
         """Returns human-readable information about the object"""
         return "; ".join(map(lambda x: x.info(debug), self.commands))
         
+    def clone(self):
+        return self.__class__(self.commands[:])
+        
     def getReverse(self):
-        tmp = self.commands[:]
-        tmp.reverse()
-        return self.__class__(tmp)
+        tmp = self.clone()
+        tmp.commands.reverse()
+        return tmp
         
     def map(self, func):
         return map(func, self.commands)
@@ -377,19 +378,39 @@ class CommandPair(Sequence):
     def __init__(self, command1, command2, rel):
         self.commands = [command1, command2]
         self.rel = rel
+        
+    def info(self, debug=False):
+        """Returns human-readable information about the object"""
+        if self.rel == SEPARATE:
+            return self.commands[0].info(debug) + " ==x== " + self.commands[1].info(debug)
+        if self.rel == DIRECT_CHILD:
+            return self.commands[0].info(debug) + " ===<> " + self.commands[1].info(debug)
+        if self.rel == DIRECT_CHILD_ONLY:
+            return self.commands[0].info(debug) + " ===>> " + self.commands[1].info(debug)
+        if self.rel == DIRECT_PARENT:
+            return self.commands[0].info(debug) + " <>=== " + self.commands[1].info(debug)
+        if self.rel == DIRECT_PARENT_ONLY:
+            return self.commands[0].info(debug) + " <<=== " + self.commands[1].info(debug)
+        if self.rel == SAME:
+            return self.commands[0].info(debug) + " = = = " + self.commands[1].info(debug)
+        
+    def clone(self):
+        return self.__class__(self.commands[0], self.commands[1], self.rel)
+        
+    def getRelationship(self):
+        return self.rel
 
     def getReverse(self):
         tmp = Sequence.getReverse(self)
         if self.rel == DIRECT_PARENT:
             tmp.rel = DIRECT_CHILD
-        elif self.rel == DIRECT_PARENT_ONLY
+        elif self.rel == DIRECT_PARENT_ONLY:
             tmp.rel = DIRECT_CHILD_ONLY
-        elif self.rel == DIRECT_CHILD
+        elif self.rel == DIRECT_CHILD:
             tmp.rel = DIRECT_PARENT
-        elif self.rel == DIRECT_CHILD_ONLY
+        elif self.rel == DIRECT_CHILD_ONLY:
             tmp.rel = DIRECT_PARENT_ONLY
-        else
-            tmp.rel = SAME
+        return tmp
 
 
 def CommandPairFactory():
@@ -398,33 +419,49 @@ def CommandPairFactory():
         for rel in [SEPARATE, DIRECT_CHILD, DIRECT_CHILD_ONLY, DIRECT_PARENT, DIRECT_PARENT_ONLY]:
             for c2 in CommandFactory(PATH2, 'New2'):
                 yield CommandPair(c1, c2, rel)
-        for c2 in CommandFactory(PATH1, 'New2');
+        for c2 in CommandFactory(PATH1, 'New2'):
             yield CommandPair(c1, c2, SAME);
 
 
-for sq in SequenceFactory():
+for sq in CommandPairFactory():
 
-    sq_rev = sq.getReverse()
+    sq_rev = sq.getReverse() # Reverse sequence
     print ""
     print sq.info()
-    print sq_rev.info() # Reverse sequence
-    
-    extends = False
-    narrows = False
-    differs = False
+    print sq_rev.info()
 
-    for fs in FilesystemFactory():
-        # print "   " + fs.info()
+    works = False # Whether there are filesystems which sq doesn't break
+    rev_works = False # Whether there are filesystems which sq_rev doesn't break
+    both_work = False # Whether there are filesystems on which both sq and sq_rev work
+    extends = False # Whether there are filesystems on which sq doesn't work but sq_rev does
+    narrows = False # Whether there are filesystems on which sq works but sq_rev doesn't
+    differs = False # Whether there are filesystems on which sq and sq_rev work but have different results
+    
+    fs_rel = sq.getRelationship()
+    if fs_rel == SAME:
+        fs_rel = SEPARATE
+
+    for fs in FilesystemFactory(fs_rel):
+        # print "  " + fs.info()
         
         # Investigate the original sequence
         fs_res = fs.clone()
         fs_res.applySequence(sq)
-        # print "  " + fs_res.info()
+        # print "    " + fs_res.info()
         
         # Investigate the reverse sequence
         fs_rev_res = fs.clone()
         fs_rev_res.applySequence(sq_rev)
-        # print "  " + fs_rev_res.info()
+        # print "    " + fs_rev_res.info()
+        
+        if not fs_res.isBroken():
+            works = True
+            
+        if not fs_rev_res.isBroken():
+            rev_works = True
+            
+        if (not fs_res.isBroken()) and (not fs_rev_res.isBroken()):
+            both_work = True
         
         if not fs_res.isSame(fs_rev_res):
             if fs_res.isBroken():
@@ -435,6 +472,9 @@ for sq in SequenceFactory():
                 differs = True
         
             # print ("SAME" if fs_res.isSame(fs_rev_res) else "DIFFERENT")
-            
-    print "::" + ("EXTENDS " if extends else "") + ("NARROWS " if narrows else "") + ("DIFFERS " if differs else "")
+    
+    if works:
+        print "::" + ("EXTENDS " if extends else "") + ("NARROWS " if narrows else "") + ("DIFFERS " if differs else "") + ("REV-BREAKS " if not rev_works else "") + ("DISJUNCT " if not both_work else "")
+    else:
+        print "::BREAKS"
         
