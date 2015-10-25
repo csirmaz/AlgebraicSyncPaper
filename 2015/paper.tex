@@ -15,10 +15,23 @@
 \newcommand{\setv}{\mathcal{V}}
 \newcommand{\setf}{\mathcal{V}_F}
 \newcommand{\setd}{\mathcal{V}_D}
+\newcommand{\setb}{\mathcal{V}_\empt}
 \newcommand{\setp}{\mathcal{P}}
 \newcommand{\empt}{\bot}
 \newcommand{\parent}{\mathtt{parent}}
-\newcommand{\FS}{\mathrm{FS}}
+\newcommand{\FS}{\Phi} % {\mathrm{FS}}
+
+\newcommand{\cbrk}{\mathtt{break}}
+\newcommand{\cbb}{\overrightarrow{\empt\empt}}
+\newcommand{\cbf}{\overrightarrow{\empt{F}}}
+\newcommand{\cbd}{\overrightarrow{\empt{D}}}
+\newcommand{\cfb}{\overrightarrow{F\empt}}
+\newcommand{\cff}{\overrightarrow{FF}}
+\newcommand{\cfd}{\overrightarrow{FD}}
+\newcommand{\cdb}{\overrightarrow{D\empt}}
+\newcommand{\cdf}{\overrightarrow{DF}}
+\newcommand{\cdd}{\overrightarrow{DD}}
+\newcommand{\cxy}{\overrightarrow{XY}}
 
 \title{Real-Life Algebraic File Synchronization}
 
@@ -31,7 +44,7 @@ Abstract goes here
 
 \section{Definition of a Filesystem}
 
-We model a filesystem using a function with a set of paths $\setp$ as its domain,
+We model a filesystem using a function $\FS$ with a set of paths $\setp$ as its domain,
 and a set of possible contents $\setv$ as its codomain:
 \[ \FS : \setp \rightarrow \setv \] 
 In our model, $\setp$ contains all possible paths, and $\setv$ contains a special
@@ -48,17 +61,20 @@ which we model using the function $\parent$, which returns the parent path
 or $\empt$ if the path is a root path:
 \[ \parent : \setp \rightarrow \setp \cup \{\empt\} \]
 
-Moreover, in $\setv$ we distinguish between files ($\setf$) and directories ($\setd$), that is:
-\[ \setv = \{\empt\} \cup \setf \cup \setd \]
+Moreover, in $\setv$ we distinguish between files ($\setf$) and directories ($\setd$), that is,
+if $\setb = \{\empt\}$ then:
+\[ \setv = \setb \cup \setf \cup \setd \]
 The tree propety can then be defined as
 \[ \forall \FS : \forall p\in\setp : \FS(p) \neq \empt \wedge \parent(p) \neq \empt \Rightarrow \FS(\parent(p)) \in \setd \]
 
 % diagram
+% /> D ---> F ---> BOT <\
+% \--/               \--/
 
 In this paper, we write $F$ for an arbitrary element of $\setf$, and $D$ for an arbitrary element
 of $\setd$. $V$ is usually a value from $\setv$ and $p$ is a path in $\setp$.
 
-\section{Commands and Sequences}
+\section{Commands}
 
 Next we need to define instructions or commands on the filesystem about which we will reason
 using our algebra.
@@ -76,13 +92,60 @@ of potential filesystems on which they can meaningfully operate.
 
 Let us consider what kind of information may be encoded in the commands.
 A usual set of commands, based on the most frequent tools implemented by filesystems,
-might be $create(p,V)$, $edit(p,V)$ and $remove(p,V)$ where $p\in\setp$ and $V\in\setv$.
+might be $create(p,V)$, $edit(p,V)$ and $remove(p)$ where $p\in\setp$ and $V\in\setv$.
 Clearly the commands need to contain information about the state they leave the filesystem
 in at the path on which they operate, that is, they need to contain the ``end'' value, $V$.
 Notice, however, that the commands above also encode some information about the filesystem
 {\it before} the command is applied; namely, $create$ requires that there are no files
 or directories at $p$, while $edit$ and $remove$ require the opposite.
 
+We also know that after $create$ or $edit$, $\FS(p)\neq\empt$, whereas after $remove$,
+$\FS(p)$ will be $\empt$. However, from \cite{NREC:alg} we know that a useful set of axioms
+will need to distinguish between edits that result in directories ($edit(p,D)$) and
+ones that result in files ($edit(p,F)$). This creates a seemingly arbitrary asymmetry where
+there is more information encoded into commands about their results than about the
+original state of the filesystem.
+
+In line with the aim to encode in commands as much information as possible,
+and in order to resolve this asymmetry, we propose a set of commands that encode
+the type of the original state of $\FS(p)$ as well.
+(Some real-life filesystem commands like $mkdir$ or $rmdir$ do this already.)
+Please note that there is never any need to encode information about the
+{\it exact} value of path $p$ in a command, merely its type ($D$, $F$ or $\empt$),
+as the success or failure of subsequent commands only depend on the type of the value.
+
+We therefore propose to have a command for each pair of types.
+For want of a better system, we will simply name our commands by concatenating
+two of $D$, $F$ and $\empt$ with an arrow, where the left sign notes the type of value
+in the filesystem before the command is applied, and the right sign notes the type
+afterwards. For example, $mkdir(p,D)$ is $\cbd(p,D)$ and $rmdir(p)$ is $\cdb(p)$.
+
 % No "move"
+
+\section{Applying Commands}
+
+The commands can only succeed if the original value at $p$ has a type that matches
+the type required by a command. If this is not the case, or if the resulting
+filesystem no longer has the tree property, then we say that the command
+\textbf{breaks} the filesystem. Broken filesystems are considered equal
+(but not equal to any working filesystem), and we note them by $\FS=\empt$.
+
+So that we could reason about sequences of commands that break every filesystem
+in the algebra, we introduce the command $\cbrk$ that simply breaks every filesystem.
+We note that a command or a sequence of commands $S$ is applied to a filesystem
+by prefixing the command or sequence to it:
+$S\FS$; or $\cbrk\FS=\empt$; or $\Xi = \cff(p,F)\FS$, for which $\Xi(p)=F$ holds
+and $\Xi(q)=\FS(q)$ for any path $q\neq p$.
+
+\section{Sequences of Commands}
+
+
+
+\begin{thebibliography}{99}
+
+\bibitem{NREC:alg} Ramsey, Norman and Elod Csirmaz: {\it An algebraic approach to
+file synchronization...}
+
+\end{thebibliography}
 
 \end{document}
