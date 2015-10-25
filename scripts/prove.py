@@ -415,10 +415,11 @@ class CommandPair(Sequence):
 
 def CommandPairFactory():
     """Constructs all 2-long command sequences"""
-    for c1 in CommandFactory(PATH1, 'New1'):
-        for rel in [SEPARATE, DIRECT_CHILD, DIRECT_CHILD_ONLY, DIRECT_PARENT, DIRECT_PARENT_ONLY]:
+    for rel in [SEPARATE, DIRECT_CHILD, DIRECT_CHILD_ONLY, DIRECT_PARENT, DIRECT_PARENT_ONLY]:
+        for c1 in CommandFactory(PATH1, 'New1'):
             for c2 in CommandFactory(PATH2, 'New2'):
                 yield CommandPair(c1, c2, rel)
+    for c1 in CommandFactory(PATH1, 'New1'):
         for c2 in CommandFactory(PATH1, 'New2'):
             yield CommandPair(c1, c2, SAME);
 
@@ -426,9 +427,9 @@ def CommandPairFactory():
 for sq in CommandPairFactory():
 
     sq_rev = sq.getReverse() # Reverse sequence
-    print ""
-    print sq.info()
-    print sq_rev.info()
+    # print ""
+    # print sq.info()
+    # print sq_rev.info()
 
     works = False # Whether there are filesystems which sq doesn't break
     rev_works = False # Whether there are filesystems which sq_rev doesn't break
@@ -474,7 +475,10 @@ for sq in CommandPairFactory():
             # print ("SAME" if fs_res.isSame(fs_rev_res) else "DIFFERENT")
     
     if works:
-        print "::" + ("EXTENDS " if extends else "") + ("NARROWS " if narrows else "") + ("DIFFERS " if differs else "") + ("REV-BREAKS " if not rev_works else "") + ("DISJUNCT " if not both_work else "")
+        if rev_works:
+            print sq.info() + " ::" + ("EXTENDS " if extends else "") + ("NARROWS " if narrows else "") + ("DIFFERS " if differs else "") + ("DISJUNCT " if not both_work else "")
+        else:
+            print sq.info() + " ::REV_BREAKS"
     else:
-        print "::BREAKS"
+        print sq.info() + " ::BREAKS"
         
