@@ -1,0 +1,88 @@
+\documentclass[12pt]{article}
+
+\usepackage{alltt}
+\usepackage{comment}
+\usepackage{multicol}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{setspace}
+\usepackage{fullpage}
+\usepackage{graphicx}
+\usepackage{boxedminipage}
+\usepackage{afterpage}
+
+\newcommand{\setv}{\mathcal{V}}
+\newcommand{\setf}{\mathcal{V}_F}
+\newcommand{\setd}{\mathcal{V}_D}
+\newcommand{\setp}{\mathcal{P}}
+\newcommand{\empt}{\bot}
+\newcommand{\parent}{\mathtt{parent}}
+\newcommand{\FS}{\mathrm{FS}}
+
+\title{Real-Life Algebraic File Synchronization}
+
+\author{Elod Pal Csirmaz}
+
+\begin{document}
+\begin{abstract}
+Abstract goes here
+\end{abstract}
+
+\section{Definition of a Filesystem}
+
+We model a filesystem using a function with a set of paths $\setp$ as its domain,
+and a set of possible contents $\setv$ as its codomain:
+\[ \FS : \setp \rightarrow \setv \] 
+In our model, $\setp$ contains all possible paths, and $\setv$ contains a special
+element, $\empt$, which is the value of $FS$ at paths where there are no files
+or directories.
+We consider the contents of files, as well as any meta-information on files
+and directories (e.g. permissions or flags) part of the values in $\setv$.
+
+Every filesystem has a so-called \textbf{tree property}, which means that
+if the filesystem is not empty at a path, and it is not a root path,
+then it must have a directory at the path's parent.
+This requires that a parent--child relationship is defined over $\setp$,
+which we model using the function $\parent$, which returns the parent path
+or $\empt$ if the path is a root path:
+\[ \parent : \setp \rightarrow \setp \cup \{\empt\} \]
+
+Moreover, in $\setv$ we distinguish between files ($\setf$) and directories ($\setd$), that is:
+\[ \setv = \{\empt\} \cup \setf \cup \setd \]
+The tree propety can then be defined as
+\[ \forall \FS : \forall p\in\setp : \FS(p) \neq \empt \wedge \parent(p) \neq \empt \Rightarrow \FS(\parent(p)) \in \setd \]
+
+% diagram
+
+In this paper, we write $F$ for an arbitrary element of $\setf$, and $D$ for an arbitrary element
+of $\setd$. $V$ is usually a value from $\setv$ and $p$ is a path in $\setp$.
+
+\section{Commands and Sequences}
+
+Next we need to define instructions or commands on the filesystem about which we will reason
+using our algebra.
+We will aim to draw conclusions or judgements about commands and sequences of commands
+based on the algebra we are aiming to construct.
+For example, if we believe that two sequences of commands are equivalent as their effect
+is the same, then we aim to be able to derive this from the axioms and inference rules of the
+algebra.
+As the algebra operates on commands only,
+these judgements, by definition, need to hold regardless of the filesystem the commands are applied to.
+Accordingly, we expect that the more information one encodes into the commands and the sequences,
+the better predicitons we will be able to make using our algebra,
+as then the commands and sequences will be more specific, and will select a smaller subset
+of potential filesystems on which they can meaningfully operate.
+
+Let us consider what kind of information may be encoded in the commands.
+A usual set of commands, based on the most frequent tools implemented by filesystems,
+might be $create(p,V)$, $edit(p,V)$ and $remove(p,V)$ where $p\in\setp$ and $V\in\setv$.
+Clearly the commands need to contain information about the state they leave the filesystem
+in at the path on which they operate, that is, they need to contain the ``end'' value, $V$.
+Notice, however, that the commands above also encode some information about the filesystem
+{\it before} the command is applied; namely, $create$ requires that there are no files
+or directories at $p$, while $edit$ and $remove$ require the opposite.
+
+% No "move"
+
+\end{document}
