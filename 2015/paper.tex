@@ -13,13 +13,15 @@
 \usepackage{afterpage}
 
 \newcommand{\setv}{\mathcal{V}}
-\newcommand{\setf}{\mathcal{V}_F}
-\newcommand{\setd}{\mathcal{V}_D}
-\newcommand{\setb}{\mathcal{V}_\empt}
+\newcommand{\setvx}[1]{\mathcal{V}_{#1}}
+\newcommand{\setf}{\setvx{F}}
+\newcommand{\setd}{\setvx{D}}
+\newcommand{\setb}{\setvx{\empt}}
 \newcommand{\setp}{\mathcal{P}}
 \newcommand{\empt}{\bot}
 \newcommand{\parent}{\mathtt{parent}}
 \newcommand{\FS}{\Phi} % {\mathrm{FS}}
+\newcommand{\GS}{\Xi} % another filesystem
 
 \newcommand{\cbrk}{\mathtt{break}}
 \newcommand{\cbb}{\overrightarrow{\empt\empt}}
@@ -32,15 +34,24 @@
 \newcommand{\cdf}{\overrightarrow{DF}}
 \newcommand{\cdd}{\overrightarrow{DD}}
 \newcommand{\cxy}{\overrightarrow{XY}}
+\newcommand{\czw}{\overrightarrow{ZW}}
 
 \title{Real-Life Algebraic File Synchronization}
 
 \author{Elod Pal Csirmaz}
 
 \begin{document}
+\maketitle
 \begin{abstract}
 Abstract goes here
 \end{abstract}
+
+\section{Introduction}
+
+% Synchronization:
+% Main aim: apply updates (where possible) from other replicas
+% update detection -> conflict detection -> merging updates -> ordering updates -> apply updates from other replicas
+% Problems: conflict detection, ordering
 
 \section{Definition of a Filesystem}
 
@@ -92,7 +103,7 @@ of potential filesystems on which they can meaningfully operate.
 
 Let us consider what kind of information may be encoded in the commands.
 A usual set of commands, based on the most frequent tools implemented by filesystems,
-might be $create(p,V)$, $edit(p,V)$ and $remove(p)$ where $p\in\setp$ and $V\in\setv$.
+might be $create(p,V)$, $edit(p,V)$ and $remove(p)$ where $p\in\setp$ and $V\in\setv$ (but $V\neq\empt$).
 Clearly the commands need to contain information about the state they leave the filesystem
 in at the path on which they operate, that is, they need to contain the ``end'' value, $V$.
 Notice, however, that the commands above also encode some information about the filesystem
@@ -118,9 +129,9 @@ We therefore propose to have a command for each pair of types.
 For want of a better system, we will simply name our commands by concatenating
 two of $D$, $F$ and $\empt$ with an arrow, where the left sign notes the type of value
 in the filesystem before the command is applied, and the right sign notes the type
-afterwards. For example, $mkdir(p,D)$ is $\cbd(p,D)$ and $rmdir(p)$ is $\cdb(p)$.
+afterwards. For example $mkdir(p,D)$ is $\cbd(p,D)$ and $rmdir(p)$ is $\cdb(p)$.
 
-% No "move"
+% TODO No "move"
 
 \section{Applying Commands}
 
@@ -134,11 +145,43 @@ So that we could reason about sequences of commands that break every filesystem
 in the algebra, we introduce the command $\cbrk$ that simply breaks every filesystem.
 We note that a command or a sequence of commands $S$ is applied to a filesystem
 by prefixing the command or sequence to it:
-$S\FS$; or $\cbrk\FS=\empt$; or $\Xi = \cff(p,F)\FS$, for which $\Xi(p)=F$ holds
-and $\Xi(q)=\FS(q)$ for any path $q\neq p$.
+\begin{itemize}
+\item $S\FS$
+\item $\cbrk\FS=\empt$
+\item $\cff(p,F)\FS = \GS$, for which $\GS(p)=F$ holds
+and $\GS(q)=\FS(q)$ for any path $q\neq p$.
+\end{itemize}
 
 \section{Sequences of Commands}
 
+We aim to use our algebra to define and implement algorithms for conflict detection
+and ordering updates (commands) before we can apply them to all replicas.
+Conflicts and ordering all happen between commands, therefore in our algebra
+we will reason about sequences of commands, 
+and do so based on a set of axioms about pairs of neighbouring commands.
+We are interested to see what pairs of commands can be simplified or reversed
+in order to see under what circumstances commands conflict or can be reordered.
+
+Pairs of commands in general will have the form
+\[ \cxy(p,V_Y) \czw(q,V_W) \]
+where $X,Y,Z,W\in\{D,F,\empt\}$, $p,q\in\setp$, and values are of the appropriate type: $V_Y\in\setvx{Y}$ and $V_W\in\setvx{W}$
+(although commands where $Y=\empt$ or $W=\empt$ do not require a value).
+
+Similarly to the case of commands, in \cite{NREC:alg} we found that in order to build
+a set of axioms in a sound and complete algebra we at times needed to take into account
+the relationship between the paths of the commands in the pair, $p$ and $q$.
+As the relationship between the paths determine how the commands affect the filesystem
+and its tree property, 
+and again in line with the aim of providing as much information as possible for the algebra,
+we encoded this relationship in the pair of commands. The possible relationships we
+need to take into account are as follows.
+
+\begin{itemize}
+\item $p=q$.
+\item $\parent(p)=q$ and $\parent(q)=p$. We know that 
+\item Only child
+\item separate
+\end{itemize}
 
 
 \begin{thebibliography}{99}
