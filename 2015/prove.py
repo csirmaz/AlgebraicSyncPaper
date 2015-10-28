@@ -31,6 +31,10 @@ class Content:
         
     def getType(self):
         return self.type
+    
+    def getValue(self):
+        if self.isEmpty(): return 'Unknown'
+        return self.value
         
     def isDir(self):
         return (self.type == DIR)
@@ -411,6 +415,9 @@ class CommandPair(Sequence):
         elif self.rel == DIRECT_CHILD_ONLY:
             tmp.rel = DIRECT_PARENT_ONLY
         return tmp
+    
+    def getLast(self):
+        return self.commands[1]
 
 
 def CommandPairFactory():
@@ -423,41 +430,69 @@ def CommandPairFactory():
         for c2 in CommandFactory(PATH1, 'New2'):
             yield CommandPair(c1, c2, SAME);
 
+# We test command pairs and aim to answer the following questions:
+# - Will the pair break all filesystems?
+# - If not, can the pair be substituted by a single command?
+# - If not, can the pair be reversed?
 
 for sq in CommandPairFactory():
 
-    sq_rev = sq.getReverse() # Reverse sequence
-    # print ""
-    # print sq.info()
+    fs_rel = sq.getRelationship()
+    if fs_rel == SAME:
+        fs_rel = SEPARATE
+        
+    # Does it break all filesystems?
+    for fs in FilesystemFactory(fs_rel):
+        fs.applySequence(sq)
+        if not fs.isBroken():
+            break # skips "else" below
+    else:
+        print sq.info() + " == break"
+        continue
+
+    # Try to find a single command with the same effect
+    # We know this is only possible, if the pair does not break all filesystems,
+    # if the two commands affect the same path.
+    if sq.getRelationship() == SAME:
+        for command in CommandFactory(sq.getLast().getPath(), sq.getLast().getEnd().getValue()):
+            for fs in FilesystemFactory(fs_rel):
+                # Apply the original sequence
+                fs_res = fs.clone()
+                fs_res.applySequence(sq)
+                # Apply the single command
+                fs_single = fs.clone()
+                fs_single.applyCommand(command)
+                if not fs_res.isSame(fs_single):
+                    break # skips "else" below
+            else: # found a suitable command
+                print sq.info() + " == " + command.info()
+                break
+        
+
+    # Reverse sequence
+    sq_rev = sq.getReverse()
     # print sq_rev.info()
 
-    works = False # Whether there are filesystems which sq doesn't break
     rev_works = False # Whether there are filesystems which sq_rev doesn't break
     both_work = False # Whether there are filesystems on which both sq and sq_rev work
     extends = False # Whether there are filesystems on which sq doesn't work but sq_rev does
     narrows = False # Whether there are filesystems on which sq works but sq_rev doesn't
     differs = False # Whether there are filesystems on which sq and sq_rev work but have different results
     
-    fs_rel = sq.getRelationship()
-    if fs_rel == SAME:
-        fs_rel = SEPARATE
-
     for fs in FilesystemFactory(fs_rel):
         # print "  " + fs.info()
         
-        # Investigate the original sequence
+        # Apply the original sequence
         fs_res = fs.clone()
         fs_res.applySequence(sq)
         # print "    " + fs_res.info()
         
-        # Investigate the reverse sequence
+        
+        # Apply the reverse sequence
         fs_rev_res = fs.clone()
         fs_rev_res.applySequence(sq_rev)
         # print "    " + fs_rev_res.info()
         
-        if not fs_res.isBroken():
-            works = True
-            
         if not fs_rev_res.isBroken():
             rev_works = True
             
@@ -474,11 +509,8 @@ for sq in CommandPairFactory():
         
             # print ("SAME" if fs_res.isSame(fs_rev_res) else "DIFFERENT")
     
-    if works:
-        if rev_works:
-            print sq.info() + " ::" + ("EXTENDS " if extends else "") + ("NARROWS " if narrows else "") + ("DIFFERS " if differs else "") + ("DISJUNCT " if not both_work else "")
-        else:
-            print sq.info() + " ::REV_BREAKS"
+    if rev_works:
+        print sq.info() + " ::" + ("EXTENDS " if extends else "") + ("NARROWS " if narrows else "") + ("DIFFERS " if differs else "") + ("DISJUNCT " if not both_work else "")
     else:
-        print sq.info() + " ::BREAKS"
+        print sq.info() + " ::REV_BREAKS"
         
