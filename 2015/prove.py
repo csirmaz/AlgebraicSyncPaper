@@ -1,7 +1,7 @@
 
 
 # Constants for Content.type:
-DIR   = 'Dir'
+DIR   = ' Dir'
 FILE  = 'File'
 EMPTY = 'Empty'
 
@@ -208,6 +208,12 @@ class Filesystem:
         if self.isBroken() and fs.isBroken(): return True
         if self.isBroken() or fs.isBroken(): return False
         return (self.p1.isSame(fs.p1) and self.p2.isSame(fs.p2) and self.rel == fs.rel)
+        
+    def isExtendedBy(self, fs):
+        """Returns true if self is broken but fs is not, or the are the same"""
+        if self.isBroken(): return True
+        if fs.isBroken(): return False
+        return (self.p1.isSame(fs.p1) and self.p2.isSame(fs.p2) and self.rel == fs.rel)
     
     def isBroken(self):
         return (self.p1.isBroken() or self.p2.isBroken())
@@ -339,8 +345,7 @@ class Command:
 def CommandFactory(path, value):
     for c1 in ContentFactory('N/A'):
         for c2 in ContentFactory(value):
-            if not(c1.isEmpty() and c2.isEmpty()):
-                yield Command(path, c1, c2)
+            yield Command(path, c1, c2)
 
 
 class Sequence:
@@ -386,17 +391,17 @@ class CommandPair(Sequence):
     def info(self, debug=False):
         """Returns human-readable information about the object"""
         if self.rel == SEPARATE:
-            return self.commands[0].info(debug) + " ==x== " + self.commands[1].info(debug)
+            return self.commands[0].info(debug) + " -x- " + self.commands[1].info(debug)
         if self.rel == DIRECT_CHILD:
-            return self.commands[0].info(debug) + " ===<> " + self.commands[1].info(debug)
+            return self.commands[0].info(debug) + " -<> " + self.commands[1].info(debug)
         if self.rel == DIRECT_CHILD_ONLY:
-            return self.commands[0].info(debug) + " ===>> " + self.commands[1].info(debug)
+            return self.commands[0].info(debug) + " ->> " + self.commands[1].info(debug)
         if self.rel == DIRECT_PARENT:
-            return self.commands[0].info(debug) + " <>=== " + self.commands[1].info(debug)
+            return self.commands[0].info(debug) + " <>- " + self.commands[1].info(debug)
         if self.rel == DIRECT_PARENT_ONLY:
-            return self.commands[0].info(debug) + " <<=== " + self.commands[1].info(debug)
+            return self.commands[0].info(debug) + " <<- " + self.commands[1].info(debug)
         if self.rel == SAME:
-            return self.commands[0].info(debug) + " = = = " + self.commands[1].info(debug)
+            return self.commands[0].info(debug) + " --- " + self.commands[1].info(debug)
         
     def clone(self):
         return self.__class__(self.commands[0], self.commands[1], self.rel)
@@ -434,6 +439,7 @@ def CommandPairFactory():
 # - Will the pair break all filesystems?
 # - If not, can the pair be substituted by a single command?
 # - If not, can the pair be reversed?
+# We are also interested in substitutions that extend the domain of the sequence.
 
 for sq in CommandPairFactory():
 
@@ -445,16 +451,19 @@ for sq in CommandPairFactory():
     for fs in FilesystemFactory(fs_rel):
         fs.applySequence(sq)
         if not fs.isBroken():
-            break # skips "else" below
-    else:
-        print sq.info() + " == break"
+            break # Skips "else" below
+    else: # If none is broken
+        print sq.info() + " \t== break"
         continue
 
     # Try to find a single command with the same effect
     # We know this is only possible, if the pair does not break all filesystems,
     # if the two commands affect the same path.
+    canSimplify = False
     if sq.getRelationship() == SAME:
         for command in CommandFactory(sq.getLast().getPath(), sq.getLast().getEnd().getValue()):
+            simplifiesEq = True  # Whether command is equivalent to sq on all filesystems
+            simplifiesExt = True # Whether command extends sq
             for fs in FilesystemFactory(fs_rel):
                 # Apply the original sequence
                 fs_res = fs.clone()
@@ -462,55 +471,38 @@ for sq in CommandPairFactory():
                 # Apply the single command
                 fs_single = fs.clone()
                 fs_single.applyCommand(command)
-                if not fs_res.isSame(fs_single):
-                    break # skips "else" below
-            else: # found a suitable command
-                print sq.info() + " == " + command.info()
-                break
-        
+                if not fs_res.isSame(fs_single): simplifiesEq = False
+                if not fs_res.isExtendedBy(fs_single): simplifiesExt = False
+            if simplifiesEq:
+                canSimplify = True
+                print sq.info() + " \t== " + command.info()
+            elif simplifiesExt:
+                canSimplify = True
+                print sq.info() + " \t=[ " + command.info()
+    
+    if canSimplify: continue
 
     # Reverse sequence
     sq_rev = sq.getReverse()
     # print sq_rev.info()
-
-    rev_works = False # Whether there are filesystems which sq_rev doesn't break
-    both_work = False # Whether there are filesystems on which both sq and sq_rev work
-    extends = False # Whether there are filesystems on which sq doesn't work but sq_rev does
-    narrows = False # Whether there are filesystems on which sq works but sq_rev doesn't
-    differs = False # Whether there are filesystems on which sq and sq_rev work but have different results
     
+    reverseEq = True
+    reverseExt = True
+
     for fs in FilesystemFactory(fs_rel):
-        # print "  " + fs.info()
-        
         # Apply the original sequence
         fs_res = fs.clone()
         fs_res.applySequence(sq)
-        # print "    " + fs_res.info()
-        
-        
         # Apply the reverse sequence
         fs_rev_res = fs.clone()
         fs_rev_res.applySequence(sq_rev)
-        # print "    " + fs_rev_res.info()
-        
-        if not fs_rev_res.isBroken():
-            rev_works = True
-            
-        if (not fs_res.isBroken()) and (not fs_rev_res.isBroken()):
-            both_work = True
-        
-        if not fs_res.isSame(fs_rev_res):
-            if fs_res.isBroken():
-                extends = True
-            elif fs_rev_res.isBroken():
-                narrows = True
-            else:
-                differs = True
-        
-            # print ("SAME" if fs_res.isSame(fs_rev_res) else "DIFFERENT")
+        if not fs_res.isSame(fs_rev_res): reverseEq = False
+        if not fs_res.isExtendedBy(fs_rev_res): reverseExt = False
+    if reverseEq:
+        print sq.info() + " \t== " + sq_rev.info()
+        continue
+    if reverseExt:
+        print sq.info() + " \t=[ " + sq_rev.info()
+        continue
     
-    if rev_works:
-        print sq.info() + " ::" + ("EXTENDS " if extends else "") + ("NARROWS " if narrows else "") + ("DIFFERS " if differs else "") + ("DISJUNCT " if not both_work else "")
-    else:
-        print sq.info() + " ::REV_BREAKS"
-        
+    print sq.info() + " \t(no rule)"
