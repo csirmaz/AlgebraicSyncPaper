@@ -7,26 +7,45 @@ EMPTY = 'Empty'
 
 
 class Content:
-    """Represents some content (value) at a given node
+    """Represents some content (value) at a given filesystem node
     
-    type = DIR or FILE or EMPTY
-    value = string
+    Private properties:
+        type (enum): DIR or FILE or EMPTY
+        value (str): an arbitrary string representing the contents
+        
     """
 
-    def __init__(self, type=EMPTY, value=0):
+    def __init__(self, type=EMPTY, value='Unknown'):
+        """Constructor
+        
+        Args:
+            type (Optional[enum]): DIR or FILE or EMPTY
+            value (Optional[str]): an arbitrary string representing the contents
+        
+        """
         self.type = type
         self.value = value
         
     def clone(self):
+        """Returns a deep clone of the object."""
         return self.__class__(self.type, self.value)
 
     def info(self, addvalue=True):
-        """Returns human-readable information about the object"""
+        """Returns human-readable information about the object.
+        
+        Args:
+            addvalue (Optional[bool]): whether to add the value to the output
+            
+        Returns:
+            str
+            
+        """
         r = self.type
         if not self.isEmpty() and addvalue: r += "(" + self.value + ")"
         return r
         
     def isSame(self, content):
+        """Returns whether the current object is the same as another instance of Content."""
         return (self.type == content.type and self.value == content.value)
         
     def getType(self):
@@ -37,17 +56,28 @@ class Content:
         return self.value
         
     def isDir(self):
+        """Returns whether the type of the object is 'diretory'."""
         return (self.type == DIR)
 
     def isFile(self):
+        """Returns whether the type of the object is 'file'."""
         return (self.type == FILE)
 
     def isEmpty(self):
+        """Returns whether the type of the object is 'empty'."""
         return (self.type == EMPTY)
 
 
 def ContentFactory(value='Unknown'):
-    """Constructs all possible contents"""
+    """Generates all possible contents.
+    
+    Args:
+        value (Optional[str]): the value of the content objects
+        
+    Yields:
+        All possible content objects
+        
+    """
     yield Content(EMPTY)
     yield Content(FILE, value)
     yield Content(DIR, value)
