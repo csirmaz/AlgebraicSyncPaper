@@ -1,6 +1,6 @@
 
 # TODO Documentation
-# TODO Check if empty sequence can replace pair
+# TODO Implement a version where there is only one directory value
 # TODO Implement 'broken' command
 
 # Constants for Content.type:
@@ -383,8 +383,10 @@ class Filesystem:
         command_path = command.getPath()
         new_content = command.getEnd()
 
-        # If we apply a command to the (direct) child path,
-        # then we may need to update the has_child flag of the parent
+        # We update the environments stored in the other node if needed.
+        # The node objects mark themselves as broken after any change
+        # if that violates the tree property. This is safe, however,
+        # as we apply only a single change to each path.
         if self.rel != SEPARATE:
             if self.rel in [DIRECT_CHILD, DIRECT_CHILD_ONLY]:
                 childpath = PATH2
@@ -533,35 +535,48 @@ class Sequence:
         return "; ".join(map(lambda x: x.info(debug), self.commands))
         
     def clone(self):
-        """Returns a shallow clone of the sequence. The commands are not mutable."""
+        """Returns a shallow clone of the sequence. Commands are not mutable."""
         return self.__class__(self.commands[:])
         
     def getReverse(self):
+        """Returns a new object with the sequence reversed."""
         tmp = self.clone()
         tmp.commands.reverse()
         return tmp
         
     def map(self, func):
+        """Applies func to all commands in the sequence."""
         return map(func, self.commands)
 
 
 
 class CommandPair(Sequence):
-    """ Represents a pair of commands
-   
-    see parent class
-    rel = DIRECT_PARENT or DIRECT_PARENT_ONLY or DIRECT_CHILD or DIRECT_CHILD_ONLY or SEPARATE or SAME
+    """Represents a pair of commands, including the relationship between their paths.
+    
+    Private properties:
+        commands (list): see parent class
+        rel (enum): the relationship between the paths of the two commands.
+            DIRECT_PARENT or DIRECT_PARENT_ONLY or DIRECT_CHILD or DIRECT_CHILD_ONLY or SEPARATE or SAME
+
     """
     # There is no need to consider any other relationship, e.g. when one path is a parent,
     # but not a direct parent of the other one, as unless there is a direct relationship,
     # the command on one path is not going to change the environment of the other.
 
     def __init__(self, command1, command2, rel):
+        """Constructor.
+        
+        Args:
+            command1 (Command): the first command in the pair
+            command2 (Command): the second command in the pair
+            rel (enum): the relationship between the paths of the two commands
+        
+        """
         self.commands = [command1, command2]
         self.rel = rel
         
     def info(self, debug=False):
-        """Returns human-readable information about the object"""
+        """Returns a human-readable string describing the object"""
         if self.rel == SEPARATE:
             return self.commands[0].info(debug) + " -x- " + self.commands[1].info(debug)
         if self.rel == DIRECT_CHILD:
@@ -576,12 +591,14 @@ class CommandPair(Sequence):
             return self.commands[0].info(debug) + " --- " + self.commands[1].info(debug)
         
     def clone(self):
+        """Returns a shallow clone of the object. Commands are not mutable."""
         return self.__class__(self.commands[0], self.commands[1], self.rel)
         
     def getRelationship(self):
         return self.rel
 
     def getReverse(self):
+        """Returns a new object with the pair reversed."""
         tmp = Sequence.getReverse(self)
         if self.rel == DIRECT_PARENT:
             tmp.rel = DIRECT_CHILD
@@ -594,11 +611,12 @@ class CommandPair(Sequence):
         return tmp
     
     def getLast(self):
+        """Returns the last command in the pair."""
         return self.commands[1]
 
 
 def CommandPairFactory():
-    """Constructs all 2-long command sequences"""
+    """Generates all possible command pairs. The file content values used will always be different."""
     for rel in [SEPARATE, DIRECT_CHILD, DIRECT_CHILD_ONLY, DIRECT_PARENT, DIRECT_PARENT_ONLY]:
         for c1 in CommandFactory(PATH1, 'New1'):
             for c2 in CommandFactory(PATH2, 'New2'):
@@ -609,17 +627,23 @@ def CommandPairFactory():
 
 # We test command pairs and aim to answer the following questions:
 # - Will the pair break all filesystems?
+# - If not, can the pair be substituted by no commands at all?
 # - If not, can the pair be substituted by a single command?
 # - If not, can the pair be reversed?
 # We are also interested in substitutions that extend the domain of the sequence.
 
 for sq in CommandPairFactory():
 
+    # We investigate filesystem models in which the two paths
+    # have the relationship encoded in the command pair.
+    # If the two commands in the pair use the same path,
+    # we get the other path in the filesystem model out of the way
+    # by using a SEPARATE relationship.
     fs_rel = sq.getRelationship()
     if fs_rel == SAME:
         fs_rel = SEPARATE
         
-    # Does it break all filesystems?
+    # Does the pair break all filesystems?
     for fs in FilesystemFactory(fs_rel):
         fs.applySequence(sq)
         if not fs.isBroken():
@@ -627,6 +651,22 @@ for sq in CommandPairFactory():
     else: # If none is broken
         print sq.info() + " \t== break"
         continue
+        
+    # Is the pair the same as no command at all?
+    nothingEq = True  # Whether sq is equivalent to no commands on all filesystems
+    nothingExt = True # Whether no commands is an extenstion of sq
+    for fs in FilesystemFactory(fs_rel):
+        fs_res = fs.clone()
+        fs_res.applySequence(sq)
+        if not fs_res.isSame(fs): nothingEq = False
+        if not fs_res.isExtendedBy(fs): nothingExt = False
+    if nothingEq:
+        print sq.info() + " \t== (no commands)"
+        continue
+    if nothingExt:
+        print sq.info() + " \t=[ (no commands)"
+        continue
+    
 
     # Try to find a single command with the same effect
     # We know this is only possible, if the pair does not break all filesystems,
@@ -658,9 +698,8 @@ for sq in CommandPairFactory():
     sq_rev = sq.getReverse()
     # print sq_rev.info()
     
-    reverseEq = True
-    reverseExt = True
-
+    reverseEq = True  # Whether the reversed pair is equivalent to sq on all filesystems
+    reverseExt = True # Whether the reversed pair extends sq
     for fs in FilesystemFactory(fs_rel):
         # Apply the original sequence
         fs_res = fs.clone()
