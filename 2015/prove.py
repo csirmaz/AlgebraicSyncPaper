@@ -1,4 +1,7 @@
 
+# TODO Documentation
+# TODO Check if empty sequence can replace pair
+# TODO Implement 'broken' command
 
 # Constants for Content.type:
 DIR   = ' Dir'
@@ -7,11 +10,11 @@ EMPTY = 'Empty'
 
 
 class Content:
-    """Represents some content (value) at a given filesystem node
+    """Represents some content (element of set V) at a given path in the filesystem
     
     Private properties:
         type (enum): DIR or FILE or EMPTY
-        value (str): an arbitrary string representing the contents
+        value (str): an arbitrary string representing e.g. file contents and metadata
         
     """
 
@@ -19,8 +22,8 @@ class Content:
         """Constructor
         
         Args:
-            type (Optional[enum]): DIR or FILE or EMPTY
-            value (Optional[str]): an arbitrary string representing the contents
+            type (Optional[enum]):
+            value (Optional[str]):
         
         """
         self.type = type
@@ -45,7 +48,7 @@ class Content:
         return r
         
     def isSame(self, content):
-        """Returns whether the current object is the same as another instance of Content."""
+        """Returns whether the object is the same as another content object."""
         return (self.type == content.type and self.value == content.value)
         
     def getType(self):
@@ -84,15 +87,27 @@ def ContentFactory(value='Unknown'):
 
 
 class Node:
-    """Represents a path and its environment relevant for commands
-    
-    has_parent = bool
-    content = Content object
-    has_child = bool
-    broken = None or string if broken (the reason for being broken)
+    """Represents a path in the filesystem and information about its environment
+
+    Private properties:    
+        has_parent (bool): whether the node has a parent (i.e. there is a directory at the parent path)
+        content (Content): a content object
+        has_child (bool): whether the node has a child (i.e. one of the child paths is not empty)
+        broken (None|str): None if the filesystem is not broken at this node;
+            the reason for being broken otherwise
+
     """
 
     def __init__(self, has_parent=False, content=None, has_child=False, broken=False):
+        """Constructor.
+
+        Args:
+            has_parent (Optional[bool]):
+            content (Optional[Content]):
+            has_child (Optional[bool]):
+            broken (Optional[None|str]):
+
+        """
         self.has_parent = has_parent
         self.content = Content() if content is None else content
         self.has_child = has_child
@@ -100,10 +115,19 @@ class Node:
         self.checkTreeProperty()
         
     def clone(self):
+        """Returns a deep clone of the object."""
         return self.__class__(self.has_parent, self.content.clone(), self.has_child, self.broken)
         
     def info(self, debug=False):
-        """Returns human-readable information about the object"""
+        """Returns a human-readable string describing the object.
+
+        Args:
+            debug (Optional[bool]): include extra information if True
+
+        Returns:
+            str
+
+        """
         r = []
         if self.isBroken():
             if debug:
@@ -116,14 +140,25 @@ class Node:
         return "(" + "".join(r) + ")"
         
     def isSame(self, node):
+        """Returns whether the object is the same as another node object."""
         if self.isBroken() and node.isBroken(): return True
         if self.isBroken() or node.isBroken(): return False
         return (self.has_parent == node.has_parent and self.content.isSame(node.content) and self.has_child == node.has_child)
 
     def isBroken(self):
+        """Returns whether the node is marked as broken."""
         return not self.broken is None
         
     def setBroken(self, reason='unknown'):
+        """Mark the node as broken.
+
+        Args:
+            broken (Optional[str]):
+
+        Returns:
+            self
+
+        """
         self.broken = reason
         return self
 
@@ -146,7 +181,12 @@ class Node:
         return self
         
     def checkTreeProperty(self):
-        """Break the node if there is a contradiction between the flags (environment) and the contents"""
+        """Mark the node as broken if there is a contradiction between its environment and its contents.
+
+        Returns:
+            self
+
+        """
         if not self.content.isEmpty() and not self.has_parent:
             self.broken = 'tree-nonempty-noparent'
         if self.has_child and not self.content.isDir():
@@ -154,70 +194,108 @@ class Node:
         return self
         
     def assertDescendant(self):
-        """Break the node if it does not have descendants"""
+        """Mark the node as broken if it does not have children.
+
+        Returns:
+            self
+
+        """
         # print "assert child on " + self.info()
         if not self.has_child or not self.content.isDir():
             self.broken = 'assert-child'
         return self
         
     def assertNoDescendants(self):
-        """Break the node if it has any descendants"""
+        """Mark the node as broken if it has a child.
+
+        Returns:
+            self
+
+        """
         # print "assert no child on " + self.info()
         if self.has_child:
             self.broken = 'assert-no-child'
         return self
         
     def assertParent(self):
-        """Break the node if it has no parent"""
+        """Mark the node as broken if it has no parent.
+
+        Returns:
+            self
+
+        """
         # print "assert parent on " + self.info()
         if not self.has_parent:
             self.broken = 'assert-parent'
         return self
         
     def assertNoParent(self):
-        """Break the node if it has a parent"""
+        """ Mark the node as broken if it has a parent.
+
+        Returns:
+            self
+
+        """
         # print "assert no parent on " + self.info()
         if self.has_parent:
             self.broken = 'assert-no-parent'
         return self
 
 
-def NodeFactory(value='Unknown'):
-    """Generator for all possible nodes"""
+def NodeFactory(contents='Unknown'):
+    """Generates all possible nodes.
+
+    Args:
+        contents (Optional[str]): the content of the value of the node
+
+    Yields:
+        All possible node objects
+
+    """
     yield Node(broken=True)
     for has_parent in [False, True]:
-        for content in ContentFactory(value):
+        for content in ContentFactory(contents):
             for has_child in [False, True]:
                 node = Node(has_parent, content, has_child)
                 if not node.isBroken():
                     yield node
 
 
-# Constants for Filesystem.rel:
+# Constants for Filesystem.rel and CommandPair.rel:
 DIRECT_PARENT      = 'DirectParent'      # p2 is the parent of p1
 DIRECT_PARENT_ONLY = 'DirectParentOnly'  # p2 is the parent of p1 and p1 is the only child
 DIRECT_CHILD       = 'DirectChild'       # p2 is the child of p2
 DIRECT_CHILD_ONLY  = 'DirectChildOnly'   # p2 is the child of p1 and p2 is the only child
 SEPARATE           = 'Separate'          # all other cases
-
 SAME               = 'Same'              # two paths are the same (used for command pairs)
 
 class Filesystem:
-    """Models a filesystem focusing on two paths to emulate the results of commands
-    
-    p1 = Node object
-    p2 = Node object
-    rel = DIRECT_PARENT or DIRECT_PARENT_ONLY or DIRECT_CHILD or DIRECT_CHILD_ONLY or SEPARATE
+    """Models two paths in a filesystem to simulate the effects of a pair of commands.
+
+    Private properties:    
+        p1 (Node): a node object; the filesystem at path p1
+        p2 (Node): a node object; the filesystem at path p2
+        rel (enum): the relationship between p1 and p2:
+            DIRECT_PARENT or DIRECT_PARENT_ONLY or DIRECT_CHILD or DIRECT_CHILD_ONLY or SEPARATE
+
     """
     
     def __init__(self, p1, p2, rel):
+        """ Constructor.
+
+        Args:
+            p1 (Node):
+            p2 (Node):
+            rel (enum):
+
+        """
         self.p1 = p1
         self.p2 = p2
         self.rel = rel
         self.checkTreeProperty()
         
     def info(self, debug=False):
-        """Returns human-readable information about the object"""
+        """Returns a human-readable string describing the object."""
         if self.isBroken() and not debug:
             return "[Broken]"
         if self.rel == SEPARATE:
@@ -232,24 +310,31 @@ class Filesystem:
             return self.p2.info(debug) + " ~~~>> " + self.p1.info(debug)
     
     def clone(self):
+        """Returns a deep clone of the object."""
         return self.__class__(self.p1.clone(), self.p2.clone(), self.rel)
         
     def isSame(self, fs):
+        """Returns whether the object is the same as another filesystem object."""
         if self.isBroken() and fs.isBroken(): return True
         if self.isBroken() or fs.isBroken(): return False
         return (self.p1.isSame(fs.p1) and self.p2.isSame(fs.p2) and self.rel == fs.rel)
         
     def isExtendedBy(self, fs):
-        """Returns true if self is broken but fs is not, or the are the same"""
+        """Returns whether self is the same as another filesystem object
+            when self is not broken.
+        """
         if self.isBroken(): return True
         if fs.isBroken(): return False
         return (self.p1.isSame(fs.p1) and self.p2.isSame(fs.p2) and self.rel == fs.rel)
     
     def isBroken(self):
+        """Returns whether the filesystem is broken."""
         return (self.p1.isBroken() or self.p2.isBroken())
         
     def checkTreeProperty(self):
-        """Break nodes if their flags contradict the relationship between the paths"""
+        """Mark the filesystem as broken if there is a contradiction
+            between the environments noted in the nodes an their relationship.
+        """
         if self.rel == SEPARATE:
             return self
 
@@ -279,6 +364,21 @@ class Filesystem:
             
             
     def applyCommand(self, command):
+        """Apply a command to the filesystem.
+
+        Note:
+            The path to apply the command at is stored in the command.
+            This function implements actions based on what the filesystem
+            knows: the relationship between the nodes. It updates the
+            environments stored in the nodes accordingly.
+
+        Args:
+            command (Command): a command object
+
+        Returns:
+            self            
+
+        """
 
         command_path = command.getPath()
         new_content = command.getEnd()
@@ -323,10 +423,21 @@ class Filesystem:
         return self
         
     def applySequence(self, sequence):
+        """Apply a sequence of commands to the filesystem."""
         sequence.map(lambda x: self.applyCommand(x))
+        return self
 
 
 def FilesystemFactory(rel):
+    """Generates all possible filesystems with the given relationship between p1 and p2.
+
+    Args:
+        rel (enum): DIRECT_PARENT or DIRECT_PARENT_ONLY or DIRECT_CHILD or DIRECT_CHILD_ONLY or SEPARATE
+
+    Yields:
+        possible filesystem objects
+
+    """
     yield Filesystem(Node(broken=True), Node(broken=True), rel)
     for p1_source in NodeFactory('Old1'):
         for p2 in NodeFactory('Old2'):
@@ -341,20 +452,31 @@ PATH2 = 'P2'
 
 
 class Command:
-    """Represents a command
+    """Represents a command.
 
-    path - PATH1 or PATH2
-    start - a Content object (the value is disregarded)
-    end - a Content object
+    Private properties:
+        path (enum): PATH1 or PATH2
+        start (Content): a content object. Its value is disregarded; only the type is used
+            to note the type of content the command expects in the filesystem
+            before it runs
+        end (Content): a content object the command turns the path into
     """
     
     def __init__(self, path, start, end):
+        """Constructor.
+
+        Args:
+            path (enum):
+            start (Content):
+            end (Content):
+
+        """
         self.path = path
         self.start = start
         self.end = end
         
     def info(self, debug=False):
-        """Returns human-readable information about the object"""
+        """Returns a human-readable string describing the object."""
         return "{" + self.path + ":" + self.start.info(False) + ">" + self.end.info() + "}"
 
     def getPath(self):        
@@ -364,7 +486,15 @@ class Command:
         return self.end
 
     def applyToNode(self, node):
-        """Apply the command to a node"""
+        """Apply the command to a node.
+
+        Args:
+            node (Node): a node object
+
+        Returns:
+            self
+
+        """
         if node.getContent().getType() != self.start.getType():
             node.setBroken('command-start')
             return self
@@ -373,25 +503,37 @@ class Command:
 
 
 def CommandFactory(path, value):
+    """Generates all possible commands that uses the given value in its end-content (if applicable).
+
+    Args:
+        value (str): an arbitrary string representing the value (e.g. file contents and metadata)
+
+    Yields:
+        all possible command objects
+
+    """
     for c1 in ContentFactory('N/A'):
         for c2 in ContentFactory(value):
             yield Command(path, c1, c2)
 
 
 class Sequence:
-    """Represents a command sequence
+    """Represents a sequence of commands.
     
-    commands - a list of Command objects
+    Private properties:
+        commands (list): a list of command objects
+
     """
     
     def __init__(self, commands):
         self.commands = commands
         
     def info(self, debug=False):
-        """Returns human-readable information about the object"""
+        """Returns a human-readable string describing the object"""
         return "; ".join(map(lambda x: x.info(debug), self.commands))
         
     def clone(self):
+        """Returns a shallow clone of the sequence. The commands are not mutable."""
         return self.__class__(self.commands[:])
         
     def getReverse(self):
