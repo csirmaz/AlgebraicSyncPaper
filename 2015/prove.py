@@ -1,7 +1,7 @@
+from itertools import chain
 
-# TODO Documentation
 # TODO Implement a version where there is only one directory value
-# TODO Implement 'broken' command
+# TODO Implement 'break' command
 
 # Constants for Content.type:
 DIR   = ' Dir'
@@ -49,7 +49,10 @@ class Content:
         
     def isSame(self, content):
         """Returns whether the object is the same as another content object."""
-        return (self.type == content.type and self.value == content.value)
+        if self.type != content.type: return False
+        if self.type == EMPTY: return True
+        # if self.type == DIR: return True
+        return (self.value == content.value)
         
     def getType(self):
         return self.type
@@ -430,22 +433,23 @@ class Filesystem:
         return self
 
 
-def FilesystemFactory(rel):
+def FilesystemFactory(rel_list):
     """Generates all possible filesystems with the given relationship between p1 and p2.
 
     Args:
-        rel (enum): DIRECT_PARENT or DIRECT_PARENT_ONLY or DIRECT_CHILD or DIRECT_CHILD_ONLY or SEPARATE
+        rel_list (list): List of DIRECT_PARENT or DIRECT_PARENT_ONLY or DIRECT_CHILD or DIRECT_CHILD_ONLY or SEPARATE
 
     Yields:
         possible filesystem objects
 
     """
-    yield Filesystem(Node(broken=True), Node(broken=True), rel)
-    for p1_source in NodeFactory('Old1'):
-        for p2 in NodeFactory('Old2'):
-            fs = Filesystem(p1_source.clone(), p2, rel)  # the constructor may break the p1 node, so we need to clone
-            if not fs.isBroken():
-                yield fs
+    for rel in rel_list:
+        yield Filesystem(Node(broken=True), Node(broken=True), rel)
+        for p1_source in NodeFactory('Old1'):
+            for p2 in NodeFactory('Old2'):
+                fs = Filesystem(p1_source.clone(), p2, rel)  # the constructor may break the p1 node, so we need to clone
+                if not fs.isBroken():
+                    yield fs
 
 
 # Constants for Command.path:
@@ -505,9 +509,10 @@ class Command:
 
 
 def CommandFactory(path, value):
-    """Generates all possible commands that uses the given value in its end-content (if applicable).
+    """Generates all possible commands that uses the given path and value in its end-content (if applicable).
 
     Args:
+        path (enum): the path
         value (str): an arbitrary string representing the value (e.g. file contents and metadata)
 
     Yields:
@@ -578,17 +583,13 @@ class CommandPair(Sequence):
     def info(self, debug=False):
         """Returns a human-readable string describing the object"""
         if self.rel == SEPARATE:
-            return self.commands[0].info(debug) + " -x- " + self.commands[1].info(debug)
+            return self.commands[0].info(debug) + " xx " + self.commands[1].info(debug)
         if self.rel == DIRECT_CHILD:
-            return self.commands[0].info(debug) + " -<> " + self.commands[1].info(debug)
-        if self.rel == DIRECT_CHILD_ONLY:
-            return self.commands[0].info(debug) + " ->> " + self.commands[1].info(debug)
+            return self.commands[0].info(debug) + " -> " + self.commands[1].info(debug)
         if self.rel == DIRECT_PARENT:
-            return self.commands[0].info(debug) + " <>- " + self.commands[1].info(debug)
-        if self.rel == DIRECT_PARENT_ONLY:
-            return self.commands[0].info(debug) + " <<- " + self.commands[1].info(debug)
+            return self.commands[0].info(debug) + " <- " + self.commands[1].info(debug)
         if self.rel == SAME:
-            return self.commands[0].info(debug) + " --- " + self.commands[1].info(debug)
+            return self.commands[0].info(debug) + " -- " + self.commands[1].info(debug)
         
     def clone(self):
         """Returns a shallow clone of the object. Commands are not mutable."""
@@ -602,13 +603,13 @@ class CommandPair(Sequence):
         tmp = Sequence.getReverse(self)
         if self.rel == DIRECT_PARENT:
             tmp.rel = DIRECT_CHILD
-        elif self.rel == DIRECT_PARENT_ONLY:
-            tmp.rel = DIRECT_CHILD_ONLY
         elif self.rel == DIRECT_CHILD:
             tmp.rel = DIRECT_PARENT
-        elif self.rel == DIRECT_CHILD_ONLY:
-            tmp.rel = DIRECT_PARENT_ONLY
         return tmp
+    
+    def getFirst(self):
+        """Returns the first command in the pair."""
+        return self.commands[0]
     
     def getLast(self):
         """Returns the last command in the pair."""
@@ -639,9 +640,13 @@ for sq in CommandPairFactory():
     # If the two commands in the pair use the same path,
     # we get the other path in the filesystem model out of the way
     # by using a SEPARATE relationship.
-    fs_rel = sq.getRelationship()
-    if fs_rel == SAME:
-        fs_rel = SEPARATE
+    fs_rel = [sq.getRelationship()]
+    if fs_rel[0] == SAME:
+        fs_rel[0] = SEPARATE
+    elif fs_rel[0] == DIRECT_CHILD:
+        fs_rel.append(DIRECT_CHILD_ONLY)
+    elif fs_rel[0] == DIRECT_PARENT:
+        fs_rel.append(DIRECT_PARENT_ONLY)
         
     # Does the pair break all filesystems?
     for fs in FilesystemFactory(fs_rel):
@@ -670,16 +675,20 @@ for sq in CommandPairFactory():
 
     # Try to find a single command with the same effect
     canSimplify = False
-    for command in CommandFactory(sq.getLast().getPath(), sq.getLast().getEnd().getValue()):
+    for command in chain(CommandFactory(sq.getFirst().getPath(), sq.getFirst().getEnd().getValue()), CommandFactory(sq.getLast().getPath(), sq.getLast().getEnd().getValue())):
+        # print " " + command.info()
         simplifiesEq = True  # Whether command is equivalent to sq on all filesystems
         simplifiesExt = True # Whether command extends sq
         for fs in FilesystemFactory(fs_rel):
+            # print "  " + fs.info()
             # Apply the original sequence
             fs_res = fs.clone()
             fs_res.applySequence(sq)
+            # print "    " + fs_res.info()
             # Apply the single command
             fs_single = fs.clone()
             fs_single.applyCommand(command)
+            # print "    " + fs_single.info()
             if not fs_res.isSame(fs_single): simplifiesEq = False
             if not fs_res.isExtendedBy(fs_single): simplifiesExt = False
         if simplifiesEq:
