@@ -22,19 +22,22 @@
 \newcommand{\parent}{\mathtt{parent}}
 \newcommand{\FS}{\Phi} % {\mathrm{FS}}
 \newcommand{\GS}{\Xi} % another filesystem
+\newcommand{\pp}{\hat{p}} % parent path
+\newcommand{\np}{\mathrel{\ooalign{$p$\cr\hidewidth\hbox{$-$}\cr}}} % path not related to p
 
 \newcommand{\cbrk}{\mathtt{break}}
-\newcommand{\cbb}{\overrightarrow{\empt\empt}}
-\newcommand{\cbf}{\overrightarrow{\empt{F}}}
-\newcommand{\cbd}{\overrightarrow{\empt{D}}}
-\newcommand{\cfb}{\overrightarrow{F\empt}}
-\newcommand{\cff}{\overrightarrow{FF}}
-\newcommand{\cfd}{\overrightarrow{FD}}
-\newcommand{\cdb}{\overrightarrow{D\empt}}
-\newcommand{\cdf}{\overrightarrow{DF}}
-\newcommand{\cdd}{\overrightarrow{DD}}
-\newcommand{\cxy}{\overrightarrow{XY}}
-\newcommand{\czw}{\overrightarrow{ZW}}
+\newcommand{\fscommand}[2]{{#1#2}}
+\newcommand{\cbb}{\fscommand{\empt\empt}}
+\newcommand{\cbf}{\fscommand{\empt{F}}}
+\newcommand{\cbd}{\fscommand{\empt{D}}}
+\newcommand{\cfb}{\fscommand{F\empt}}
+\newcommand{\cff}{\fscommand{FF}}
+\newcommand{\cfd}{\fscommand{FD}}
+\newcommand{\cdb}{\fscommand{D\empt}}
+\newcommand{\cdf}{\fscommand{DF}}
+\newcommand{\cdd}{\fscommand{DD}}
+\newcommand{\cxy}{\fscommand{XY}}
+\newcommand{\czw}{\fscommand{ZW}}
 
 \title{Real-Life Algebraic File Synchronization}
 
@@ -59,9 +62,9 @@ We model a filesystem using a function $\FS$ with a set of paths $\setp$ as its 
 and a set of possible contents $\setv$ as its codomain:
 \[ \FS : \setp \rightarrow \setv \] 
 In our model, $\setp$ contains all possible paths, and $\setv$ contains a special
-element, $\empt$, which is the value of $FS$ at paths where there are no files
+element, $\empt$, which is the value of $\FS$ at paths where there are no files
 or directories.
-We consider the contents of files, as well as any meta-information on files
+We consider the contents of files, as well as any meta-information of files
 and directories (e.g. permissions or flags) part of the values in $\setv$.
 
 Every filesystem has a so-called \textbf{tree property}, which means that
@@ -83,7 +86,7 @@ The tree propety can then be defined as
 % \--/               \--/
 
 In this paper, we write $F$ for an arbitrary element of $\setf$, and $D$ for an arbitrary element
-of $\setd$. $V$ is usually a value from $\setv$ and $p$ is a path in $\setp$.
+of $\setd$. $V$ is usually a value from $\setv$ and $p$ and $q$ are paths in $\setp$.
 
 \section{Commands}
 
@@ -127,7 +130,8 @@ as the success or failure of subsequent commands only depend on the type of the 
 
 We therefore propose to have a command for each pair of types.
 For want of a better system, we will simply name our commands by concatenating
-two of $D$, $F$ and $\empt$ with an arrow, where the left sign notes the type of value
+two of $\fscommand{D}{}$, $\fscommand{F}{}$ and $\fscommand{\empt}{}$, 
+where the left sign notes the type of value
 in the filesystem before the command is applied, and the right sign notes the type
 afterwards. For example $mkdir(p,D)$ is $\cbd(p,D)$ and $rmdir(p)$ is $\cdb(p)$.
 
@@ -163,8 +167,9 @@ We are interested to see what pairs of commands can be simplified or reversed
 in order to see under what circumstances commands conflict or can be reordered.
 
 Pairs of commands in general will have the form
-\[ \cxy(p,V_Y) \czw(q,V_W) \]
-where $X,Y,Z,W\in\{D,F,\empt\}$, $p,q\in\setp$, and values are of the appropriate type: $V_Y\in\setvx{Y}$ and $V_W\in\setvx{W}$
+\[ \cxy(p,V_Y); \czw(q,V_W) \]
+where $X,Y,Z,W\in\{D,F,\empt\}$, $p,q\in\setp$, and values are of the appropriate type: 
+$V_Y\in\setvx{Y}$ and $V_W\in\setvx{W}$
 (although commands where $Y=\empt$ or $W=\empt$ do not require a value).
 
 Similarly to the case of commands, in \cite{NREC:alg} we found that in order to build
@@ -173,15 +178,43 @@ the relationship between the paths of the commands in the pair, $p$ and $q$.
 As the relationship between the paths determine how the commands affect the filesystem
 and its tree property, 
 and again in line with the aim of providing as much information as possible for the algebra,
-we encoded this relationship in the pair of commands. The possible relationships we
-need to take into account are as follows.
+we encode this relationship in the pair of commands. The possible relationships we
+consider are as follows.
 
 \begin{itemize}
-\item $p=q$.
-\item $\parent(p)=q$ and $\parent(q)=p$. We know that 
-\item Only child
-\item separate
+\item $p=q$. If the two commands affect the same path, the pair of commands
+will clearly behave differently than if the paths are different.
+\item Separate paths, that is, $\parent(p)\neq q$ and $\parent(q)\neq p$. If the paths
+are not directly related, then modifying the filesystem at one path is not going
+to affect the outcome of the command on the other path.
+The two commands will therefore commute and the pair will be reversible.
+\item Directly related paths, that is, $\parent(p)=q$ or $\parent(q)=p$.
+Some of these command pairs will not be reversible.
+For example, $\cbd(\parent(p),D);\cbf(p,F)$ will work on some filesystems,
+while $\cbf(p,F);\cbd(\parent(p),D)$ will break all filesystems.
 \end{itemize}
+
+One may think that we may be able to specify more about the reversibility
+or possible simplification of a pair of commands in the last group if we also
+knew whether the child path $p$ was the only (non-empty) child of its parent.
+However, it is easy to see that encoding this information in a pair
+is not going to enrich our algebra as, for example,
+the behaviour of a hypothetical $\cfb(p_{\mathrm{only\ child}}); \cdb(\parent(p))$
+is exactly the same as that of the more generic
+$\cfb(p); \cdb(\parent(p))$. The former will break any filesystem in which
+$p$ is not the only child as it violates its preconditions, but so will
+the generic pair.
+
+In summary, if we adopt the notation $\pp := \parent(p)$ and use $\np$ for a path not directly related to $p$,
+then we have pairs of commands
+of the following forms:
+\begin{align*}
+\cxy(p,V_Y)&; \czw(p,V_W) \\
+\cxy(p,V_Y)&; \czw(\np,V_W) \\
+\cxy(p,V_Y)&; \czw(\pp,V_W) \\
+\cxy(\pp,V_Y)&; \czw(p,V_W)
+\end{align*}
+
 
 
 \begin{thebibliography}{99}

@@ -556,7 +556,7 @@ class CommandPair(Sequence):
     Private properties:
         commands (list): see parent class
         rel (enum): the relationship between the paths of the two commands.
-            DIRECT_PARENT or DIRECT_PARENT_ONLY or DIRECT_CHILD or DIRECT_CHILD_ONLY or SEPARATE or SAME
+            DIRECT_PARENT or DIRECT_CHILD or SEPARATE or SAME
 
     """
     # There is no need to consider any other relationship, e.g. when one path is a parent,
@@ -617,7 +617,7 @@ class CommandPair(Sequence):
 
 def CommandPairFactory():
     """Generates all possible command pairs. The file content values used will always be different."""
-    for rel in [SEPARATE, DIRECT_CHILD, DIRECT_CHILD_ONLY, DIRECT_PARENT, DIRECT_PARENT_ONLY]:
+    for rel in [SEPARATE, DIRECT_CHILD, DIRECT_PARENT]:
         for c1 in CommandFactory(PATH1, 'New1'):
             for c2 in CommandFactory(PATH2, 'New2'):
                 yield CommandPair(c1, c2, rel)
@@ -669,28 +669,25 @@ for sq in CommandPairFactory():
     
 
     # Try to find a single command with the same effect
-    # We know this is only possible, if the pair does not break all filesystems,
-    # if the two commands affect the same path.
     canSimplify = False
-    if sq.getRelationship() == SAME:
-        for command in CommandFactory(sq.getLast().getPath(), sq.getLast().getEnd().getValue()):
-            simplifiesEq = True  # Whether command is equivalent to sq on all filesystems
-            simplifiesExt = True # Whether command extends sq
-            for fs in FilesystemFactory(fs_rel):
-                # Apply the original sequence
-                fs_res = fs.clone()
-                fs_res.applySequence(sq)
-                # Apply the single command
-                fs_single = fs.clone()
-                fs_single.applyCommand(command)
-                if not fs_res.isSame(fs_single): simplifiesEq = False
-                if not fs_res.isExtendedBy(fs_single): simplifiesExt = False
-            if simplifiesEq:
-                canSimplify = True
-                print sq.info() + " \t== " + command.info()
-            elif simplifiesExt:
-                canSimplify = True
-                print sq.info() + " \t=[ " + command.info()
+    for command in CommandFactory(sq.getLast().getPath(), sq.getLast().getEnd().getValue()):
+        simplifiesEq = True  # Whether command is equivalent to sq on all filesystems
+        simplifiesExt = True # Whether command extends sq
+        for fs in FilesystemFactory(fs_rel):
+            # Apply the original sequence
+            fs_res = fs.clone()
+            fs_res.applySequence(sq)
+            # Apply the single command
+            fs_single = fs.clone()
+            fs_single.applyCommand(command)
+            if not fs_res.isSame(fs_single): simplifiesEq = False
+            if not fs_res.isExtendedBy(fs_single): simplifiesExt = False
+        if simplifiesEq:
+            canSimplify = True
+            print sq.info() + " \t== " + command.info()
+        elif simplifiesExt:
+            canSimplify = True
+            print sq.info() + " \t=[ " + command.info()
     
     if canSimplify: continue
 
