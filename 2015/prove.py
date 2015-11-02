@@ -1,7 +1,10 @@
 from itertools import chain
 
-# TODO Implement a version where there is only one directory value
-# TODO Implement 'break' command
+# Whether directories have equal contents, i.e. there is only a single
+# directory-type value in the filesystem.
+ONE_DIRECTORY_VALUE = False
+
+DEBUG = False
 
 # Constants for Content.type:
 DIR   = ' Dir'
@@ -33,25 +36,18 @@ class Content:
         """Returns a deep clone of the object."""
         return self.__class__(self.type, self.value)
 
-    def info(self, addvalue=True):
-        """Returns human-readable information about the object.
-        
-        Args:
-            addvalue (Optional[bool]): whether to add the value to the output
-            
-        Returns:
-            str
-            
-        """
+    def info(self, addvalue=True, debug=False):
+        """Returns human-readable information about the object."""
         r = self.type
-        if not self.isEmpty() and addvalue: r += "(" + self.value + ")"
+        if debug or (addvalue and not self.isEmpty() and not(ONE_DIRECTORY_VALUE and self.isDir())):
+            r += "(" + self.value + ")"
         return r
         
     def isSame(self, content):
         """Returns whether the object is the same as another content object."""
         if self.type != content.type: return False
-        if self.type == EMPTY: return True
-        # if self.type == DIR: return True
+        if self.isEmpty(): return True
+        if ONE_DIRECTORY_VALUE and self.isDir(): return True
         return (self.value == content.value)
         
     def getType(self):
@@ -138,7 +134,7 @@ class Node:
             else:
                 return "(Broken)"
         if self.has_parent: r.append("o--")
-        r.append(self.content.info())
+        r.append(self.content.info(debug))
         if self.has_child: r.append("--o")
         return "(" + "".join(r) + ")"
         
@@ -483,8 +479,15 @@ class Command:
         
     def info(self, debug=False):
         """Returns a human-readable string describing the object."""
-        return "{" + self.path + ":" + self.start.info(False) + ">" + self.end.info() + "}"
+        return "{" + self.path + ":" + self.start.info(False, debug) + ">" + self.end.info(True, debug) + "}"
 
+    def isSame(self, command):
+        """Returns whether self is the same as another command object."""
+        if self.path != command.path: return False
+        if not self.start.isSame(command.start): return False
+        if not self.end.isSame(command.end): return False
+        return True
+    
     def getPath(self):        
         return self.path
         
@@ -521,7 +524,8 @@ def CommandFactory(path, value):
     """
     for c1 in ContentFactory('N/A'):
         for c2 in ContentFactory(value):
-            yield Command(path, c1, c2)
+            if not c1.isSame(c2): # Skip noop (assertion) commands
+                yield Command(path, c1, c2)
 
 
 class Sequence:
@@ -633,7 +637,15 @@ def CommandPairFactory():
 # - If not, can the pair be reversed?
 # We are also interested in substitutions that extend the domain of the sequence.
 
+# When the two commands are separate, the default is that they commute
+print "Default: XY xx ZW == ZW xx XY"
+
+# When the two commands have the same path, the default is that they break all filesystems
+print "Default otherwise: XY ?? ZW == break"
+
 for sq in CommandPairFactory():
+    
+    # print "  " + sq.info(DEBUG)
 
     # We investigate filesystem models in which the two paths
     # have the relationship encoded in the command pair.
@@ -653,8 +665,9 @@ for sq in CommandPairFactory():
         fs.applySequence(sq)
         if not fs.isBroken():
             break # Skips "else" below
-    else: # If none is broken
-        print sq.info() + " \t== break"
+    else: # If none is not broken
+        if sq.getRelationship() == SEPARATE:
+            print sq.info(DEBUG) + " \t== break"
         continue
         
     # Is the pair the same as no command at all?
@@ -666,17 +679,21 @@ for sq in CommandPairFactory():
         if not fs_res.isSame(fs): nothingEq = False
         if not fs_res.isExtendedBy(fs): nothingExt = False
     if nothingEq:
-        print sq.info() + " \t== (no commands)"
+        print sq.info(DEBUG) + " \t== (no commands)"
         continue
     if nothingExt:
-        print sq.info() + " \t=[ (no commands)"
+        print sq.info(DEBUG) + " \t=[ (no commands)"
         continue
     
 
     # Try to find a single command with the same effect
-    canSimplify = False
+    # We try to find a command based on both commands in the pair.
+    # However, this can lead to finding the same command twice;
+    # a simple deduplication attempt is coded below.
+    simplifiedByEq = None
+    simplifiedByExt = None
     for command in chain(CommandFactory(sq.getFirst().getPath(), sq.getFirst().getEnd().getValue()), CommandFactory(sq.getLast().getPath(), sq.getLast().getEnd().getValue())):
-        # print " " + command.info()
+        # print " " + command.info(DEBUG)
         simplifiesEq = True  # Whether command is equivalent to sq on all filesystems
         simplifiesExt = True # Whether command extends sq
         for fs in FilesystemFactory(fs_rel):
@@ -692,13 +709,15 @@ for sq in CommandPairFactory():
             if not fs_res.isSame(fs_single): simplifiesEq = False
             if not fs_res.isExtendedBy(fs_single): simplifiesExt = False
         if simplifiesEq:
-            canSimplify = True
-            print sq.info() + " \t== " + command.info()
+            if simplifiedByEq is None or not simplifiedByEq.isSame(command):
+                simplifiedByEq = command
+                print sq.info(DEBUG) + " \t== " + command.info(DEBUG)
         elif simplifiesExt:
-            canSimplify = True
-            print sq.info() + " \t=[ " + command.info()
+            if simplifiedByExt is None or not simplifiedByExt.isSame(command):
+                simplifiedByExt = command
+                print sq.info(DEBUG) + " \t=[ " + command.info(DEBUG)
     
-    if canSimplify: continue
+    if not(simplifiedByEq is None) or not(simplifiedByExt is None) : continue
 
     # Reverse sequence
     sq_rev = sq.getReverse()
@@ -716,10 +735,11 @@ for sq in CommandPairFactory():
         if not fs_res.isSame(fs_rev_res): reverseEq = False
         if not fs_res.isExtendedBy(fs_rev_res): reverseExt = False
     if reverseEq:
-        print sq.info() + " \t== " + sq_rev.info()
+        if sq.getRelationship() != SEPARATE:
+            print sq.info(DEBUG) + " \t== " + sq_rev.info(DEBUG)
         continue
     if reverseExt:
-        print sq.info() + " \t=[ " + sq_rev.info()
+        print sq.info(DEBUG) + " \t=[ " + sq_rev.info(DEBUG)
         continue
     
-    print sq.info() + " \t(no rule)"
+    print sq.info(DEBUG) + " \t(no rule)"
