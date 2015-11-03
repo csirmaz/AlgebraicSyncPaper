@@ -4,6 +4,8 @@ from itertools import chain
 # directory-type value in the filesystem.
 ONE_DIRECTORY_VALUE = False
 
+STYLE = 'normal' # 'normal or 'debug' or 'tex'
+
 DEBUG = False
 
 # Constants for Content.type:
@@ -36,11 +38,28 @@ class Content:
         """Returns a deep clone of the object."""
         return self.__class__(self.type, self.value)
 
-    def info(self, addvalue=True, debug=False):
-        """Returns human-readable information about the object."""
-        r = self.type
-        if debug or (addvalue and not self.isEmpty() and not(ONE_DIRECTORY_VALUE and self.isDir())):
-            r += "(" + self.value + ")"
+    def info(self, addvalue=True, path=None):
+        """Returns human-readable information about the object.
+        
+        Args:
+            addvalue (bool): whether to add a description of the value
+            path (None or string): used with TeX output; added if addvalue to become the first argument of a command
+        
+        """
+        if STYLE == 'tex':
+            if self.isEmpty(): rc = 'b'
+            elif self.isDir(): rc = 'd'
+            elif self.isFile(): rc = 'f'
+            r = rc
+            if addvalue: r += '(' + path
+        else:
+            r = self.type
+        if STYLE == 'debug' or (addvalue and not self.isEmpty() and not(ONE_DIRECTORY_VALUE and self.isDir())):
+            if STYLE == 'tex':
+                r += ', ' + rc.upper() + '_' + self.value[-1:]
+            else:
+                r += '(' + self.value + ')'
+        if STYLE == 'tex' and addvalue: r += ')'
         return r
         
     def isSame(self, content):
@@ -117,16 +136,8 @@ class Node:
         """Returns a deep clone of the object."""
         return self.__class__(self.has_parent, self.content.clone(), self.has_child, self.broken)
         
-    def info(self, debug=False):
-        """Returns a human-readable string describing the object.
-
-        Args:
-            debug (Optional[bool]): include extra information if True
-
-        Returns:
-            str
-
-        """
+    def info(self):
+        """Returns a human-readable string describing the object."""
         r = []
         if self.isBroken():
             if debug:
@@ -134,7 +145,7 @@ class Node:
             else:
                 return "(Broken)"
         if self.has_parent: r.append("o--")
-        r.append(self.content.info(debug))
+        r.append(self.content.info())
         if self.has_child: r.append("--o")
         return "(" + "".join(r) + ")"
         
@@ -293,20 +304,20 @@ class Filesystem:
         self.rel = rel
         self.checkTreeProperty()
         
-    def info(self, debug=False):
+    def info(self):
         """Returns a human-readable string describing the object."""
-        if self.isBroken() and not debug:
+        if self.isBroken() and not STYLE == 'debug':
             return "[Broken]"
         if self.rel == SEPARATE:
-            return self.p1.info(debug) + " ==x== " + self.p2.info(debug)
+            return self.p1.info() + " ==x== " + self.p2.info()
         if self.rel == DIRECT_CHILD:
-            return self.p1.info(debug) + " ===<> " + self.p2.info(debug)
+            return self.p1.info() + " ===<> " + self.p2.info()
         if self.rel == DIRECT_CHILD_ONLY:
-            return self.p1.info(debug) + " ===>> " + self.p2.info(debug)
+            return self.p1.info() + " ===>> " + self.p2.info()
         if self.rel == DIRECT_PARENT:
-            return self.p2.info(debug) + " ~~~<> " + self.p1.info(debug)
+            return self.p2.info() + " ~~~<> " + self.p1.info()
         if self.rel == DIRECT_PARENT_ONLY:
-            return self.p2.info(debug) + " ~~~>> " + self.p1.info(debug)
+            return self.p2.info() + " ~~~>> " + self.p1.info()
     
     def clone(self):
         """Returns a deep clone of the object."""
@@ -477,9 +488,16 @@ class Command:
         self.start = start
         self.end = end
         
-    def info(self, debug=False):
+    def info(self, isParent=False, asSequence=False):
         """Returns a human-readable string describing the object."""
-        return "{" + self.path + ":" + self.start.info(False, debug) + ">" + self.end.info(True, debug) + "}"
+        if STYLE == 'tex':
+            path = '\\pp' if isParent else 'p'
+            path += '_1' if self.path == PATH1 else '_2'
+            r = '\\c' + self.start.info(False) + self.end.info(True, path)
+            if asSequence: return '[' + r + ']'
+            return r
+        else:
+            return "{" + self.path + ":" + self.start.info(False) + ">" + self.end.info(True) + "}"
 
     def isSame(self, command):
         """Returns whether self is the same as another command object."""
@@ -539,9 +557,9 @@ class Sequence:
     def __init__(self, commands):
         self.commands = commands
         
-    def info(self, debug=False):
+    def info(self):
         """Returns a human-readable string describing the object"""
-        return "; ".join(map(lambda x: x.info(debug), self.commands))
+        return "; ".join(map(lambda x: x.info(), self.commands))
         
     def clone(self):
         """Returns a shallow clone of the sequence. Commands are not mutable."""
@@ -584,16 +602,13 @@ class CommandPair(Sequence):
         self.commands = [command1, command2]
         self.rel = rel
         
-    def info(self, debug=False):
+    def info(self):
         """Returns a human-readable string describing the object"""
-        if self.rel == SEPARATE:
-            return self.commands[0].info(debug) + " xx " + self.commands[1].info(debug)
-        if self.rel == DIRECT_CHILD:
-            return self.commands[0].info(debug) + " -> " + self.commands[1].info(debug)
-        if self.rel == DIRECT_PARENT:
-            return self.commands[0].info(debug) + " <- " + self.commands[1].info(debug)
-        if self.rel == SAME:
-            return self.commands[0].info(debug) + " -- " + self.commands[1].info(debug)
+        if STYLE == 'tex':
+            return '[' + self.commands[0].info(self.rel == DIRECT_CHILD) + '; ' + self.commands[1].info(self.rel == DIRECT_PARENT) + ']'
+        else:
+            Dsep = {SEPARATE: 'xx', DIRECT_CHILD: '->', DIRECT_PARENT: '<-', SAME: '--'}
+            return self.commands[0].info() + ' ' + Dsep[self.rel] + ' ' + self.commands[1].info()
         
     def clone(self):
         """Returns a shallow clone of the object. Commands are not mutable."""
@@ -637,6 +652,20 @@ def CommandPairFactory():
 # - If not, can the pair be reversed?
 # We are also interested in substitutions that extend the domain of the sequence.
 
+if STYLE == 'tex':
+    Pequ = ' \\equiv '
+    Pext = ' \\eqext '
+    Pbreak = '\\break'
+    Pnocomm = '[]'
+    Pnorule = ''
+else:
+    Pequ = ' == '
+    Pext = ' =[ '
+    Pbreak = 'break'
+    Pnocomm = '(no commands)'
+    Pnorule = ' (no rule)'
+    
+
 # When the two commands are separate, the default is that they commute
 print "Default: XY xx ZW == ZW xx XY"
 
@@ -645,7 +674,7 @@ print "Default otherwise: XY ?? ZW == break"
 
 for sq in CommandPairFactory():
     
-    # print "  " + sq.info(DEBUG)
+    # print "  " + sq.info()
 
     # We investigate filesystem models in which the two paths
     # have the relationship encoded in the command pair.
@@ -667,7 +696,7 @@ for sq in CommandPairFactory():
             break # Skips "else" below
     else: # If none is not broken
         if sq.getRelationship() == SEPARATE:
-            print sq.info(DEBUG) + " \t== break"
+            print sq.info() + Pequ + Pbreak
         continue
         
     # Is the pair the same as no command at all?
@@ -679,10 +708,10 @@ for sq in CommandPairFactory():
         if not fs_res.isSame(fs): nothingEq = False
         if not fs_res.isExtendedBy(fs): nothingExt = False
     if nothingEq:
-        print sq.info(DEBUG) + " \t== (no commands)"
+        print sq.info() + Pequ + Pnocomm
         continue
     if nothingExt:
-        print sq.info(DEBUG) + " \t=[ (no commands)"
+        print sq.info() + Pext + Pnocomm
         continue
     
 
@@ -693,7 +722,7 @@ for sq in CommandPairFactory():
     simplifiedByEq = None
     simplifiedByExt = None
     for command in chain(CommandFactory(sq.getFirst().getPath(), sq.getFirst().getEnd().getValue()), CommandFactory(sq.getLast().getPath(), sq.getLast().getEnd().getValue())):
-        # print " " + command.info(DEBUG)
+        # print " " + command.info()
         simplifiesEq = True  # Whether command is equivalent to sq on all filesystems
         simplifiesExt = True # Whether command extends sq
         for fs in FilesystemFactory(fs_rel):
@@ -711,11 +740,11 @@ for sq in CommandPairFactory():
         if simplifiesEq:
             if simplifiedByEq is None or not simplifiedByEq.isSame(command):
                 simplifiedByEq = command
-                print sq.info(DEBUG) + " \t== " + command.info(DEBUG)
+                print sq.info() + Pequ + command.info(asSequence=True)
         elif simplifiesExt:
             if simplifiedByExt is None or not simplifiedByExt.isSame(command):
                 simplifiedByExt = command
-                print sq.info(DEBUG) + " \t=[ " + command.info(DEBUG)
+                print sq.info() + Pext + command.info(asSequence=True)
     
     if not(simplifiedByEq is None) or not(simplifiedByExt is None) : continue
 
@@ -736,10 +765,10 @@ for sq in CommandPairFactory():
         if not fs_res.isExtendedBy(fs_rev_res): reverseExt = False
     if reverseEq:
         if sq.getRelationship() != SEPARATE:
-            print sq.info(DEBUG) + " \t== " + sq_rev.info(DEBUG)
+            print sq.info() + Pequ + sq_rev.info()
         continue
     if reverseExt:
-        print sq.info(DEBUG) + " \t=[ " + sq_rev.info(DEBUG)
+        print sq.info() + Pext + sq_rev.info()
         continue
     
-    print sq.info(DEBUG) + " \t(no rule)"
+    print sq.info() + Pnorule
