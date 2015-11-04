@@ -4,9 +4,7 @@ from itertools import chain
 # directory-type value in the filesystem.
 ONE_DIRECTORY_VALUE = False
 
-STYLE = 'normal' # 'normal or 'debug' or 'tex'
-
-DEBUG = False
+STYLE = 'tex' # 'normal or 'debug' or 'tex'
 
 # Constants for Content.type:
 DIR   = ' Dir'
@@ -61,6 +59,10 @@ class Content:
                 r += '(' + self.value + ')'
         if STYLE == 'tex' and addvalue: r += ')'
         return r
+    
+    def label(self):
+        """Returns a short string describing some parts of the object."""
+        return self.info(False)
         
     def isSame(self, content):
         """Returns whether the object is the same as another content object."""
@@ -498,6 +500,10 @@ class Command:
             return r
         else:
             return "{" + self.path + ":" + self.start.info(False) + ">" + self.end.info(True) + "}"
+        
+    def label(self):
+        """Returns a short string describing some parts of the object."""
+        return self.start.label() + self.end.label()
 
     def isSame(self, command):
         """Returns whether self is the same as another command object."""
@@ -506,8 +512,15 @@ class Command:
         if not self.end.isSame(command.end): return False
         return True
     
+    def isDirToDir(self):
+        """Returns if the command is a Dir->Dir."""
+        return self.getStart().isDir() and self.getEnd().isDir()
+    
     def getPath(self):        
         return self.path
+    
+    def getStart(self):
+        return self.start
         
     def getEnd(self):
         return self.end
@@ -576,6 +589,13 @@ class Sequence:
         return map(func, self.commands)
 
 
+# Cosntants for axiom groups
+A_BREAKING = 'Br'
+A_SIMPLIFY = 'Sp'
+A_COMMUTE = 'Cm'
+A_NORULE = 'No'
+A_UNKNOWN = '??'
+
 
 class CommandPair(Sequence):
     """Represents a pair of commands, including the relationship between their paths.
@@ -610,6 +630,15 @@ class CommandPair(Sequence):
             Dsep = {SEPARATE: 'xx', DIRECT_CHILD: '->', DIRECT_PARENT: '<-', SAME: '--'}
             return self.commands[0].info() + ' ' + Dsep[self.rel] + ' ' + self.commands[1].info()
         
+    def label(self):
+        """Returns a short string describing some of the object"""
+        Dsep = {SEPARATE: 'x', DIRECT_CHILD: '>', DIRECT_PARENT: '<', SAME: '='}        
+        return self.commands[0].label() + Dsep[self.rel] + self.commands[1].label();
+    
+    def info_label(self):
+        """Returns the label and info."""
+        return self.label() + " " + self.predictAxiomGroup() + "  " + self.info()
+        
     def clone(self):
         """Returns a shallow clone of the object. Commands are not mutable."""
         return self.__class__(self.commands[0], self.commands[1], self.rel)
@@ -633,6 +662,23 @@ class CommandPair(Sequence):
     def getLast(self):
         """Returns the last command in the pair."""
         return self.commands[1]
+    
+    def predictAxiomGroup(self):
+        """Returns the predicted rule type."""
+        if self.rel == SEPARATE:
+            return A_COMMUTE
+        if self.rel == SAME and self.getFirst().getEnd().getType() != self.getLast().getStart().getType():
+            return A_BREAKING
+        if self.rel == SAME:
+            return A_SIMPLIFY
+        
+        if not ONE_DIRECTORY_VALUE:
+            if self.rel == DIRECT_CHILD and self.getFirst().isDirToDir():
+                return A_COMMUTE
+            if self.rel == DIRECT_PARENT and self.getLast().isDirToDir():
+                return A_COMMUTE
+        
+        return A_UNKNOWN
 
 
 def CommandPairFactory():
@@ -647,10 +693,15 @@ def CommandPairFactory():
 
 # We test command pairs and aim to answer the following questions:
 # - Will the pair break all filesystems?
+RulesBreaking = []
 # - If not, can the pair be substituted by no commands at all?
 # - If not, can the pair be substituted by a single command?
+RulesSimplified = []
 # - If not, can the pair be reversed?
+RulesCommute = []
 # We are also interested in substitutions that extend the domain of the sequence.
+
+RulesNoRule = []
 
 if STYLE == 'tex':
     Pequ = ' \\equiv '
@@ -666,11 +717,8 @@ else:
     Pnorule = ' (no rule)'
     
 
-# When the two commands are separate, the default is that they commute
-print "Default: XY xx ZW == ZW xx XY"
-
-# When the two commands have the same path, the default is that they break all filesystems
-print "Default otherwise: XY ?? ZW == break"
+# print "Default: XY xx ZW == ZW xx XY"
+# print "Default otherwise: XY ?? ZW == break"
 
 for sq in CommandPairFactory():
     
@@ -695,8 +743,8 @@ for sq in CommandPairFactory():
         if not fs.isBroken():
             break # Skips "else" below
     else: # If none is not broken
-        if sq.getRelationship() == SEPARATE:
-            print sq.info() + Pequ + Pbreak
+        # if sq.getRelationship() == SEPARATE:
+        RulesBreaking.append(sq.info_label() + Pequ + Pbreak)
         continue
         
     # Is the pair the same as no command at all?
@@ -708,10 +756,10 @@ for sq in CommandPairFactory():
         if not fs_res.isSame(fs): nothingEq = False
         if not fs_res.isExtendedBy(fs): nothingExt = False
     if nothingEq:
-        print sq.info() + Pequ + Pnocomm
+        RulesSimplified.append(sq.info_label() + Pequ + Pnocomm)
         continue
     if nothingExt:
-        print sq.info() + Pext + Pnocomm
+        RulesSimplified.append(sq.info_label() + Pext + Pnocomm)
         continue
     
 
@@ -740,11 +788,11 @@ for sq in CommandPairFactory():
         if simplifiesEq:
             if simplifiedByEq is None or not simplifiedByEq.isSame(command):
                 simplifiedByEq = command
-                print sq.info() + Pequ + command.info(asSequence=True)
+                RulesSimplified.append(sq.info_label() + Pequ + command.info(asSequence=True))
         elif simplifiesExt:
             if simplifiedByExt is None or not simplifiedByExt.isSame(command):
                 simplifiedByExt = command
-                print sq.info() + Pext + command.info(asSequence=True)
+                RulesSimplified.append(sq.info_label() + Pext + command.info(asSequence=True))
     
     if not(simplifiedByEq is None) or not(simplifiedByExt is None) : continue
 
@@ -764,11 +812,21 @@ for sq in CommandPairFactory():
         if not fs_res.isSame(fs_rev_res): reverseEq = False
         if not fs_res.isExtendedBy(fs_rev_res): reverseExt = False
     if reverseEq:
-        if sq.getRelationship() != SEPARATE:
-            print sq.info() + Pequ + sq_rev.info()
+        # if sq.getRelationship() != SEPARATE:
+        RulesCommute.append(sq.info_label() + Pequ + sq_rev.info())
         continue
     if reverseExt:
-        print sq.info() + Pext + sq_rev.info()
+        RulesCommute.append(sq.info_label() + Pext + sq_rev.info())
         continue
     
-    print sq.info() + Pnorule
+    RulesNoRule.append(sq.info_label() + Pnorule)
+
+print "\nBreaking rules"
+print "\n".join(RulesBreaking)
+print "\nSimplification rules"
+print "\n".join(RulesSimplified)
+print "\nCommuting rules"
+print "\n".join(RulesCommute)
+print "\nNo rules"
+print "\n".join(RulesNoRule)
+
