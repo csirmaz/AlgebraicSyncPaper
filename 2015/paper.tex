@@ -2,15 +2,16 @@
 
 \usepackage{alltt}
 \usepackage{comment}
-\usepackage{multicol}
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{setspace}
 \usepackage{fullpage}
 \usepackage{graphicx}
-\usepackage{boxedminipage}
 \usepackage{afterpage}
+\usepackage{centernot}
+
+\usepackage{tikz}
 
 \newcommand{\setv}{\mathcal{V}}
 \newcommand{\setvx}[1]{\mathcal{V}_{#1}}
@@ -22,24 +23,33 @@
 \newcommand{\parent}{\mathtt{parent}}
 \newcommand{\FS}{\Phi} % {\mathrm{FS}}
 \newcommand{\GS}{\Xi} % another filesystem
-\newcommand{\pp}{\hat{p}} % parent path
-\newcommand{\np}{\mathrel{\ooalign{$p$\cr\hidewidth\hbox{$-$}\cr}}} % path not related to p
+\newcommand{\pp}{p^\uparrow} % parent path
+\newcommand{\np}{p_{\centernot\leftrightarrow}} % path not related to p
 
 \newcommand{\cbrk}{\mathtt{break}}
 \newcommand{\fscommand}[2]{{#1#2}}
-\newcommand{\cbb}{\fscommand{\empt\empt}}
-\newcommand{\cbf}{\fscommand{\empt{F}}}
-\newcommand{\cbd}{\fscommand{\empt{D}}}
-\newcommand{\cfb}{\fscommand{F\empt}}
-\newcommand{\cff}{\fscommand{FF}}
-\newcommand{\cfd}{\fscommand{FD}}
-\newcommand{\cdb}{\fscommand{D\empt}}
-\newcommand{\cdf}{\fscommand{DF}}
-\newcommand{\cdd}{\fscommand{DD}}
-\newcommand{\cxy}{\fscommand{XY}}
-\newcommand{\czw}{\fscommand{ZW}}
+\newcommand{\fsregcommandchar}[1]{\mathtt{#1}}
+\newcommand{\fsregcommand}[2]{\fscommand{\fsregcommandchar{#1}}{\fsregcommandchar{#2}}}
+\newcommand{\cbb}{\fsregcommand{\empt}{\empt}}
+\newcommand{\cbf}{\fsregcommand{\empt}{F}}
+\newcommand{\cbd}{\fsregcommand{\empt}{D}}
+\newcommand{\cfb}{\fsregcommand{F}{\empt}}
+\newcommand{\cff}{\fsregcommand{F}{F}}
+\newcommand{\cfd}{\fsregcommand{F}{D}}
+\newcommand{\cdb}{\fsregcommand{D}{\empt}}
+\newcommand{\cdf}{\fsregcommand{D}{F}}
+\newcommand{\cdd}{\fsregcommand{D}{D}}
+\newcommand{\cxy}{\fscommand{X}{Y}}
+\newcommand{\cyz}{\fscommand{Y}{Z}}
+\newcommand{\cxz}{\fscommand{X}{Z}}
+\newcommand{\czw}{\fscommand{Z}{W}}
 
-\title{Real-Life Algebraic File Synchronization}
+\newcommand{\eqext}{\sqsubseteq}
+\newcommand{\eqnrw}{\sqsupseteq}
+
+\newcommand{\emptyseq}{[\,]}
+
+\title{A Complete Algebra for File Synchronization}
 
 \author{Elod Pal Csirmaz}
 
@@ -79,11 +89,18 @@ Moreover, in $\setv$ we distinguish between files ($\setf$) and directories ($\s
 if $\setb = \{\empt\}$ then:
 \[ \setv = \setb \cup \setf \cup \setd \]
 The tree propety can then be defined as
-\[ \forall \FS : \forall p\in\setp : \FS(p) \neq \empt \wedge \parent(p) \neq \empt \Rightarrow \FS(\parent(p)) \in \setd \]
+\[ \forall \FS, p\in\setp : \FS(p) \neq \empt \wedge \parent(p) \neq \empt \Rightarrow \FS(\parent(p)) \in \setd \]
+
+This means that as we move from a path to its child, its grandchild, and so on,
+the types of values we encounter in the filesystem can only change according to the following
+transition diagram:
 
 % diagram
 % /> D ---> F ---> BOT <\
 % \--/               \--/
+\input{type-transition}
+
+In other words, the types will form a sequence like $D,D,\cdots,D,F,\empt,\empt,\cdots$.
 
 In this paper, we write $F$ for an arbitrary element of $\setf$, and $D$ for an arbitrary element
 of $\setd$. $V$ is usually a value from $\setv$ and $p$ and $q$ are paths in $\setp$.
@@ -130,7 +147,7 @@ as the success or failure of subsequent commands only depend on the type of the 
 
 We therefore propose to have a command for each pair of types.
 For want of a better system, we will simply name our commands by concatenating
-two of $\fscommand{D}{}$, $\fscommand{F}{}$ and $\fscommand{\empt}{}$, 
+two of $\fsregcommandchar{D}$, $\fsregcommandchar{F}$ and $\fsregcommandchar{\empt}$, 
 where the left sign notes the type of value
 in the filesystem before the command is applied, and the right sign notes the type
 afterwards. For example $mkdir(p,D)$ is $\cbd(p,D)$ and $rmdir(p)$ is $\cdb(p)$.
@@ -147,12 +164,12 @@ filesystem no longer has the tree property, then we say that the command
 
 So that we could reason about sequences of commands that break every filesystem
 in the algebra, we introduce the command $\cbrk$ that simply breaks every filesystem.
-We note that a command or a sequence of commands $S$ is applied to a filesystem
-by prefixing the command or sequence to it:
+We note that a sequence of commands $S$ is applied to a filesystem
+by prefixing the sequence to it:
 \begin{itemize}
 \item $S\FS$
-\item $\cbrk\FS=\empt$
-\item $\cff(p,F)\FS = \GS$, for which $\GS(p)=F$ holds
+\item $[\cbrk]\FS=\empt$
+\item $[\cff(p,F)]\FS = \GS$, for which $\GS(p)=F$ holds
 and $\GS(q)=\FS(q)$ for any path $q\neq p$.
 \end{itemize}
 
@@ -167,8 +184,8 @@ We are interested to see what pairs of commands can be simplified or reversed
 in order to see under what circumstances commands conflict or can be reordered.
 
 Pairs of commands in general will have the form
-\[ \cxy(p,V_Y); \czw(q,V_W) \]
-where $X,Y,Z,W\in\{D,F,\empt\}$, $p,q\in\setp$, and values are of the appropriate type: 
+\[ [\cxy(p,V_Y); \czw(q,V_W)] \]
+where $X,Y,Z,W\in\{\fsregcommandchar{D},\fsregcommandchar{F},\empt\}$, $p,q\in\setp$, and values are of the appropriate type: 
 $V_Y\in\setvx{Y}$ and $V_W\in\setvx{W}$
 (although commands where $Y=\empt$ or $W=\empt$ do not require a value).
 
@@ -184,14 +201,18 @@ consider are as follows.
 \begin{itemize}
 \item $p=q$. If the two commands affect the same path, the pair of commands
 will clearly behave differently than if the paths are different.
+%
 \item Separate paths, that is, $\parent(p)\neq q$ and $\parent(q)\neq p$. If the paths
 are not directly related, then modifying the filesystem at one path is not going
 to affect the outcome of the command on the other path.
 The two commands will therefore commute and the pair will be reversible.
+We will denote a path separate from $p$ with $\np$.
+%
 \item Directly related paths, that is, $\parent(p)=q$ or $\parent(q)=p$.
+For simplicity, we will write $\pp$ for $\parent(p)$.
 Some of these command pairs will not be reversible.
-For example, $\cbd(\parent(p),D);\cbf(p,F)$ will work on some filesystems,
-while $\cbf(p,F);\cbd(\parent(p),D)$ will break all filesystems.
+For example, $[\cbd(\pp,D);\cbf(p,F)]$ will work on some filesystems,
+while $[\cbf(p,F);\cbd(\pp,D)]$ will break all filesystems.
 \end{itemize}
 
 One may think that we may be able to specify more about the reversibility
@@ -199,28 +220,172 @@ or possible simplification of a pair of commands in the last group if we also
 knew whether the child path $p$ was the only (non-empty) child of its parent.
 However, it is easy to see that encoding this information in a pair
 is not going to enrich our algebra as, for example,
-the behaviour of a hypothetical $\cfb(p_{\mathrm{only\ child}}); \cdb(\parent(p))$
+the behaviour of a hypothetical $[\cfb(p_{\mathrm{only\ child}}); \cdb(\pp)]$
 is exactly the same as that of the more generic
-$\cfb(p); \cdb(\parent(p))$. The former will break any filesystem in which
+$[\cfb(p); \cdb(\pp)]$. The former will break any filesystem in which
 $p$ is not the only child as it violates its preconditions, but so will
 the generic pair.
 
-In summary, if we adopt the notation $\pp := \parent(p)$ and use $\np$ for a path not directly related to $p$,
-then we have pairs of commands
+In summary, we have pairs of commands
 of the following forms:
-\begin{align*}
-\cxy(p,V_Y)&; \czw(p,V_W) \\
-\cxy(p,V_Y)&; \czw(\np,V_W) \\
-\cxy(p,V_Y)&; \czw(\pp,V_W) \\
-\cxy(\pp,V_Y)&; \czw(p,V_W)
-\end{align*}
+\begin{itemize}
+\item[i.] \( [\cxy(p,V_Y); \czw(\np,V_W)] \)
+\item[ii.] \( [\cxy(p,V_Y); \czw(p,V_W)] \)
+\item[iii.] \( [\cxy(\pp,V_Y); \czw(p,V_W)] \)
+\item[iv.] \( [\cxy(p,V_Y); \czw(\pp,V_W)] \)
+\end{itemize}
 
+%% What does it mean to restrict the inspected filesystems to a given relationship?
+
+\section{Defining the Algebra}
+
+In order to reason about sequences of commands, we define \emph{algebraic laws} on
+commands. We use formal logic to build a proof system which is sound and
+complete for its intended interpretation.
+
+Similarly to \cite{NREC:alg}, we have two kinds of judgements
+for sequences \(S_1\) and \(S_2\):
+\begin{itemize}
+\item \(S_1\equiv S_2\), or \emph{\(S_1\) is algebraically equivalent to
+\(S_2\)}. Its intended interpretation is that they act in the same way on all
+filesystems.
+\item \(S_1\eqext S_2\), or \emph{\(S_2\) extends \(S_1\)}; its intended
+interpretation is that they act in the same way on all
+filesystems that \(S_1\) does not break.
+\end{itemize}
+
+We have two inference rules for the two judgements,
+which make it possible to derive new statements from the axioms or other statements.
+These are:
+
+\emph{For any sequences \(S_1, S_2, S, S'\):}
+\begin{itemize}
+\item if \(S_1\equiv S_2\) then \(S;S_1;S'\equiv S;S_2;S'\)
+\item if \(S_1\eqext S_2\) then \(S;S_1;S'\eqext S;S_2;S'\)
+\item if \(S_1\equiv S_2\) then \(S_1\eqext S_2\).
+\end{itemize}
+
+Finally, we have a set of axioms or laws that describe the behaviour
+of each command pair. We exclude commands that either break the
+filesystem or leave it in the same state ($\cbb$) and for
+simplicity's sake we merged axioms where the outcome is predictable
+from the relationship between the paths in the commands.
+
+\begin{itemize}
+\item[i.] If the two paths in the pair are separate (not directly related), then
+the commands commute with an equivalence:
+\[ [\cxy(p,V_Y); \czw(\np,V_W)] \equiv [\czw(\np,V_W); \cxy(p,V_Y)] \]
+%
+\item[ii.] If the two paths are the same ($[\cxy(p,V_Y); \czw(p,V_W)]$), then
+the pair will break every filesystem if $Z\ne Y$, that is, if the second
+command expects a type of value different from the one left by the first command.
+Otherwise, the pair will simplify to a single or no commands
+if both $X$ and $W$ are $\fsregcommandchar{\empt}$ or $\fsregcommandchar{D}$:
+\begin{gather*}
+% bf=fb Sp
+           [\cbf(p, F); \cfb(p)] \eqext \emptyseq \\
+% bd=db Sp
+           [\cbd(p, D); \cdb(p)] \eqext \emptyseq \\
+% db=bd Sp
+           [\cdb(p); \cbd(p, D)] \eqext [\cdd(p, D)] \\
+% df=fd Sp
+           [\cdf(p, F); \cfd(p, D)] \eqext [\cdd(p, D)]
+\end{gather*}
+In all other cases the commands are equivalent to a single command
+replacing the input of the first command with the output of the second:
+\[ [\cxy(p, V_Y); \cyz(p, V_Z)] \equiv [\cxz(p, V_Z)] \]
+%
+\item[iii.]
+Of the pairs in which the first command is applied to the parent of the path
+of the second command there are pairs to which no law applies.
+We call these ``construction'' pairs:
+\begin{gather*}
+% bd>bf
+           [\cbd(\pp, D); \cbf(p, F)] \\
+% bd>bd
+           [\cbd(\pp, D_1); \cbd(p, D_2)] \\
+% fd>bf
+           [\cfd(\pp, D); \cbf(p, F)] \\
+% fd>bd
+           [\cfd(\pp, D_1); \cbd(p, D_2)]
+\end{gather*}
+Otherwise commands in these pairs commute iff the first command is $\cdd$;
+all other pairs break every filesystem. For example:
+\begin{gather*}
+[\cdd(\pp, D); \cbf(p, F)] \equiv [\cbf(p, F); \cdd(\pp, D)] \\
+[\cdf(\pp, F); \cbd(p, D)] \equiv \cbrk
+\end{gather*}
+%
+\item[iv.]
+The final group of pairs are the ones in which the path in the second
+command is the parent of the one in the first.
+These behave similarly to the previous group. There are
+so-called ``destruction'' pairs to which no law applies:
+\begin{gather*}
+% fb<db ??
+           [\cfb(p); \cdb(\pp)] \\
+% fb<df ??
+           [\cfb(p); \cdf(\pp, F)] \\
+% db<db ??
+           [\cdb(p); \cdb(\pp)] \\
+% db<df ??
+           [\cdb(p); \cdf(\pp, F)]
+\end{gather*}
+Otherwise the commands commute iff the \emph{second} command is $\cdd$.
+All other pairs break every filesystem.
+\end{itemize}
+
+\section{Real-Life Variant}
+
+In real-life applications, we often do not want to consider metadata stored in
+directories (\cite{BZ}). In other words, the contents of directories are all equal,
+which can be modelled by assuming that $|\setd|=1$.
+Note that this creates a convenient symmetry where there are only a single value
+for each type, $D$ and $\empt$, that can be repeated as we move from a path to its child.
+
+This also means that $\cdd$, like $\cbb$, becomes a command that either breaks a filesystem
+or leaves it in the same state, and we will disregard it in our algebra.
+The axioms will simplify as follows:
+
+\begin{itemize}
+\item[i.] Pairs with separate paths are still reversible,
+but \emph{these are the only pairs that are so}.
+%
+\item[ii.] If the two paths are the same ($[\cxy(p,V_Y); \czw(p,V_W)]$), then, as above,
+the pair will break every filesystem if $Z\ne Y$.
+Otherwise, the pair is extended by an empty sequence
+if both $X$ and $W$ are $\fsregcommandchar{\empt}$ or $\fsregcommandchar{D}$:
+\begin{gather*}
+% bf=fb Sp
+           [\cbf(p, F); \cfb(p)] \eqext \emptyseq \\
+% bd=db Sp
+           [\cbd(p, D); \cdb(p)] \eqext \emptyseq \\
+% db=bd Sp
+           [\cdb(p); \cbd(p, D)] \eqext \emptyseq \\
+% df=fd Sp
+           [\cdf(p, F); \cfd(p, D)] \eqext \emptyseq
+\end{gather*}
+And in all other cases, as above, the commands are equivalent to a single command
+replacing the input of the first command with the output of the second:
+\[ [\cxy(p, V_Y); \cyz(p, V_Z)] \equiv [\cxz(p, V_Z)] \]
+%
+\item[iii.]
+Of the pairs in which the first command is applied to the parent path,
+the same ``construction'' pairs still have no laws, but all other pairs
+break all filesystems.
+%
+\item[iv.]
+And we still have the ``destruction'' pairs among the pairs where the second command
+is applied to the parent path, and all other pairs break all filesystems.
+\end{itemize}
 
 
 \begin{thebibliography}{99}
 
 \bibitem{NREC:alg} Ramsey, Norman and Elod Csirmaz: {\it An algebraic approach to
 file synchronization...}
+
+\bibitem{BZ} Bill Zissimopoulos, ...
 
 \end{thebibliography}
 
