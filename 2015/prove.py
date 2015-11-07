@@ -637,6 +637,8 @@ class CommandPair(Sequence):
     
     def info_label(self):
         """Returns the label and info."""
+        if STYLE == 'tex':
+            return "% " + self.label() + " " + self.predictAxiomGroup() + "\n           " + self.info()
         return self.label() + " " + self.predictAxiomGroup() + "  " + self.info()
         
     def clone(self):
@@ -706,16 +708,18 @@ RulesNoRule = []
 if STYLE == 'tex':
     Pequ = ' \\equiv '
     Pext = ' \\eqext '
-    Pbreak = '\\break'
+    Pbreak = '\\cbrk'
     Pnocomm = '[]'
     Pnorule = ''
+    Pjoin = ' \\\\\n';
 else:
     Pequ = ' == '
     Pext = ' =[ '
     Pbreak = 'break'
     Pnocomm = '(no commands)'
     Pnorule = ' (no rule)'
-    
+    Pjoin = '\n';
+
 
 # print "Default: XY xx ZW == ZW xx XY"
 # print "Default otherwise: XY ?? ZW == break"
@@ -822,11 +826,11 @@ for sq in CommandPairFactory():
     RulesNoRule.append(sq.info_label() + Pnorule)
 
 print "\nBreaking rules"
-print "\n".join(RulesBreaking)
+print Pjoin.join(RulesBreaking)
 print "\nSimplification rules"
-print "\n".join(RulesSimplified)
+print Pjoin.join(RulesSimplified)
 print "\nCommuting rules"
-print "\n".join(RulesCommute)
+print Pjoin.join(RulesCommute)
 print "\nNo rules"
-print "\n".join(RulesNoRule)
+print Pjoin.join(RulesNoRule)
 
