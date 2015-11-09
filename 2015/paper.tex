@@ -422,9 +422,9 @@ is applied to the parent path,
 
 \section{Ordering commands}
 
-We often encounter the case where we only have a set of commands without a sepcified order.
+We often encounter the case where we only have a set of commands without a specified order.
 Indeed, it is actually the task of the reconciler to determine whether there is an order
-in which updates from multiple replicas can all be applied to a filesystem.
+in which updates from multiple replicas can be applied to a filesystem.
 
 By a {\bf minimal sequence or set} of commands we mean a sequence / set in which
 there is at most one command on each path.
@@ -433,7 +433,7 @@ If $U$ is a minimal set of commands
 that we know can be applied to at least one filesystem in some order without breaking it,
 then we can split $U$ into a maximum number of disjunct subsets
 (components) so that the paths of two commands from different subsets would never be directly related.
-If we aim to order the commands in $U$, then we can focus on order the commands
+If we aim to order the commands in $U$, then we can focus on ordering the commands
 inside the components, as all permutations of the components are allowed:
 the commands in them will commute.
 
@@ -441,7 +441,7 @@ Components containing a single command do not pose a problem when determining
 possible orders.
 (Note that $\cff$ can only appear in a component of one.)
 
-In each component that is larger than one, the patch are directly related
+In each component that is larger than one, the paths are directly related
 and the commands form construction or destruction chains.
 To order the commands,
 select the command with the topmost path, so that there would be no command
