@@ -43,12 +43,16 @@
 \newcommand{\cyz}{\fscommand{Y}{Z}}
 \newcommand{\cxz}{\fscommand{X}{Z}}
 \newcommand{\czw}{\fscommand{Z}{W}}
+\newcommand{\cqr}{\fscommand{Q}{R}}
 
 \newcommand{\eqext}{\sqsubseteq}
 \newcommand{\eqnrw}{\sqsupseteq}
 \newcommand{\nequiv}{\not\equiv}
 
 \newcommand{\emptyseq}{[\,]}
+
+\newcommand{\extset}[1]{\wp{#1}}
+\newcommand{\orderset}[1]{\vec{\wp}{#1}}
 
 \title{A More Complete Algebra for File Synchronization}
 
@@ -413,6 +417,103 @@ is applied to the parent path,
    \item[Break.] and all other pairs break all filesystems.
    \end{description}
 \end{description}
+
+{\bf Going forward we use the algebra derived from the $|\setd|=1$ case.}
+
+\section{Ordering commands}
+
+We often encounter the case where we only have a set of commands without a sepcified order.
+Indeed, it is actually the task of the reconciler to determine whether there is an order
+in which updates from multiple replicas can all be applied to a filesystem.
+
+By a {\bf minimal sequence or set} of commands we mean a sequence / set in which
+there is at most one command on each path.
+
+If $U$ is a minimal set of commands
+that we know can be applied to at least one filesystem in some order without breaking it,
+then we can split $U$ into a maximum number of disjunct subsets
+(components) so that the paths of two commands from different subsets would never be directly related.
+If we aim to order the commands in $U$, then we can focus on order the commands
+inside the components, as all permutations of the components are allowed:
+the commands in them will commute.
+
+Components containing a single command do not pose a problem when determining
+possible orders.
+(Note that $\cff$ can only appear in a component of one.)
+
+In each component that is larger than one, the patch are directly related
+and the commands form construction or destruction chains.
+To order the commands,
+select the command with the topmost path, so that there would be no command
+on its parent path. If the command removes content at this path, the command
+needs to follow all other commands in the component, and
+the component is a destruction component.
+Otherwise the command with the topmost component needs to precede other commands
+in the component, and it is a construction component.
+Repeat the above process of splitting commands into subsets on the remaining commands
+in the component. Recursively, this way we can determine all allowed orders of the commands.
+
+We use $\orderset{U}$ to denote the set of sequences that contain all commands in $U$
+and represent all allowed orders. As a specific case, we can regard a sequence of commands $S$
+as a set and determine its $\orderset{S}$.
+At times by $\orderset{U}$ we mean an arbitrary sequence in the set.
+
+% (O-D)
+{\bf Lemma.} If $U$ contains commands on both $p$ and $\pp$, then
+there is a $U^*\in\orderset{U}$ where they are next to each other.
+
+{\bf Lemma.} For any minimal sequence $S$ not equivalent to $\cbrk$,
+$\orderset{S} = \extset{S}$.
+
+\section{Soundness}
+
+\section{Completeness}
+
+{\bf Lemma.} \((\forall\FS: S\FS = \empt) \Rightarrow S \equiv \cbrk\)
+
+\section{Update detection}
+
+\section{Reconciliation}
+
+If $A$ and $B$ are minimal sequences and there is at least one filesystem neither of them breaks,
+we write $A\circ B$. In this case based on the soundness of the algebra
+we also know that $A\nequiv\cbrk$ and $B\nequiv\cbrk$.
+Also, if there are commands on path $p$ in both $A$ ($\cxy(p, V_Y)$) and $B$ ($\czw(p, V_W)$)
+then their input types must match ($X=Z$).
+
+{\bf Lemma.} Let $A$ and $B$ be two minimal sequences so that $A\circ B$.
+Then their intersection can also be applied to any filesystem
+either can be applied to without breaking it.
+
+Proof.
+First we prove the following.
+Mark all commands in $A$ that also appear in $B$.
+Then $\exists A^* \in \orderset{A}$ in which the marked commands are at the beginning.
+
+We show $A$ can be transformed via equivalences so that this would be true
+by induction on the number of non-marked commands preceding the last marked command.
+If it is 0, no transformation is needed.
+For the induction step, select the last marked command preceded by a non-marked command.
+If the two commute, reverse them, thereby reducing the number on relevant non-marked commands.
+If they do not commute, they must be a construction or destruction pair as we know
+that $A$ is minimal and $A\nequiv\cbrk$.
+
+Let the marked command be $\cxy(p, V_Y)$ and the preceding unmarked command in $A$ be $\czw(q, V_W)$.
+We have two cases and we will proceed by indirection.
+
+If $B$ has a command on $q$, let it be $\cqr(q, V_R)$. As $A\circ B$, we know
+that $Q=Z$. From 
+O-D (TODO ref)
+we also know that there is a $B^*\equiv B$ where $\cxy$ and $\cqr$ are next to each other,
+and from the construction and destruction laws we know that $\cxy$ determines that like
+$\czw(q, V_W)$ in $A$, any command on $q$ must precede it in $B$. As $B$ is minimal, $B^*$
+contains the same commands, and so it is the $\cqr$ command that precedes $\cxy$ in $B^*$.
+Going back to the construction and destruction laws we see that the output type of the first command
+is always the same, and it is either $D$ or $\empt$. Therefore $R=W$ and $\cqr(q, V_R)=\czw(q, V_W)$
+as $|\setd|=|\setb|=1$. This is a contradiction as $\czw$ was not marked, but we see it must also be in $B$.
+
+If $B$ has no command on $q$, 
+
 
 
 \begin{thebibliography}{99}
