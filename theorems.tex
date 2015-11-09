@@ -14,12 +14,8 @@ filesystems, i.e. \(\forall F: S_1F=S_2F\).
 \item \(S_1\eqexp S_2\), or \emph{\(S_2\) extends \(S_1\)}; its intended
 interpretation is that if \(S_1\) does not break a filesystem, then they act
 the same on it, i.e. \(\forall F: S_1F\ne\ud \implies S_1F=S_2F\).
-%%%
-%%% Transitivity? == => =C ?
-%%%
 \end{itemize}
 
-%%%% REF!!
 The axioms of our proof system are the laws listed in Table 1. We have two
 inference rules, one for each judgement.
 
@@ -29,7 +25,6 @@ We created the laws with the help of pairs of commands.
 Lines in the last section are not axioms; they are written
 there to list all possible pairs.
 
-\begin{notrsi}
 \medskip
 {\small{
 How many pairs do we have? 
@@ -45,17 +40,12 @@ or precede \(break\)), and one case when we have a pair made of two
 \(break\)s. Thus, we have \(4\times 9+3\times2+1=43\) pairs. 
 }}
 \medskip
-\end{notrsi}
 
 We subdivide some laws containing \(edit\) because of \(edit\)'s different
 behavior when modifying paths to files or to directories. These laws are
 numbered with A or B.
 Extension laws (that is, where the relation is \(\eqexp\), not
 \(\equiv\)) are marked with \(E\).
-%%%
-%%% reference
-%%%
-% (See table 1 for the laws.)
 
 \ifnum\Textsize=1%
 \def\crlw{\)\\\indent\(}%
@@ -112,16 +102,12 @@ Extension laws (that is, where the relation is \(\eqexp\), not
 \def\lawxxxvii{43}%
 %%%
 \ifnum\Textsize=1
-%%\begin{forrsi*}
 \afterpage{\clearpage}
 \begin{table}[H]
 \singlespacing
 \else
-%%\end{forrsi*}
-%%\begin{notrsi*}
 \begin{table}[thb]
 \fi
-%%\end{notrsi*}
 \relax
 \label{table:laws}
 \relax
@@ -134,10 +120,6 @@ Extension laws (that is, where the relation is \(\eqexp\), not
 edit(\pisub,Y); edit(\pi,X)\)\\
 \lawip. \(edit(\pisub,Y); edit(\pi,X) \equiv\crlw
 edit(\pi,X); edit(\pisub,Y)\)\\
-%2. \(edit(\pi,X); create(\pisub,Y) \equiv
-%create(\pisub,Y); edit(\pi,X)\)\\
-%%\lawiibp. \(edit(\pi,\cdir{X}); create(\pisub,Y)\eqshr\)\\\indent\(%
-%%create(\pisub,Y); edit(\pi,\cdir{X})\)\\
 \lawiib. \(create(\pisub,Y); edit(\pi,\cdir{X})\eqexp\)\\\indent\(%
 edit(\pi,\cdir{X}); create(\pisub,Y)\)\\
 \lawiiia. \(edit(\pi,\cdir{X}); remove(\pisub) \equiv\)\\\indent\(%
@@ -163,8 +145,6 @@ create(\pi,X); remove(\varphi)\)\\
 \lawix. \(remove(\pi); remove(\varphi) \equiv\crlw
 remove(\varphi); remove(\pi)\)
 \lawsection{Breaking laws}
-%1*. \(edit(\pi,\cfile{X}); edit(\pisub,Y) \equiv 
-%edit(\pisub,Y); edit(\pi,\cfile{X}) \equiv break\)\\
 \lawiia. \(edit(\pi,\cfile{X}); create(\pisub,Y) \equiv
 break\)\\
 \lawiiap. \(create(\pisub,Y); edit(\pi,\cfile{X}) \equiv
@@ -208,12 +188,8 @@ create(\pisub,Y); edit(\pi,\cdir{X})\)\\
 \end{minipage}
 }}
 }
-%\begin{forrsi}
-%\doublespacing
-%\end{forrsi}
 \caption{Algebraic laws}
 \end{table}
-%}
 
 \subsection{Inference rules}
 

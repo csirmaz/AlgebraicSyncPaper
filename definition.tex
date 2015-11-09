@@ -42,14 +42,12 @@ Two filesystems \(F_1\) and \(F_2\) are equivalent iff
 
 We write \(F\{\pi \mapsto X\}\) for the function that is like \(F\),
 except it maps \(\pi\) to \(X\).
-\begin{notrsi}
 So
 \[F\{\pi \mapsto X\}(\gamma)=
 \begin{cases}
 X,&\mbox{if $\pi=\gamma$}\\
 F(\gamma), &\mbox{otherwise}
 \end{cases}\]
-\end{notrsi}
 
 We write \(childless_F(\pi)\) iff \(F(\pi)\) has no descendants,
 i.e. \(\forall\gamma: \pi\prec\gamma\implies F(\gamma)=\ud\).
@@ -85,15 +83,12 @@ commands \(create\), \(remove\), \(edit\) and \(break\). In appendix
 move--free
 algebra.
 
-\begin{notrsi}
 All commands have the following property: if applied to a filesystem,
 they either break the system (\(command(\pi,X)F=\ud\)) or 
 \(command(\pi,X)F=F\{\pi\mapsto X\}\); that is, they only affect the filesystem at the path on which
 they were applied. 
-\end{notrsi}
 
 Now we define the exact behavior of each command.
-%We have four commands: \emph{create, edit, remove} and \emph{break.} 
 Applied to the broken filesystem, they all leave
 the filesystem in the broken state. Otherwise, 
 the definition of their effect is as follows: 
