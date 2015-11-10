@@ -5,6 +5,7 @@
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
+\usepackage{amsthm}
 \usepackage{setspace}
 \usepackage{fullpage}
 \usepackage{graphicx}
@@ -44,15 +45,25 @@
 \newcommand{\cxz}{\fscommand{X}{Z}}
 \newcommand{\czw}{\fscommand{Z}{W}}
 \newcommand{\cqr}{\fscommand{Q}{R}}
+\newcommand{\cqq}{\fscommand{Q}{Q}}
 
 \newcommand{\eqext}{\sqsubseteq}
 \newcommand{\eqnrw}{\sqsupseteq}
 \newcommand{\nequiv}{\not\equiv}
+\newcommand{\wrext}{\stackrel{\mathtt{br}}{\sqsubseteq}}
+\newcommand{\wrnrw}{\stackrel{\mathtt{br}}{\sqsupseteq}}
+\newcommand{\coworks}{\circ}
+\newcommand{\ncoworks}{\centernot\circ}
 
 \newcommand{\emptyseq}{[\,]}
 
 \newcommand{\extset}[1]{\wp{#1}}
 \newcommand{\orderset}[1]{\vec{\wp}{#1}}
+
+\theoremstyle{definition}
+\newtheorem{mydef}{Definition}
+
+\newtheorem{mylem}{Lemma}
 
 \title{A More Complete Algebra for File Synchronization}
 
@@ -257,14 +268,16 @@ complete for its intended interpretation.
 
 Similarly to \cite{NREC:alg}, we have two kinds of judgements
 for sequences \(S_1\) and \(S_2\):
-\begin{itemize}
-\item \(S_1\equiv S_2\), or \emph{\(S_1\) is algebraically equivalent to
+\begin{mydef}
+\(S_1\equiv S_2\), or \emph{\(S_1\) is algebraically equivalent to
 \(S_2\)}. Its intended interpretation is that they act in the same way on all
-filesystems.
-\item \(S_1\eqext S_2\), or \emph{\(S_2\) extends \(S_1\)}; its intended
+filesystems. It is a commutative and transitive relation.
+\end{mydef}
+\begin{mydef}
+\(S_1\eqext S_2\), or \emph{\(S_2\) extends \(S_1\)}; its intended
 interpretation is that they act in the same way on all
-filesystems that \(S_1\) does not break.
-\end{itemize}
+filesystems that \(S_1\) does not break. It is a transitive relation.
+\end{mydef}
 
 We have two inference rules for the two judgements,
 which make it possible to derive new statements from the axioms or other statements.
@@ -426,8 +439,10 @@ We often encounter the case where we only have a set of commands without a speci
 Indeed, it is actually the task of the reconciler to determine whether there is an order
 in which updates from multiple replicas can be applied to a filesystem.
 
-By a {\bf minimal sequence or set} of commands we mean a sequence / set in which
+\begin{mydef}{Minimal set / sequence}
+By a minimal sequence or set of commands we mean a sequence / set in which
 there is at most one command on each path.
+\end{mydef}
 
 If $U$ is a minimal set of commands
 that we know can be applied to at least one filesystem in some order without breaking it,
@@ -445,50 +460,174 @@ In each component that is larger than one, the paths are directly related
 and the commands form construction or destruction chains.
 To order the commands,
 select the command with the topmost path, so that there would be no command
-on its parent path. If the command removes content at this path, the command
+on its parent path. If the command removes content at this path, then it
 needs to follow all other commands in the component, and
 the component is a destruction component.
 Otherwise the command with the topmost component needs to precede other commands
 in the component, and it is a construction component.
-Repeat the above process of splitting commands into subsets on the remaining commands
+Repeat the process of splitting commands into subsets on the remaining commands
 in the component. Recursively, this way we can determine all allowed orders of the commands.
 
+\begin{mydef}{$\orderset{U}$}
 We use $\orderset{U}$ to denote the set of sequences that contain all commands in $U$
-and represent all allowed orders. As a specific case, we can regard a sequence of commands $S$
+and represent all allowed orders.
+\end{mydef}
+
+As a specific case, we can regard a sequence of commands $S$
 as a set and determine its $\orderset{S}$.
 At times by $\orderset{U}$ we mean an arbitrary sequence in the set.
 
-% (O-D)
-{\bf Lemma.} If $U$ contains commands on both $p$ and $\pp$, then
+\begin{mylem}\label{lemma:neighbour}
+If $U$ contains commands on both $p$ and $\pp$, then
 there is a $U^*\in\orderset{U}$ where they are next to each other.
+\end{mylem}
 
-{\bf Lemma.} For any minimal sequence $S$ not equivalent to $\cbrk$,
+\begin{mydef}
+$\extset{S} := \{S^*|S\eqext S^*\}$
+\end{mydef}
+
+\begin{mylem}\label{lemma:minextset}
+For any minimal sequence $S$ not equivalent to $\cbrk$, $\extset{S} = \{S^*|S\equiv S^*\}$.
+\end{mylem}
+\begin{proof}
+This is because as $S$ has at most one command on each path, only equivalence axioms
+can be applied to it.
+\end{proof}
+
+\begin{mylem}\label{lemma:minextorder}
+For any minimal sequence $S$ not equivalent to $\cbrk$,
 $\orderset{S} = \extset{S}$.
+\end{mylem}
 
 \section{Soundness}
 
 \section{Completeness}
 
-{\bf Lemma.} \((\forall\FS: S\FS = \empt) \Rightarrow S \equiv \cbrk\)
+\begin{mylem}
+\((\forall\FS: S\FS = \empt) \Rightarrow S \equiv \cbrk\)
+\end{mylem}
 
 \section{Update detection}
 
+\section{Extending the algebra}
+
+We have seen that commands can break a filesystem
+either because their input type does not match the filesystem at the given path,
+or because the filesystem loses its tree property.
+
+\begin{mydef}{Fully typed sequences}
+We call a sequence of commands fully typed if whenever it breaks a filesystem
+it is explained by a mismatch on the input types of the commands it contains.
+TODO: define fully typed sequences in terms of the algebra?
+\end{mydef}
+
+To aid the construction of fully typed sequences, we reintroduce
+two assertion commands that either break the filesystem
+or leave it unchanged: $\cbb(p)$ and $\cdd(p)$.
+As $|\setb|=|\setd|=1$, we do not note the exact output value.
+These can be used to test whether $\FS(p)=\empt$ or $\FS(p)=D$.
+
+Furthermore, we note the following axioms:
+
+\begin{itemize}
+\item Laws for construction typing:
+   \begin{gather*}
+            [\cbf(p, F)] \equiv [\cdd(\pp); \cbf(p, F)]\\
+            [\cbd(p, D)] \equiv [\cdd(\pp); \cbd(p, D)]
+   \end{gather*}
+\item Laws for destruction typing:
+   \begin{gather*}
+            [\cdb(\pp)] \equiv [\cbb(p); \cdb(\pp)]\\
+            [\cdf(\pp, F)] \equiv [\cbb(p); \cdf(\pp, F)]
+   \end{gather*}
+\end{itemize}
+
+Separately, we extend the algebra with the following judgements and axioms:
+
+\begin{mydef}{$A\coworks B$}
+or the domains of $A$ and $B$ overlap.
+Its intended interpretation is that
+there is at least one filesystem neither $A$ nor $B$ breaks.
+It is a commutative (but not transitive) relation.
+For $A\ncoworks B$ we say that $A$ and $B$ are disjoint.
+\end{mydef}
+
+\begin{mydef}{$A\wrext B$}
+or the domain of $B$ extends that of $A$.
+Its intended interpretation is that
+$B$ does not break any filesystem $A$ does not break.
+It is a transitive relation.
+\end{mydef}
+
+\begin{itemize}
+\item $A\coworks B \Rightarrow A\nequiv\cbrk$
+\item $A\eqext B \Rightarrow A\wrext B$
+\item $A\coworks B\wrext C \Rightarrow A\coworks C$
+\item $A\ncoworks B\wrnrw C \Rightarrow A\ncoworks C$
+\item $A\ncoworks B \Rightarrow A;S\ncoworks B$
+\end{itemize}
+
+Axioms:
+
+\begin{itemize}
+\item $\cxy(p,V_Y)\ncoworks \czw(p,V_W)$ where $X\neq Z$
+% \item Disjoint laws for construction:
+%    \begin{gather*}
+%    % bd>bf
+%             [\cbd(\pp, D); \cbf(p, F)] \ncoworks [\cbf(p, F)]\\
+%    % bd>bd
+%             [\cbd(\pp, D_1); \cbd(p, D_2)] \ncoworks [\cbd(p, D_2)]\\
+%    % fd>bf
+%             [\cfd(\pp, D); \cbf(p, F)] \ncoworks [\cbf(p, F)]\\
+%    % fd>bd
+%             [\cfd(\pp, D_1); \cbd(p, D_2)] \ncoworks [\cbd(p, D_2)]
+%    \end{gather*}
+% \item Disjoint laws for destruction:
+%    \begin{gather*}
+%    % fb<db ??
+%             [\cfb(p); \cdb(\pp)] \ncoworks [\cdb(\pp)]\\
+%    % fb<df ??
+%             [\cfb(p); \cdf(\pp, F)] \ncoworks [\cdf(\pp, F)]\\
+%    % db<db ??
+%             [\cdb(p); \cdb(\pp)] \ncoworks [\cdb(\pp)]\\
+%    % db<df ??
+%             [\cdb(p); \cdf(\pp, F)] \ncoworks [\cdf(\pp, F)]
+%    \end{gather*}
+\end{itemize}
+
+\begin{mylem}
+If $A$ and $B$ are minimal sequences, $A\coworks B$,
+and there are commands on path $p$ in both $A$ ($\cxy(p, V_Y)$) and $B$ ($\czw(p, V_W)$)
+then their input types must match ($X=Z$).
+TODO: Can this be derived from the algebra?
+\end{mylem}
+
+\begin{mylem}
+If $A$ is fully typed and $S;A$ is minimal, then $S;A\wrext A$
+TODO: Is this an axiom?
+\end{mylem}
+
+\begin{mylem}\label{lemma:ncowprefix}
+$A\ncoworks B \Rightarrow S;A\ncoworks B$ if $A$ is fully typed and $S;A$ is minimal.
+\end{mylem}
+\begin{proof}
+This follows from above.
+\end{proof}
+
 \section{Reconciliation}
 
-If $A$ and $B$ are minimal sequences and there is at least one filesystem neither of them breaks,
-we write $A\circ B$. In this case based on the soundness of the algebra
-we also know that $A\nequiv\cbrk$ and $B\nequiv\cbrk$.
-Also, if there are commands on path $p$ in both $A$ ($\cxy(p, V_Y)$) and $B$ ($\czw(p, V_W)$)
-then their input types must match ($X=Z$).
-
-{\bf Lemma.} Let $A$ and $B$ be two minimal sequences so that $A\circ B$.
+\begin{mylem}
+Let $A$ and $B$ be two minimal sequences so that $A\coworks B$.
 Then their intersection can also be applied to any filesystem
 either can be applied to without breaking it.
+\end{mylem}
 
-Proof.
+\begin{proof}
 First we prove the following.
 Mark all commands in $A$ that also appear in $B$.
 Then $\exists A^* \in \orderset{A}$ in which the marked commands are at the beginning.
+
+\medskip
 
 We show $A$ can be transformed via equivalences so that this would be true
 by induction on the number of non-marked commands preceding the last marked command.
@@ -501,9 +640,8 @@ that $A$ is minimal and $A\nequiv\cbrk$.
 Let the marked command be $\cxy(p, V_Y)$ and the preceding unmarked command in $A$ be $\czw(q, V_W)$.
 We have two cases and we will proceed by indirection.
 
-If $B$ has a command on $q$, let it be $\cqr(q, V_R)$. As $A\circ B$, we know
-that $Q=Z$. From 
-O-D (TODO ref)
+If $B$ has a command on $q$, let it be $\cqr(q, V_R)$. As $A\coworks B$, we know
+that $Q=Z$. From lemmas \ref{lemma:neighbour}, \ref{lemma:minextset} and \ref{lemma:minextorder}
 we also know that there is a $B^*\equiv B$ where $\cxy$ and $\cqr$ are next to each other,
 and from the construction and destruction laws we know that $\cxy$ determines that like
 $\czw(q, V_W)$ in $A$, any command on $q$ must precede it in $B$. As $B$ is minimal, $B^*$
@@ -512,8 +650,26 @@ Going back to the construction and destruction laws we see that the output type 
 is always the same, and it is either $D$ or $\empt$. Therefore $R=W$ and $\cqr(q, V_R)=\czw(q, V_W)$
 as $|\setd|=|\setb|=1$. This is a contradiction as $\czw$ was not marked, but we see it must also be in $B$.
 
-If $B$ has no command on $q$, 
+If $B$ has no command on $q$, $A$ and $B$ cannot work on the same filesystem,
+as the second commands in all construction and destruction laws require a different type of input
+as the first commands. This is a contradiction as we supposed $A\coworks B$.
 
+In terms of the algebra, this latter argument could be rephrased as follows.
+Split $A$ into $[A_0;\czw(q, V_W);\cxy(p, V_Y);A_1]$.
+Add command $\cqq(q)$ before $\cxy(p, V_Y)$ to $B$ according to the construction or destruction typing laws.
+This yields $B^*\equiv B$, which we split into $[B_0;\cqq(q);\cxy(p, V_Y);B_1]$.
+We know $[\czw(q, V_W);\cxy(p, V_Y)]$ is fully typed (TODO: why?)
+and $A$ is minimal, so $[A_0;\czw(q, V_W);\cxy(p, V_Y)]$ is minimal.
+We also know $[\cqq(q);\cxy(p, V_Y)]$ is fully typed and $B^*$ is minimal, so $[B_0;\cqq(q);\cxy(p, V_Y)]$ is minimal.
+But we know $[\czw(q, V_W);\cxy(p, V_Y)]\ncoworks [\cqq(q);\cxy(p, V_Y)]$
+as comparing the construction and destruction laws to their typing counterparts we know that $Z\neq Q$,
+and so from lemma \ref{lemma:ncowprefix} and $A\ncoworks B \Rightarrow A;S\ncoworks B$
+we know that $A\ncoworks B^*\equiv B$ and so $A\ncoworks B$ which is a contradiction.
+(TODO: Is there a point in proving this this way?)
+
+\medskip
+
+\end{proof}
 
 
 \begin{thebibliography}{99}
