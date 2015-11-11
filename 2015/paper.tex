@@ -7,11 +7,11 @@
 \usepackage{amssymb}
 \usepackage{amsthm}
 \usepackage{setspace}
-\usepackage{fullpage}
+% \usepackage{fullpage}
 \usepackage{graphicx}
-\usepackage{afterpage}
-\usepackage{centernot}
+% \usepackage{afterpage}
 
+\usepackage{centernot}
 \usepackage{tikz}
 
 \newcommand{\setv}{\mathcal{V}}
@@ -22,6 +22,8 @@
 \newcommand{\setp}{\mathcal{P}}
 \newcommand{\empt}{\bot}
 \newcommand{\parent}{\mathtt{parent}}
+\newcommand{\toppath}{\mathtt{None}}
+\newcommand{\fsbroken}{\mathtt{Broken}}
 \newcommand{\FS}{\Phi} % {\mathrm{FS}}
 \newcommand{\GS}{\Xi} % another filesystem
 \newcommand{\pp}{p^\uparrow} % parent path
@@ -62,7 +64,7 @@
 
 \theoremstyle{definition}
 \newtheorem{mydef}{Definition}
-
+\newtheorem{myax}{Axiom}
 \newtheorem{mylem}{Lemma}
 
 \title{A More Complete Algebra for File Synchronization}
@@ -93,19 +95,22 @@ or directories.
 We consider the contents of files, as well as any meta-information of files
 and directories (e.g. permissions or flags) part of the values in $\setv$.
 
-Every filesystem has a so-called \textbf{tree property}, which means that
-if the filesystem is not empty at a path, and it is not a root path,
-then it must have a directory at the path's parent.
-This requires that a parent--child relationship is defined over $\setp$,
-which we model using the function $\parent$, which returns the parent path
-or $\empt$ if the path is a root path:
-\[ \parent : \setp \rightarrow \setp \cup \{\empt\} \]
+The paths of a filesystem form a disjoint union of rooted directed trees.
+\begin{mydef}
+The function $\parent(p)$ returns the parent path of $p$, or
+returns $\toppath$ if $p$ is the root of a tree.
+We also write $\pp$ for $\parent(p)$.
+\end{mydef}
 
-Moreover, in $\setv$ we distinguish between files ($\setf$) and directories ($\setd$), that is,
+Every filesystem has a so-called \textbf{tree property}, which means that
+if the filesystem is not empty at a path, and the path has a parent,
+then there must be a directory at the parent path.
+
+To model this, in $\setv$ we distinguish between files ($\setf$) and directories ($\setd$), that is,
 if $\setb = \{\empt\}$ then:
 \[ \setv = \setb \cup \setf \cup \setd \]
 The tree propety can then be defined as
-\[ \forall \FS, p\in\setp : \FS(p) \neq \empt \wedge \parent(p) \neq \empt \Rightarrow \FS(\parent(p)) \in \setd \]
+\[ \forall \FS, p\in\setp : \FS(p) \neq \empt \wedge \parent(p) \neq \toppath \Rightarrow \FS(\parent(p)) \in \setd \]
 
 This means that as we move from a path to its child, its grandchild, and so on,
 the types of values we encounter in the filesystem can only change according to the following
@@ -113,12 +118,10 @@ transition diagram:
 
 \input{type-transition}
 
-In other words, the types will form a sequence like $D,D,\cdots,D,F,\empt,\empt,\cdots$.
-
 In this paper, we write $F$ for an arbitrary element of $\setf$, and $D$ for an arbitrary element
 of $\setd$. $V$ is usually a value from $\setv$ and $p$ and $q$ are paths in $\setp$.
 
-\section{Commands}
+\section{Introducing commands}
 
 Next we need to define instructions or commands on the filesystem about which we will reason
 using our algebra.
@@ -138,9 +141,9 @@ Let us consider what kind of information may be encoded in the commands.
 A usual set of commands, based on the most frequent tools implemented by filesystems,
 might be $create(p,V)$, $edit(p,V)$ and $remove(p)$ where $p\in\setp$ and $V\in\setv$ (but $V\neq\empt$).
 Clearly the commands need to contain information about the state they leave the filesystem
-in at the path on which they operate, that is, they need to contain the ``end'' value, $V$.
+in at the path on which they operate, that is, they need to contain their output value, $V$.
 Notice, however, that the commands above also encode some information about the filesystem
-{\it before} the command is applied; namely, $create$ requires that there are no files
+\emph{before} the command is applied; namely, $create$ requires that there are no files
 or directories at $p$, while $edit$ and $remove$ require the opposite.
 
 We also know that after $create$ or $edit$, $\FS(p)\neq\empt$, whereas after $remove$,
@@ -155,20 +158,21 @@ but it creates a seemingly arbitrary asymmetry where
 there is more information encoded into commands about their results than about the
 original state of the filesystem.
 
-In line with the aim to encode in commands as much information as possible,
+In line with the aim to encode as much information as possible in the commands,
 and in order to resolve this asymmetry, we propose a set of commands that encode
 the type of the original state of $\FS(p)$ as well.
-(Some real-life filesystem commands like $mkdir$ or $rmdir$ do this already.)
+(Some real-life filesystem commands like $rmdir$ do this already.)
 Please note that there is never any need to encode information about the
-{\it exact} value of path $p$ in a command, merely its type ($D$, $F$ or $\empt$),
-as the success or failure of subsequent commands only depend on the type of the value.
+\emph{exact} value of path $p$ in a command, merely its type ($D$, $F$ or $\empt$),
+as the success or failure of filesystem commands only depend on the type of the value.
 
 We therefore propose to have a command for each pair of types.
-For want of a better system, we will simply name our commands by concatenating
+For want of a better system, we will name our commands by concatenating
 two of $\fsregcommandchar{D}$, $\fsregcommandchar{F}$ and $\fsregcommandchar{\empt}$, 
 where the left sign notes the type of value
 in the filesystem before the command is applied, and the right sign notes the type
 afterwards. For example $mkdir(p,D)$ is $\cbd(p,D)$ and $rmdir(p)$ is $\cdb(p)$.
+Please find their exact definitions below.
 
 % TODO No "move"
 
@@ -178,17 +182,41 @@ The commands can only succeed if the original value at $p$ has a type that match
 the type required by a command. If this is not the case, or if the resulting
 filesystem no longer has the tree property, then we say that the command
 \textbf{breaks} the filesystem. Broken filesystems are considered equal
-(but not equal to any working filesystem), and we note them by $\FS=\empt$.
+(but not equal to any working filesystem), and we note them by $\FS=\fsbroken$.
 
 So that we could reason about sequences of commands that break every filesystem
 in the algebra, we introduce the command $\cbrk$ that simply breaks every filesystem.
-We note that a sequence of commands $S$ is applied to a filesystem
-by prefixing the sequence to it:
+
+We note that a command or a sequence of commands is applied to a filsystem
+by prefixing the command or sequence to it, for example: $\cbrk\FS$, $\cbd(p,D)\FS$, 
+or $S\FS$ if $S$ is a sequence of commands.
+
+The exact behaviour of our commands is as follows:
 \begin{itemize}
-\item $S\FS$
-\item $[\cbrk]\FS=\empt$
-\item $[\cff(p,F)]\FS = \GS$, for which $\GS(p)=F$ holds
-and $\GS(q)=\FS(q)$ for any path $q\neq p$.
+\item $\cbrk\FS = \fsbroken$
+\item
+All commands have the generic form $\cxy(p,V_Y)$ where
+$X$ and $Y$ are types ($\fsregcommandchar{D}$, $\fsregcommandchar{F}$ or $\fsregcommandchar{\empt}$),
+$p\in\setp$ and $V_Y$ is a value of the appropriate type from $\setvx{Y}$.
+At times we omit $V_Y$ if there is only one suitable value.
+
+Let us introduce the following notation for a filesystem derived from $\FS$:
+\[ \FS\{p\mapsto V\}(q) :=
+   \begin{cases}
+   V &\mbox{if~} q=p\\
+   \FS(q) &\mbox{otherwise.}
+   \end{cases}
+\]
+
+Then
+\[ \cxy(p,V_Y)\FS = 
+   \begin{cases}
+   \fsbroken &\mbox{if~} \FS=\fsbroken\\
+   \fsbroken &\mbox{if~} \FS(p)\not\in\setvx{X}\\
+   \fsbroken &\mbox{if~} \FS\{p\mapsto V_Y\} \mbox{~violates the tree property}\\
+   \FS\{p\mapsto V_Y\} &\mbox{otherwise.}
+   \end{cases}
+\]
 \end{itemize}
 
 \section{Sequences of Commands}
@@ -204,10 +232,9 @@ in order to see under what circumstances commands conflict or can be reordered.
 
 Pairs of commands in general will have the form
 \[ [\cxy(p,V_Y); \czw(q,V_W)] \]
-where $X,Y,Z,W\in\{\fsregcommandchar{D},\fsregcommandchar{F},\empt\}$, $p,q\in\setp$, and values are of the appropriate type: 
+where $X,Y,Z,W\in\{\fsregcommandchar{D},\fsregcommandchar{F},\empt\}$, $p,q\in\setp$, 
+and values are of the appropriate type: 
 $V_Y\in\setvx{Y}$ and $V_W\in\setvx{W}$.
-(Strictly speaking, commands where $Y=\empt$ or $W=\empt$ do not require a value,
-but they can also be written in a $\fscommand{X}{\empt}(p, \empt)$ form.)
 
 Similarly to the case of commands, in \cite{NREC:alg} we found that in order to build
 a set of axioms in a sound and complete algebra and use the algebra effectively we at times needed to take into account
@@ -279,22 +306,23 @@ interpretation is that they act in the same way on all
 filesystems that \(S_1\) does not break. It is a transitive relation.
 \end{mydef}
 
-We have two inference rules for the two judgements,
+We have inference rules for the two judgements,
 which make it possible to derive new statements from the axioms or other statements.
 These are:
 
 \emph{For any sequences \(S_1, S_2, S, S'\):}
 \begin{itemize}
-\item if \(S_1\equiv S_2\) then \(S;S_1;S'\equiv S;S_2;S'\)
-\item if \(S_1\eqext S_2\) then \(S;S_1;S'\eqext S;S_2;S'\)
-\item if \(S_1\equiv S_2\) then \(S_1\eqext S_2\).
+\item \(S_1\equiv S_2 \Rightarrow S;S_1;S'\equiv S;S_2;S'\)
+\item \(S_1\eqext S_2 \Rightarrow S;S_1;S'\eqext S;S_2;S'\)
+\item \(S_1\equiv S_2 \Rightarrow S_1\eqext S_2\).
 \end{itemize}
 
 Finally, we have a set of axioms or laws that describe the behaviour
 of each command pair. We exclude commands that either break the
 filesystem or leave it in the same state ($\cbb$) and for
-simplicity's sake we merged axioms where the outcome is predictable
-from the relationship between the paths in the commands.
+simplicity's sake instead of listing axioms for all pairs of commands
+we describe the behaviour of groups of pairs
+based on the relationship between the paths in the commands.
 
 \begin{description}
 \item[Unrelated.] If the two paths in the pair are not directly related, then
@@ -333,7 +361,8 @@ the commands cannot be reversed. Instead:
 These are the pairs in which the first command is applied to the parent of the path
 of the second command.
    \begin{description}
-   \item[Construction.] There are pairs in this group to which no law applies.
+   \item[Construction.] There are pairs in this group to which no law applies:
+   the commands do not commute or break every filesystem, and cannot be simplified.
    We call these ``construction'' pairs:
    \begin{gather*}
    % bd>bf
@@ -382,7 +411,7 @@ These behave similarly to the previous group.
 In real-life applications, we often do not want to consider metadata stored in
 directories (\cite{BZ}). In other words, the contents of directories are all equal,
 which can be modelled by assuming that $|\setd|=1$.
-Note that this creates a convenient symmetry where there are only a single value
+Note that this creates a convenient symmetry where there is only a single value
 for each type that can be repeated as we move from a path to its child ($D$ and $\empt$).
 
 This also means that $\cdd$, like $\cbb$, becomes a command that either breaks a filesystem
@@ -431,6 +460,7 @@ is applied to the parent path,
    \end{description}
 \end{description}
 
+% TODO
 {\bf Going forward we use the algebra derived from the $|\setd|=1$ case.}
 
 \section{Ordering commands}
@@ -440,54 +470,57 @@ Indeed, it is actually the task of the reconciler to determine whether there is 
 in which updates from multiple replicas can be applied to a filesystem.
 
 \begin{mydef}{Minimal set / sequence}
-By a minimal sequence or set of commands we mean a sequence / set in which
-there is at most one command on each path.
+By a minimal set or sequence of commands we mean a set / sequence in which
+there is at most one command on every path.
 \end{mydef}
 
 If $U$ is a minimal set of commands
 that we know can be applied to at least one filesystem in some order without breaking it,
 then we can split $U$ into a maximum number of disjunct subsets
-(components) so that the paths of two commands from different subsets would never be directly related.
-If we aim to order the commands in $U$, then we can focus on ordering the commands
-inside the components, as all permutations of the components are allowed:
-the commands in them will commute.
+(components) so that the paths of two commands from two different subsets are never directly related.
+If we aim to order the commands in $U$, then we can allow any permutation of 
+the components as the commands in them will commute freely.
 
 Components containing a single command do not pose a problem when determining
 possible orders.
 (Note that $\cff$ can only appear in a component of one.)
 
-In each component that is larger than one, the paths are directly related
-and the commands form construction or destruction chains.
-To order the commands,
+In each component that is larger than one, the paths 
+form a rooted ordered tree via the parent--child relationships,
+and the pairs connected by edges will be like pairs in the
+construction or destruction laws.
+To order the commands in a component,
 select the command with the topmost path, so that there would be no command
-on its parent path. If the command removes content at this path, then it
+on its parent path (if there is one). 
+If the command removes content at this path (it is of the form $\fsregcommand{X}{\empt}$), then it
 needs to follow all other commands in the component, and
-the component is a destruction component.
+the component is made of destruction pairs.
 Otherwise the command with the topmost component needs to precede other commands
-in the component, and it is a construction component.
-Repeat the process of splitting commands into subsets on the remaining commands
+in the component, and it is made of construction pairs.
+Move the command with the topmost path in place, and
+repeat the process of splitting commands into subsets on the remaining commands
 in the component. Recursively, this way we can determine all allowed orders of the commands.
 
 \begin{mydef}{$\orderset{U}$}
 We use $\orderset{U}$ to denote the set of sequences that contain all commands in $U$
-and represent all allowed orders.
+and represent all orders generated by this algorithm.
+At times by $\orderset{U}$ we mean an arbitrary sequence in the set.
 \end{mydef}
 
 As a specific case, we can regard a sequence of commands $S$
 as a set and determine its $\orderset{S}$.
-At times by $\orderset{U}$ we mean an arbitrary sequence in the set.
 
 \begin{mylem}\label{lemma:neighbour}
 If $U$ contains commands on both $p$ and $\pp$, then
-there is a $U^*\in\orderset{U}$ where they are next to each other.
+there is a $U'\in\orderset{U}$ where they are next to each other.
 \end{mylem}
 
 \begin{mydef}
-$\extset{S} := \{S^*|S\eqext S^*\}$
+$\extset{S} := \{S'|S\eqext S'\}$
 \end{mydef}
 
 \begin{mylem}\label{lemma:minextset}
-For any minimal sequence $S$ not equivalent to $\cbrk$, $\extset{S} = \{S^*|S\equiv S^*\}$.
+For any minimal sequence $S$ not equivalent to $\cbrk$, $\extset{S} = \{S'|S\equiv S'\}$.
 \end{mylem}
 \begin{proof}
 This is because as $S$ has at most one command on each path, only equivalence axioms
@@ -498,6 +531,8 @@ can be applied to it.
 For any minimal sequence $S$ not equivalent to $\cbrk$,
 $\orderset{S} = \extset{S}$.
 \end{mylem}
+
+% TODO Can these be derived from the algebra?
 
 \section{Soundness}
 
@@ -518,14 +553,15 @@ or because the filesystem loses its tree property.
 \begin{mydef}{Fully typed sequences}
 We call a sequence of commands fully typed if whenever it breaks a filesystem
 it is explained by a mismatch on the input types of the commands it contains.
+% TODO
 TODO: define fully typed sequences in terms of the algebra?
 \end{mydef}
 
 To aid the construction of fully typed sequences, we reintroduce
 two assertion commands that either break the filesystem
 or leave it unchanged: $\cbb(p)$ and $\cdd(p)$.
-As $|\setb|=|\setd|=1$, we do not note the exact output value.
-These can be used to test whether $\FS(p)=\empt$ or $\FS(p)=D$.
+(As $|\setb|=|\setd|=1$, we do not note their exact output value.)
+They can be used to test whether $\FS(p)=\empt$ or $\FS(p)=D$.
 
 Furthermore, we note the following axioms:
 
@@ -559,18 +595,17 @@ $B$ does not break any filesystem $A$ does not break.
 It is a transitive relation.
 \end{mydef}
 
-\begin{itemize}
-\item $A\coworks B \Rightarrow A\nequiv\cbrk$
-\item $A\eqext B \Rightarrow A\wrext B$
-\item $A\coworks B\wrext C \Rightarrow A\coworks C$
-\item $A\ncoworks B\wrnrw C \Rightarrow A\ncoworks C$
-\item $A\ncoworks B \Rightarrow A;S\ncoworks B$
-\end{itemize}
 
-Axioms:
+\begin{myax}$A\coworks B \Rightarrow A\nequiv\cbrk$\end{myax}
+\begin{myax}$A\eqext B \Rightarrow A\wrext B$\end{myax}
+\begin{myax}\label{axiom:wrextpostfix}$[A;S] \wrext A$\end{myax}
+\begin{myax}$A\coworks B\wrext C \Rightarrow A\coworks C$\end{myax}
+\begin{myax}\label{axiom:ncowwrnrw}$A\ncoworks B\wrnrw C \Rightarrow A\ncoworks C$\end{myax}
 
-\begin{itemize}
-\item $\cxy(p,V_Y)\ncoworks \czw(p,V_W)$ where $X\neq Z$
+\begin{mylem}\label{lemma:ncowpostfix}$A\ncoworks B \Rightarrow [A;S]\ncoworks B$\end{mylem}
+\begin{proof}From axioms \ref{axiom:wrextpostfix} and \ref{axiom:ncowwrnrw}\end{proof}
+
+\begin{myax}$\cxy(p,V_Y)\ncoworks \czw(p,V_W)$ if $X\neq Z$\end{myax}
 % \item Disjoint laws for construction:
 %    \begin{gather*}
 %    % bd>bf
@@ -593,7 +628,6 @@ Axioms:
 %    % db<df ??
 %             [\cdb(p); \cdf(\pp, F)] \ncoworks [\cdf(\pp, F)]
 %    \end{gather*}
-\end{itemize}
 
 \begin{mylem}
 If $A$ and $B$ are minimal sequences, $A\coworks B$,
@@ -602,23 +636,27 @@ then their input types must match ($X=Z$).
 TODO: Can this be derived from the algebra?
 \end{mylem}
 
-\begin{mylem}
-If $A$ is fully typed and $S;A$ is minimal, then $S;A\wrext A$
+\begin{mylem}\label{lemma:wrextprefix}
+$[S;A]\wrext A$
+if $A$ is fully typed and $[S;A]$ is minimal.
 TODO: Is this an axiom?
 \end{mylem}
 
 \begin{mylem}\label{lemma:ncowprefix}
-$A\ncoworks B \Rightarrow S;A\ncoworks B$ if $A$ is fully typed and $S;A$ is minimal.
+$A\ncoworks B \Rightarrow [S;A]\ncoworks B$ 
+if $A$ is fully typed and $[S;A]$ is minimal.
 \end{mylem}
 \begin{proof}
-This follows from above.
+This follows from lemma \ref{lemma:wrextprefix} and axiom \ref{axiom:ncowwrnrw}.
 \end{proof}
 
 \section{Reconciliation}
 
+
+
 \begin{mylem}
 Let $A$ and $B$ be two minimal sequences so that $A\coworks B$.
-Then their intersection can also be applied to any filesystem
+Then their intersection ($\orderset(A\cap B)$) can also be applied to any filesystem
 either can be applied to without breaking it.
 \end{mylem}
 
@@ -663,12 +701,14 @@ and $A$ is minimal, so $[A_0;\czw(q, V_W);\cxy(p, V_Y)]$ is minimal.
 We also know $[\cqq(q);\cxy(p, V_Y)]$ is fully typed and $B^*$ is minimal, so $[B_0;\cqq(q);\cxy(p, V_Y)]$ is minimal.
 But we know $[\czw(q, V_W);\cxy(p, V_Y)]\ncoworks [\cqq(q);\cxy(p, V_Y)]$
 as comparing the construction and destruction laws to their typing counterparts we know that $Z\neq Q$,
-and so from lemma \ref{lemma:ncowprefix} and $A\ncoworks B \Rightarrow A;S\ncoworks B$
+and so from lemma \ref{lemma:ncowprefix} and lemma \ref{lemma:ncowpostfix}
 we know that $A\ncoworks B^*\equiv B$ and so $A\ncoworks B$ which is a contradiction.
 (TODO: Is there a point in proving this this way?)
 
 \medskip
 
+We now know that $A$ can be rearranged in a way that commands in $A\cap B$
+are at the beginning, and therefore $A\wrext \orderset(A\cap B)$ and by symmetry $B\wrext \orderset(A\cap B)$.
 \end{proof}
 
 
