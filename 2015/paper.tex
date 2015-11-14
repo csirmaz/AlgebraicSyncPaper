@@ -1,20 +1,15 @@
 \documentclass[12pt]{article}
 
-\usepackage{alltt}
-\usepackage{comment}
+% \usepackage{alltt}
+% \usepackage{comment}
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{amsthm}
-\usepackage{setspace}
-% \usepackage{fullpage}
-\usepackage{graphicx}
-% \usepackage{afterpage}
-
+% \usepackage{graphicx}
 \usepackage{centernot}
 \usepackage{tikz}
-
-% TODO Use cleveref to add prefix to references
+\usepackage{cleveref}
 
 \newcommand{\setv}{\mathcal{V}}
 \newcommand{\setvx}[1]{\mathcal{V}_{#1}}
@@ -28,8 +23,7 @@
 \newcommand{\fsbroken}{\mathtt{Broken}} % broken FS value
 \newcommand{\FS}{\Phi} % a filesystem
 \newcommand{\GS}{\Xi} % another filesystem
-\newcommand{\pp}{p^\uparrow} % parent path
-\newcommand{\np}{p_{\centernot\leftrightarrow}} % path not related to p
+\newcommand{\pp}{p\!\!\uparrow} % parent path
 
 \newcommand{\cbrk}{\mathtt{break}}
 \newcommand{\fscommand}[2]{{#1#2}}
@@ -54,6 +48,11 @@
 \newcommand{\eqext}{\sqsubseteq}
 \newcommand{\eqnrw}{\sqsupseteq}
 \newcommand{\nequiv}{\not\equiv}
+
+\newcommand{\works}{\dot{\mathbf{w}}}
+
+% TODO: delete:
+\newcommand{\np}{p_{\centernot\leftrightarrow}} % path not related to p TODO change this
 \newcommand{\wrext}{\stackrel{\mathtt{br}}{\sqsubseteq}}
 \newcommand{\wrnrw}{\stackrel{\mathtt{br}}{\sqsupseteq}}
 \newcommand{\coworks}{\circ}
@@ -65,10 +64,20 @@
 \newcommand{\orderset}[1]{\vec{\wp}({#1})}
 \newcommand{\ordered}[1]{\vec{\mathbf{o}}({#1})}
 
+\newcommand{\recchar}[3]{{#1}^{#3}_{\mathcal{R}|{#2}}}
+\newcommand{\reca}{\recchar{A}{B}{}} % Reconciliation
+\newcommand{\recb}{\recchar{B}{A}{}}
+\newcommand{\recaset}{\recchar{A}{B}{*}}
+\newcommand{\recbset}{\recchar{B}{A}{*}}
+
 \theoremstyle{definition}
 \newtheorem{mydef}{Definition}
 \newtheorem{myax}{Axiom}
 \newtheorem{mylem}{Lemma}
+
+\crefname{mydef}{definition}{definitions}
+\crefname{myax}{axiom}{axioms}
+\crefname{mylem}{lemma}{lemmas}
 
 \title{A More Complete Algebra for File Synchronization}
 
@@ -113,7 +122,7 @@ To model this, in $\setv$ we distinguish between files ($\setf$) and directories
 if $\setb = \{\empt\}$ then:
 \[ \setv = \setb \cup \setf \cup \setd \]
 The tree propety can then be defined as
-\[ \forall \FS, p\in\setp : \FS(p) \neq \empt \wedge \parent(p) \neq \toppath \Rightarrow \FS(\parent(p)) \in \setd \]
+\[ \forall p\in\setp : \FS(p) \neq \empt \wedge \parent(p) \neq \toppath \Rightarrow \FS(\parent(p)) \in \setd \]
 
 This means that as we move from a path to its child, its grandchild, and so on,
 the types of values we encounter in the filesystem can only change according to the following
@@ -194,24 +203,24 @@ We note that a command or a sequence of commands is applied to a filsystem
 by prefixing the command or sequence to it, for example: $\cbrk\FS$, $\cbd(p,D)\FS$, 
 or $S\FS$ if $S$ is a sequence of commands.
 
-The exact behaviour of our commands is as follows:
-\begin{itemize}
-\item $\cbrk\FS = \fsbroken$
-\item
-All commands have the generic form $\cxy(p,V_Y)$ where
-$X$ and $Y$ are types ($\fsregcommandchar{D}$, $\fsregcommandchar{F}$ or $\fsregcommandchar{\empt}$),
-$p\in\setp$ and $V_Y$ is a value of the appropriate type from $\setvx{Y}$.
-At times we omit $V_Y$ if there is only one suitable value.
-
-Let us introduce the following notation for a filesystem derived from $\FS$:
+\begin{mydef}
+Using $\FS\{p\mapsto V\}$ we denote a filesystem derived from $\FS$:
 \[ \FS\{p\mapsto V\}(q) :=
    \begin{cases}
    V &\mbox{if~} q=p\\
    \FS(q) &\mbox{otherwise.}
    \end{cases}
 \]
+\end{mydef}
 
-Then
+The exact behaviour of our commands is as follows:
+\begin{itemize}
+\item $\cbrk\FS = \fsbroken$
+\item
+All other commands have the generic form $\cxy(p,V_Y)$ where
+$X$ and $Y$ are types ($\fsregcommandchar{D}$, $\fsregcommandchar{F}$ or $\fsregcommandchar{\empt}$),
+$p\in\setp$ and $V_Y$ is a value of the appropriate type from $\setvx{Y}$.
+At times we omit $V_Y$ if there is only one suitable value.
 \[ \cxy(p,V_Y)\FS = 
    \begin{cases}
    \fsbroken &\mbox{if~} \FS=\fsbroken\\
@@ -245,80 +254,107 @@ the relationship between the paths of the commands in the pair, $p$ and $q$.
 As the relationship between the paths determine how the commands affect the filesystem
 and its tree property, 
 and again in line with the aim of providing as much information as possible for the algebra,
-we encode this relationship in the pair of commands. The possible relationships we
+we encode this relationship in the pair of commands.
+
+The possible relationships we
 consider are as follows.
 
-\begin{description}
-\item[Same.] Paths that are the same ($p=q$). If the two commands affect the same path, the pair of commands
-will clearly behave differently than if the paths are different.
-%
-\item[Unrelated.] Paths that are not \emph{directly} related,
-that is, where $\parent(p)\neq q$ and $\parent(q)\neq p$. 
-In this case modifying the filesystem at one path is not going
-to affect the outcome of the command on the other path.
-The two commands will therefore commute and the pair will be reversible.
-We will denote a path separate from $p$ with $\np$.
-%
-\item[Directly related.] Directly related paths, that is, $\parent(p)=q$ or $\parent(q)=p$.
-For simplicity, we will write $\pp$ for $\parent(p)$.
-Some of these command pairs will not be reversible.
-For example, $[\cbd(\pp,D);\cbf(p,F)]$ will work on some filesystems,
-while $[\cbf(p,F);\cbd(\pp,D)]$ will break all filesystems.
-\end{description}
-
-One may think that we may be able to specify more about the reversibility
-or possible simplification of a pair of commands in the last group if we also
-knew whether the child path $p$ was the only (non-empty) child of its parent.
-However, it is easy to see that encoding this information in a pair
-is not going to enrich our algebra as, for example,
-the behaviour of a hypothetical $[\cfb(p_{\mathrm{only\ child}}); \cdb(\pp)]$
-is exactly the same as that of the more generic
-$[\cfb(p); \cdb(\pp)]$. The former will break any filesystem in which
-$p$ is not the only child as it violates its preconditions, but so will
-the generic pair.
+% One may think that we may be able to specify more about the reversibility
+% or possible simplification of a pair of commands in the last group if we also
+% knew whether the child path $p$ was the only (non-empty) child of its parent.
+% However, it is easy to see that encoding this information in a pair
+% is not going to enrich our algebra as, for example,
+% the behaviour of a hypothetical $[\cfb(p_{\mathrm{only\ child}}); \cdb(\pp)]$
+% is exactly the same as that of the more generic
+% $[\cfb(p); \cdb(\pp)]$. The former will break any filesystem in which
+% $p$ is not the only child as it violates its preconditions, but so will
+% the generic pair.
 
 % TODO Would it be worth encoding non-direct parent/child relationships?
-
-In summary, we have pairs of commands
-of the following forms:
-\begin{description}
-\item[Unrelated.] \( [\cxy(p,V_Y); \czw(\np,V_W)] \)
-\item[Same.] \( [\cxy(p,V_Y); \czw(p,V_W)] \)
-\item[Down.] \( [\cxy(\pp,V_Y); \czw(p,V_W)] \)
-\item[Up.] \( [\cxy(p,V_Y); \czw(\pp,V_W)] \)
-\end{description}
 
 %% What does it mean to restrict the inspected filesystems to a given relationship?
 
 \section{Defining the Algebra}
 
-In order to reason about sequences of commands, we define \emph{algebraic laws} on
-commands. We use formal logic to build a proof system which is sound and
-complete for its intended interpretation.
+In the following sections $A,B,S$ and $T$ denote sequences of commands.
+The first two relations echo the ones defined in \cite{NREC:alg}.
 
-Similarly to \cite{NREC:alg}, we have two kinds of judgements
-for sequences \(S_1\) and \(S_2\):
 \begin{mydef}
-\(S_1\equiv S_2\), or \emph{\(S_1\) is algebraically equivalent to
-\(S_2\)}. Its intended interpretation is that they act in the same way on all
-filesystems. It is a commutative and transitive relation.
-\end{mydef}
-\begin{mydef}
-\(S_1\eqext S_2\), or \emph{\(S_2\) extends \(S_1\)}; its intended
-interpretation is that they act in the same way on all
-filesystems that \(S_1\) does not break. It is a transitive relation.
+$A\equiv B$ means that $A$ and $B$ are equivalent.
+Its intended interpretation is that they behave in the same way on
+all filesystems: $\forall \FS: A\FS=B\FS$.
+It is a commutative and transitive relation.
 \end{mydef}
 
-We have inference rules for the two judgements,
-which make it possible to derive new statements from the axioms or other statements.
-These are:
+\begin{mydef}
+$A\eqext B$ means that $B$ extends $A$.
+Its intended interpretation is that they behave in the same way
+on any filesystem $A$ does not break:
+$\forall \FS: A\FS\neq\fsbroken\Rightarrow A\FS=B\FS$
+It is a transitive relation.
+\end{mydef}
 
-\emph{For any sequences \(S_1, S_2, S, S'\):}
-\begin{itemize}
-\item \(S_1\equiv S_2 \Rightarrow S;S_1;S'\equiv S;S_2;S'\)
-\item \(S_1\eqext S_2 \Rightarrow S;S_1;S'\eqext S;S_2;S'\)
-\item \(S_1\equiv S_2 \Rightarrow S_1\eqext S_2\).
-\end{itemize}
+\begin{mydef}
+$\works A$ means that $A$ does not break a filesystem.
+Unlike the operators (TODO:?) defined above,
+$\works$ ties to the same variable in the whole expression.
+For example, the intended interpretation of
+$\works A$ is $\exists \FS: A\FS\neq\fsbroken$,
+and the intended interpretation of
+$\works A\wedge\works B$ is $\exists \FS: A\FS\neq\fsbroken \wedge B\FS\neq\fsbroken$.
+
+Clearly $\works A\Leftrightarrow A\nequiv\cbrk$.
+
+TODO: This is temporary. Check in what expression $\works$ appears
+to see if it can be simplified.
+\end{mydef}
+
+\begin{mydef}{Assertion command.}
+A command is an assertion command if
+for every filesystem it either breaks it or leaves it in the same state.
+In our current algebra $\cbb$ and $\cdd$ are the only two assertion commands.
+\end{mydef}
+
+\begin{mydef}{Minimal set / sequence.}
+A sequence or set of commands is minimal if it contains at most one command on every path.
+\end{mydef}
+
+\begin{mydef}{Simple set / sequence.}
+A sequence or set of commands is simple if it is minimal and it does not contain assertion commands.
+\end{mydef}
+
+\begin{myax}
+$A\equiv B \Rightarrow A\eqext B$
+\end{myax}
+
+\begin{myax}
+$A\equiv B \Rightarrow S;A;T\equiv S;B;T$
+\end{myax}
+
+\begin{myax}
+$A\eqext B \Rightarrow S;A;T\eqext S;B;T$
+\end{myax}
+
+\begin{myax}
+$A\eqext B \Rightarrow (\works A \Rightarrow \works B)$
+\end{myax}
+
+\begin{myax}\label{worksextpostfix}
+$\works[A;S] \Rightarrow \works A$
+\end{myax}
+
+\begin{mylem}\label{worksinputmatch}
+If $A$ and $B$ are minimal sequences, $(\works A\wedge \works B)$,
+and there are commands on path $p$ in both $A$ ($\cxy(p, V_Y)\in A$) and $B$ ($\czw(p, V_W)\in B$)
+then their input types must match ($X=Z$).
+TODO: Is this an axiom?
+\end{mylem}
+
+
+% ---------------------------------------------------------------
+
+
+
 
 Finally, we have a set of axioms or laws that describe the behaviour
 of each command pair. We exclude commands that either break the
@@ -331,8 +367,7 @@ based on the relationship between the paths in the commands.
 \item[Unrelated.] If the two paths in the pair are not directly related, then
 the commands commute with an equivalence and they will not break every filesystem:
 \begin{align*}
-[\cxy(p,V_Y); \czw(\np,V_W)] &\equiv [\czw(\np,V_W); \cxy(p,V_Y)] \\
-&\nequiv \cbrk
+[\cxy(p,V_Y); \czw(\np,V_W)] &\equiv [\czw(\np,V_W); \cxy(p,V_Y)]
 \end{align*}
 %
 \item[Same.] If the two paths are the same ($[\cxy(p,V_Y); \czw(p,V_W)]$), the
@@ -472,11 +507,6 @@ We often encounter the case where we only have a set of commands without a speci
 Indeed, it is actually the task of the reconciler to determine whether there is an order
 in which updates from multiple replicas can be applied to a filesystem.
 
-\begin{mydef}{Minimal set / sequence}
-By a minimal set or sequence of commands we mean a set / sequence in which
-there is at most one command on every path.
-\end{mydef}
-
 If $U$ is a minimal set of commands
 that we know can be applied to at least one filesystem in some order without breaking it,
 then we can split $U$ into a maximum number of disjunct subsets
@@ -586,17 +616,16 @@ $B$ does not break any filesystem $A$ does not break.
 It is a transitive relation.
 \end{mydef}
 
-
+% TODO See above
 \begin{myax}$A\coworks B \Rightarrow A\nequiv\cbrk$\end{myax}
 \begin{myax}$A\eqext B \Rightarrow A\wrext B$\end{myax}
 \begin{myax}\label{axiom:wrextpostfix}$[A;S] \wrext A$\end{myax}
 \begin{myax}$A\coworks B\wrext C \Rightarrow A\coworks C$\end{myax}
 \begin{myax}\label{axiom:ncowwrnrw}$A\ncoworks B\wrnrw C \Rightarrow A\ncoworks C$\end{myax}
 
+\begin{mylem}\label{lemma:cowdelfix}$[A;S]\coworks B \Rightarrow A\coworks B$\end{mylem}
 \begin{mylem}\label{lemma:ncowpostfix}$A\ncoworks B \Rightarrow [A;S]\ncoworks B$\end{mylem}
-\begin{proof}From axioms \ref{axiom:wrextpostfix} and \ref{axiom:ncowwrnrw}\end{proof}
-
-% \begin{myax}$\cxy(p,V_Y)\ncoworks \czw(p,V_W)$ if $X\neq Z$\end{myax}
+\begin{proof}From \cref{axiom:wrextpostfix,axiom:ncowwrnrw}\end{proof}
 
 \begin{mylem}\label{lemma:cowinputmatch}
 If $A$ and $B$ are minimal sequences, $A\coworks B$,
@@ -610,21 +639,21 @@ TODO: maybe this is the only thing needed
 
 If we start with two copies of the filesystem $\FS$,
 and two different sequences are applied to the copies to yield $\FS_A:=A\FS$
-and $\FS_B:=B\FS$, then our aim is to define sequences of commands $A^R$ and $B^R$
-so that $B^R\FS_A$ and $A^R\FS_B$ would be as close to each other as possible.
+and $\FS_B:=B\FS$, then our aim is to define sequences of commands $\reca$ and $\recb$
+so that $\recb\FS_A$ and $\reca\FS_B$ would be as close to each other as possible.
 
 We work based on the assumption that to achieve this, we need
 to apply to $\FS_B$ the commands that have been applied to $\FS_A$, and \emph{vice versa}.
 As some commands may have been applied to both filesystems, our first approximation
-is $A^R = \ordered{A\setminus B}$ and $B^R = \ordered{B\setminus A}$.
+is $\reca = \ordered{A\setminus B}$ and $\recb = \ordered{B\setminus A}$.
 This, however, will break both filesystems if there have been incompatible updates
 in $A$ and $B$. 
 Our aim is therefore to provide an algorithm that selects the commands 
-$A^R = \ordered{A^{R*}}$  where $A^{R*} \subset A\setminus B$
-and $B^R = \ordered{B^{R*}}$ where $B^{R*} \subset B\setminus A$ 
-so that $A^R\FS_B\neq\fsbroken$ and $B^R\FS_A\neq\fsbroken$,
+$\reca = \ordered{\recaset}$  where $\recaset \subset A\setminus B$
+and $\recb = \ordered{\recbset}$ where $\recbset \subset B\setminus A$ 
+so that $\reca\FS_B\neq\fsbroken$ and $\recb\FS_A\neq\fsbroken$,
 and show that these are the longest sequences with this property, that is,
-adding any command left out from $A^R$ or $B^R$ will break the filesystems.
+adding any command left out from $\reca$ or $\recb$ will break the filesystems.
 
 We assume that $A$ and $B$ are returned by an update detector,
 and so they are minimal and do not contain assertion commands.
@@ -633,15 +662,22 @@ We also assume that $\FS_A$ and $\FS_B$ are not broken and therefore $A\coworks 
 Our reconciliation algorithm is as follows.
 
 \begin{mydef}{Reconciliation}\label{def:reconciliation}
-\[ A^R = \ordered{\{c| c\in A\setminus B \wedge \forall c'\in B\setminus A: [c;c']\equiv[c';c]\}} \]
+\begin{align*}
+\recaset = \{c| & \\
+& c\in A\setminus B \\
+& \wedge \\
+& \forall c'\in B\setminus A: [c;c']\equiv[c';c]\\
+\} & \\
+\reca = \ordered{\recaset}&
+\end{align*}
 
-In other words, the sequence $A^R$ we apply to $\FS_B$ are all commands from $A\setminus B$
+In other words, the sequence $\reca$ we apply to $\FS_B$ consists of all commands from $A\setminus B$
 that commute with every command in $B\setminus A$.
 This is equivalent to saying that those commands are selected from $A\setminus B$
 whose paths are unrelated to the paths of the commands in $B\setminus A$.
 \end{mydef}
 
-Now we prove that $A^R\FS_B\neq\fsbroken$.
+Now we prove that $\reca\FS_B\neq\fsbroken$.
 
 \begin{mylem}
 Let $A$ and $B$ be two minimal sequences without assertion commands so that $A\coworks B$.
@@ -668,9 +704,9 @@ Therefore either $q=\parent(p)$ or $p=\parent(q)$.
 Let the marked command be $\cxy(p, V_Y)$ and the preceding unmarked command in $A$ be $\czw(q, V_W)$.
 
 If $B$ has a command on $q$, then
-from lemma \ref{lemma:neighbour}
+from \cref{lemma:neighbour}
 we know that there is a $B'$ in $\orderset{B}$ where it is next to $\cxy$,
-and from lemmas \ref{lemma:minextset} and \ref{lemma:minextorder} we know that $B'\equiv B$.
+and from \cref{lemma:minextset,lemma:minextorder} we know that $B'\equiv B$.
 From the construction and destruction laws we also know that a command on $q$
 must precede $\cxy(p, V_Y)$ just as it does so in $A$.
 
@@ -686,8 +722,8 @@ A = [\cdots; \czw(q, V_W); \cxy(p, V_Y); \cdots] \\
 B' = [\cdots; \cqr(q, V_R); \cxy(p, V_Y); \cdots]
 \end{gather*}
 
-As $A\coworks B$, 
-from lemma \ref{lemma:cowinputmatch}
+As $A\coworks B\equiv B'$, 
+from \cref{lemma:cowinputmatch}
 we know that $Q=Z$. 
 
 Going back to the construction and destruction laws we see that the output type of the first command
@@ -703,11 +739,33 @@ but $A$ contained no assertion commands.
 
 We now know that there is an $A'\equiv A$ in which commands in $A\cap B$
 are at the beginning, and therefore 
-from axiom \ref{axiom:wrextpostfix}
+from \cref{axiom:wrextpostfix}
 $A\wrext \ordered{A\cap B}$ and by symmetry $B\wrext \ordered{A\cap B}$.
 \end{proof}
 
 \medskip
+
+\begin{mylem}
+If $S\coworks T$ and $\forall s\in S, t\in T: [s;t]\equiv[t;s]$
+then $[S;T]\coworks S$.
+In this case we also know
+$\forall \FS: S\FS\neq\fsbroken \wedge T\FS\neq\fsbroken \Rightarrow [S;T]\FS\neq\fsbroken$
+(but we can't yet express this in the algebra).
+\end{mylem}
+
+\begin{mylem}
+$[S;T]\coworks[S;U]\Rightarrow T\coworks U$.
+TODO Is this an axiom?
+\end{mylem}
+
+Turning back to reconciliation we know
+$A\equiv[\ordered{A\cap B};A_0]$
+where $A_0=\ordered{A\setminus B}$.
+We define $B_0$ similarly.
+As $A\coworks B$ we know $A_0\coworks B_0$.
+
+We also know commands in $A_0$ and $\recb$ commute, that is,
+$\forall a\in A_0, b\in\recb: [a;b]\equiv[b;a]$.
 
 
 
