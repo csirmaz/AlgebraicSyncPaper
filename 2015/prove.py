@@ -4,7 +4,7 @@ from itertools import chain
 # directory-type value in the filesystem.
 ONE_DIRECTORY_VALUE = False
 
-STYLE = 'tex' # 'normal or 'debug' or 'tex'
+STYLE = 'debug' # 'normal or 'debug'
 
 # Constants for Content.type:
 DIR   = ' Dir'
@@ -36,28 +36,16 @@ class Content:
         """Returns a deep clone of the object."""
         return self.__class__(self.type, self.value)
 
-    def info(self, addvalue=True, path=None):
+    def info(self, addvalue=True):
         """Returns human-readable information about the object.
         
         Args:
             addvalue (bool): whether to add a description of the value
-            path (None or string): used with TeX output; added if addvalue to become the first argument of a command
         
         """
-        if STYLE == 'tex':
-            if self.isEmpty(): rc = 'b'
-            elif self.isDir(): rc = 'd'
-            elif self.isFile(): rc = 'f'
-            r = rc
-            if addvalue: r += '(' + path
-        else:
-            r = self.type
+        r = self.type
         if STYLE == 'debug' or (addvalue and not self.isEmpty() and not(ONE_DIRECTORY_VALUE and self.isDir())):
-            if STYLE == 'tex':
-                r += ', ' + rc.upper() + '_' + self.value[-1:]
-            else:
-                r += '(' + self.value + ')'
-        if STYLE == 'tex' and addvalue: r += ')'
+            r += '(' + self.value + ')'
         return r
     
     def label(self):
@@ -492,14 +480,7 @@ class Command:
         
     def info(self, isParent=False, asSequence=False):
         """Returns a human-readable string describing the object."""
-        if STYLE == 'tex':
-            path = '\\pp' if isParent else 'p'
-            path += '_1' if self.path == PATH1 else '_2'
-            r = '\\c' + self.start.info(False) + self.end.info(True, path)
-            if asSequence: return '[' + r + ']'
-            return r
-        else:
-            return "{" + self.path + ":" + self.start.info(False) + ">" + self.end.info(True) + "}"
+        return "{" + self.path + ":" + self.start.info(False) + ">" + self.end.info(True) + "}"
         
     def label(self):
         """Returns a short string describing some parts of the object."""
@@ -624,11 +605,8 @@ class CommandPair(Sequence):
         
     def info(self):
         """Returns a human-readable string describing the object"""
-        if STYLE == 'tex':
-            return '[' + self.commands[0].info(self.rel == DIRECT_CHILD) + '; ' + self.commands[1].info(self.rel == DIRECT_PARENT) + ']'
-        else:
-            Dsep = {SEPARATE: 'xx', DIRECT_CHILD: '->', DIRECT_PARENT: '<-', SAME: '--'}
-            return self.commands[0].info() + ' ' + Dsep[self.rel] + ' ' + self.commands[1].info()
+        Dsep = {SEPARATE: 'xx', DIRECT_CHILD: '->', DIRECT_PARENT: '<-', SAME: '--'}
+        return self.commands[0].info() + ' ' + Dsep[self.rel] + ' ' + self.commands[1].info()
         
     def label(self):
         """Returns a short string describing some of the object"""
@@ -637,8 +615,6 @@ class CommandPair(Sequence):
     
     def info_label(self):
         """Returns the label and info."""
-        if STYLE == 'tex':
-            return "% " + self.label() + " " + self.predictAxiomGroup() + "\n           " + self.info()
         return self.label() + " " + self.predictAxiomGroup() + "  " + self.info()
         
     def clone(self):
@@ -705,21 +681,12 @@ RulesCommute = []
 
 RulesNoRule = []
 
-if STYLE == 'tex':
-    Pequ = ' \\equiv '
-    Pext = ' \\eqext '
-    Pbreak = '\\cbrk'
-    Pnocomm = '[]'
-    Pnorule = ''
-    Pjoin = ' \\\\\n';
-else:
-    Pequ = ' == '
-    Pext = ' =[ '
-    Pbreak = 'break'
-    Pnocomm = '(no commands)'
-    Pnorule = ' (no rule)'
-    Pjoin = '\n';
-
+Pequ = ' == '
+Pext = ' =[ '
+Pbreak = 'break'
+Pnocomm = '(no commands)'
+Pnorule = ' (no rule)'
+Pjoin = '\n';
 
 # print "Default: XY xx ZW == ZW xx XY"
 # print "Default otherwise: XY ?? ZW == break"
