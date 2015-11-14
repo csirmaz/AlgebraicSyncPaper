@@ -49,7 +49,8 @@
 \newcommand{\eqnrw}{\sqsupseteq}
 \newcommand{\nequiv}{\not\equiv}
 
-\newcommand{\works}{\dot{\mathbf{w}}}
+\newcommand{\works}[1]{\dot{\mathbf{w}}({#1})}
+\newcommand{\worksc}[2]{\dot{\mathbf{w}}({#1}|{#2})}
 
 % TODO: delete:
 \newcommand{\np}{p_{\centernot\leftrightarrow}} % path not related to p TODO change this
@@ -70,14 +71,25 @@
 \newcommand{\recaset}{\recchar{A}{B}{*}}
 \newcommand{\recbset}{\recchar{B}{A}{*}}
 
-\theoremstyle{definition}
-\newtheorem{mydef}{Definition}
-\newtheorem{myax}{Axiom}
-\newtheorem{mylem}{Lemma}
+\newcommand{\infer}[2]{\begin{array}{c}{#1}\\\hline{#2}\end{array}}
+\newcommand{\inferr}[3]{\begin{array}{c}{#1}\\{#2}\\\hline{#3}\end{array}}
 
+\theoremstyle{definition}
+
+\newtheorem{mydef}{Definition}
 \crefname{mydef}{definition}{definitions}
+
+\newtheorem{myax}{Axiom}
 \crefname{myax}{axiom}{axioms}
+
+\newtheorem{mylem}{Lemma}
 \crefname{mylem}{lemma}{lemmas}
+
+\newtheorem{myth}{Theorem}
+\crefname{myth}{theorem}{theorems}
+
+\newtheorem{myrul}{Rule}
+\crefname{myrul}{rule}{rules}
 
 \title{A More Complete Algebra for File Synchronization}
 
@@ -233,6 +245,9 @@ At times we omit $V_Y$ if there is only one suitable value.
 
 \section{Sequences of Commands}
 
+
+% -----------------------------
+
 We aim to use our algebra to define and implement algorithms for conflict detection
 and ordering updates (commands) before we can apply them to all replicas.
 Conflicts and ordering all happen between commands, therefore in our algebra
@@ -276,7 +291,7 @@ consider are as follows.
 
 \section{Defining the Algebra}
 
-In the following sections $A,B,S$ and $T$ denote sequences of commands.
+In the following sections $A$ and $B$ stand for arbitrary sequences of commands.
 The first two relations echo the ones defined in \cite{NREC:alg}.
 
 \begin{mydef}
@@ -295,18 +310,22 @@ It is a transitive relation.
 \end{mydef}
 
 \begin{mydef}
-$\works A$ means that $A$ does not break a filesystem.
-Unlike the operators (TODO:?) defined above,
-$\works$ ties to the same variable in the whole expression.
-For example, the intended interpretation of
-$\works A$ is $\exists \FS: A\FS\neq\fsbroken$,
-and the intended interpretation of
-$\works A\wedge\works B$ is $\exists \FS: A\FS\neq\fsbroken \wedge B\FS\neq\fsbroken$.
+$\works{A_1,A_2,\ldots,A_n}$ means that 
+$A_1,A_2,\ldots,A_n$ work at the same time.
+Its intended interpretation is
+\[\exists \FS: A_1\FS\neq\fsbroken \wedge \cdots \wedge A_n\FS\neq\fsbroken\]
+\end{mydef}
 
-Clearly $\works A\Leftrightarrow A\nequiv\cbrk$.
-
-TODO: This is temporary. Check in what expression $\works$ appears
-to see if it can be simplified.
+\begin{mydef}
+$\worksc{A_1,A_2,\ldots,A_n}{B_1,B_2,\ldots,B_n}$ means that 
+$A_1,A_2,\ldots,A_n$ work where $B_1,B_2,\ldots,B_n$ work.
+Its intended interpretation is
+\begin{align*}
+\forall \FS:&\\ 
+&B_1\FS\neq\fsbroken \wedge \cdots \wedge B_n\FS\neq\fsbroken\\
+&\Rightarrow\\
+&A_1\FS\neq\fsbroken \wedge \cdots \wedge A_n\FS\neq\fsbroken
+\end{align*}
 \end{mydef}
 
 \begin{mydef}{Assertion command.}
@@ -323,28 +342,43 @@ A sequence or set of commands is minimal if it contains at most one command on e
 A sequence or set of commands is simple if it is minimal and it does not contain assertion commands.
 \end{mydef}
 
-\begin{myax}
-$A\equiv B \Rightarrow A\eqext B$
-\end{myax}
+We have the following inference rules, in which $A,B,A_i,B_i,S$ and $T$ stand for all possible sequences of commands:
 
-\begin{myax}
-$A\equiv B \Rightarrow S;A;T\equiv S;B;T$
-\end{myax}
+\begin{myrul}
+\[\infer{A\equiv B}{A\eqext B}\]
+\end{myrul}
 
-\begin{myax}
-$A\eqext B \Rightarrow S;A;T\eqext S;B;T$
-\end{myax}
+\begin{myrul}
+\[\infer{A\equiv B}{S;A;T\equiv S;B;T}\]
+\end{myrul}
 
-\begin{myax}
-$A\eqext B \Rightarrow (\works A \Rightarrow \works B)$
-\end{myax}
+\begin{myrul}
+\[\infer{A\eqext B}{S;A;T\eqext S;B;T}\]
+\end{myrul}
+
+\begin{myrul}
+\[\infer{A\eqnrw B}{\worksc{A}{B}}\]
+\end{myrul}
+
+\begin{myrul}
+\[\infer{\works{A_1,\ldots,A_{n-1},A_n}}{\works{A_1,\ldots,A_{n-1}}}\]
+\end{myrul}
+
+\begin{myrul}
+\[\infer{\worksc{A_1,\ldots,A_{n-1},A_n}{B_1,\ldots,B_n}}{\worksc{A_1,\ldots,A_{n-1}}{B_1,\ldots,B_n}}\]
+\end{myrul}
+
+\begin{myrul}{??? - and vice versa}
+\[\infer{\works{A}}{A\nequiv\cbrk}\]
+\end{myrul}
+
 
 \begin{myax}\label{worksextpostfix}
-$\works[A;S] \Rightarrow \works A$
+$\worksc{A}{A;S}$ where $A$ and $S$ are arbitrary sequences
 \end{myax}
 
 \begin{mylem}\label{worksinputmatch}
-If $A$ and $B$ are minimal sequences, $(\works A\wedge \works B)$,
+If $A$ and $B$ are minimal sequences, $\works{A,B}$,
 and there are commands on path $p$ in both $A$ ($\cxy(p, V_Y)\in A$) and $B$ ($\czw(p, V_W)\in B$)
 then their input types must match ($X=Z$).
 TODO: Is this an axiom?
@@ -656,8 +690,8 @@ and show that these are the longest sequences with this property, that is,
 adding any command left out from $\reca$ or $\recb$ will break the filesystems.
 
 We assume that $A$ and $B$ are returned by an update detector,
-and so they are minimal and do not contain assertion commands.
-We also assume that $\FS_A$ and $\FS_B$ are not broken and therefore $A\coworks B$.
+and so they are simple sequences.
+We also assume that $\FS_A$ and $\FS_B$ are not broken and therefore $\works{A,B}$.
 
 Our reconciliation algorithm is as follows.
 
@@ -673,16 +707,21 @@ Our reconciliation algorithm is as follows.
 
 In other words, the sequence $\reca$ we apply to $\FS_B$ consists of all commands from $A\setminus B$
 that commute with every command in $B\setminus A$.
-This is equivalent to saying that those commands are selected from $A\setminus B$
-whose paths are unrelated to the paths of the commands in $B\setminus A$.
 \end{mydef}
 
-Now we prove that $\reca\FS_B\neq\fsbroken$.
+Now we prove that $\reca\FS_B\neq\fsbroken$, and, in general:
+
+\begin{myth}
+If $A, B$ are simple, then $\worksc{[B;\reca]}{A,B}$
+\end{myth}
+
+This is trivial unless $\works{A,B}$.
 
 \begin{mylem}
-Let $A$ and $B$ be two minimal sequences without assertion commands so that $A\coworks B$.
-Then their intersection ($\ordered{A\cap B}$) can also be applied to any filesystem
-either can be applied to without breaking it.
+Let $A$ and $B$ be two simple sequences so that $\works{A, B}$.
+Then their intersection works on any filesystem
+either of them works on:
+$\worksc{\ordered{A\cap B}}{A}$, and, by symmetry, for $B$.
 \end{mylem}
 
 \begin{proof}
