@@ -1,10 +1,16 @@
 from itertools import chain
+import sys
 
 # Whether directories have equal contents, i.e. there is only a single
 # directory-type value in the filesystem.
-ONE_DIRECTORY_VALUE = False
+ONE_DIRECTORY_VALUE = True
 
-STYLE = 'debug' # 'normal or 'debug'
+# Whether a rule using a DISTANT relationship should be tested on DIRECT and DIRECT_ONLY,
+# and a rule using a DIRECT relationship should be tested on DIRECT_ONLY.
+RULE_RELATIONSHIPS_INCLUSIVE = False
+
+DEBUG = 0
+STYLE = 'normal' # Style of info() methods: 'normal or 'debug'
 
 # Constants for Content.type:
 DIR   = ' Dir'
@@ -50,7 +56,8 @@ class Content:
     
     def label(self):
         """Returns a short string describing some parts of the object."""
-        return self.info(False)
+        disp = { EMPTY:'b', FILE:'f', DIR:'d' }
+        return disp[self.type]
         
     def isSame(self, content):
         """Returns whether the object is the same as another content object."""
@@ -130,7 +137,7 @@ class Node:
         """Returns a human-readable string describing the object."""
         r = []
         if self.isBroken():
-            if debug:
+            if STYLE == 'debug':
                 r.append("Broken(" + self.broken + ") ")
             else:
                 return "(Broken)"
@@ -262,12 +269,41 @@ def NodeFactory(contents='Unknown'):
 
 
 # Constants for Filesystem.rel and CommandPair.rel:
-DIRECT_PARENT      = 'DirectParent'      # p2 is the parent of p1
+DISTANT_PARENT     = 'DistantParent'     # p2 is an ancestor of p1 but not its parent
+DIRECT_PARENT      = 'DirectParent'      # p2 is the parent of p1 and p1 is not the only child
 DIRECT_PARENT_ONLY = 'DirectParentOnly'  # p2 is the parent of p1 and p1 is the only child
-DIRECT_CHILD       = 'DirectChild'       # p2 is the child of p2
+DISTANT_CHILD      = 'DistantChild'      # p2 is the descendant of p1 but not its child
+DIRECT_CHILD       = 'DirectChild'       # p2 is the child of p2 and p2 is not the only child
 DIRECT_CHILD_ONLY  = 'DirectChildOnly'   # p2 is the child of p1 and p2 is the only child
-SEPARATE           = 'Separate'          # all other cases
 SAME               = 'Same'              # two paths are the same (used for command pairs)
+SEPARATE           = 'Separate'          # all other cases
+
+def isChildRel(rel):
+    """Returns if according to the relation p2 is a descendant"""
+    return (rel in [DISTANT_CHILD, DIRECT_CHILD, DIRECT_CHILD_ONLY])
+
+def isDirectRel(rel):
+    """Returns if the relation is a direct relation"""
+    return (rel in [DIRECT_CHILD, DIRECT_CHILD_ONLY, DIRECT_PARENT, DIRECT_PARENT_ONLY])
+    
+def isOnlyRel(rel):
+    """Returns if the relation is an "only" relation"""
+    return (rel in [DIRECT_CHILD_ONLY, DIRECT_PARENT_ONLY])
+
+def getReverseRel(rel):
+    """Returns the reverse relation"""
+    rev = {
+        DISTANT_PARENT: DISTANT_CHILD,
+        DIRECT_PARENT: DIRECT_CHILD,
+        DIRECT_PARENT_ONLY: DIRECT_CHILD_ONLY,
+        DISTANT_CHILD: DISTANT_PARENT,
+        DIRECT_CHILD: DIRECT_PARENT,
+        DIRECT_CHILD_ONLY: DIRECT_PARENT_ONLY,
+        SAME: SAME,
+        SEPARATE: SEPARATE
+    }
+    return rev[rel]
+
 
 class Filesystem:
     """Models two paths in a filesystem to simulate the effects of a pair of commands.
@@ -276,7 +312,7 @@ class Filesystem:
         p1 (Node): a node object; the filesystem at path p1
         p2 (Node): a node object; the filesystem at path p2
         rel (enum): the relationship between p1 and p2:
-            DIRECT_PARENT or DIRECT_PARENT_ONLY or DIRECT_CHILD or DIRECT_CHILD_ONLY or SEPARATE
+            DISTANT_PARENT, DIRECT_PARENT, DIRECT_PARENT_ONLY, DISTANT_CHILD, DIRECT_CHILD, DIRECT_CHILD_ONLY, SEPARATE
 
     """
     
@@ -298,16 +334,19 @@ class Filesystem:
         """Returns a human-readable string describing the object."""
         if self.isBroken() and not STYLE == 'debug':
             return "[Broken]"
-        if self.rel == SEPARATE:
-            return self.p1.info() + " ==x== " + self.p2.info()
-        if self.rel == DIRECT_CHILD:
-            return self.p1.info() + " ===<> " + self.p2.info()
-        if self.rel == DIRECT_CHILD_ONLY:
-            return self.p1.info() + " ===>> " + self.p2.info()
-        if self.rel == DIRECT_PARENT:
-            return self.p2.info() + " ~~~<> " + self.p1.info()
-        if self.rel == DIRECT_PARENT_ONLY:
-            return self.p2.info() + " ~~~>> " + self.p1.info()
+        Dsep = {
+            SEPARATE: ' =x= ',
+            DISTANT_CHILD: ' >=> ',
+            DIRECT_CHILD: ' =<> ',
+            DIRECT_CHILD_ONLY: ' =>> ',
+            DISTANT_PARENT: ' >~> ',
+            DIRECT_PARENT: ' ~<> ',
+            DIRECT_PARENT_ONLY: ' ~>> ',
+            SAME: ' -=- '
+        }
+        if self.rel == SEPARATE or isChildRel(self.rel):
+            return self.p1.info() + Dsep[self.rel] + self.p2.info()
+        return self.p2.info() + Dsep[self.rel] + self.p1.info()
     
     def clone(self):
         """Returns a deep clone of the object."""
@@ -338,27 +377,26 @@ class Filesystem:
         if self.rel == SEPARATE:
             return self
 
-        if self.rel in [DIRECT_CHILD, DIRECT_CHILD_ONLY]:
+        if isChildRel(self.rel):
             parent = self.p1
             child = self.p2
         else:
             parent = self.p2
             child = self.p1
-            
-        only = self.rel in [DIRECT_CHILD_ONLY, DIRECT_PARENT_ONLY]
-    
+
         if not child.getContent().isEmpty():
             # print "child not empty"
             parent.assertDescendant()
 
-        if not parent.getContent().isEmpty():
+        if isDirectRel(self.rel) and not parent.getContent().isEmpty():
             # print "parent not empty"
             child.assertParent()
-        else:
+            
+        if parent.getContent().isEmpty():
             # print "parent empty"
             child.assertNoParent()
 
-        if only and child.getContent().isEmpty():
+        if isOnlyRel(self.rel) and child.getContent().isEmpty():
             # print "only child and child empty"
             parent.assertNoDescendants()
             
@@ -381,14 +419,14 @@ class Filesystem:
         """
 
         command_path = command.getPath()
-        new_content = command.getEnd()
-
+        new_content = command.getOutput()
+        
         # We update the environments stored in the other node if needed.
         # The node objects mark themselves as broken after any change
         # if that violates the tree property. This is safe, however,
         # as we apply only a single change to each path.
         if self.rel != SEPARATE:
-            if self.rel in [DIRECT_CHILD, DIRECT_CHILD_ONLY]:
+            if isChildRel(self.rel):
                 childpath = PATH2
                 child = self.p2
                 parentpath = PATH1
@@ -401,23 +439,25 @@ class Filesystem:
 
             if command_path == childpath:
                 
-                # If the child will have content, the parent will have a child
-                if not new_content.isEmpty():
+                # If the child gets content, the parent gets a child
+                if isDirectRel(self.rel) and not new_content.isEmpty():
                     parent.setHasChild(True)
                 
-                # If the only child is deleted, the parent will have no child
-                if self.rel in [DIRECT_CHILD_ONLY, DIRECT_PARENT_ONLY] and new_content.isEmpty():
+                # If the only child gets deleted, the parent loses all children
+                if isOnlyRel(self.rel) and new_content.isEmpty():
                     parent.setHasChild(False)
                     
             if command_path == parentpath:
             
-                # If the parent is deleted, the child will have no parent
-                if new_content.isEmpty():
-                    child.setHasParent(False)
-                
-                # If the parent is created, the child will have a parent
-                else:
-                    child.setHasParent(True)
+                if isDirectRel(self.rel):
+                    
+                    # If the parent gets deleted, the child loses parent
+                    if new_content.isEmpty():
+                        child.setHasParent(False)
+                    
+                    # If the parent gets created, the child gets a parent
+                    else:
+                        child.setHasParent(True)
   
         # Here the command is always applied to a different path than the one we changed above
         command.applyToNode(self.p1 if command_path == PATH1 else self.p2)
@@ -434,7 +474,8 @@ def FilesystemFactory(rel_list):
     """Generates all possible filesystems with the given relationship between p1 and p2.
 
     Args:
-        rel_list (list): List of DIRECT_PARENT or DIRECT_PARENT_ONLY or DIRECT_CHILD or DIRECT_CHILD_ONLY or SEPARATE
+        rel_list (list): List of
+            DISTANT_PARENT, DIRECT_PARENT, DIRECT_PARENT_ONLY, DISTANT_CHILD, DIRECT_CHILD, DIRECT_CHILD_ONLY, SEPARATE
 
     Yields:
         possible filesystem objects
@@ -459,52 +500,52 @@ class Command:
 
     Private properties:
         path (enum): PATH1 or PATH2
-        start (Content): a content object. Its value is disregarded; only the type is used
+        inp (Content): a content object. Its value is disregarded; only the type is used
             to note the type of content the command expects in the filesystem
             before it runs
-        end (Content): a content object the command turns the path into
+        outp (Content): a content object the command turns the path into
     """
     
-    def __init__(self, path, start, end):
+    def __init__(self, path, inp, outp):
         """Constructor.
 
         Args:
             path (enum):
-            start (Content):
-            end (Content):
+            inp (Content):
+            outp (Content):
 
         """
         self.path = path
-        self.start = start
-        self.end = end
+        self.inp = inp
+        self.outp = outp
         
-    def info(self, isParent=False, asSequence=False):
+    def info(self):
         """Returns a human-readable string describing the object."""
-        return "{" + self.path + ":" + self.start.info(False) + ">" + self.end.info(True) + "}"
+        return "{" + self.path + ":" + self.inp.info(False) + ">" + self.outp.info(True) + "}"
         
     def label(self):
         """Returns a short string describing some parts of the object."""
-        return self.start.label() + self.end.label()
+        return self.inp.label() + self.outp.label()
 
     def isSame(self, command):
         """Returns whether self is the same as another command object."""
         if self.path != command.path: return False
-        if not self.start.isSame(command.start): return False
-        if not self.end.isSame(command.end): return False
+        if not self.inp.isSame(command.inp): return False
+        if not self.outp.isSame(command.outp): return False
         return True
     
     def isDirToDir(self):
         """Returns if the command is a Dir->Dir."""
-        return self.getStart().isDir() and self.getEnd().isDir()
+        return self.getInput().isDir() and self.getOutput().isDir()
     
     def getPath(self):        
         return self.path
     
-    def getStart(self):
-        return self.start
+    def getInput(self):
+        return self.inp
         
-    def getEnd(self):
-        return self.end
+    def getOutput(self):
+        return self.outp
 
     def applyToNode(self, node):
         """Apply the command to a node.
@@ -516,15 +557,15 @@ class Command:
             self
 
         """
-        if node.getContent().getType() != self.start.getType():
-            node.setBroken('command-start')
+        if node.getContent().getType() != self.inp.getType():
+            node.setBroken('command-input')
             return self
-        node.setContent(self.end)
+        node.setContent(self.outp)
         return self
 
 
 def CommandFactory(path, value):
-    """Generates all possible commands that uses the given path and value in its end-content (if applicable).
+    """Generates all possible commands that uses the given path and value in its output content (if applicable).
 
     Args:
         path (enum): the path
@@ -536,8 +577,7 @@ def CommandFactory(path, value):
     """
     for c1 in ContentFactory('N/A'):
         for c2 in ContentFactory(value):
-            if not c1.isSame(c2): # Skip noop (assertion) commands
-                yield Command(path, c1, c2)
+            yield Command(path, c1, c2)
 
 
 class Sequence:
@@ -570,21 +610,13 @@ class Sequence:
         return map(func, self.commands)
 
 
-# Cosntants for axiom groups
-A_BREAKING = 'Br'
-A_SIMPLIFY = 'Sp'
-A_COMMUTE = 'Cm'
-A_NORULE = 'No'
-A_UNKNOWN = '??'
-
-
 class CommandPair(Sequence):
     """Represents a pair of commands, including the relationship between their paths.
     
     Private properties:
         commands (list): see parent class
         rel (enum): the relationship between the paths of the two commands.
-            DIRECT_PARENT or DIRECT_CHILD or SEPARATE or SAME
+            DISTANT_PARENT, DIRECT_PARENT, DIRECT_PARENT_ONLY, DISTANT_CHILD, DIRECT_CHILD, DIRECT_CHILD_ONLY, SEPARATE, SAME
 
     """
     # There is no need to consider any other relationship, e.g. when one path is a parent,
@@ -605,32 +637,60 @@ class CommandPair(Sequence):
         
     def info(self):
         """Returns a human-readable string describing the object"""
-        Dsep = {SEPARATE: 'xx', DIRECT_CHILD: '->', DIRECT_PARENT: '<-', SAME: '--'}
+        Dsep = {
+            SEPARATE: '-x-',
+            DISTANT_CHILD: '>->',
+            DIRECT_CHILD: '-<>',
+            DIRECT_CHILD_ONLY: '->>',
+            DISTANT_PARENT: '<-<',
+            DIRECT_PARENT: '<>-',
+            DIRECT_PARENT_ONLY: '<<-',
+            SAME: '---'
+        }
         return self.commands[0].info() + ' ' + Dsep[self.rel] + ' ' + self.commands[1].info()
         
     def label(self):
         """Returns a short string describing some of the object"""
-        Dsep = {SEPARATE: 'x', DIRECT_CHILD: '>', DIRECT_PARENT: '<', SAME: '='}        
+        Dsep = {
+            SEPARATE: '-x-',
+            DISTANT_CHILD: '>->',
+            DIRECT_CHILD: '-<>',
+            DIRECT_CHILD_ONLY: '->>',
+            DISTANT_PARENT: '<-<',
+            DIRECT_PARENT: '<>-',
+            DIRECT_PARENT_ONLY: '<<-',
+            SAME: '---'
+        }
         return self.commands[0].label() + Dsep[self.rel] + self.commands[1].label();
     
-    def info_label(self):
-        """Returns the label and info."""
-        return self.label() + " " + self.predictAxiomGroup() + "  " + self.info()
-        
     def clone(self):
         """Returns a shallow clone of the object. Commands are not mutable."""
         return self.__class__(self.commands[0], self.commands[1], self.rel)
         
     def getRelationship(self):
         return self.rel
+    
+    def getFilesystemRelationship(self):
+        fs_rel = [SEPARATE if self.rel == SAME else self.rel]
+        
+        if RULE_RELATIONSHIPS_INCLUSIVE:
+            if self.rel == DISTANT_CHILD:
+                fs_rel.append(DIRECT_CHILD)
+                fs_rel.append(DIRECT_CHILD_ONLY)
+            if self.rel == DIRECT_CHILD:
+                fs_rel.append(DIRECT_CHILD_ONLY)
+            if self.rel == DISTANT_PARENT:
+                fs_rel.append(DIRECT_PARENT)
+                fs_rel.append(DIRECT_PARENT_ONLY)
+            if self.rel == DIRECT_PARENT:
+                fs_rel.append(DIRECT_PARENT_ONLY)
+        if DEBUG > 1: print "FSRel : " + ",".join(fs_rel)
+        return fs_rel
 
     def getReverse(self):
         """Returns a new object with the pair reversed."""
         tmp = Sequence.getReverse(self)
-        if self.rel == DIRECT_PARENT:
-            tmp.rel = DIRECT_CHILD
-        elif self.rel == DIRECT_CHILD:
-            tmp.rel = DIRECT_PARENT
+        tmp.rel = getReverseRel(self.rel)
         return tmp
     
     def getFirst(self):
@@ -641,98 +701,78 @@ class CommandPair(Sequence):
         """Returns the last command in the pair."""
         return self.commands[1]
     
-    def predictAxiomGroup(self):
-        """Returns the predicted rule type."""
-        if self.rel == SEPARATE:
-            return A_COMMUTE
-        if self.rel == SAME and self.getFirst().getEnd().getType() != self.getLast().getStart().getType():
-            return A_BREAKING
-        if self.rel == SAME:
-            return A_SIMPLIFY
-        
-        if not ONE_DIRECTORY_VALUE:
-            if self.rel == DIRECT_CHILD and self.getFirst().isDirToDir():
-                return A_COMMUTE
-            if self.rel == DIRECT_PARENT and self.getLast().isDirToDir():
-                return A_COMMUTE
-        
-        return A_UNKNOWN
-
 
 def CommandPairFactory():
     """Generates all possible command pairs. The file content values used will always be different."""
-    for rel in [SEPARATE, DIRECT_CHILD, DIRECT_PARENT]:
+    for rel in [SEPARATE, SAME, DISTANT_CHILD, DIRECT_CHILD, DIRECT_CHILD_ONLY, DISTANT_PARENT, DIRECT_PARENT, DIRECT_PARENT_ONLY]:
+        print '\n' + rel
+        
+        # Print a header line:
+        pr('    ')
+        for c2 in CommandFactory(PATH2, 'New2'):
+            pr(c2.label() + ',')
+        pr('\n')
+        
         for c1 in CommandFactory(PATH1, 'New1'):
-            for c2 in CommandFactory(PATH2, 'New2'):
+            pr(c1.label() + ': ')
+            for c2 in CommandFactory(PATH1 if (rel == SAME) else PATH2, 'New2'):
                 yield CommandPair(c1, c2, rel)
-    for c1 in CommandFactory(PATH1, 'New1'):
-        for c2 in CommandFactory(PATH1, 'New2'):
-            yield CommandPair(c1, c2, SAME);
+            pr('\n')
 
 # We test command pairs and aim to answer the following questions:
 # - Will the pair break all filesystems?
-RulesBreaking = []
-# - If not, can the pair be substituted by no commands at all?
-# - If not, can the pair be substituted by a single command?
-RulesSimplified = []
-# - If not, can the pair be reversed?
-RulesCommute = []
+# - Can the pair be substituted by no commands at all?
+# - Can the pair be substituted by a single command?
+# - Can the pair be reversed?
 # We are also interested in substitutions that extend the domain of the sequence.
 
-RulesNoRule = []
-
-Pequ = ' == '
-Pext = ' =[ '
-Pbreak = 'break'
-Pnocomm = '(no commands)'
-Pnorule = ' (no rule)'
-Pjoin = '\n';
-
-# print "Default: XY xx ZW == ZW xx XY"
-# print "Default otherwise: XY ?? ZW == break"
-
-for sq in CommandPairFactory():
+def pr(s):
+    sys.stdout.write(s)
+    sys.stdout.flush()
     
-    # print "  " + sq.info()
+print '\n=== BREAK ==='
+for sq in CommandPairFactory():
+    fs_rel = sq.getFilesystemRelationship()
 
-    # We investigate filesystem models in which the two paths
-    # have the relationship encoded in the command pair.
-    # If the two commands in the pair use the same path,
-    # we get the other path in the filesystem model out of the way
-    # by using a SEPARATE relationship.
-    fs_rel = [sq.getRelationship()]
-    if fs_rel[0] == SAME:
-        fs_rel[0] = SEPARATE
-    elif fs_rel[0] == DIRECT_CHILD:
-        fs_rel.append(DIRECT_CHILD_ONLY)
-    elif fs_rel[0] == DIRECT_PARENT:
-        fs_rel.append(DIRECT_PARENT_ONLY)
-        
     # Does the pair break all filesystems?
+    breaksAll = True
+    if DEBUG > 1: print ". breaksAll?"
     for fs in FilesystemFactory(fs_rel):
+        if DEBUG > 1: print ". 0 " + fs.info()
         fs.applySequence(sq)
+        if DEBUG > 1: print ". 1 " + fs.info()
         if not fs.isBroken():
-            break # Skips "else" below
-    else: # If none is not broken
-        # if sq.getRelationship() == SEPARATE:
-        RulesBreaking.append(sq.info_label() + Pequ + Pbreak)
-        continue
+            breaksAll = False
+            break
         
+    if DEBUG > 0 and breaksAll: print "* breaksAll"
+    pr('BR ' if breaksAll else '.. ')
+
+print '\n=== EMPTY SEQUENCE ==='
+for sq in CommandPairFactory():
+    fs_rel = sq.getFilesystemRelationship()
+
     # Is the pair the same as no command at all?
     nothingEq = True  # Whether sq is equivalent to no commands on all filesystems
     nothingExt = True # Whether no commands is an extenstion of sq
+    if DEBUG > 1: print ". nothing?"
     for fs in FilesystemFactory(fs_rel):
         fs_res = fs.clone()
         fs_res.applySequence(sq)
         if not fs_res.isSame(fs): nothingEq = False
         if not fs_res.isExtendedBy(fs): nothingExt = False
-    if nothingEq:
-        RulesSimplified.append(sq.info_label() + Pequ + Pnocomm)
-        continue
-    if nothingExt:
-        RulesSimplified.append(sq.info_label() + Pext + Pnocomm)
-        continue
+        
+    if DEBUG > 0:
+        if nothingEq: print "* equals empty sequence"
+        elif nothingExt: print "* extended by empty sequence"
+    else:
+        if nothingEq: pr('== ')
+        elif nothingExt: pr('=[ ')
+        else: pr('.. ')
     
+print '\n=== SINGLE COMMAND ==='
+for sq in CommandPairFactory():
+    fs_rel = sq.getFilesystemRelationship()
 
     # Try to find a single command with the same effect
     # We try to find a command based on both commands in the pair.
@@ -740,64 +780,68 @@ for sq in CommandPairFactory():
     # a simple deduplication attempt is coded below.
     simplifiedByEq = None
     simplifiedByExt = None
-    for command in chain(CommandFactory(sq.getFirst().getPath(), sq.getFirst().getEnd().getValue()), CommandFactory(sq.getLast().getPath(), sq.getLast().getEnd().getValue())):
-        # print " " + command.info()
+    if DEBUG > 1: print ". simplified?"
+    for command in chain(CommandFactory(sq.getFirst().getPath(), sq.getFirst().getOutput().getValue()), CommandFactory(sq.getLast().getPath(), sq.getLast().getOutput().getValue())):
+        if DEBUG > 1: print ". . " + command.info()
         simplifiesEq = True  # Whether command is equivalent to sq on all filesystems
         simplifiesExt = True # Whether command extends sq
         for fs in FilesystemFactory(fs_rel):
-            # print "  " + fs.info()
+            if DEBUG > 2: print ". . o " + fs.info()
             # Apply the original sequence
             fs_res = fs.clone()
             fs_res.applySequence(sq)
-            # print "    " + fs_res.info()
+            if DEBUG > 2: print ". . s " + fs_res.info()
             # Apply the single command
             fs_single = fs.clone()
             fs_single.applyCommand(command)
-            # print "    " + fs_single.info()
+            if DEBUG > 2: print ". . c " + fs_single.info()
             if not fs_res.isSame(fs_single): simplifiesEq = False
             if not fs_res.isExtendedBy(fs_single): simplifiesExt = False
         if simplifiesEq:
             if simplifiedByEq is None or not simplifiedByEq.isSame(command):
                 simplifiedByEq = command
-                RulesSimplified.append(sq.info_label() + Pequ + command.info(asSequence=True))
+                if DEBUG > 1: print ". * equals " + command.info()
         elif simplifiesExt:
             if simplifiedByExt is None or not simplifiedByExt.isSame(command):
                 simplifiedByExt = command
-                RulesSimplified.append(sq.info_label() + Pext + command.info(asSequence=True))
+                if DEBUG > 1: print ". * extended by " + command.info()
     
-    if not(simplifiedByEq is None) or not(simplifiedByExt is None) : continue
+    if DEBUG > 0:
+        if not simplifiedByEq is None: print "* equals command " + simplifiedByEq.info()
+        elif not simplifiedByExt is None: print "* extended by command " + simplifiedByExt.info()
+    else:
+        if not simplifiedByEq is None: pr('== ')
+        elif not simplifiedByExt is None: pr('=[ ')
+        else: pr('.. ')
+    
+print '\n=== REVERSE ==='
+for sq in CommandPairFactory():
+    fs_rel = sq.getFilesystemRelationship()
 
     # Reverse sequence
     sq_rev = sq.getReverse()
-    # print sq_rev.info()
+    if DEBUG > 1: print ". reverse? " + sq_rev.info()
     
     reverseEq = True  # Whether the reversed pair is equivalent to sq on all filesystems
     reverseExt = True # Whether the reversed pair extends sq
     for fs in FilesystemFactory(fs_rel):
+        if DEBUG > 1: print ". . o " + fs.info()
         # Apply the original sequence
         fs_res = fs.clone()
         fs_res.applySequence(sq)
+        if DEBUG > 1: print ". . s " + fs_res.info()
         # Apply the reverse sequence
         fs_rev_res = fs.clone()
         fs_rev_res.applySequence(sq_rev)
+        if DEBUG > 1: print ". . r " + fs_rev_res.info()
         if not fs_res.isSame(fs_rev_res): reverseEq = False
         if not fs_res.isExtendedBy(fs_rev_res): reverseExt = False
-    if reverseEq:
-        # if sq.getRelationship() != SEPARATE:
-        RulesCommute.append(sq.info_label() + Pequ + sq_rev.info())
-        continue
-    if reverseExt:
-        RulesCommute.append(sq.info_label() + Pext + sq_rev.info())
-        continue
-    
-    RulesNoRule.append(sq.info_label() + Pnorule)
 
-print "\nBreaking rules"
-print Pjoin.join(RulesBreaking)
-print "\nSimplification rules"
-print Pjoin.join(RulesSimplified)
-print "\nCommuting rules"
-print Pjoin.join(RulesCommute)
-print "\nNo rules"
-print Pjoin.join(RulesNoRule)
+    if DEBUG > 0:
+        if reverseEq: print "* equals reverse " + sq_rev.info()
+        elif reverseExt: print "* extended by reverse " + sq_rev.info()
+    else:
+        if reverseEq: pr('== ')
+        elif reverseExt: pr('=[ ')
+        else: pr('.. ')
 
