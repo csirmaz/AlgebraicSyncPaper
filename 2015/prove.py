@@ -248,6 +248,17 @@ class Node:
             self.broken = 'assert-no-parent'
         return self
 
+    def assertDir(self):
+        """ Mark the node as broken if it is not a directory.
+
+        Returns:
+            self
+
+        """
+        if not self.content.isDir():
+            self.broken = 'assert-dir'
+        return self
+
 
 def NodeFactory(contents='Unknown'):
     """Generates all possible nodes.
@@ -386,13 +397,13 @@ class Filesystem:
 
         if not child.getContent().isEmpty():
             # print "child not empty"
-            parent.assertDescendant()
+            parent.assertDir().assertDescendant()
 
-        if isDirectRel(self.rel) and not parent.getContent().isEmpty():
+        if isDirectRel(self.rel) and parent.getContent().isDir():
             # print "parent not empty"
             child.assertParent()
             
-        if parent.getContent().isEmpty():
+        if not parent.getContent().isDir():
             # print "parent empty"
             child.assertNoParent()
 
@@ -448,16 +459,14 @@ class Filesystem:
                     parent.setHasChild(False)
                     
             if command_path == parentpath:
-            
-                if isDirectRel(self.rel):
+                                
+                # If the parent becomes a file or empty, the child loses parent
+                if not new_content.isDir():
+                    child.setHasParent(False)
                     
-                    # If the parent gets deleted, the child loses parent
-                    if new_content.isEmpty():
-                        child.setHasParent(False)
-                    
-                    # If the parent gets created, the child gets a parent
-                    else:
-                        child.setHasParent(True)
+                # If the parent becomes a directory, the child gets a parent
+                if isDirectRel(self.rel) and new_content.isDir():
+                    child.setHasParent(True)
   
         # Here the command is always applied to a different path than the one we changed above
         command.applyToNode(self.p1 if command_path == PATH1 else self.p2)
