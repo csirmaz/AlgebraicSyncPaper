@@ -45,6 +45,11 @@
 \newcommand{\cqr}{\fscommand{Q}{R}}
 \newcommand{\cqq}{\fscommand{Q}{Q}}
 
+\newcommand{\typeset}{\{\fsregcommandchar{D},\fsregcommandchar{F},\empt\}}
+
+\newcommand{\descendant}{\prec}
+\newcommand{\ancestor}{\succ}
+
 \newcommand{\eqext}{\sqsubseteq}
 \newcommand{\eqnrw}{\sqsupseteq}
 \newcommand{\nequiv}{\not\equiv}
@@ -123,7 +128,6 @@ The paths of a filesystem form a disjoint union of rooted directed trees.
 \begin{mydef}
 The function $\parent(p)$ returns the parent path of $p$, or
 returns $\toppath$ if $p$ is the root of a tree.
-We also write $\pp$ for $\parent(p)$.
 \end{mydef}
 
 Every filesystem has a so-called \textbf{tree property}, which means that
@@ -196,9 +200,20 @@ two of $\fsregcommandchar{D}$, $\fsregcommandchar{F}$ and $\fsregcommandchar{\em
 where the left sign notes the type of value
 in the filesystem before the command is applied, and the right sign notes the type
 afterwards. For example $mkdir(p,D)$ is $\cbd(p,D)$ and $rmdir(p)$ is $\cdb(p)$.
-Please find their exact definitions below.
+
+When we describe multiple or unknown commands, we may substitute one or both
+types with a variable, e.g. $\cxy(p,V)$. In this context,
+if we write that $\cxy=\czw$, we mean that their input and output types
+are the same ($X=Z$ and $Y=W$).
 
 % TODO No "move"
+
+% TODO Only one directory value
+In real-life applications, we often do not want to consider metadata stored in
+directories (\cite{BZ}). In other words, the contents of directories are all equal,
+which can be modelled by assuming that $|\setd|=1$.
+Note that this creates a convenient symmetry where there is only a single value
+for each type that can be repeated as we move from a path to its child ($D$ and $\empt$).
 
 \section{Applying Commands}
 
@@ -243,51 +258,29 @@ At times we omit $V_Y$ if there is only one suitable value.
 \]
 \end{itemize}
 
-\section{Sequences of Commands}
+\section{Notation and definitions}
 
+\begin{mydef}{$p\descendant q$.}
+$p\descendant q$ if $p$ is the ancestor of $q$ ($p=\parent^n(q)$).
+\end{mydef}
 
-% -----------------------------
+\begin{mydef}{Assertion command.}
+A command is an assertion command if
+for every filesystem it either breaks it or leaves it in the same state.
+In other words, assertion commands have the same input and output type,
+and there must also be only one possible value for their output.
+Accordingly in our current algebra $\cbb$ and $\cdd$ are the only two assertion commands.
+As $|\setb|=|\setd|=1$, we do not note their exact output value.
+\end{mydef}
 
-We aim to use our algebra to define and implement algorithms for conflict detection
-and ordering updates (commands) before we can apply them to all replicas.
-Conflicts and ordering all happen between commands, therefore in our algebra
-we will reason about sequences of commands, 
-and do so based on a set of axioms about pairs of neighbouring commands.
-We are interested to see which pairs of commands cause errors all the time,
-and which can be simplified or reversed
-in order to see under what circumstances commands conflict or can be reordered.
+\begin{mydef}{Minimal set / sequence.}
+A sequence or set of commands is minimal if it contains at most one command on every path.
+\end{mydef}
 
-Pairs of commands in general will have the form
-\[ [\cxy(p,V_Y); \czw(q,V_W)] \]
-where $X,Y,Z,W\in\{\fsregcommandchar{D},\fsregcommandchar{F},\empt\}$, $p,q\in\setp$, 
-and values are of the appropriate type: 
-$V_Y\in\setvx{Y}$ and $V_W\in\setvx{W}$.
+\begin{mydef}{Simple set / sequence.}
+A sequence or set of commands is simple if it is minimal and it does not contain assertion commands.
+\end{mydef}
 
-Similarly to the case of commands, in \cite{NREC:alg} we found that in order to build
-a set of axioms in a sound and complete algebra and use the algebra effectively we at times needed to take into account
-the relationship between the paths of the commands in the pair, $p$ and $q$.
-As the relationship between the paths determine how the commands affect the filesystem
-and its tree property, 
-and again in line with the aim of providing as much information as possible for the algebra,
-we encode this relationship in the pair of commands.
-
-The possible relationships we
-consider are as follows.
-
-% One may think that we may be able to specify more about the reversibility
-% or possible simplification of a pair of commands in the last group if we also
-% knew whether the child path $p$ was the only (non-empty) child of its parent.
-% However, it is easy to see that encoding this information in a pair
-% is not going to enrich our algebra as, for example,
-% the behaviour of a hypothetical $[\cfb(p_{\mathrm{only\ child}}); \cdb(\pp)]$
-% is exactly the same as that of the more generic
-% $[\cfb(p); \cdb(\pp)]$. The former will break any filesystem in which
-% $p$ is not the only child as it violates its preconditions, but so will
-% the generic pair.
-
-% TODO Would it be worth encoding non-direct parent/child relationships?
-
-%% What does it mean to restrict the inspected filesystems to a given relationship?
 
 \section{Defining the Algebra}
 
@@ -328,21 +321,10 @@ Its intended interpretation is
 \end{align*}
 \end{mydef}
 
-\begin{mydef}{Assertion command.}
-A command is an assertion command if
-for every filesystem it either breaks it or leaves it in the same state.
-In our current algebra $\cbb$ and $\cdd$ are the only two assertion commands.
-\end{mydef}
-
-\begin{mydef}{Minimal set / sequence.}
-A sequence or set of commands is minimal if it contains at most one command on every path.
-\end{mydef}
-
-\begin{mydef}{Simple set / sequence.}
-A sequence or set of commands is simple if it is minimal and it does not contain assertion commands.
-\end{mydef}
 
 We have the following inference rules, in which $A,B,A_i,B_i,S$ and $T$ stand for all possible sequences of commands:
+
+% TODO A=B -> B=A; A=B B=C -> A=C; etc.
 
 \begin{myrul}
 \[\infer{A\equiv B}{A\eqext B}\]
@@ -372,11 +354,6 @@ We have the following inference rules, in which $A,B,A_i,B_i,S$ and $T$ stand fo
 \[\infer{\works{A}}{A\nequiv\cbrk}\]
 \end{myrul}
 
-
-\begin{myax}\label{worksextpostfix}
-$\worksc{A}{A;S}$ where $A$ and $S$ are arbitrary sequences
-\end{myax}
-
 \begin{mylem}\label{worksinputmatch}
 If $A$ and $B$ are minimal sequences, $\works{A,B}$,
 and there are commands on path $p$ in both $A$ ($\cxy(p, V_Y)\in A$) and $B$ ($\czw(p, V_W)\in B$)
@@ -385,84 +362,67 @@ TODO: Is this an axiom?
 \end{mylem}
 
 
-% ---------------------------------------------------------------
+We aim to use our algebra to define and implement algorithms for conflict detection
+and ordering commands before we can apply them to all replicas.
+Conflicts and ordering all happen between commands, therefore in our algebra
+we will reason about sequences of commands, 
+and do so based on a set of axioms about pairs of neighbouring commands.
+We are interested to see which pairs of commands cause errors all the time,
+and which can be simplified or reversed
+in order to see under what circumstances commands conflict or can be reordered.
+
+Pairs of commands in general will have the form
+\[ [\cxy(p,V_Y); \czw(q,V_W)] \]
+where $X,Y,Z,W\in\typeset$, $p,q\in\setp$, 
+and values are of the appropriate type: 
+$V_Y\in\setvx{Y}$ and $V_W\in\setvx{W}$.
+
+The following axioms describe multiple statements
+that we accept as true in the algebra.
+These statements are generated by substituting 
+all possible values for
+$X,Y,Z,W\in\typeset$; $p,q\in\setp$; $V_Y\in\setvx{Y}$ and $V_W\in\setvx{W}$
+under the conditions noted in the axiom.
 
 
+\begin{myax}\label{ax_separate_commute}
+$\cxy(p,V_Y); \czw(q,V_W) \equiv \czw(q,V_W); \cxy(p,V_Y)$ where $p\not\descendant q$ and $q\not\descendant p$.
+\end{myax}
 
+\begin{myax}\label{ax_separate_nobreaks}
+$\cxy(p,V_Y); \czw(q,V_W) \nequiv \cbrk$ where $p\not\descendant q$ and $q\not\descendant p$.
+\end{myax}
 
-Finally, we have a set of axioms or laws that describe the behaviour
-of each command pair. We exclude commands that either break the
-filesystem or leave it in the same state ($\cbb$) and for
-simplicity's sake instead of listing axioms for all pairs of commands
-we describe the behaviour of groups of pairs
-based on the relationship between the paths in the commands.
+\begin{myax}\label{ax_same_breaks}
+$\cxy(p,V_Y); \czw(p,V_W) \equiv \cbrk$ if $Y\ne Z$.
+\end{myax}
 
-\begin{description}
-\item[Unrelated.] If the two paths in the pair are not directly related, then
-the commands commute with an equivalence and they will not break every filesystem:
-\begin{align*}
-[\cxy(p,V_Y); \czw(\np,V_W)] &\equiv [\czw(\np,V_W); \cxy(p,V_Y)]
-\end{align*}
-%
-\item[Same.] If the two paths are the same ($[\cxy(p,V_Y); \czw(p,V_W)]$), the
-the commands cannot be reversed. Instead:
-   \begin{description}
-   \item[Break.]
-   The pair will break every filesystem if $Z\ne Y$, that is, if the second
-   command expects a type of value different from the one left by the first command.
-   \item[Simplified by extension.]
-   Otherwise, the pair will simplify to a single or no commands
-   if both $X$ and $W$ are $\fsregcommandchar{\empt}$ or $\fsregcommandchar{D}$:
-   \begin{gather*}
-   % bf=fb Sp
-            [\cbf(p, F); \cfb(p)] \eqext \emptyseq \\
-   % bd=db Sp
-            [\cbd(p, D); \cdb(p)] \eqext \emptyseq \\
-   % db=bd Sp
-            [\cdb(p); \cbd(p, D)] \eqext [\cdd(p, D)] \\
-   % df=fd Sp
-            [\cdf(p, F); \cfd(p, D)] \eqext [\cdd(p, D)]
-   \end{gather*}
-   \item[Simplified by equivalence.]
-   In all other cases, the commands are equivalent to a single command
-   replacing the input of the first command with the output of the second:
-   \[ [\cxy(p, V_Y); \cyz(p, V_Z)] \equiv [\cxz(p, V_Z)] \]
-   \end{description}
-%
-\item[Down.]
-These are the pairs in which the first command is applied to the parent of the path
-of the second command.
-   \begin{description}
-   \item[Construction.] There are pairs in this group to which no law applies:
-   the commands do not commute or break every filesystem, and cannot be simplified.
-   We call these ``construction'' pairs:
+\begin{myax}\label{ax_distantchild_breaks}
+$\cxy(p,V_Y); \czw(q,V_W) \equiv \cbrk$ if $p\descendant q$ and $p\neq\parent(q)$ and $\cxy\neq\cdd$ and $\czw\neq\cbb$.
+\end{myax}
+
+\begin{myax}\label{ax_distantparent_breaks}
+$\cxy(p,V_Y); \czw(q,V_W) \equiv \cbrk$ if $p\ancestor q$ and $\parent(p)\neq q$ and $\cxy\neq\cbb$ and $\czw\neq\cdd$.
+\end{myax}
+
+\begin{mydef}{Construction pair.}
+A pair of commands on paths $p$ and $q$ is a construction pair if $p=\parent(q)$ and the commands are one
+of the following:
    \begin{gather*}
    % bd>bf
-            [\cbd(\pp, D); \cbf(p, F)] \\
+            [\cbd(p, D); \cbf(q, F)] \\
    % bd>bd
-            [\cbd(\pp, D_1); \cbd(p, D_2)] \\
+            [\cbd(p, D_1); \cbd(q, D_2)] \\
    % fd>bf
-            [\cfd(\pp, D); \cbf(p, F)] \\
+            [\cfd(p, D); \cbf(q, F)] \\
    % fd>bd
-            [\cfd(\pp, D_1); \cbd(p, D_2)]
+            [\cfd(p, D_1); \cbd(q, D_2)]
    \end{gather*}
-   \item[Commute.] Otherwise, the commands in these pairs commute iff the first command is $\cdd$. For example:
-   \begin{gather*}
-   [\cdd(\pp, D); \cbf(p, F)] \equiv [\cbf(p, F); \cdd(\pp, D)]
-   \end{gather*}
-   \item[Break.] All other pairs break every filesystem, e.g.:
-   \begin{gather*}
-   [\cdf(\pp, F); \cbd(p, D)] \equiv \cbrk
-   \end{gather*}
-   \end{description}
-%
-\item[Up.]
-The final group of pairs are the ones in which the path in the second
-command is the parent of the one in the first.
-These behave similarly to the previous group. 
-   \begin{description}
-   \item[Desctruction.] There are
-   so-called ``destruction'' pairs to which no law applies:
+\end{mydef}
+
+\begin{mydef}{Destruction pair.}
+A pair of commands on paths $p$ and $q$ is a destruction pair if $\parent(p)=q$ and the commands are one
+of the following:
    \begin{gather*}
    % fb<db ??
             [\cfb(p); \cdb(\pp)] \\
@@ -473,67 +433,33 @@ These behave similarly to the previous group.
    % db<df ??
             [\cdb(p); \cdf(\pp, F)]
    \end{gather*}
-   \item[Commute.] Otherwise the commands commute iff the \emph{second} command is $\cdd$.
-   \item[Break.] All other pairs break every filesystem.
-   \end{description}
-\end{description}
+\end{mydef}
 
-\section{Real-Life Variant}
+\begin{myax}\label{ax_directchild_breaks}
+$\cxy(p,V_Y); \czw(q,V_W) \equiv \cbrk$ if $p=\parent(q)$ and $\cxy\neq\cdd$ and $\czw\neq\cbb$
+and the pair is not a construction pair.
+\end{myax}
 
-In real-life applications, we often do not want to consider metadata stored in
-directories (\cite{BZ}). In other words, the contents of directories are all equal,
-which can be modelled by assuming that $|\setd|=1$.
-Note that this creates a convenient symmetry where there is only a single value
-for each type that can be repeated as we move from a path to its child ($D$ and $\empt$).
+\begin{myax}\label{ax_directparent_breaks}
+$\cxy(p,V_Y); \czw(q,V_W) \equiv \cbrk$ if $\parent(p)=q$ and $\cxy\neq\cbb$ and $\czw\neq\cdd$
+and the pair is not a destruction pair.
+\end{myax}
 
-This also means that $\cdd$, like $\cbb$, becomes a command that either breaks a filesystem
-or leaves it in the same state, and we will disregard it in our algebra.
-The axioms will simplify as follows:
+\begin{myax}\label{worksextpostfix}
+$\worksc{A}{A;S}$ where $A$ and $S$ are arbitrary sequences of commands
+\end{myax}
 
-\begin{description}
-\item[Unrelated.] Pairs with unrelated paths are still reversible and not equivalent to
-$\cbrk$, but these are the only pairs that are reversible.
-%
-\item[Same.] If the two paths are the same ($[\cxy(p,V_Y); \czw(p,V_W)]$), then,
-as above, the commands do not commute.
-   \begin{description}
-   \item[Break.] Also, as above, the pair will break every filesystem if $Z\ne Y$.
-   \item[Simplified by extension.] Otherwise, the pair is extended by an empty sequence
-   if both $X$ and $W$ are $\fsregcommandchar{\empt}$ or $\fsregcommandchar{D}$:
-   \begin{gather*}
-   % bf=fb Sp
-            [\cbf(p, F); \cfb(p)] \eqext \emptyseq \\
-   % bd=db Sp
-            [\cbd(p, D); \cdb(p)] \eqext \emptyseq \\
-   % db=bd Sp
-            [\cdb(p); \cbd(p, D)] \eqext \emptyseq \\
-   % df=fd Sp
-            [\cdf(p, F); \cfd(p, D)] \eqext \emptyseq
-   \end{gather*}
-   \item[Simplified by equivalence.]
-   And in all other cases, as above, the commands are equivalent to a single command
-   replacing the input of the first command with the output of the second:
-   \[ [\cxy(p, V_Y); \cyz(p, V_Z)] \equiv [\cxz(p, V_Z)] \]
-   \end{description}
-%
-\item[Down.]
-Of the pairs in which the first command is applied to the parent path:
-   \begin{description}
-   \item[Construction.] the same ``construction'' pairs still have no laws, 
-   \item[Break.] but all other pairs break all filesystems.
-   \end{description}
-%
-\item[Up.]
-And of the pairs where the second command
-is applied to the parent path,
-   \begin{description}
-   \item[Destruction.] we still have the ``destruction'' pairs,
-   \item[Break.] and all other pairs break all filesystems.
-   \end{description}
-\end{description}
 
-% TODO
-{\bf Going forward we use the algebra derived from the $|\setd|=1$ case.}
+% Separate:
+% * commute
+% - if both are BB or DD, extended by empty seq
+% - if either is BB or DD, extended by the other command
+% - not equiv to break
+% Same:
+% * equiv break unless 1-out == 2-in
+% - extended by empty seq if 1-out==2-in & 1-in==2-out==B,D
+% - extended by single command (if 1-out==2-in) (otherwise breaks so true)
+
 
 \section{Ordering commands}
 
@@ -613,12 +539,7 @@ $\orderset{S} = \extset{S}$.
 
 \section{Extending the algebra}
 
-We reintroduce two assertion commands that either break the filesystem
-or leave it unchanged: $\cbb(p)$ and $\cdd(p)$.
-(As $|\setb|=|\setd|=1$, we do not note their exact output value.)
-They can be used to test whether $\FS(p)=\empt$ or $\FS(p)=D$.
-
-Furthermore, we note the following axioms:
+We note the following axioms:
 
 \begin{itemize}
 \item Laws for construction assertion:
