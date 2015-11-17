@@ -315,6 +315,23 @@ def getReverseRel(rel):
     }
     return rev[rel]
 
+def getFilesystemRelationship(rel):
+    fs_rel = [SEPARATE if rel == SAME else rel]
+    
+    if RULE_RELATIONSHIPS_INCLUSIVE:
+        if rel == DISTANT_CHILD:
+            fs_rel.append(DIRECT_CHILD)
+            fs_rel.append(DIRECT_CHILD_ONLY)
+        if rel == DIRECT_CHILD:
+            fs_rel.append(DIRECT_CHILD_ONLY)
+        if rel == DISTANT_PARENT:
+            fs_rel.append(DIRECT_PARENT)
+            fs_rel.append(DIRECT_PARENT_ONLY)
+        if rel == DIRECT_PARENT:
+            fs_rel.append(DIRECT_PARENT_ONLY)
+    if DEBUG > 1: print "FSRel : " + ",".join(fs_rel)
+    return fs_rel
+
 
 class Filesystem:
     """Models two paths in a filesystem to simulate the effects of a pair of commands.
@@ -679,23 +696,6 @@ class CommandPair(Sequence):
     def getRelationship(self):
         return self.rel
     
-    def getFilesystemRelationship(self):
-        fs_rel = [SEPARATE if self.rel == SAME else self.rel]
-        
-        if RULE_RELATIONSHIPS_INCLUSIVE:
-            if self.rel == DISTANT_CHILD:
-                fs_rel.append(DIRECT_CHILD)
-                fs_rel.append(DIRECT_CHILD_ONLY)
-            if self.rel == DIRECT_CHILD:
-                fs_rel.append(DIRECT_CHILD_ONLY)
-            if self.rel == DISTANT_PARENT:
-                fs_rel.append(DIRECT_PARENT)
-                fs_rel.append(DIRECT_PARENT_ONLY)
-            if self.rel == DIRECT_PARENT:
-                fs_rel.append(DIRECT_PARENT_ONLY)
-        if DEBUG > 1: print "FSRel : " + ",".join(fs_rel)
-        return fs_rel
-
     def getReverse(self):
         """Returns a new object with the pair reversed."""
         tmp = Sequence.getReverse(self)
@@ -711,22 +711,20 @@ class CommandPair(Sequence):
         return self.commands[1]
     
 
-def CommandPairFactory():
+def CommandPairFactory(rel):
     """Generates all possible command pairs. The file content values used will always be different."""
-    for rel in [SEPARATE, SAME, DISTANT_CHILD, DIRECT_CHILD, DIRECT_CHILD_ONLY, DISTANT_PARENT, DIRECT_PARENT, DIRECT_PARENT_ONLY]:
-        print '\n' + rel
-        
-        # Print a header line:
-        pr('    ')
-        for c2 in CommandFactory(PATH2, 'New2'):
-            pr(c2.label() + ',')
+    
+    # Print a header line:
+    pr('    ')
+    for c2 in CommandFactory(PATH2, 'New2'):
+        pr(c2.label() + ' ')
+    pr('\n')
+    
+    for c1 in CommandFactory(PATH1, 'New1'):
+        pr(c1.label() + ': ')
+        for c2 in CommandFactory(PATH1 if (rel == SAME) else PATH2, 'New2'):
+            yield CommandPair(c1, c2, rel)
         pr('\n')
-        
-        for c1 in CommandFactory(PATH1, 'New1'):
-            pr(c1.label() + ': ')
-            for c2 in CommandFactory(PATH1 if (rel == SAME) else PATH2, 'New2'):
-                yield CommandPair(c1, c2, rel)
-            pr('\n')
 
 # We test command pairs and aim to answer the following questions:
 # - Will the pair break all filesystems?
@@ -738,119 +736,123 @@ def CommandPairFactory():
 def pr(s):
     sys.stdout.write(s)
     sys.stdout.flush()
+
+print 'BR : breaks all filesystems'
+print '== : equivalent to'
+print '[[ : extended by'
     
-print '\n=== BREAK ==='
-for sq in CommandPairFactory():
-    fs_rel = sq.getFilesystemRelationship()
+for rel in [SEPARATE, SAME, DISTANT_CHILD, DIRECT_CHILD, DIRECT_CHILD_ONLY, DISTANT_PARENT, DIRECT_PARENT, DIRECT_PARENT_ONLY]:
+    print '\n===== ' + rel + ' ====='
+    fs_rel = getFilesystemRelationship(rel)
 
-    # Does the pair break all filesystems?
-    breaksAll = True
-    if DEBUG > 1: print ". breaksAll?"
-    for fs in FilesystemFactory(fs_rel):
-        if DEBUG > 1: print ". 0 " + fs.info()
-        fs.applySequence(sq)
-        if DEBUG > 1: print ". 1 " + fs.info()
-        if not fs.isBroken():
-            breaksAll = False
-            break
-        
-    if DEBUG > 0 and breaksAll: print "* breaksAll"
-    pr('BR ' if breaksAll else '.. ')
+    print '\nBreak:'
+    for sq in CommandPairFactory(rel):
 
-print '\n=== EMPTY SEQUENCE ==='
-for sq in CommandPairFactory():
-    fs_rel = sq.getFilesystemRelationship()
-
-    # Is the pair the same as no command at all?
-    nothingEq = True  # Whether sq is equivalent to no commands on all filesystems
-    nothingExt = True # Whether no commands is an extenstion of sq
-    if DEBUG > 1: print ". nothing?"
-    for fs in FilesystemFactory(fs_rel):
-        fs_res = fs.clone()
-        fs_res.applySequence(sq)
-        if not fs_res.isSame(fs): nothingEq = False
-        if not fs_res.isExtendedBy(fs): nothingExt = False
-        
-    if DEBUG > 0:
-        if nothingEq: print "* equals empty sequence"
-        elif nothingExt: print "* extended by empty sequence"
-    else:
-        if nothingEq: pr('== ')
-        elif nothingExt: pr('=[ ')
-        else: pr('.. ')
-    
-print '\n=== SINGLE COMMAND ==='
-for sq in CommandPairFactory():
-    fs_rel = sq.getFilesystemRelationship()
-
-    # Try to find a single command with the same effect
-    # We try to find a command based on both commands in the pair.
-    # However, this can lead to finding the same command twice;
-    # a simple deduplication attempt is coded below.
-    simplifiedByEq = None
-    simplifiedByExt = None
-    if DEBUG > 1: print ". simplified?"
-    for command in chain(CommandFactory(sq.getFirst().getPath(), sq.getFirst().getOutput().getValue()), CommandFactory(sq.getLast().getPath(), sq.getLast().getOutput().getValue())):
-        if DEBUG > 1: print ". . " + command.info()
-        simplifiesEq = True  # Whether command is equivalent to sq on all filesystems
-        simplifiesExt = True # Whether command extends sq
+        # Does the pair break all filesystems?
+        breaksAll = True
+        if DEBUG > 1: print ". breaksAll?"
         for fs in FilesystemFactory(fs_rel):
-            if DEBUG > 2: print ". . o " + fs.info()
+            if DEBUG > 1: print ". 0 " + fs.info()
+            fs.applySequence(sq)
+            if DEBUG > 1: print ". 1 " + fs.info()
+            if not fs.isBroken():
+                breaksAll = False
+                break
+            
+        if DEBUG > 0 and breaksAll: print "* breaksAll"
+        pr('BR ' if breaksAll else '.. ')
+
+    print '\nEmpty sequence:'
+    for sq in CommandPairFactory(rel):
+
+        # Is the pair the same as no command at all?
+        nothingEq = True  # Whether sq is equivalent to no commands on all filesystems
+        nothingExt = True # Whether no commands is an extenstion of sq
+        if DEBUG > 1: print ". nothing?"
+        for fs in FilesystemFactory(fs_rel):
+            fs_res = fs.clone()
+            fs_res.applySequence(sq)
+            if not fs_res.isSame(fs): nothingEq = False
+            if not fs_res.isExtendedBy(fs): nothingExt = False
+            
+        if DEBUG > 0:
+            if nothingEq: print "* equals empty sequence"
+            elif nothingExt: print "* extended by empty sequence"
+        else:
+            if nothingEq: pr('== ')
+            elif nothingExt: pr('[[ ')
+            else: pr('.. ')
+        
+    print '\nSingle command:'
+    for sq in CommandPairFactory(rel):
+
+        # Try to find a single command with the same effect
+        # We try to find a command based on both commands in the pair.
+        # However, this can lead to finding the same command twice;
+        # a simple deduplication attempt is coded below.
+        simplifiedByEq = None
+        simplifiedByExt = None
+        if DEBUG > 1: print ". simplified?"
+        for command in chain(CommandFactory(sq.getFirst().getPath(), sq.getFirst().getOutput().getValue()), CommandFactory(sq.getLast().getPath(), sq.getLast().getOutput().getValue())):
+            if DEBUG > 1: print ". . " + command.info()
+            simplifiesEq = True  # Whether command is equivalent to sq on all filesystems
+            simplifiesExt = True # Whether command extends sq
+            for fs in FilesystemFactory(fs_rel):
+                if DEBUG > 2: print ". . o " + fs.info()
+                # Apply the original sequence
+                fs_res = fs.clone()
+                fs_res.applySequence(sq)
+                if DEBUG > 2: print ". . s " + fs_res.info()
+                # Apply the single command
+                fs_single = fs.clone()
+                fs_single.applyCommand(command)
+                if DEBUG > 2: print ". . c " + fs_single.info()
+                if not fs_res.isSame(fs_single): simplifiesEq = False
+                if not fs_res.isExtendedBy(fs_single): simplifiesExt = False
+            if simplifiesEq:
+                if simplifiedByEq is None or not simplifiedByEq.isSame(command):
+                    simplifiedByEq = command
+                    if DEBUG > 1: print ". * equals " + command.info()
+            elif simplifiesExt:
+                if simplifiedByExt is None or not simplifiedByExt.isSame(command):
+                    simplifiedByExt = command
+                    if DEBUG > 1: print ". * extended by " + command.info()
+        
+        if DEBUG > 0:
+            if not simplifiedByEq is None: print "* equals command " + simplifiedByEq.info()
+            elif not simplifiedByExt is None: print "* extended by command " + simplifiedByExt.info()
+        else:
+            if not simplifiedByEq is None: pr('== ')
+            elif not simplifiedByExt is None: pr('[[ ')
+            else: pr('.. ')
+        
+    print '\nReverse sequence:'
+    for sq in CommandPairFactory(rel):
+
+        # Reverse sequence
+        sq_rev = sq.getReverse()
+        if DEBUG > 1: print ". reverse? " + sq_rev.info()
+        
+        reverseEq = True  # Whether the reversed pair is equivalent to sq on all filesystems
+        reverseExt = True # Whether the reversed pair extends sq
+        for fs in FilesystemFactory(fs_rel):
+            if DEBUG > 1: print ". . o " + fs.info()
             # Apply the original sequence
             fs_res = fs.clone()
             fs_res.applySequence(sq)
-            if DEBUG > 2: print ". . s " + fs_res.info()
-            # Apply the single command
-            fs_single = fs.clone()
-            fs_single.applyCommand(command)
-            if DEBUG > 2: print ". . c " + fs_single.info()
-            if not fs_res.isSame(fs_single): simplifiesEq = False
-            if not fs_res.isExtendedBy(fs_single): simplifiesExt = False
-        if simplifiesEq:
-            if simplifiedByEq is None or not simplifiedByEq.isSame(command):
-                simplifiedByEq = command
-                if DEBUG > 1: print ". * equals " + command.info()
-        elif simplifiesExt:
-            if simplifiedByExt is None or not simplifiedByExt.isSame(command):
-                simplifiedByExt = command
-                if DEBUG > 1: print ". * extended by " + command.info()
-    
-    if DEBUG > 0:
-        if not simplifiedByEq is None: print "* equals command " + simplifiedByEq.info()
-        elif not simplifiedByExt is None: print "* extended by command " + simplifiedByExt.info()
-    else:
-        if not simplifiedByEq is None: pr('== ')
-        elif not simplifiedByExt is None: pr('=[ ')
-        else: pr('.. ')
-    
-print '\n=== REVERSE ==='
-for sq in CommandPairFactory():
-    fs_rel = sq.getFilesystemRelationship()
+            if DEBUG > 1: print ". . s " + fs_res.info()
+            # Apply the reverse sequence
+            fs_rev_res = fs.clone()
+            fs_rev_res.applySequence(sq_rev)
+            if DEBUG > 1: print ". . r " + fs_rev_res.info()
+            if not fs_res.isSame(fs_rev_res): reverseEq = False
+            if not fs_res.isExtendedBy(fs_rev_res): reverseExt = False
 
-    # Reverse sequence
-    sq_rev = sq.getReverse()
-    if DEBUG > 1: print ". reverse? " + sq_rev.info()
-    
-    reverseEq = True  # Whether the reversed pair is equivalent to sq on all filesystems
-    reverseExt = True # Whether the reversed pair extends sq
-    for fs in FilesystemFactory(fs_rel):
-        if DEBUG > 1: print ". . o " + fs.info()
-        # Apply the original sequence
-        fs_res = fs.clone()
-        fs_res.applySequence(sq)
-        if DEBUG > 1: print ". . s " + fs_res.info()
-        # Apply the reverse sequence
-        fs_rev_res = fs.clone()
-        fs_rev_res.applySequence(sq_rev)
-        if DEBUG > 1: print ". . r " + fs_rev_res.info()
-        if not fs_res.isSame(fs_rev_res): reverseEq = False
-        if not fs_res.isExtendedBy(fs_rev_res): reverseExt = False
-
-    if DEBUG > 0:
-        if reverseEq: print "* equals reverse " + sq_rev.info()
-        elif reverseExt: print "* extended by reverse " + sq_rev.info()
-    else:
-        if reverseEq: pr('== ')
-        elif reverseExt: pr('=[ ')
-        else: pr('.. ')
+        if DEBUG > 0:
+            if reverseEq: print "* equals reverse " + sq_rev.info()
+            elif reverseExt: print "* extended by reverse " + sq_rev.info()
+        else:
+            if reverseEq: pr('== ')
+            elif reverseExt: pr('[[ ')
+            else: pr('.. ')
 
