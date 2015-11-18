@@ -39,6 +39,7 @@
 \newcommand{\cdf}{\fsregcommand{D}{F}}
 \newcommand{\cdd}{\fsregcommand{D}{D}}
 \newcommand{\cxy}{\fscommand{X}{Y}}
+\newcommand{\cyx}{\fscommand{Y}{X}}
 \newcommand{\cyz}{\fscommand{Y}{Z}}
 \newcommand{\cxz}{\fscommand{X}{Z}}
 \newcommand{\cxw}{\fscommand{X}{W}}
@@ -54,9 +55,10 @@
 \newcommand{\eqext}{\sqsubseteq}
 \newcommand{\eqnrw}{\sqsupseteq}
 \newcommand{\nequiv}{\not\equiv}
+\newcommand{\indep}{\not\sim}
 
-\newcommand{\works}[1]{\dot{\mathbf{w}}({#1})}
-\newcommand{\worksc}[2]{\dot{\mathbf{w}}({#1}|{#2})}
+\newcommand{\works}[1]{{\mathbf{w}}({#1})}
+\newcommand{\worksc}[2]{{\mathbf{w}}({#1}|{#2})}
 
 % TODO: delete:
 \newcommand{\np}{p_{\centernot\leftrightarrow}} % path not related to p TODO change this
@@ -79,6 +81,7 @@
 
 \newcommand{\infer}[2]{\begin{array}{c}{#1}\\\hline{#2}\end{array}}
 \newcommand{\inferr}[3]{\begin{array}{c}{#1}\\{#2}\\\hline{#3}\end{array}}
+\newcommand{\inferrr}[4]{\begin{array}{c}{#1}\\{#2}\\{#3}\\\hline{#4}\end{array}}
 
 \theoremstyle{definition}
 
@@ -232,7 +235,7 @@ by prefixing the command or sequence to it, for example: $\cbrk\FS$, $\cbd(p,D)\
 or $S\FS$ if $S$ is a sequence of commands.
 
 \begin{mydef}
-Using $\FS\{p\mapsto V\}$ we denote a filesystem derived from $\FS$:
+Using $\FS[V/p]$ we denote a filesystem derived from $\FS$:
 \[ \FS\{p\mapsto V\}(q) :=
    \begin{cases}
    V &\mbox{if~} q=p\\
@@ -253,8 +256,8 @@ At times we omit $V_Y$ if there is only one suitable value.
    \begin{cases}
    \fsbroken &\mbox{if~} \FS=\fsbroken\\
    \fsbroken &\mbox{if~} \FS(p)\not\in\setvx{X}\\
-   \fsbroken &\mbox{if~} \FS\{p\mapsto V_Y\} \mbox{~violates the tree property}\\
-   \FS\{p\mapsto V_Y\} &\mbox{otherwise.}
+   \fsbroken &\mbox{if~} \FS[V/p] \mbox{~violates the tree property}\\
+   \FS[V/p] &\mbox{otherwise.}
    \end{cases}
 \]
 \end{itemize}
@@ -262,7 +265,7 @@ At times we omit $V_Y$ if there is only one suitable value.
 \section{Notation and definitions}
 
 \begin{mydef}{$p\descendant q$.}
-$p\descendant q$ if $p$ is the ancestor of $q$ ($p=\parent^n(q)$).
+$p\descendant q$ if $p$ is the ancestor of $q$ ($p=\parent^n(q)$). (the transitive closure of the $\parent$ relation)
 \end{mydef}
 
 \begin{mydef}{Unrelated paths.}
@@ -286,7 +289,6 @@ A sequence or set of commands is minimal if it contains at most one command on e
 A sequence or set of commands is simple if it is minimal and it does not contain assertion commands.
 \end{mydef}
 
-
 \section{Defining the Algebra}
 
 In the following sections $A$ and $B$ stand for arbitrary sequences of commands.
@@ -294,29 +296,33 @@ The first two relations echo the ones defined in \cite{NREC:alg}.
 
 \begin{mydef}
 $A\equiv B$ means that $A$ and $B$ are equivalent.
+We assume that it is a reflexive, commutative and transitive relation.
 Its intended interpretation is that they behave in the same way on
 all filesystems: $\forall \FS: A\FS=B\FS$.
-It is a commutative and transitive relation.
 \end{mydef}
 
 \begin{mydef}
 $A\eqext B$ means that $B$ extends $A$.
+It is a reflexive and transitive relation.
 Its intended interpretation is that they behave in the same way
 on any filesystem $A$ does not break:
 $\forall \FS: A\FS\neq\fsbroken\Rightarrow A\FS=B\FS$
-It is a transitive relation.
 \end{mydef}
 
 \begin{mydef}
 $\works{A_1,A_2,\ldots,A_n}$ means that 
 $A_1,A_2,\ldots,A_n$ work at the same time.
+TODO: $A_i$ is a set (order not important).
 Its intended interpretation is
 \[\exists \FS: A_1\FS\neq\fsbroken \wedge \cdots \wedge A_n\FS\neq\fsbroken\]
 \end{mydef}
 
 \begin{mydef}
 $\worksc{A_1,A_2,\ldots,A_n}{B_1,B_2,\ldots,B_n}$ means that 
-$A_1,A_2,\ldots,A_n$ work where $B_1,B_2,\ldots,B_n$ work.
+all of $A_1,A_2,\ldots,A_n$ work where all of $B_1,B_2,\ldots,B_n$ work.
+TODO: $A$s $B$s are sets.
+We assume that the arguments $A_i$ and $B_i$ commute among each other,
+and that the relation is reflexive, that is, $\worksc{B}{B}$ is true for all sequences.
 Its intended interpretation is
 \begin{align*}
 \forall \FS:&\\ 
@@ -344,7 +350,7 @@ We have the following inference rules, in which $A,B,A_i,B_i,S$ and $T$ stand fo
 \end{myrul}
 
 \begin{myrul}\label{r_ex_w}
-\[\infer{A\eqnrw B}{\worksc{A}{B}}\]
+\[\infer{B\eqext A}{\worksc{A}{B}}\]
 \end{myrul}
 
 These rules also apply if the second, conditional part of $\worksc{\ldots}{B_1,\ldots,B_n}$ is empty:
@@ -353,13 +359,21 @@ These rules also apply if the second, conditional part of $\worksc{\ldots}{B_1,\
 \[\infer{\worksc{A_1,\ldots,A_{n-1},A_n}{B_1,\ldots,B_n}}{\worksc{A_1,\ldots,A_{n-1}}{B_1,\ldots,B_n}}\]
 \end{myrul}
 
-\begin{myrul}
-\[\infer{\worksc{A_1,\ldots,A_i,\ldots,A_n}{B_1,\ldots,B_n}}{\worksc{A_i,A_1,\ldots,A_{i-1},A_{i+1},\ldots,A_n}{B_1,\ldots,B_n}}\]
+% \begin{myrul}
+% \[\infer{\worksc{A_1,\ldots,A_i,\ldots,A_n}{B_1,\ldots,B_n}}{\worksc{A_i,A_1,\ldots,A_{i-1},A_{i+1},\ldots,A_n}{B_1,\ldots,B_n}}\]
+% \end{myrul}
+
+\begin{myrul}\label{r_w_combine}
+\[\inferr{\worksc{A_1,\ldots,A_n}{B_1,\ldots,B_n}}{\worksc{C}{B_1,\ldots,B_n}}{\worksc{A_1,\ldots,A_n,C}{B_1,\ldots,B_n}}\]
 \end{myrul}
 
 \begin{myrul}\label{r_w_w}
 \[\inferr{\worksc{A_1,\ldots,A_n}{B_1,\ldots,B_n}}{\worksc{C}{A_n}}{\worksc{A_1,\ldots,A_n,C}{B_1,\ldots,B_n}}\]
 \end{myrul}
+
+% \begin{myrul}\label{r_w_replacecond}
+% \[\inferr{\worksc{A_1,\ldots,A_n}{B_1,\ldots,B_n}}{\worksc{C}{B_n}}{\worksc{A_1,\ldots,A_n}{B_1,\ldots,B_{n-1},C}}\]
+% \end{myrul}
 
 \begin{myrul}{??? - and vice versa}
 \[\infer{\works{A}}{A\nequiv\cbrk}\]
@@ -372,6 +386,39 @@ then their input types must match ($X=Z$).
 TODO: Is this an axiom?
 \end{mylem}
 
+\begin{mydef}{Inverse commands and sequences.}
+The inverse of command $\cxy(p,V_Y)$ is $\cxy(p,V_Y)^{-1} = \cyx(p,V_X)$
+where $V_X$ is an arbitrary value from $\setvx{X}$.
+The inverse of sequence $S$, $S^{-1}$, consists of the inverses of the commands in $S$
+in reverse order.
+\end{mydef}
+
+\begin{myrul}\label{r_invmove}
+\[ \infer{\worksc{S;A}{B}}{\worksc{A}{S^{-1};B}} \]
+To see the soundness of this rule...
+Sequences are bijections on filesystems over type-equality.
+TODO: $A,S,B$ need to be simple?
+\end{myrul}
+
+\begin{mydef}{Independent commands, sequences and sets.}
+For two commands $\cxy$ and $\czw$ we write $\cxy\indep\czw$ if $\cxy;\czw\equiv\czw;\cxy\nequiv\cbrk$.
+% TODO use w() instead of nequiv break
+For two sequences or sets of commands $A$ and $B$ we write $A\indep B$ if
+$\forall a\in A \mbox{and~} \forall b\in B: a\indep b$.
+\end{mydef}
+
+\begin{myrul}\label{r_indep_combine}
+\[ \inferrr{\worksc{T}{S}}{\worksc{U}{S}}{T\indep U}{\worksc{T;U}{S}} \]
+To see the soundness of this rule...
+\end{myrul}
+
+\begin{mylem}\label{indep_prefix_combine}
+\[ \inferrr{\worksc{A;B}{S}}{\worksc{A;C}{S}}{B\indep C}{\worksc{A;B;C}{S}} \]
+\end{mylem}
+\begin{proof}
+From \cref{r_invmove,r_indep_combine}
+TODO reverse of /cref{r_invmove} needed
+\end{proof}
 
 We aim to use our algebra to define and implement algorithms for conflict detection
 and ordering commands before we can apply them to all replicas.
@@ -399,12 +446,16 @@ under the conditions noted in the axiom.
 \begin{myax}\label{ax_separate_commute}
 Commands on unrelated paths commute:
 $\cxy(p,V_Y); \czw(q,V_W) \equiv \czw(q,V_W); \cxy(p,V_Y)$ where $p\not\descendant q$ and $q\not\descendant p$.
+TODO $p\neq q$
 \end{myax}
 
 \begin{myax}\label{ax_separate_nobreaks}
 Commands on unrelated paths do not break every filesystem:
 $\cxy(p,V_Y); \czw(q,V_W) \nequiv \cbrk$ where $p\not\descendant q$ and $q\not\descendant p$.
+TODO $p\neq q$
 \end{myax}
+
+% TODO Use 'node' instead of 'path'
 
 \begin{myax}\label{ax_same_breaks}
 Commands on the same path break every filesystem if incompatible:
@@ -427,6 +478,7 @@ $\cxy(\pp,V_Y); \czw(p,V_W) \equiv \cbrk$ where $\pp\descendant p$ and $\pp\neq\
 
 \begin{myax}\label{ax_distantparent_breaks}
 $\cxy(p,V_Y); \czw(\pp,V_W) \equiv \cbrk$ where $p\ancestor \pp$ and $\parent(p)\neq \pp$ and $\cxy\neq\cbb$ and $\czw\neq\cdd$.
+TODO merge into previous
 \end{myax}
 
 \begin{mydef}{Construction pair.}
@@ -486,7 +538,6 @@ $\cxy(p,V_Y) \eqext \emptyseq$ where $\cxy=\cbb$ or $\cxy=\cdd$.
 \begin{myax}\label{worksextpostfix}
 $\worksc{A}{A;S}$ where $A$ and $S$ are arbitrary sequences of commands
 \end{myax}
-
 
 \section{Ordering commands}
 
@@ -595,19 +646,19 @@ Our reconciliation algorithm is as follows.
 \recaset = \{c| & \\
 & c\in A\setminus B \\
 & \wedge \\
-& \forall c'\in B\setminus A: [c;c']\equiv[c';c]\\
+& \forall c'\in B\setminus A: c\indep c'\\
 \} & \\
 \reca = \ordered{\recaset}&
 \end{align*}
 
 In other words, the sequence $\reca$ we apply to $\FS_B$ consists of all commands from $A\setminus B$
-that commute with every command in $B\setminus A$.
+that independent from every command in $B\setminus A$.
 \end{mydef}
 
 Now we prove that $\reca\FS_B\neq\fsbroken$, and, in general:
 
 \begin{myth}
-If $A, B$ are simple, then $\worksc{[B;\reca]}{A,B}$
+If $A, B$ are simple, then $\worksc{B;\reca}{A,B}$
 \end{myth}
 
 This is trivial unless $\works{A,B}$.
@@ -625,6 +676,8 @@ Mark all commands in $A$ that also appear in $B$.
 Then there is an $A'$ in $\orderset{A}$ in which the marked commands are at the beginning.
 
 \medskip
+
+TODO: unmarked-marked can be reversed -- but induction is wrong
 
 We show $A$ can be transformed via equivalences so that this would be true,
 by induction on the number of non-marked commands preceding the last marked command.
@@ -689,29 +742,105 @@ $\worksc{\ordered{A\cap B}}{A}$ and by symmetry $\worksc{\ordered{A\cap B}}{B}$.
 
 \medskip
 
-\begin{mylem}
-If $S\coworks T$ and $\forall s\in S, t\in T: [s;t]\equiv[t;s]$
-then $[S;T]\coworks S$.
-In this case we also know
-$\forall \FS: S\FS\neq\fsbroken \wedge T\FS\neq\fsbroken \Rightarrow [S;T]\FS\neq\fsbroken$
-(but we can't yet express this in the algebra).
-\end{mylem}
+We would like to prove that $\worksc{B;\reca}{A,B}$.
+From above we know that this is equivalent to
+$\worksc{\ordered{A\cap B};\ordered{B\setminus A};\reca}{A,B}$.
+As we already know that $\reca\indep B\setminus A$
+and that $\worksc{\ordered{A\cap B};\ordered{B\setminus A}}{A,B}$
+(as $\worksc{B}{A,B}$),
+based on \cref{indep_prefix_combine}
+we only need to prove that
+$\worksc{\ordered{A\cap B};\reca}{A,B}$.
+
+\newcommand{\acbi}{\ordered{A\cap B}^{-1}}
+\newcommand{\amb}{A\setminus B}
+\newcommand{\bma}{B\setminus A}
+Using \cref{r_invmove} we can rephrase this as
+% TODO axiom doesn't specify multiple conditions
+$\worksc{\reca}{\acbi;A,\acbi;B}$.
+
+We already know the following things:
+\begin{itemize}
+\item $\amb$ and $\bma$ are simple as $A$ and $B$ are simple
+% \item $\amb \cap \bma = \emptyset$
+\item $\reca$ is the largest subset of $\amb$ for which $\reca\indep\amb$
+\item $\worksc{\ordered{\amb};\ordered{\bma}}{\acbi;A,\acbi;B}$ as $\worksc{A,B}{A,B}$ based on \cref{r_invmove}
+\end{itemize}
+
+Our theorem is therefore proven if we prove the following lemma:
 
 \begin{mylem}
-$[S;T]\coworks[S;U]\Rightarrow T\coworks U$.
-TODO Is this an axiom?
+If
+   \begin{itemize}
+   \item \newcommand{\condSimple}{(1)} \condSimple $S$ and $T$ are simple sequences
+   % \item \newcommand{\condDisj}{(4)} \condDisj $S\cap T=\emptyset$
+   \item \newcommand{\condApr}{(2)} \condApr $S^*$ is the largest subset of $S$ where $S^*\indep T$
+   \item \newcommand{\condWork}{(3)} \condWork $\worksc{S,T}{C_1,\ldots,C_n}$
+   \end{itemize}
+then
+\[ \worksc{S^*}{C_1,\ldots,C_n} \]
 \end{mylem}
 
-Turning back to reconciliation we know
-$A\equiv[\ordered{A\cap B};A_0]$
-where $A_0=\ordered{A\setminus B}$.
-We define $B_0$ similarly.
-As $A\coworks B$ we know $A_0\coworks B_0$.
+\begin{proof}
+% TODO Refer back to conditions!
+This is trivial unless $\works{C_1,\ldots,C_n}$, so we will assume that it is true
+and therefore $\works{S,T}$.
+% TODO This probably needs an axiom
 
-We also know commands in $A_0$ and $\recb$ commute, that is,
-$\forall a\in A_0, b\in\recb: [a;b]\equiv[b;a]$.
+Similarly to above, we prove that $S$ can be transformed into $S'$ by equivalences
+so that all commands in $S^*$ would be at its beginning.
+If so then based on \cref{worksextpostfix}
+$\worksc{S^*}{C_1,\ldots,C_n}$ as $\worksc{S'}{C_1,\ldots,C_n}$.
 
+Also similarly to above,
+we proceed by induction on the number of commands in $S$ that are not in $S^*$, but which precede
+the last command in $S$ that is also in $S^*$.
+If the number is 0, the lemma is true.
+Otherwise let the last command in $S$ also in $S^*$ be $\cxy(p,V_Y)$
+and the preceding command in $S$ be $\czw(q,V_W)$.
 
+As $S$ is simple and $\works{S}$, from 
+\cref{ax_distantchild_breaks,ax_distantparent_breaks,ax_directchild_breaks,ax_directparent_breaks}
+we know that these commands can only be on unrelated paths or form a construction or destruction pair.
+In the first case, swapping the commands results in a sequence equivalent to $S$,
+with the number on relevant commands not in $S^*$ reduced by one.
+In the last two cases,
+either $q=\parent(p)$ or $p=\parent(q)$.
+
+We also know that there must be a command $\cqr(r,V_R)$ in $T$ which is not independent of $\czw(q,V_W)$.
+By definition this means that one of the following must be true:
+\begin{itemize}
+\item $\czw(q,V_W);\cqr(r,V_R) \equiv\cbrk$
+\item $\cqr(r,V_R);\czw(q,V_W) \equiv\cbrk$
+\item $\czw(q,V_W);\cqr(r,V_R) \nequiv \cqr(r,V_R);\czw(q,V_W)$
+\end{itemize}
+From these and \cref{ax_separate_commute,ax_separate_nobreaks} we also know that
+either $q\descendant r$ or $r\descendant q$.
+By definition we also know that $\cxy(p,V_Y)\indep \cqr(r,V_R)$,
+and the same argument shows that therefore
+$p\not\descendant r$ and $r\not\descendant p$ and $p\neq r$. TODO CHECK
+
+We therefore have four cases considering the relationships between $p,q$ and $r$:
+\begin{itemize}
+\item $p=\parent(q) \wedge r\descendant q$.
+   This would mean that $r\descendant p$ or $r=p$, which is a contradiction.
+\item $p=\parent(q) \wedge q\descendant r$.
+   This would mean that $p\descendant r$, which is a contradiction.
+\item $q=\parent(p) \wedge r\descendant q$.
+   This would mean that $r\descendant p$, which is a contradiction.  
+\item $q=\parent(p) \wedge q\descendant r$.
+   Let us continue with this case.
+\end{itemize}
+
+We know that $T$ cannot have a command on $q$ as $q=\parent(p)$ and $\cxy(p,V_Y)\indep T$.
+Create $T'\equiv T$ by inserting a command on $q$ before $\cqr(r,V_R)$
+into $T$ according to \cref{ax_parent_assert}.
+We now have $\cxy(p,V_Y)\indep T\equiv T'$ which is a contradiction as
+$T'$ has a command on $q$ and $q=\parent(p)$.
+% TODO axiom? A \~ B == C  =>  A \~ C
+\end{proof}
+
+TODO $\reca$ is maximal
 
 \begin{thebibliography}{99}
 
