@@ -47,34 +47,27 @@
 \newcommand{\cqr}{\fscommand{Q}{R}}
 \newcommand{\cqq}{\fscommand{Q}{Q}}
 
-\newcommand{\typeset}{\{\fsregcommandchar{D},\fsregcommandchar{F},\empt\}}
-
+\newcommand{\typeset}{\{\fsregcommandchar{D},\fsregcommandchar{F},\empt\}} % Set of types in commands
+\newcommand{\cc}{\circ}
 \newcommand{\descendant}{\prec}
 \newcommand{\ancestor}{\succ}
 
 \newcommand{\eqext}{\sqsubseteq}
 \newcommand{\eqnrw}{\sqsupseteq}
 \newcommand{\nequiv}{\not\equiv}
-\newcommand{\indep}{\not\sim}
+\newcommand{\indep}{\wr\!\!\wr\,} % Independent
 
 \newcommand{\works}[1]{{\mathbf{w}}({#1})}
 \newcommand{\worksc}[2]{{\mathbf{w}}({#1}|{#2})}
 
-% TODO: delete:
-\newcommand{\np}{p_{\centernot\leftrightarrow}} % path not related to p TODO change this
-\newcommand{\wrext}{\stackrel{\mathtt{br}}{\sqsubseteq}}
-\newcommand{\wrnrw}{\stackrel{\mathtt{br}}{\sqsupseteq}}
-\newcommand{\coworks}{\circ}
-\newcommand{\ncoworks}{\centernot\circ}
-
-\newcommand{\emptyseq}{[\,]}
+\newcommand{\emptyseq}{[\,]} % TODO change
 
 \newcommand{\extset}[1]{\wp({#1})}
 \newcommand{\orderset}[1]{\vec{\wp}({#1})}
-\newcommand{\ordered}[1]{\vec{\mathbf{o}}({#1})}
+\newcommand{\ordered}[1]{#1}
 
 \newcommand{\recchar}[3]{{#1}^{#3}_{\mathcal{R}|{#2}}}
-\newcommand{\reca}{\recchar{A}{B}{}} % Reconciliation
+\newcommand{\reca}{\recchar{A}{B}{}} % Reconciled from A
 \newcommand{\recb}{\recchar{B}{A}{}}
 \newcommand{\recaset}{\recchar{A}{B}{*}}
 \newcommand{\recbset}{\recchar{B}{A}{*}}
@@ -90,15 +83,18 @@
 
 \newtheorem{myax}{Axiom}
 \crefname{myax}{axiom}{axioms}
+% \creflabelformat{myax}{A#2#1#3}
 
 \newtheorem{mylem}{Lemma}
 \crefname{mylem}{lemma}{lemmas}
+% \creflabelformat{mylem}{L#2#1#3}
 
 \newtheorem{myth}{Theorem}
 \crefname{myth}{theorem}{theorems}
 
 \newtheorem{myrul}{Rule}
 \crefname{myrul}{rule}{rules}
+% \creflabelformat{myrul}{R#2#1#3}
 
 \title{A More Complete Algebra for File Synchronization}
 
@@ -236,7 +232,7 @@ or $S\FS$ if $S$ is a sequence of commands.
 
 \begin{mydef}
 Using $\FS[V/p]$ we denote a filesystem derived from $\FS$:
-\[ \FS\{p\mapsto V\}(q) :=
+\[ \FS[V/p](q) :=
    \begin{cases}
    V &\mbox{if~} q=p\\
    \FS(q) &\mbox{otherwise.}
@@ -281,11 +277,11 @@ Accordingly in our current algebra $\cbb$ and $\cdd$ are the only two assertion 
 As $|\setb|=|\setd|=1$, we do not note their exact output value.
 \end{mydef}
 
-\begin{mydef}{Minimal set / sequence.}
+\begin{mydef}{Minimal set or sequence.}
 A sequence or set of commands is minimal if it contains at most one command on every path.
 \end{mydef}
 
-\begin{mydef}{Simple set / sequence.}
+\begin{mydef}{Simple set or sequence.}
 A sequence or set of commands is simple if it is minimal and it does not contain assertion commands.
 \end{mydef}
 
@@ -335,18 +331,16 @@ Its intended interpretation is
 
 We have the following inference rules, in which $A,B,A_i,B_i,S$ and $T$ stand for all possible sequences of commands:
 
-% TODO A=B -> B=A; A=B B=C -> A=C; etc.
-
 \begin{myrul}\label{r_eq_ex}
 \[\infer{A\equiv B}{A\eqext B}\]
 \end{myrul}
 
 \begin{myrul}
-\[\infer{A\equiv B}{S;A;T\equiv S;B;T}\]
+\[\infer{A\equiv B}{S\cc A\cc T\equiv S\cc B\cc T}\]
 \end{myrul}
 
 \begin{myrul}
-\[\infer{A\eqext B}{S;A;T\eqext S;B;T}\]
+\[\infer{A\eqext B}{S\cc A\cc T\eqext S\cc B\cc T}\]
 \end{myrul}
 
 \begin{myrul}\label{r_ex_w}
@@ -359,10 +353,6 @@ These rules also apply if the second, conditional part of $\worksc{\ldots}{B_1,\
 \[\infer{\worksc{A_1,\ldots,A_{n-1},A_n}{B_1,\ldots,B_n}}{\worksc{A_1,\ldots,A_{n-1}}{B_1,\ldots,B_n}}\]
 \end{myrul}
 
-% \begin{myrul}
-% \[\infer{\worksc{A_1,\ldots,A_i,\ldots,A_n}{B_1,\ldots,B_n}}{\worksc{A_i,A_1,\ldots,A_{i-1},A_{i+1},\ldots,A_n}{B_1,\ldots,B_n}}\]
-% \end{myrul}
-
 \begin{myrul}\label{r_w_combine}
 \[\inferr{\worksc{A_1,\ldots,A_n}{B_1,\ldots,B_n}}{\worksc{C}{B_1,\ldots,B_n}}{\worksc{A_1,\ldots,A_n,C}{B_1,\ldots,B_n}}\]
 \end{myrul}
@@ -370,10 +360,6 @@ These rules also apply if the second, conditional part of $\worksc{\ldots}{B_1,\
 \begin{myrul}\label{r_w_w}
 \[\inferr{\worksc{A_1,\ldots,A_n}{B_1,\ldots,B_n}}{\worksc{C}{A_n}}{\worksc{A_1,\ldots,A_n,C}{B_1,\ldots,B_n}}\]
 \end{myrul}
-
-% \begin{myrul}\label{r_w_replacecond}
-% \[\inferr{\worksc{A_1,\ldots,A_n}{B_1,\ldots,B_n}}{\worksc{C}{B_n}}{\worksc{A_1,\ldots,A_n}{B_1,\ldots,B_{n-1},C}}\]
-% \end{myrul}
 
 \begin{myrul}{??? - and vice versa}
 \[\infer{\works{A}}{A\nequiv\cbrk}\]
@@ -394,30 +380,30 @@ in reverse order.
 \end{mydef}
 
 \begin{myrul}\label{r_invmove}
-\[ \infer{\worksc{S;A}{B}}{\worksc{A}{S^{-1};B}} \]
+\[ \infer{\worksc{S\cc A}{B}}{\worksc{A}{S^{-1}\cc B}} \]
 To see the soundness of this rule...
 Sequences are bijections on filesystems over type-equality.
 TODO: $A,S,B$ need to be simple?
 \end{myrul}
 
 \begin{mydef}{Independent commands, sequences and sets.}
-For two commands $\cxy$ and $\czw$ we write $\cxy\indep\czw$ if $\cxy;\czw\equiv\czw;\cxy\nequiv\cbrk$.
+For two commands $\cxy$ and $\czw$ we write $\cxy\indep\czw$ if $\cxy\cc \czw\equiv\czw\cc \cxy\nequiv\cbrk$.
 % TODO use w() instead of nequiv break
 For two sequences or sets of commands $A$ and $B$ we write $A\indep B$ if
 $\forall a\in A \mbox{and~} \forall b\in B: a\indep b$.
 \end{mydef}
 
 \begin{myrul}\label{r_indep_combine}
-\[ \inferrr{\worksc{T}{S}}{\worksc{U}{S}}{T\indep U}{\worksc{T;U}{S}} \]
+\[ \inferrr{\worksc{T}{S}}{\worksc{U}{S}}{T\indep U}{\worksc{T\cc U}{S}} \]
 To see the soundness of this rule...
 \end{myrul}
 
 \begin{mylem}\label{indep_prefix_combine}
-\[ \inferrr{\worksc{A;B}{S}}{\worksc{A;C}{S}}{B\indep C}{\worksc{A;B;C}{S}} \]
+\[ \inferrr{\worksc{A\cc B}{S}}{\worksc{A\cc C}{S}}{B\indep C}{\worksc{A\cc B\cc C}{S}} \]
 \end{mylem}
 \begin{proof}
 From \cref{r_invmove,r_indep_combine}
-TODO reverse of /cref{r_invmove} needed
+TODO reverse of \cref{r_invmove} needed
 \end{proof}
 
 We aim to use our algebra to define and implement algorithms for conflict detection
@@ -430,7 +416,7 @@ and which can be simplified or reversed
 in order to see under what circumstances commands conflict or can be reordered.
 
 Pairs of commands in general will have the form
-\[ \cxy(p,V_Y); \czw(q,V_W) \]
+\[ \cxy(p,V_Y)\cc  \czw(q,V_W) \]
 where $X,Y,Z,W\in\typeset$, $p,q\in\setp$, 
 and values are of the appropriate type: 
 $V_Y\in\setvx{Y}$ and $V_W\in\setvx{W}$.
@@ -445,13 +431,13 @@ under the conditions noted in the axiom.
 
 \begin{myax}\label{ax_separate_commute}
 Commands on unrelated paths commute:
-$\cxy(p,V_Y); \czw(q,V_W) \equiv \czw(q,V_W); \cxy(p,V_Y)$ where $p\not\descendant q$ and $q\not\descendant p$.
+$\cxy(p,V_Y)\cc  \czw(q,V_W) \equiv \czw(q,V_W)\cc  \cxy(p,V_Y)$ where $p\not\descendant q$ and $q\not\descendant p$.
 TODO $p\neq q$
 \end{myax}
 
 \begin{myax}\label{ax_separate_nobreaks}
 Commands on unrelated paths do not break every filesystem:
-$\cxy(p,V_Y); \czw(q,V_W) \nequiv \cbrk$ where $p\not\descendant q$ and $q\not\descendant p$.
+$\cxy(p,V_Y)\cc  \czw(q,V_W) \nequiv \cbrk$ where $p\not\descendant q$ and $q\not\descendant p$.
 TODO $p\neq q$
 \end{myax}
 
@@ -459,25 +445,25 @@ TODO $p\neq q$
 
 \begin{myax}\label{ax_same_breaks}
 Commands on the same path break every filesystem if incompatible:
-$\cxy(p,V_Y); \czw(p,V_W) \equiv \cbrk$ where $Y\ne Z$.
+$\cxy(p,V_Y)\cc  \czw(p,V_W) \equiv \cbrk$ where $Y\ne Z$.
 \end{myax}
 
 \begin{myax}\label{ax_same_emptyseq}
 Commands on the same path simplify:
-$\cxy(p,V_Y); \czw(p,V_W) \eqext \emptyseq$ where $Y=Z$ and $X=W=\fsregcommandchar{\empt}$ or $X=W=\fsregcommandchar{D}$.
+$\cxy(p,V_Y)\cc  \czw(p,V_W) \eqext \emptyseq$ where $Y=Z$ and $X=W=\fsregcommandchar{\empt}$ or $X=W=\fsregcommandchar{D}$.
 \end{myax}
 
 \begin{myax}\label{ax_same_singlec}
 Commands on the same path simplify:
-$\cxy(p,V_Y); \czw(p,V_W) \equiv \cxw(p,V_W)$ where $Y=Z$ and $XW\neq\cbb$ and $XW\neq\cdd$.
+$\cxy(p,V_Y)\cc  \czw(p,V_W) \equiv \cxw(p,V_W)$ where $Y=Z$ and $XW\neq\cbb$ and $XW\neq\cdd$.
 \end{myax}
 
 \begin{myax}\label{ax_distantchild_breaks}
-$\cxy(\pp,V_Y); \czw(p,V_W) \equiv \cbrk$ where $\pp\descendant p$ and $\pp\neq\parent(p)$ and $\cxy\neq\cdd$ and $\czw\neq\cbb$.
+$\cxy(\pp,V_Y)\cc  \czw(p,V_W) \equiv \cbrk$ where $\pp\descendant p$ and $\pp\neq\parent(p)$ and $\cxy\neq\cdd$ and $\czw\neq\cbb$.
 \end{myax}
 
 \begin{myax}\label{ax_distantparent_breaks}
-$\cxy(p,V_Y); \czw(\pp,V_W) \equiv \cbrk$ where $p\ancestor \pp$ and $\parent(p)\neq \pp$ and $\cxy\neq\cbb$ and $\czw\neq\cdd$.
+$\cxy(p,V_Y)\cc  \czw(\pp,V_W) \equiv \cbrk$ where $p\ancestor \pp$ and $\parent(p)\neq \pp$ and $\cxy\neq\cbb$ and $\czw\neq\cdd$.
 TODO merge into previous
 \end{myax}
 
@@ -486,13 +472,13 @@ A pair of commands on paths $\pp$ and $p$ is a construction pair if $\pp=\parent
 of the following:
    \begin{gather*}
    % bd>bf
-            [\cbd(\pp, D); \cbf(p, F)] \\
+            [\cbd(\pp, D)\cc  \cbf(p, F)] \\
    % bd>bd
-            [\cbd(\pp, D_1); \cbd(p, D_2)] \\
+            [\cbd(\pp, D_1)\cc  \cbd(p, D_2)] \\
    % fd>bf
-            [\cfd(\pp, D); \cbf(p, F)] \\
+            [\cfd(\pp, D)\cc  \cbf(p, F)] \\
    % fd>bd
-            [\cfd(\pp, D_1); \cbd(p, D_2)]
+            [\cfd(\pp, D_1)\cc  \cbd(p, D_2)]
    \end{gather*}
 \end{mydef}
 
@@ -501,34 +487,34 @@ A pair of commands on paths $p$ and $\pp$ is a destruction pair if $\parent(p)=\
 of the following:
    \begin{gather*}
    % fb<db ??
-            [\cfb(p); \cdb(\pp)] \\
+            [\cfb(p)\cc  \cdb(\pp)] \\
    % fb<df ??
-            [\cfb(p); \cdf(\pp, F)] \\
+            [\cfb(p)\cc  \cdf(\pp, F)] \\
    % db<db ??
-            [\cdb(p); \cdb(\pp)] \\
+            [\cdb(p)\cc  \cdb(\pp)] \\
    % db<df ??
-            [\cdb(p); \cdf(\pp, F)]
+            [\cdb(p)\cc  \cdf(\pp, F)]
    \end{gather*}
 \end{mydef}
 
 \begin{myax}\label{ax_directchild_breaks}
-$\cxy(\pp,V_Y); \czw(p,V_W) \equiv \cbrk$ where $\pp=\parent(p)$ and $\cxy\neq\cdd$ and $\czw\neq\cbb$
+$\cxy(\pp,V_Y)\cc  \czw(p,V_W) \equiv \cbrk$ where $\pp=\parent(p)$ and $\cxy\neq\cdd$ and $\czw\neq\cbb$
 and the pair is not a construction pair.
 \end{myax}
 
 \begin{myax}\label{ax_directparent_breaks}
-$\cxy(p,V_Y); \czw(\pp,V_W) \equiv \cbrk$ where $\parent(p)=\pp$ and $\cxy\neq\cbb$ and $\czw\neq\cdd$
+$\cxy(p,V_Y)\cc  \czw(\pp,V_W) \equiv \cbrk$ where $\parent(p)=\pp$ and $\cxy\neq\cbb$ and $\czw\neq\cdd$
 and the pair is not a destruction pair.
 \end{myax}
 
 \begin{myax}\label{ax_child_assert}
 An assertion command can be added on a child path:
-$\cbb(p);\cxy(\pp,V_Y) \equiv \cxy(\pp,V_Y) \equiv \cxy(\pp,V_Y);\cbb(p)$ where $\pp\descendant p$ and $\cxy\neq\cdd$.
+$\cbb(p)\cc \cxy(\pp,V_Y) \equiv \cxy(\pp,V_Y) \equiv \cxy(\pp,V_Y)\cc \cbb(p)$ where $\pp\descendant p$ and $\cxy\neq\cdd$.
 \end{myax}
 
 \begin{myax}\label{ax_parent_assert}
 An assertion command can be added on the parent path:
-$\cdd(\pp);\cxy(p,V_Y) \equiv \cxy(p,V_Y) \equiv \cxy(p,V_Y);\cdd(\pp)$ where $\pp\descendant p$ and $\cxy\neq\cbb$.
+$\cdd(\pp)\cc \cxy(p,V_Y) \equiv \cxy(p,V_Y) \equiv \cxy(p,V_Y)\cc \cdd(\pp)$ where $\pp\descendant p$ and $\cxy\neq\cbb$.
 \end{myax}
 
 \begin{myax}\label{ax_assert}
@@ -536,7 +522,7 @@ $\cxy(p,V_Y) \eqext \emptyseq$ where $\cxy=\cbb$ or $\cxy=\cdd$.
 \end{myax}
 
 \begin{myax}\label{worksextpostfix}
-$\worksc{A}{A;S}$ where $A$ and $S$ are arbitrary sequences of commands
+$\worksc{A}{A\cc S}$ where $A$ and $S$ are arbitrary sequences of commands
 \end{myax}
 
 \section{Ordering commands}
@@ -658,7 +644,7 @@ that independent from every command in $B\setminus A$.
 Now we prove that $\reca\FS_B\neq\fsbroken$, and, in general:
 
 \begin{myth}
-If $A, B$ are simple, then $\worksc{B;\reca}{A,B}$
+If $A, B$ are simple, then $\worksc{B\cc \reca}{A,B}$
 \end{myth}
 
 This is trivial unless $\works{A,B}$.
@@ -714,8 +700,8 @@ We also know that $B'$ is still minimal (but no longer simple).
 We therefore have a minimal $B'$ which has a command on $q$ just before $\cxy(p, V_Y)$ and $B'\equiv B$.
 Let this command on $q$ be $\cqr(q, V_R)$.
 \begin{gather*}
-A = \cdots; \czw(q, V_W); \cxy(p, V_Y); \cdots \\
-B' = \cdots; \cqr(q, V_R); \cxy(p, V_Y); \cdots
+A = \cdots\cc  \czw(q, V_W)\cc  \cxy(p, V_Y)\cc  \cdots \\
+B' = \cdots\cc  \cqr(q, V_R)\cc  \cxy(p, V_Y)\cc  \cdots
 \end{gather*}
 
 As $\works{A,B}$ and so $\works{A,B'}$ (via \cref{r_eq_ex,r_ex_w,r_w_w}), 
@@ -742,29 +728,29 @@ $\worksc{\ordered{A\cap B}}{A}$ and by symmetry $\worksc{\ordered{A\cap B}}{B}$.
 
 \medskip
 
-We would like to prove that $\worksc{B;\reca}{A,B}$.
+We would like to prove that $\worksc{B\cc \reca}{A,B}$.
 From above we know that this is equivalent to
-$\worksc{\ordered{A\cap B};\ordered{B\setminus A};\reca}{A,B}$.
+$\worksc{\ordered{A\cap B}\cc \ordered{B\setminus A}\cc \reca}{A,B}$.
 As we already know that $\reca\indep B\setminus A$
-and that $\worksc{\ordered{A\cap B};\ordered{B\setminus A}}{A,B}$
+and that $\worksc{\ordered{A\cap B}\cc \ordered{B\setminus A}}{A,B}$
 (as $\worksc{B}{A,B}$),
 based on \cref{indep_prefix_combine}
 we only need to prove that
-$\worksc{\ordered{A\cap B};\reca}{A,B}$.
+$\worksc{\ordered{A\cap B}\cc \reca}{A,B}$.
 
 \newcommand{\acbi}{\ordered{A\cap B}^{-1}}
 \newcommand{\amb}{A\setminus B}
 \newcommand{\bma}{B\setminus A}
 Using \cref{r_invmove} we can rephrase this as
 % TODO axiom doesn't specify multiple conditions
-$\worksc{\reca}{\acbi;A,\acbi;B}$.
+$\worksc{\reca}{\acbi\cc A,\acbi\cc B}$.
 
 We already know the following things:
 \begin{itemize}
 \item $\amb$ and $\bma$ are simple as $A$ and $B$ are simple
 % \item $\amb \cap \bma = \emptyset$
 \item $\reca$ is the largest subset of $\amb$ for which $\reca\indep\amb$
-\item $\worksc{\ordered{\amb};\ordered{\bma}}{\acbi;A,\acbi;B}$ as $\worksc{A,B}{A,B}$ based on \cref{r_invmove}
+\item $\worksc{\ordered{\amb}\cc \ordered{\bma}}{\acbi\cc A,\acbi\cc B}$ as $\worksc{A,B}{A,B}$ based on \cref{r_invmove}
 \end{itemize}
 
 Our theorem is therefore proven if we prove the following lemma:
@@ -810,9 +796,9 @@ either $q=\parent(p)$ or $p=\parent(q)$.
 We also know that there must be a command $\cqr(r,V_R)$ in $T$ which is not independent of $\czw(q,V_W)$.
 By definition this means that one of the following must be true:
 \begin{itemize}
-\item $\czw(q,V_W);\cqr(r,V_R) \equiv\cbrk$
-\item $\cqr(r,V_R);\czw(q,V_W) \equiv\cbrk$
-\item $\czw(q,V_W);\cqr(r,V_R) \nequiv \cqr(r,V_R);\czw(q,V_W)$
+\item $\czw(q,V_W)\cc \cqr(r,V_R) \equiv\cbrk$
+\item $\cqr(r,V_R)\cc \czw(q,V_W) \equiv\cbrk$
+\item $\czw(q,V_W)\cc \cqr(r,V_R) \nequiv \cqr(r,V_R)\cc \czw(q,V_W)$
 \end{itemize}
 From these and \cref{ax_separate_commute,ax_separate_nobreaks} we also know that
 either $q\descendant r$ or $r\descendant q$.
@@ -837,7 +823,7 @@ Create $T'\equiv T$ by inserting a command on $q$ before $\cqr(r,V_R)$
 into $T$ according to \cref{ax_parent_assert}.
 We now have $\cxy(p,V_Y)\indep T\equiv T'$ which is a contradiction as
 $T'$ has a command on $q$ and $q=\parent(p)$.
-% TODO axiom? A \~ B == C  =>  A \~ C
+
 \end{proof}
 
 TODO $\reca$ is maximal
