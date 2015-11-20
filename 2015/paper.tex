@@ -1,25 +1,22 @@
 \documentclass[12pt]{article}
 
-% \usepackage{alltt}
-% \usepackage{comment}
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{amsthm}
-% \usepackage{graphicx}
 \usepackage{centernot}
 \usepackage{tikz}
 \usepackage{cleveref}
 
-\newcommand{\setv}{\mathcal{V}}
+\newcommand{\setv}{\mathcal{V}} % Set of values
 \newcommand{\setvx}[1]{\mathcal{V}_{#1}}
-\newcommand{\setf}{\setvx{F}}
-\newcommand{\setd}{\setvx{D}}
-\newcommand{\setb}{\setvx{\empt}}
-\newcommand{\setp}{\mathcal{P}}
+\newcommand{\setf}{\setvx{F}} % Set of file values
+\newcommand{\setd}{\setvx{D}} % Set of directory values
+\newcommand{\setb}{\setvx{\empt}} % Set of empty values
+\newcommand{\setn}{\mathcal{N}} % Set of nodes / paths
 \newcommand{\empt}{\bot}
 \newcommand{\parent}{\mathtt{parent}}
-\newcommand{\toppath}{\mathtt{None}} % return value of parent()
+\newcommand{\topnode}{\mathtt{None}} % return value of parent()
 \newcommand{\fsbroken}{\mathtt{Broken}} % broken FS value
 \newcommand{\FS}{\Phi} % a filesystem
 \newcommand{\GS}{\Xi} % another filesystem
@@ -48,7 +45,7 @@
 \newcommand{\cqq}{\fscommand{Q}{Q}}
 
 \newcommand{\typeset}{\{\fsregcommandchar{D},\fsregcommandchar{F},\empt\}} % Set of types in commands
-\newcommand{\cc}{\circ}
+\newcommand{\cc}{\circ} % Command / sequence concatenation
 \newcommand{\descendant}{\prec}
 \newcommand{\ancestor}{\succ}
 
@@ -96,7 +93,7 @@
 \crefname{myrul}{rule}{rules}
 % \creflabelformat{myrul}{R#2#1#3}
 
-\title{A More Complete Algebra for File Synchronization}
+\title{Correctness of Algebraic File Synchronization}
 
 \author{Elod Pal Csirmaz}
 
@@ -108,50 +105,76 @@ Abstract goes here
 
 \section{Introduction}
 
+Synchronizing data structures, and filesystems in particular,
+is a task that we encounter more and more often in our world
+of multiple mobile devices, cloud solutions and distributed systems.
+Applications of synchronization ranges from
+solutions for end users who expect to access personal data seamlessly
+on multiple devices and personal clouds to geographically distributed server networks
+that need to synchronize themselves with low latency to serve the 
+same content.
+
+In this paper we
+continue the work in \cite{NREC:alg} and add to the theoretical understanding
+of synchronization based not on filesystem states, but filesystem changes or commands.
+
+
 % Synchronization:
 % Main aim: apply updates (where possible) from other replicas
 % update detection -> conflict detection -> merging updates -> ordering updates -> apply updates from other replicas
 % Problems: conflict detection, ordering
 
+% New:
+% better command (instruction) set
+% simpler reconciliation algorithm
+% proof of correctness
+
 \section{Definition of a Filesystem}
 
-We model a filesystem using a function $\FS$ with a set of paths $\setp$ as its domain,
+We model a filesystem using a function $\FS$ with a set of nodes (filesystem paths) $\setn$ as its domain,
 and a set of possible contents $\setv$ as its codomain:
 \[ \FS : \setp \rightarrow \setv \] 
-In our model, $\setp$ contains all possible paths, and $\setv$ contains a special
-element, $\empt$, which is the value of $\FS$ at paths where there are no files
-or directories.
+In our model, $\setn$ contains all possible nodes, including the ones where there is no file or directory,
+and $\setv$ contains a special element, $\empt$, which is the value of $\FS$ at an empty node.
 We consider the contents of files, as well as any meta-information of files
 and directories (e.g. permissions or flags) part of the values in $\setv$.
 
-The paths of a filesystem form a disjoint union of rooted directed trees.
+The nodes form a disjoint union of rooted directed trees.
 \begin{mydef}
-The function $\parent(p)$ returns the parent path of $p$, or
-returns $\toppath$ if $p$ is the root of a tree.
+The function $\parent(n)$ returns the parent node of $n$, or
+returns $\topnode$ if $n$ is the root of a tree.
 \end{mydef}
 
 Every filesystem has a so-called \textbf{tree property}, which means that
-if the filesystem is not empty at a path, and the path has a parent,
-then there must be a directory at the parent path.
+if the filesystem is not empty at a node, and the node has a parent,
+then there must be a directory at the parent node.
 
 To model this, in $\setv$ we distinguish between files ($\setf$) and directories ($\setd$), that is,
 if $\setb = \{\empt\}$ then:
 \[ \setv = \setb \cup \setf \cup \setd \]
 The tree propety can then be defined as
-\[ \forall p\in\setp : \FS(p) \neq \empt \wedge \parent(p) \neq \toppath \Rightarrow \FS(\parent(p)) \in \setd \]
+\[ \forall n\in\setn : \FS(n) \neq \empt \wedge \parent(n) \neq \topnode \Rightarrow \FS(\parent(n)) \in \setd \]
 
-This means that as we move from a path to its child, its grandchild, and so on,
+This means that as we move down from the root of a tree of nodes,
 the types of values we encounter in the filesystem can only change according to the following
 transition diagram:
 
 \input{type-transition}
 
 In this paper, we write $F$ for an arbitrary element of $\setf$, and $D$ for an arbitrary element
-of $\setd$. $V$ is usually a value from $\setv$ and $p$ and $q$ are paths in $\setp$.
+of $\setd$. $V$ is a value from $\setv$ and $n$ and $m$ are nodes in $\setn$.
+
+
+
+
+
 
 \section{Introducing commands}
 
-Next we need to define instructions or commands on the filesystem about which we will reason
+Next we need to define commands on the filesystem.
+
+% <<<<<<<< TODO Rewrite: no algebra
+ about which we will reason
 using our algebra.
 We will aim to draw conclusions or judgements about commands and sequences of commands
 based on the algebra we are aiming to construct.
@@ -164,61 +187,48 @@ Accordingly, we expect that the more information one encodes into the commands a
 the better predicitons we will be able to make using our algebra,
 as then the commands and sequences will be more specific, and will select a smaller subset
 of potential filesystems on which they can meaningfully operate.
+% >>>>>>>>>> to here
+
 
 Let us consider what kind of information may be encoded in the commands.
 A usual set of commands, based on the most frequent tools implemented by filesystems,
-might be $create(p,V)$, $edit(p,V)$ and $remove(p)$ where $p\in\setp$ and $V\in\setv$ (but $V\neq\empt$).
-Clearly the commands need to contain information about the state they leave the filesystem
-in at the path on which they operate, that is, they need to contain their output value, $V$.
-Notice, however, that the commands above also encode some information about the filesystem
-\emph{before} the command is applied; namely, $create$ requires that there are no files
-or directories at $p$, while $edit$ and $remove$ require the opposite.
+might be $create(n,V)$, $edit(n,V)$ and $remove(n)$ where $n\in\setn$ and $V\in\setv$ (but $V\neq\empt$).
+Regarding what we know of their output, that is, the state of the filesystem at $n$
+after applying the command,
+we know that after $create$ or $edit$, $\FS(n)\neq\empt$, whereas after $remove$,
+$\FS(n)$ will be $\empt$. 
+However, from \cite{NREC:alg} we know that a useful set of axioms
+will in some cases need to distinguish between edits that result in directories ($edit(n,D)$) and
+ones that result in files ($edit(n,F)$), and treat them as separate commands.
+Indeed, Bill Zissimopoulos suggested (\cite{BZ}) that extending this distinction to more commands
+utlimately simplifies
+the definition of conflicting commands, as our model will then able to predict the behavior of commands
+more precisely.
+In other words, encoding the type of the output ($D$, $F$ or $\empt$) in the commands is definitely useful.
+At the same time, there is never any need to encode information about the
+\emph{exact} output value of a command,
+as the success or failure of filesystem commands only depend on the types of values in the filesystem.
 
-We also know that after $create$ or $edit$, $\FS(p)\neq\empt$, whereas after $remove$,
-$\FS(p)$ will be $\empt$. However, from \cite{NREC:alg} we know that a useful set of axioms
-will in some cases need to distinguish between edits that result in directories ($edit(p,D)$) and
-ones that result in files ($edit(p,F)$);
-and Bill Zissimopoulos suggested in \cite{BZ} that extending this distinction simplifies
-definitions based on our algebra, as it is then able to predict the behaviour of commands
-more precisely. 
-In other words, encoding this information in the commands is definitely useful,
-but it creates a seemingly arbitrary asymmetry where
-there is more information encoded into commands about their results than about the
-original state of the filesystem.
-
-In line with the aim to encode as much information as possible in the commands,
+Notice, however, that the commands listed above also encode some information about 
+their input, the filesystem
+\emph{before} the command is applied; namely, $create(n,V)$ requires that there are no files
+or directories at $n$, while $edit(n,V)$ and $remove(n)$ require the opposite.
+This creates an arbitrary asymmetry where
+there is now more information encoded into commands about their output than about their input.
+In line with the aim to encode as much information as possible in the commands, % TODO Where is this mentioned?
 and in order to resolve this asymmetry, we propose a set of commands that encode
-the type of the original state of $\FS(p)$ as well.
+the type of the original state of $\FS(n)$ as well.
 (Some real-life filesystem commands like $rmdir$ do this already.)
-Please note that there is never any need to encode information about the
-\emph{exact} value of path $p$ in a command, merely its type ($D$, $F$ or $\empt$),
-as the success or failure of filesystem commands only depend on the type of the value.
 
 We therefore propose to have a command for each pair of types.
 For want of a better system, we will name our commands by concatenating
 two of $\fsregcommandchar{D}$, $\fsregcommandchar{F}$ and $\fsregcommandchar{\empt}$, 
-where the left sign notes the type of value
-in the filesystem before the command is applied, and the right sign notes the type
-afterwards. For example $mkdir(p,D)$ is $\cbd(p,D)$ and $rmdir(p)$ is $\cdb(p)$.
+where the left sign denotes the type of value
+required in the filesystem before the command is applied, and the right sign notes the type
+afterwards. For example, $mkdir(n,D)$ will be $\cbd(n,D)$, and $rmdir(n)$ will be $\cdb(n)$.
 
-When we describe multiple or unknown commands, we may substitute one or both
-types with a variable, e.g. $\cxy(p,V)$. In this context,
-if we write that $\cxy=\czw$, we mean that their input and output types
-are the same ($X=Z$ and $Y=W$).
-
-% TODO No "move"
-
-% TODO Only one directory value
-In real-life applications, we often do not want to consider metadata stored in
-directories (\cite{BZ}). In other words, the contents of directories are all equal,
-which can be modelled by assuming that $|\setd|=1$.
-Note that this creates a convenient symmetry where there is only a single value
-for each type that can be repeated as we move from a path to its child ($D$ and $\empt$).
-
-\section{Applying Commands}
-
-The commands can only succeed if the original value at $p$ has a type that matches
-the type required by a command. If this is not the case, or if the resulting
+A command can only succeeds if the original value at node $n$ has a type that matches
+the input type of the command. If this is not the case, or if the resulting
 filesystem no longer has the tree property, then we say that the command
 \textbf{breaks} the filesystem. Broken filesystems are considered equal
 (but not equal to any working filesystem), and we note them by $\FS=\fsbroken$.
@@ -227,45 +237,121 @@ So that we could reason about sequences of commands that break every filesystem
 in the algebra, we introduce the command $\cbrk$ that simply breaks every filesystem.
 
 We note that a command or a sequence of commands is applied to a filsystem
-by prefixing the command or sequence to it, for example: $\cbrk\FS$, $\cbd(p,D)\FS$, 
+by prefixing the command or sequence to it, for example: $\cbrk\FS$, $\cbd(n,D)\FS$, 
 or $S\FS$ if $S$ is a sequence of commands.
 
 \begin{mydef}
-Using $\FS[V/p]$ we denote a filesystem derived from $\FS$:
-\[ \FS[V/p](q) :=
+Using $\FS[V/n]$ we denote a filesystem derived from $\FS$:
+\[ \FS[V/n](m) :=
    \begin{cases}
-   V &\mbox{if~} q=p\\
-   \FS(q) &\mbox{otherwise.}
+   V &\mbox{if~} m=n\\
+   \FS(m) &\mbox{otherwise.}
    \end{cases}
 \]
 \end{mydef}
 
-The exact behaviour of our commands is as follows:
+The exact behavior of our commands is as follows:
 \begin{itemize}
 \item $\cbrk\FS = \fsbroken$
 \item
-All other commands have the generic form $\cxy(p,V_Y)$ where
-$X$ and $Y$ are types ($\fsregcommandchar{D}$, $\fsregcommandchar{F}$ or $\fsregcommandchar{\empt}$),
-$p\in\setp$ and $V_Y$ is a value of the appropriate type from $\setvx{Y}$.
+All other commands have the generic form $\cxy(n,V_Y)$ where
+$X$ and $Y$ are types in $\typeset$,
+$n\in\setn$ and $V_Y$ is a value of the appropriate type from $\setvx{Y}$.
 At times we omit $V_Y$ if there is only one suitable value.
-\[ \cxy(p,V_Y)\FS = 
+\[ \cxy(n,V_Y)\FS = 
    \begin{cases}
    \fsbroken &\mbox{if~} \FS=\fsbroken\\
-   \fsbroken &\mbox{if~} \FS(p)\not\in\setvx{X}\\
-   \fsbroken &\mbox{if~} \FS[V/p] \mbox{~violates the tree property}\\
-   \FS[V/p] &\mbox{otherwise.}
+   \fsbroken &\mbox{if~} \FS(n)\not\in\setvx{X}\\
+   \fsbroken &\mbox{if~} \FS[V/n] \mbox{~violates the tree property}\\
+   \FS[V/n] &\mbox{otherwise.}
    \end{cases}
 \]
 \end{itemize}
 
-\section{Notation and definitions}
 
-\begin{mydef}{$p\descendant q$.}
-$p\descendant q$ if $p$ is the ancestor of $q$ ($p=\parent^n(q)$). (the transitive closure of the $\parent$ relation)
+When we describe multiple or unknown commands, we may substitute one or both
+types with a variable, for example by writing $\cxy(n,V)$. In this context,
+if we write that $\cxy=\czw$, we mean that their input and output types
+are the same ($X=Z$ and $Y=W$).
+
+% Simplifications
+% ---------------
+
+For reasons also listed in \cite{NREC:alg}, in this paper we will not consider
+a $move$ or $rename$ command. Regarding the theoretical reasoning we aim to follow,
+this turns out to be useful because these would be the only commands that affect
+filesystems at two nodes at once, therefore describing 
+the dependencies affecting these commands
+would call for a more complicated model.
+From a pragmatic perspective, this restriction does not mean that in an application
+implementing conflict resolution using the algorithm described here would not be
+able to handle renames by pre- and post-processing changes in the filesystem to
+discover them, which (especially when a rename is combined with changes to the content)
+is a non-trivial problem in itself.
+
+Another simplification we will assume in this paper is regarding directories.
+As Bill Zissimopoulos pointed out (\cite{BZ}), we often do not want to consider metadata stored in
+directories during synchronization. In other words, the contents of directories are all equal,
+which can be modelled by assuming that $|\setd|=1$.
+% This also creates a convenient symmetry where there is only a single value
+% for each type that can be repeated as we move from a path to its child ($D$ and $\empt$).
+
+
+
+
+\section{Describing the behavior of commands}
+
+So that we could describe the effects of commands on a filesystem, let us introduce some notation
+and note some observations.
+
+The commands we aim to investigate do not occur in isolation:
+for example, when comparing to filesystems to determine the commands needed to transform one into the other,
+we receive a set of commands with uncertain ordering.
+Applying commands to a filesystem, however, happens in time,
+so for this we need a sequence of commands.
+We use $\cc$ to concatenate commands to form a sequence, or concatenate sequences to form a longer sequence:
+$S=\cbd(n)\cc \cbf(m,F)$, or $S'=S\cc\cbb(o)$.
+
+The following concepts will allow us to investigate sequences independently of filesystems.
+In the definitions, $A,B,S,T$ stand for arbitrary sequences of commands.
+The first two relations echo the ones defined in \cite{NREC:alg}.
+
+\begin{mydef}
+% Relation in the algebra
+$A\equiv B$ means that $A$ and $B$ are equivalent,
+% intended interpretation:
+that is, they behave in the same way on
+all filesystems: $\forall \FS: A\FS=B\FS$.
+It is a reflexive, commutative and transitive relation,
+and clearly
+% inference rule:
+$ A\equiv B \Rightarrow S\cc A\cc T\equiv S\cc B\cc T $.
 \end{mydef}
 
-\begin{mydef}{Unrelated paths.}
-Paths $p$ and $q$ are unrelated if $p\not\descendant q$ and $p\not\ancestor q$.
+\begin{mydef}
+% Relation in the algebra
+$A\eqext B$ means that $B$ extends $A$,
+% intended interpretation:
+that is, they behave in the same way
+on any filesystem $A$ does not break:
+$\forall \FS: A\FS\neq\fsbroken\Rightarrow A\FS=B\FS$.
+It is a reflexive and transitive relation,
+and we can see that
+% inference rules:
+$ A\eqext B \Rightarrow S\cc A\cc T\eqext S\cc B\cc T$
+and
+$ A\equiv B \Rightarrow A\eqext B$.
+\end{mydef}
+
+
+
+
+
+
+
+
+\begin{mydef}{$n\descendant m$.}
+We write $n\descendant m$ if $n$ is the ancestor of $m$ ($n=\parent^n(m)$). % TODO (the transitive closure of the $\parent$ relation)
 \end{mydef}
 
 \begin{mydef}{Assertion command.}
@@ -273,44 +359,37 @@ A command is an assertion command if
 for every filesystem it either breaks it or leaves it in the same state.
 In other words, assertion commands have the same input and output type,
 and there must also be only one possible value for their output.
-Accordingly in our current algebra $\cbb$ and $\cdd$ are the only two assertion commands.
-As $|\setb|=|\setd|=1$, we do not note their exact output value.
+Accordingly, in our current algebra, $\cbb(n)$ and $\cdd(n)$ are the only two assertion commands,
+and we do not note their output value as it is determined.
 \end{mydef}
 
 \begin{mydef}{Minimal set or sequence.}
-A sequence or set of commands is minimal if it contains at most one command on every path.
+A sequence or set of commands is minimal if it contains at most one command on every node.
 \end{mydef}
 
 \begin{mydef}{Simple set or sequence.}
 A sequence or set of commands is simple if it is minimal and it does not contain assertion commands.
 \end{mydef}
 
+
+
 \section{Defining the Algebra}
 
-In the following sections $A$ and $B$ stand for arbitrary sequences of commands.
-The first two relations echo the ones defined in \cite{NREC:alg}.
+% -----------.........-------------.............--------------..............
+
+
+
 
 \begin{mydef}
-$A\equiv B$ means that $A$ and $B$ are equivalent.
-We assume that it is a reflexive, commutative and transitive relation.
-Its intended interpretation is that they behave in the same way on
-all filesystems: $\forall \FS: A\FS=B\FS$.
-\end{mydef}
-
-\begin{mydef}
-$A\eqext B$ means that $B$ extends $A$.
-It is a reflexive and transitive relation.
-Its intended interpretation is that they behave in the same way
-on any filesystem $A$ does not break:
-$\forall \FS: A\FS\neq\fsbroken\Rightarrow A\FS=B\FS$
-\end{mydef}
-
-\begin{mydef}
-$\works{A_1,A_2,\ldots,A_n}$ means that 
-$A_1,A_2,\ldots,A_n$ work at the same time.
-TODO: $A_i$ is a set (order not important).
-Its intended interpretation is
-\[\exists \FS: A_1\FS\neq\fsbroken \wedge \cdots \wedge A_n\FS\neq\fsbroken\]
+% Unsure if this relation should be in the algebra.
+For a set of $k$ sequences
+$\works{A_1,A_2,\ldots,A_k}$ means that 
+$A_1,A_2,\ldots,A_k$ work at the same time, that is,
+% intended interpretation:
+\[\exists \FS: A_1\FS\neq\fsbroken \wedge \cdots \wedge A_k\FS\neq\fsbroken\]
+As the sequences form a set, their order is irrelevant.
+% inference rules:
+Also, we see that 
 \end{mydef}
 
 \begin{mydef}
@@ -329,19 +408,9 @@ Its intended interpretation is
 \end{mydef}
 
 
-We have the following inference rules, in which $A,B,A_i,B_i,S$ and $T$ stand for all possible sequences of commands:
+% INFERENCE RULES
 
-\begin{myrul}\label{r_eq_ex}
-\[\infer{A\equiv B}{A\eqext B}\]
-\end{myrul}
 
-\begin{myrul}
-\[\infer{A\equiv B}{S\cc A\cc T\equiv S\cc B\cc T}\]
-\end{myrul}
-
-\begin{myrul}
-\[\infer{A\eqext B}{S\cc A\cc T\eqext S\cc B\cc T}\]
-\end{myrul}
 
 \begin{myrul}\label{r_ex_w}
 \[\infer{B\eqext A}{\worksc{A}{B}}\]
@@ -385,6 +454,11 @@ To see the soundness of this rule...
 Sequences are bijections on filesystems over type-equality.
 TODO: $A,S,B$ need to be simple?
 \end{myrul}
+
+
+We say that the nodes $n$ and $m$ are \textbf{unrelated} if $n\not\descendant m$ and $n\not\ancestor m$
+and $n\new m$.
+
 
 \begin{mydef}{Independent commands, sequences and sets.}
 For two commands $\cxy$ and $\czw$ we write $\cxy\indep\czw$ if $\cxy\cc \czw\equiv\czw\cc \cxy\nequiv\cbrk$.
