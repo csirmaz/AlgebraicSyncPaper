@@ -52,7 +52,8 @@
 \newcommand{\eqext}{\sqsubseteq}
 \newcommand{\eqnrw}{\sqsupseteq}
 \newcommand{\nequiv}{\not\equiv}
-\newcommand{\indep}{\wr\!\!\wr\,} % Independent
+\newcommand{\indep}{\wr\!\!\wr\,} % Independent commands, sequences
+\newcommand{\unrel}{\indep} % Unrelated nodes
 
 \newcommand{\works}[1]{{\mathbf{w}}({#1})}
 \newcommand{\worksc}[2]{{\mathbf{w}}({#1}|{#2})}
@@ -123,6 +124,10 @@ of synchronization based not on filesystem states, but filesystem changes or com
 % Main aim: apply updates (where possible) from other replicas
 % update detection -> conflict detection -> merging updates -> ordering updates -> apply updates from other replicas
 % Problems: conflict detection, ordering
+
+% Insight: (Prof. Norman Ramsey)
+% - updates where two orders are not equivalent are incompatible
+% - we only have a set of updates and need to create an order
 
 % New:
 % better command (instruction) set
@@ -301,6 +306,9 @@ which can be modelled by assuming that $|\setd|=1$.
 
 \section{Describing the behavior of commands}
 
+% Definitions for command pairs and ordering
+% ------------------------------------------
+
 So that we could describe the effects of commands on a filesystem, let us introduce some notation
 and note some observations.
 
@@ -343,194 +351,84 @@ and
 $ A\equiv B \Rightarrow A\eqext B$.
 \end{mydef}
 
-
-
-
-
-
-
+Let us also define the following relations between nodes:
 
 \begin{mydef}{$n\descendant m$.}
 We write $n\descendant m$ if $n$ is the ancestor of $m$ ($n=\parent^n(m)$). % TODO (the transitive closure of the $\parent$ relation)
 \end{mydef}
 
-\begin{mydef}{Assertion command.}
-A command is an assertion command if
-for every filesystem it either breaks it or leaves it in the same state.
-In other words, assertion commands have the same input and output type,
-and there must also be only one possible value for their output.
-Accordingly, in our current algebra, $\cbb(n)$ and $\cdd(n)$ are the only two assertion commands,
-and we do not note their output value as it is determined.
-\end{mydef}
-
-\begin{mydef}{Minimal set or sequence.}
-A sequence or set of commands is minimal if it contains at most one command on every node.
-\end{mydef}
-
-\begin{mydef}{Simple set or sequence.}
-A sequence or set of commands is simple if it is minimal and it does not contain assertion commands.
-\end{mydef}
-
-
-
-\section{Defining the Algebra}
-
-% -----------.........-------------.............--------------..............
-
-
-
-
-\begin{mydef}
-% Unsure if this relation should be in the algebra.
-For a set of $k$ sequences
-$\works{A_1,A_2,\ldots,A_k}$ means that 
-$A_1,A_2,\ldots,A_k$ work at the same time, that is,
-% intended interpretation:
-\[\exists \FS: A_1\FS\neq\fsbroken \wedge \cdots \wedge A_k\FS\neq\fsbroken\]
-As the sequences form a set, their order is irrelevant.
-% inference rules:
-Also, we see that 
-\end{mydef}
-
-\begin{mydef}
-$\worksc{A_1,A_2,\ldots,A_n}{B_1,B_2,\ldots,B_n}$ means that 
-all of $A_1,A_2,\ldots,A_n$ work where all of $B_1,B_2,\ldots,B_n$ work.
-TODO: $A$s $B$s are sets.
-We assume that the arguments $A_i$ and $B_i$ commute among each other,
-and that the relation is reflexive, that is, $\worksc{B}{B}$ is true for all sequences.
-Its intended interpretation is
-\begin{align*}
-\forall \FS:&\\ 
-&B_1\FS\neq\fsbroken \wedge \cdots \wedge B_n\FS\neq\fsbroken\\
-&\Rightarrow\\
-&A_1\FS\neq\fsbroken \wedge \cdots \wedge A_n\FS\neq\fsbroken
-\end{align*}
-\end{mydef}
-
-
-% INFERENCE RULES
-
-
-
-\begin{myrul}\label{r_ex_w}
-\[\infer{B\eqext A}{\worksc{A}{B}}\]
-\end{myrul}
-
-These rules also apply if the second, conditional part of $\worksc{\ldots}{B_1,\ldots,B_n}$ is empty:
-
-\begin{myrul}
-\[\infer{\worksc{A_1,\ldots,A_{n-1},A_n}{B_1,\ldots,B_n}}{\worksc{A_1,\ldots,A_{n-1}}{B_1,\ldots,B_n}}\]
-\end{myrul}
-
-\begin{myrul}\label{r_w_combine}
-\[\inferr{\worksc{A_1,\ldots,A_n}{B_1,\ldots,B_n}}{\worksc{C}{B_1,\ldots,B_n}}{\worksc{A_1,\ldots,A_n,C}{B_1,\ldots,B_n}}\]
-\end{myrul}
-
-\begin{myrul}\label{r_w_w}
-\[\inferr{\worksc{A_1,\ldots,A_n}{B_1,\ldots,B_n}}{\worksc{C}{A_n}}{\worksc{A_1,\ldots,A_n,C}{B_1,\ldots,B_n}}\]
-\end{myrul}
-
-\begin{myrul}{??? - and vice versa}
-\[\infer{\works{A}}{A\nequiv\cbrk}\]
-\end{myrul}
-
-\begin{mylem}\label{worksinputmatch}
-If $A$ and $B$ are minimal sequences, $\works{A,B}$,
-and there are commands on path $p$ in both $A$ ($\cxy(p, V_Y)\in A$) and $B$ ($\czw(p, V_W)\in B$)
-then their input types must match ($X=Z$).
-TODO: Is this an axiom?
-\end{mylem}
-
-\begin{mydef}{Inverse commands and sequences.}
-The inverse of command $\cxy(p,V_Y)$ is $\cxy(p,V_Y)^{-1} = \cyx(p,V_X)$
-where $V_X$ is an arbitrary value from $\setvx{X}$.
-The inverse of sequence $S$, $S^{-1}$, consists of the inverses of the commands in $S$
-in reverse order.
-\end{mydef}
-
-\begin{myrul}\label{r_invmove}
-\[ \infer{\worksc{S\cc A}{B}}{\worksc{A}{S^{-1}\cc B}} \]
-To see the soundness of this rule...
-Sequences are bijections on filesystems over type-equality.
-TODO: $A,S,B$ need to be simple?
-\end{myrul}
-
-
-We say that the nodes $n$ and $m$ are \textbf{unrelated} if $n\not\descendant m$ and $n\not\ancestor m$
+\begin{mydef}{$n\unrel m$.}
+We write $n\unrel m$, or ``$n$ and $m$ are unrelated'' if $n\not\descendant m$ and $n\not\ancestor m$
 and $n\new m$.
-
-
-\begin{mydef}{Independent commands, sequences and sets.}
-For two commands $\cxy$ and $\czw$ we write $\cxy\indep\czw$ if $\cxy\cc \czw\equiv\czw\cc \cxy\nequiv\cbrk$.
-% TODO use w() instead of nequiv break
-For two sequences or sets of commands $A$ and $B$ we write $A\indep B$ if
-$\forall a\in A \mbox{and~} \forall b\in B: a\indep b$.
 \end{mydef}
 
-\begin{myrul}\label{r_indep_combine}
-\[ \inferrr{\worksc{T}{S}}{\worksc{U}{S}}{T\indep U}{\worksc{T\cc U}{S}} \]
-To see the soundness of this rule...
-\end{myrul}
 
-\begin{mylem}\label{indep_prefix_combine}
-\[ \inferrr{\worksc{A\cc B}{S}}{\worksc{A\cc C}{S}}{B\indep C}{\worksc{A\cc B\cc C}{S}} \]
-\end{mylem}
-\begin{proof}
-From \cref{r_invmove,r_indep_combine}
-TODO reverse of \cref{r_invmove} needed
-\end{proof}
+% Command pairs - Axioms
+% ----------------------
 
-We aim to use our algebra to define and implement algorithms for conflict detection
-and ordering commands before we can apply them to all replicas.
-Conflicts and ordering all happen between commands, therefore in our algebra
-we will reason about sequences of commands, 
-and do so based on a set of axioms about pairs of neighbouring commands.
-We are interested to see which pairs of commands cause errors all the time,
-and which can be simplified or reversed
-in order to see under what circumstances commands conflict or can be reordered.
+\section{Investigating command pairs}
 
-Pairs of commands in general will have the form
-\[ \cxy(p,V_Y)\cc  \czw(q,V_W) \]
-where $X,Y,Z,W\in\typeset$, $p,q\in\setp$, 
+Our aim is to derive information about the effects of sequences
+of commands independently of that actual filesystems.
+In order to make this possible, we investigate the smallest building
+blocks of sequences: pairs of commands that act on a filesystem directly one after the other.
+This approach is useful as there are a limited number of command pairs,
+because, as we arguad above, we can disregard the exact output value of commands apart from its type,
+and we can also abstract the relationship between the nodes in the two commands
+to a finite number of cases.
+
+We methodically investigated of all possibilities using a computer program
+to determine
+which pairs of commands cause errors all the time,
+which can be simplified to one or no commands, and which can be reversed
+without any change in their overall effect.
+% TODO: Footnote: URL
+Our basis for this investigation was the model of filesystems introduced in this paper.
+These properties of command pairs are crucial as they determine
+how a set of commands can be re-ordered to be applied to a filesystem
+during synchronization, and what commands will never be compatible.
+
+Below we list a number of statements derived using this method.
+Although they can be proven by investigating all relevant possibilities
+in a filesystem, we refer to these in axioms because in a secondary algebraic model
+that describes commands without reference to an underlying filesystem,
+these would function as meta-rules generating statements we would accept as true.
+See section (TODO) for more about such a model.
+
+\medskip
+
+Pairs of commands in general have the form
+\[ \cxy(n,V_Y)\cc  \czw(m,V_W) \]
+where $X,Y,Z,W\in\typeset$, $n,m\in\setn$, 
 and values are of the appropriate type: 
 $V_Y\in\setvx{Y}$ and $V_W\in\setvx{W}$.
 
-The following axioms describe multiple statements
-that we accept as true in the algebra.
-These statements are generated by substituting 
-all possible values for
-$X,Y,Z,W\in\typeset$; $p,q,\pp\in\setp$; $V_Y\in\setvx{Y}$ and $V_W\in\setvx{W}$
-under the conditions noted in the axiom.
-
-
 \begin{myax}\label{ax_separate_commute}
-Commands on unrelated paths commute:
-$\cxy(p,V_Y)\cc  \czw(q,V_W) \equiv \czw(q,V_W)\cc  \cxy(p,V_Y)$ where $p\not\descendant q$ and $q\not\descendant p$.
-TODO $p\neq q$
+Commands on unrelated nodes commute:
+$\cxy(n,V_Y)\cc  \czw(m,V_W) \equiv \czw(m,V_W)\cc \cxy(n,V_Y)$ where $n\unrel m$.
 \end{myax}
 
 \begin{myax}\label{ax_separate_nobreaks}
-Commands on unrelated paths do not break every filesystem:
-$\cxy(p,V_Y)\cc  \czw(q,V_W) \nequiv \cbrk$ where $p\not\descendant q$ and $q\not\descendant p$.
-TODO $p\neq q$
+Commands on unrelated nodes do not break every filesystem:
+$\cxy(n,V_Y)\cc  \czw(m,V_W) \nequiv \cbrk$ where $n\unrel m$.
 \end{myax}
 
-% TODO Use 'node' instead of 'path'
-
 \begin{myax}\label{ax_same_breaks}
-Commands on the same path break every filesystem if incompatible:
-$\cxy(p,V_Y)\cc  \czw(p,V_W) \equiv \cbrk$ where $Y\ne Z$.
+Commands on the same node break every filesystem if their types are incompatible:
+$\cxy(n,V_Y)\cc \czw(n,V_W) \equiv \cbrk$ where $Y\ne Z$.
 \end{myax}
 
 \begin{myax}\label{ax_same_emptyseq}
-Commands on the same path simplify:
-$\cxy(p,V_Y)\cc  \czw(p,V_W) \eqext \emptyseq$ where $Y=Z$ and $X=W=\fsregcommandchar{\empt}$ or $X=W=\fsregcommandchar{D}$.
+Commands on the same node simplify:
+$\cxy(n,V_Y)\cc \czw(n,V_W) \eqext \emptyseq$ where $Y=Z$ and $X=W=\fsregcommandchar{\empt}$ or $X=W=\fsregcommandchar{D}$.
 \end{myax}
 
 \begin{myax}\label{ax_same_singlec}
-Commands on the same path simplify:
-$\cxy(p,V_Y)\cc  \czw(p,V_W) \equiv \cxw(p,V_W)$ where $Y=Z$ and $XW\neq\cbb$ and $XW\neq\cdd$.
+Commands on the same node simplify:
+$\cxy(n,V_Y)\cc  \czw(n,V_W) \equiv \cxw(n,V_W)$ where $Y=Z$ and $XW\neq\cbb$ and $XW\neq\cdd$.
 \end{myax}
+
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 \begin{myax}\label{ax_distantchild_breaks}
 $\cxy(\pp,V_Y)\cc  \czw(p,V_W) \equiv \cbrk$ where $\pp\descendant p$ and $\pp\neq\parent(p)$ and $\cxy\neq\cdd$ and $\czw\neq\cbb$.
@@ -591,6 +489,74 @@ An assertion command can be added on the parent path:
 $\cdd(\pp)\cc \cxy(p,V_Y) \equiv \cxy(p,V_Y) \equiv \cxy(p,V_Y)\cc \cdd(\pp)$ where $\pp\descendant p$ and $\cxy\neq\cbb$.
 \end{myax}
 
+
+
+
+
+
+
+
+
+
+\begin{mydef}{Inverse commands and sequences.}
+The inverse of command $\cxy(p,V_Y)$ is $\cxy(p,V_Y)^{-1} = \cyx(p,V_X)$
+where $V_X$ is an arbitrary value from $\setvx{X}$.
+The inverse of sequence $S$, $S^{-1}$, consists of the inverses of the commands in $S$
+in reverse order.
+\end{mydef}
+
+\begin{mylem}\label{r_invmove}
+\[ \infer{\worksc{S\cc A}{B}}{\worksc{A}{S^{-1}\cc B}} \]
+To see the soundness of this rule...
+Sequences are bijections on filesystems over type-equality.
+TODO: $A,S,B$ need to be simple?
+\end{mylem}
+
+\begin{mydef}{Assertion command.}
+A command is an assertion command if
+for every filesystem it either breaks it or leaves it in the same state.
+In other words, assertion commands have the same input and output type,
+and there must also be only one possible value for their output.
+Accordingly, in our current algebra, $\cbb(n)$ and $\cdd(n)$ are the only two assertion commands,
+and we do not note their output value as it is determined.
+\end{mydef}
+
+\begin{mydef}{Minimal set or sequence.}
+A sequence or set of commands is minimal if it contains at most one command on every node.
+\end{mydef}
+
+\begin{mydef}{Simple set or sequence.}
+A sequence or set of commands is simple if it is minimal and it does not contain assertion commands.
+\end{mydef}
+
+
+\begin{mydef}{Independent commands, sequences and sets.}
+For two commands $\cxy$ and $\czw$ we write $\cxy\indep\czw$ if $\cxy\cc \czw\equiv\czw\cc \cxy\nequiv\cbrk$.
+% TODO use w() instead of nequiv break
+For two sequences or sets of commands $A$ and $B$ we write $A\indep B$ if
+$\forall a\in A \mbox{and~} \forall b\in B: a\indep b$.
+\end{mydef}
+
+\begin{myrul}\label{r_indep_combine}
+\[ \inferrr{\worksc{T}{S}}{\worksc{U}{S}}{T\indep U}{\worksc{T\cc U}{S}} \]
+To see the soundness of this rule...
+\end{myrul}
+
+\begin{mylem}\label{indep_prefix_combine}
+\[ \inferrr{\worksc{A\cc B}{S}}{\worksc{A\cc C}{S}}{B\indep C}{\worksc{A\cc B\cc C}{S}} \]
+\end{mylem}
+\begin{proof}
+From \cref{r_invmove,r_indep_combine}
+TODO reverse of \cref{r_invmove} needed
+\end{proof}
+
+
+
+
+
+
+
+
 \begin{myax}\label{ax_assert}
 $\cxy(p,V_Y) \eqext \emptyseq$ where $\cxy=\cbb$ or $\cxy=\cdd$.
 \end{myax}
@@ -598,6 +564,10 @@ $\cxy(p,V_Y) \eqext \emptyseq$ where $\cxy=\cbb$ or $\cxy=\cdd$.
 \begin{myax}\label{worksextpostfix}
 $\worksc{A}{A\cc S}$ where $A$ and $S$ are arbitrary sequences of commands
 \end{myax}
+
+
+
+
 
 \section{Ordering commands}
 
@@ -716,6 +686,74 @@ that independent from every command in $B\setminus A$.
 \end{mydef}
 
 Now we prove that $\reca\FS_B\neq\fsbroken$, and, in general:
+
+
+
+
+
+
+
+
+% Introducing 'works'
+% -------------------
+
+So that we can formalise statements (TODO) needed to prove this,
+let us introduce two relations that describe under what conditions
+sequences of commands work, that is, do not break a filesystem.
+
+\begin{mydef}
+% Unsure if this relation should be in the algebra.
+For a set of $k$ sequences
+$\works{A_1,A_2,\ldots,A_k}$ means that 
+$A_1,A_2,\ldots,A_k$ work at the same time, that is,
+% intended interpretation:
+\[\exists \FS: A_1\FS\neq\fsbroken \wedge \cdots \wedge A_k\FS\neq\fsbroken\]
+As the sequences form a set, their order is irrelevant.
+% inference rules:
+We also see that $\works{A} \Leftrightarrow A\nequiv \cbrk$. 
+\end{mydef}
+
+\begin{mydef}
+For two sets of sequences, $\worksc{A_1,A_2,\ldots,A_k}{B_1,B_2,\ldots,B_l}$ means that 
+all of $A_1,A_2,\ldots,A_k$ work where all of $B_1,B_2,\ldots,B_l$ work,
+that is,
+% intended interpretation:
+\begin{align*}
+\forall \FS:&\\ 
+&B_1\FS\neq\fsbroken \wedge \cdots \wedge B_k\FS\neq\fsbroken\\
+&\Rightarrow\\
+&A_1\FS\neq\fsbroken \wedge \cdots \wedge A_l\FS\neq\fsbroken
+\end{align*}
+As above, the order of the sequences in the sets is not relevant.
+% inference rules:
+It is easy to see that 
+% $\worksc{X}{X}$ is always true for any set of sequences $X$,
+$B\eqext A \Rightarrow \worksc{A}{B}$
+and that this relation can be chained:
+$ \worksc{A_1,\ldots,A_k}{B_1,\ldots,B_l} \wedge \worksc{C_1,\ldots,C_j}{A_1} \Rightarrow \worksc{A_1,\ldots,A_k,C_1,\ldots,C_j}{B_1,\ldots,B_l} $
+\end{mydef}
+
+\begin{mylem}\label{worksinputmatch}
+If $A$ and $B$ are minimal sequences, $\works{A,B}$,
+and there are commands on node $n$ in both $A$ ($\cxy(n, V_Y)\in A$) and $B$ ($\czw(n, V_W)\in B$)
+then their input types must match ($X=Z$).
+\end{mylem}
+\begin{proof}
+This is easily shown using an indirect proof: if $X\neq Z$, then there is no filesystem that
+$\cxy(n, V_Y)$ or $\czw(n, V_W)$ would not break, and consequently $A$ and $B$ could not work on the same filesystem.
+\end{proof}
+
+
+
+
+
+
+
+
+
+
+
+
 
 \begin{myth}
 If $A, B$ are simple, then $\worksc{B\cc \reca}{A,B}$
@@ -900,7 +938,9 @@ $T'$ has a command on $q$ and $q=\parent(p)$.
 
 \end{proof}
 
-TODO $\reca$ is maximal
+% TODO $\reca$ is maximal
+
+% TODO Talk about setting up an algebra / calculus
 
 \begin{thebibliography}{99}
 
