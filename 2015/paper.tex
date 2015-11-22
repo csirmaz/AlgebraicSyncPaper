@@ -20,7 +20,7 @@
 \newcommand{\fsbroken}{\mathtt{Broken}} % broken FS value
 \newcommand{\FS}{\Phi} % a filesystem
 \newcommand{\GS}{\Xi} % another filesystem
-\newcommand{\pp}{p^*} % parent path
+\newcommand{\nn}{n^*} % parent node
 
 \newcommand{\cbrk}{\mathtt{break}}
 \newcommand{\fscommand}[2]{{#1#2}}
@@ -125,8 +125,9 @@ of synchronization based not on filesystem states, but filesystem changes or com
 % update detection -> conflict detection -> merging updates -> ordering updates -> apply updates from other replicas
 % Problems: conflict detection, ordering
 
+% ORDERING - because when taking updates from different replicas we get an essentially unordered set
 % Insight: (Prof. Norman Ramsey)
-% - updates where two orders are not equivalent are incompatible
+% - updates where two orders (AB vs BA) are not equivalent are incompatible
 % - we only have a set of updates and need to create an order
 
 % New:
@@ -320,9 +321,9 @@ so for this we need a sequence of commands.
 We use $\cc$ to concatenate commands to form a sequence, or concatenate sequences to form a longer sequence:
 $S=\cbd(n)\cc \cbf(m,F)$, or $S'=S\cc\cbb(o)$.
 
-The following concepts will allow us to investigate sequences independently of filesystems.
+The following concepts allow us to investigate sequences independently of filesystems.
 In the definitions, $A,B,S,T$ stand for arbitrary sequences of commands.
-The first two relations echo the ones defined in \cite{NREC:alg}.
+These relations echo the ones defined in \cite{NREC:alg}.
 
 \begin{mydef}
 % Relation in the algebra
@@ -428,66 +429,266 @@ Commands on the same node simplify:
 $\cxy(n,V_Y)\cc  \czw(n,V_W) \equiv \cxw(n,V_W)$ where $Y=Z$ and $XW\neq\cbb$ and $XW\neq\cdd$.
 \end{myax}
 
-% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-\begin{myax}\label{ax_distantchild_breaks}
-$\cxy(\pp,V_Y)\cc  \czw(p,V_W) \equiv \cbrk$ where $\pp\descendant p$ and $\pp\neq\parent(p)$ and $\cxy\neq\cdd$ and $\czw\neq\cbb$.
-\end{myax}
-
-\begin{myax}\label{ax_distantparent_breaks}
-$\cxy(p,V_Y)\cc  \czw(\pp,V_W) \equiv \cbrk$ where $p\ancestor \pp$ and $\parent(p)\neq \pp$ and $\cxy\neq\cbb$ and $\czw\neq\cdd$.
-TODO merge into previous
+\begin{myax}\label{ax_distantrel_breaks}
+Commands on distant relatives break all filesystems:
+$\cxy(\nn,V_Y)\cc  \czw(n,V_W) \equiv \cbrk$
+and $\czw(n,V_W)\cc \cxy(\nn,V_Y) \equiv\cbrk$
+where $\nn\descendant n$ and $\nn\neq\parent(n)$ and $\cxy\neq\cdd$ and $\czw\neq\cbb$.
 \end{myax}
 
 \begin{mydef}{Construction pair.}
-A pair of commands on paths $\pp$ and $p$ is a construction pair if $\pp=\parent(p)$ and the commands are one
+A pair of commands on nodes $\nn$ and $n$ is a construction pair if $\nn=\parent(n)$ and the commands are one
 of the following:
    \begin{gather*}
    % bd>bf
-            [\cbd(\pp, D)\cc  \cbf(p, F)] \\
+            \cbd(\nn, D)\cc  \cbf(n, F) \\
    % bd>bd
-            [\cbd(\pp, D_1)\cc  \cbd(p, D_2)] \\
+            \cbd(\nn, D_1)\cc  \cbd(n, D_2) \\
    % fd>bf
-            [\cfd(\pp, D)\cc  \cbf(p, F)] \\
+            \cfd(\nn, D)\cc  \cbf(n, F) \\
    % fd>bd
-            [\cfd(\pp, D_1)\cc  \cbd(p, D_2)]
-   \end{gather*}
-\end{mydef}
-
-\begin{mydef}{Destruction pair.}
-A pair of commands on paths $p$ and $\pp$ is a destruction pair if $\parent(p)=\pp$ and the commands are one
-of the following:
-   \begin{gather*}
-   % fb<db ??
-            [\cfb(p)\cc  \cdb(\pp)] \\
-   % fb<df ??
-            [\cfb(p)\cc  \cdf(\pp, F)] \\
-   % db<db ??
-            [\cdb(p)\cc  \cdb(\pp)] \\
-   % db<df ??
-            [\cdb(p)\cc  \cdf(\pp, F)]
+            \cfd(\nn, D_1)\cc  \cbd(n, D_2)
    \end{gather*}
 \end{mydef}
 
 \begin{myax}\label{ax_directchild_breaks}
-$\cxy(\pp,V_Y)\cc  \czw(p,V_W) \equiv \cbrk$ where $\pp=\parent(p)$ and $\cxy\neq\cdd$ and $\czw\neq\cbb$
+All other commands on a child break every filesystem:
+$\cxy(\nn,V_Y)\cc  \czw(n,V_W) \equiv \cbrk$ where $\nn=\parent(n)$ and $\cxy\neq\cdd$ and $\czw\neq\cbb$
 and the pair is not a construction pair.
 \end{myax}
 
+\begin{mydef}{Destruction pair.}
+A pair of commands on nodes $n$ and $\nn$ is a destruction pair if $\parent(n)=\nn$ and the commands are one
+of the following:
+   \begin{gather*}
+   % fb<db ??
+            \cfb(n)\cc  \cdb(\nn) \\
+   % fb<df ??
+            \cfb(n)\cc  \cdf(\nn, F) \\
+   % db<db ??
+            \cdb(n)\cc  \cdb(\nn) \\
+   % db<df ??
+            \cdb(n)\cc  \cdf(\nn, F)
+   \end{gather*}
+\end{mydef}
+
 \begin{myax}\label{ax_directparent_breaks}
-$\cxy(p,V_Y)\cc  \czw(\pp,V_W) \equiv \cbrk$ where $\parent(p)=\pp$ and $\cxy\neq\cbb$ and $\czw\neq\cdd$
+All other commands on a parent break every filsystem:
+$\cxy(n,V_Y)\cc  \czw(\nn,V_W) \equiv \cbrk$ where $\parent(n)=\nn$ and $\cxy\neq\cbb$ and $\czw\neq\cdd$
 and the pair is not a destruction pair.
 \end{myax}
 
+\begin{mydef}{Assertion command.}
+A command is an assertion command if
+for every filesystem it either breaks it or leaves it in the same state.
+In other words, assertion commands have the same input and output type,
+and there must also be only one possible value for their output.
+Accordingly, in our current algebra, $\cbb(n)$ and $\cdd(n)$ are the only two assertion commands,
+and we do not note their output value as it is determined.
+\end{mydef}
+
 \begin{myax}\label{ax_child_assert}
-An assertion command can be added on a child path:
-$\cbb(p)\cc \cxy(\pp,V_Y) \equiv \cxy(\pp,V_Y) \equiv \cxy(\pp,V_Y)\cc \cbb(p)$ where $\pp\descendant p$ and $\cxy\neq\cdd$.
+An assertion command can be added on a descendant node:
+$\cbb(n)\cc \cxy(\nn,V_Y) \equiv \cxy(\nn,V_Y) \equiv \cxy(\nn,V_Y)\cc \cbb(n)$ where $\nn\descendant n$ and $\cxy\neq\cdd$.
 \end{myax}
 
 \begin{myax}\label{ax_parent_assert}
-An assertion command can be added on the parent path:
-$\cdd(\pp)\cc \cxy(p,V_Y) \equiv \cxy(p,V_Y) \equiv \cxy(p,V_Y)\cc \cdd(\pp)$ where $\pp\descendant p$ and $\cxy\neq\cbb$.
+An assertion command can be added on an ancestor node:
+$\cdd(\nn)\cc \cxy(n,V_Y) \equiv \cxy(n,V_Y) \equiv \cxy(n,V_Y)\cc \cdd(\nn)$ where $\nn\descendant n$ and $\cxy\neq\cbb$.
 \end{myax}
+
+\begin{myax}\label{ax_assert}
+Assertion commands can be removed:
+$\cxy(n,V_Y) \eqext \emptyseq$ where $\cxy=\cbb$ or $\cxy=\cdd$.
+\end{myax}
+
+
+% Update detection
+% ----------------
+
+\section{Update detection}
+
+In a command-based reconciliation solution we assume that we have two sequences of commands
+$A$ and $B$ that have modified a single filesystem $\FS$ yielding two different replicas $\FS_A$ and $\FS_B$ that we
+need to reconcile. While it is conceivable that the sequences would be based on a record of
+all operations that modified the two filesystems, in most filesystem implementations
+such records are not implemented, and therefore we must construct suitable sequences
+by comparing $\FS_A$ and $\FS_B$ to their common ancestor, $\FS$. This is called update detection.
+
+A sequence that transforms $\FS$ into $\FS_A$ must contain at least one command on each node
+that changes between the two states of the filesystem. Also, it is easy to see that this is also
+sufficient, as there are commands available for any input and output value. 
+Specifically, if at node $n$, $\FS(n)=X'$ and $\FS_A(n)=Y'\neq X'$, then we add the command $\cxy(n,Y')$ to $A$
+where $X'\in\setvx{X}$ and $Y'\in\setvx{Y}$.
+
+To be able to describe such sequences better, let us introduce the following properties:
+
+\begin{mydef}{Minimal set or sequence.}
+% TODO Don't introduce?
+A sequence or set of commands is minimal if it contains at most one command on every node.
+\end{mydef}
+
+\begin{mydef}{Simple set or sequence.}
+A sequence or set of commands is simple if it is minimal and it does not contain assertion commands.
+\end{mydef}
+
+This update detector therefore yields a simple set of commands because we only add a single command
+for each node, and we only add commands that are necessary, that is, there will be no 
+assertion commands in the set.
+
+The next step in generating the sequences is to order the commands collected.
+As this task is at the heart of reconciliation itself independently of update detection,
+we discuss it in the next section.
+
+% TODO Proof of correctness of update detection - the generated order will work
+
+% Ordering commands
+% ----------------
+
+\section{Ordering commands}
+
+We often encounter the case where we only have a set of commands without a specified order.
+As we have seen above, this can occur after the first stage of update detection,
+but, more importantly,
+it is actually the task of the reconciler to determine whether there is an order,
+and if yes, what order,
+in which updates from multiple replicas can be applied to a filesystem.
+
+In this section we describe an algorithm with which all possible orderings of a
+set of sequences can be generated, but before doing so, let us consider the following lemma.
+
+\begin{mylem}\label{connected_changes}
+If a simple set of commands that can be applied to a filesystem in some order without breaking it
+contains commands on $n$ and $\nn$ where $\nn\descendant n$
+but $\nn\neq\parent(n)$, then the set must also contain a command on $\parent(n)$.
+\end{mylem}
+\begin{proof}
+We will prove this statement for simple sequences, as if all sequences must contain a command on $\parent(n)$
+under the given conditions, then so must sets because otherwise there would be no order in which thay can be
+applied to any filesystem.
+
+Let $A$ be a sequence that satisfies the conditions;
+we therefore know that it contains a command $\cxy(n,V_Y)$ on $n$
+and another command $\czw(\nn,V_W)$ on $\nn$.
+We use an indirect proof and assume that there are no commands on $\parent(n)$ in $A$.
+Next, we create a new sequence $A'\equiv A$ in which $\cxy$ and $\czw$ are next to each other.
+If they are already next to each other in $A$, there is nothing to do.
+Otherwise, consider the command next to $\cxy(n,V_Y)$ in the direction where $\czw(\nn,V_W)$ is.
+Let this command be $\cqr(m,V_R)$.
+If $\czw$ is to the right, the $A$ looks like the following:
+\[ A = \cdots\cc\cxy(n,V_Y)\cc\cqr(m,V_R)\cc\cdots\cc\czw(\nn,V_W)\cc\cdots \]
+If $n\unrel m$, reverse $\cxy$ and $\cqr$. Based on \cref{ax_separate_commute} we know that the new
+sequence is equivalent to $A$.
+Otherwise, we know $m\neq\parent(n)$ as there are no commands on $\parent(n)$, and so
+from \cref{ax_distantrel_breaks} we get $A\equiv\cbrk$ which contradicts our assumptions.
+(Note that $A$ cannot contains assertion commands.)
+By repeating this step we can therefore convert $A$ into $A'$ where $\cxy$ and $\czw$ are neighboring commands.
+However, then \cref{ax_distantrel_breaks} applies to the sequence and therefore $A\equiv A'\equiv\cbrk$ which
+is again a contradiction.
+\end{proof}
+
+By applying \cref{connected_changes} multiple times we see that if a simple set of commands
+contains two commands on related nodes, then it must contain a command on each
+node that is between these two nodes in the parent--child tree.
+
+We can now define our algorithm to generate orders of sets of commands.
+
+Let $U$ be a simple set of commands
+that we know can be applied to at least one filesystem in some order without breaking it.
+Then we can split $U$ into a maximum number of disjunct subsets
+(components) so that the nodes of two commands from two different subsets are unrelated.
+These will simply be the components of the subset of the node forest that contains the nodes affected by the set.
+
+From \cref{ax_separate_commute} we know that commands from different 
+components can be applied in any order.
+Therefore once we have ordered the commands inside a component, we generate
+all permutations of the components themselves, including the ones
+in which commands from separate components mix and overlap
+(but where the possible orders determined for the components are respected).
+
+Next, consider the ordering inside a component.
+
+This is not a problem in the case of components containing a single command only.
+(Note that $\cff$ can only appear in a component of one.)
+
+In each component that is larger than one, 
+we know that all nodes are related, and from \cref{connected_changes}
+we also know that it must contain commands on all nodes in between.
+Therefore the nodes
+form a rooted ordered tree,
+and the pairs of commands connected by the edges in the tree 
+must be construction or destruction pairs.
+(Otherwise, there would be no ordering of the component that is not equivalent to $\cbrk$
+and via \cref{ax_separate_commute} there would be no ordering of the whole set, either.)
+
+To order the commands in the component,
+select the command with the topmost node, so that there would be no command
+on its parent node (if there is one). 
+If the command removes content at this node (it is of the form $\fsregcommand{X}{\empt}$), 
+then it must follow all other commands in the component, and
+all parent--child pairs in the whole component must be destruction pairs.
+Otherwise, the command with the topmost node needs to precede the other commands,
+and the component must be made of construction pairs.
+These follow from the patterns of construction and destruction pairs, which
+at no point can mix without causing any sequence to break all filesystems.
+
+Then move the command with the topmost node to the beginning or the end of
+the sequence we are creating out of the component,
+and recursively start the whole algorithm again on the commands in the component that remain.
+The result of this process is a set of possible orders for each component,
+which are then combined into a set of possible orders for the whole set of commands.
+
+\begin{mydef}{$\orderset{U}$}
+We use $\orderset{U}$ to denote the set of sequences that contain all commands in
+the simple set $U$
+and represent all orders generated by this algorithm.
+\end{mydef}
+
+As a specific case, we can regard a sequence of commands $S$
+as a set and determine its $\orderset{S}$.
+Let us investigate the properties of simple sequences and this set a bit further.
+
+\begin{mydef}{$\extset{S}$.}
+For any sequence $S$ we can consider all sequences that extend it:
+$\extset{S} := \{S'|S\eqext S'\}$
+\end{mydef}
+
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\begin{mylem}\label{simple_is_max}
+For any simple sequence $S\neq\cbrk$, $\forall T: S\eqext T \Rightarrow S\equiv T$;
+that is, the domains of simple sequences cannot be extended further.
+This is equivalent to $\extset{S} = \{S'|S\equiv S'\}$.
+\end{mylem}
+\begin{proof}
+TODO
+% TODO
+\end{proof}
+
+\begin{mylem}\label{lemma:minextorder}
+% TODO orderset only defined on simple
+For any minimal sequence $S\neq\cbrk$, $\orderset{S} = \extset{S}$.
+\end{mylem}
+\begin{proof}
+TODO
+% TODO
+\end{proof}
+
+\begin{mylem}
+All sequences in $\orderset{S}$ of a simple sequence $S$ are equivalent.
+\end{mylem}
+\begin{proof}
+This follows from \cref{simple_is_max,lemma:minextorder}.
+\end{proof}
+
+
+TODO: we'll treat sequences as sets and sets as sequences
+once we know they can be applied.
+
+\begin{mylem}\label{lemma:neighbor}
+If $U$ contains commands on both $n$ and $\parent(n)$, then
+there is a $U'\in\orderset{U}$ where they are next to each other.
+\end{mylem}
 
 
 
@@ -512,22 +713,6 @@ Sequences are bijections on filesystems over type-equality.
 TODO: $A,S,B$ need to be simple?
 \end{mylem}
 
-\begin{mydef}{Assertion command.}
-A command is an assertion command if
-for every filesystem it either breaks it or leaves it in the same state.
-In other words, assertion commands have the same input and output type,
-and there must also be only one possible value for their output.
-Accordingly, in our current algebra, $\cbb(n)$ and $\cdd(n)$ are the only two assertion commands,
-and we do not note their output value as it is determined.
-\end{mydef}
-
-\begin{mydef}{Minimal set or sequence.}
-A sequence or set of commands is minimal if it contains at most one command on every node.
-\end{mydef}
-
-\begin{mydef}{Simple set or sequence.}
-A sequence or set of commands is simple if it is minimal and it does not contain assertion commands.
-\end{mydef}
 
 
 \begin{mydef}{Independent commands, sequences and sets.}
@@ -551,16 +736,6 @@ TODO reverse of \cref{r_invmove} needed
 \end{proof}
 
 
-
-
-
-
-
-
-\begin{myax}\label{ax_assert}
-$\cxy(p,V_Y) \eqext \emptyseq$ where $\cxy=\cbb$ or $\cxy=\cdd$.
-\end{myax}
-
 \begin{myax}\label{worksextpostfix}
 $\worksc{A}{A\cc S}$ where $A$ and $S$ are arbitrary sequences of commands
 \end{myax}
@@ -569,81 +744,16 @@ $\worksc{A}{A\cc S}$ where $A$ and $S$ are arbitrary sequences of commands
 
 
 
-\section{Ordering commands}
 
-We often encounter the case where we only have a set of commands without a specified order.
-Indeed, it is actually the task of the reconciler to determine whether there is an order
-in which updates from multiple replicas can be applied to a filesystem.
 
-If $U$ is a minimal set of commands
-that we know can be applied to at least one filesystem in some order without breaking it,
-then we can split $U$ into a maximum number of disjunct subsets
-(components) so that the paths of two commands from two different subsets are never directly related.
-If we aim to order the commands in $U$, then we can allow any permutation of 
-the components as the commands in them will commute freely.
 
-Components containing a single command do not pose a problem when determining
-possible orders.
-(Note that $\cff$ can only appear in a component of one.)
 
-In each component that is larger than one, the paths 
-form a rooted ordered tree via the parent--child relationships,
-and the pairs connected by edges will be like pairs in the
-construction or destruction laws.
-To order the commands in a component,
-select the command with the topmost path, so that there would be no command
-on its parent path (if there is one). 
-If the command removes content at this path (it is of the form $\fsregcommand{X}{\empt}$), then it
-needs to follow all other commands in the component, and
-the component is made of destruction pairs.
-Otherwise the command with the topmost component needs to precede other commands
-in the component, and it is made of construction pairs.
-Move the command with the topmost path in place, and
-repeat the process of splitting commands into subsets on the remaining commands
-in the component. Recursively, this way we can determine all allowed orders of the commands.
 
-\begin{mydef}{$\orderset{U}$}
-We use $\orderset{U}$ to denote the set of sequences that contain all commands in $U$
-and represent all orders generated by this algorithm.
-By $\ordered{U}$ we mean an arbitrary sequence in the set.
-\end{mydef}
 
-As a specific case, we can regard a sequence of commands $S$
-as a set and determine its $\orderset{S}$.
 
-\begin{mylem}\label{lemma:neighbour}
-If $U$ contains commands on both $p$ and $\pp$, then
-there is a $U'\in\orderset{U}$ where they are next to each other.
-\end{mylem}
 
-\begin{mydef}
-$\extset{S} := \{S'|S\eqext S'\}$
-\end{mydef}
 
-\begin{mylem}\label{lemma:minextset}
-For any minimal sequence $S$ not equivalent to $\cbrk$, $\extset{S} = \{S'|S\equiv S'\}$.
-\end{mylem}
-\begin{proof}
-This is because as $S$ has at most one command on each path, only equivalence axioms
-can be applied to it.
-\end{proof}
 
-\begin{mylem}\label{lemma:minextorder}
-For any minimal sequence $S$ not equivalent to $\cbrk$,
-$\orderset{S} = \extset{S}$.
-\end{mylem}
-
-% TODO Can these be derived from the algebra?
-
-\section{Soundness}
-
-\section{Completeness}
-
-\begin{mylem}
-\((\forall\FS: S\FS = \empt) \Rightarrow S \equiv \cbrk\)
-\end{mylem}
-
-\section{Update detection}
 
 \section{Reconciliation}
 
@@ -793,7 +903,7 @@ either $q=\parent(p)$ or $p=\parent(q)$.
 Let the marked command be $\cxy(p, V_Y)$ and the preceding unmarked command in $A$ be $\czw(q, V_W)$.
 
 If $B$ has a command on $q$, then
-from \cref{lemma:neighbour}
+from \cref{lemma:neighbor}
 we know that there is a $B'$ in $\orderset{B}$ where it is next to $\cxy$,
 and from \cref{lemma:minextset,lemma:minextorder} we know that $B'\equiv B$.
 % TODO Use when describing ordering:
@@ -898,7 +1008,7 @@ Otherwise let the last command in $S$ also in $S^*$ be $\cxy(p,V_Y)$
 and the preceding command in $S$ be $\czw(q,V_W)$.
 
 As $S$ is simple and $\works{S}$, from 
-\cref{ax_distantchild_breaks,ax_distantparent_breaks,ax_directchild_breaks,ax_directparent_breaks}
+\cref{ax_distantrel_breaks,ax_directchild_breaks,ax_directparent_breaks}
 we know that these commands can only be on unrelated paths or form a construction or destruction pair.
 In the first case, swapping the commands results in a sequence equivalent to $S$,
 with the number on relevant commands not in $S^*$ reduced by one.
