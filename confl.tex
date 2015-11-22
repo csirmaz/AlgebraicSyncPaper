@@ -29,10 +29,12 @@ from which we know they break every filesystem).
 
 We write \(C_1\confl C_2\) if \(C_1\) and \(C_2\) are conflicting
 commands.
-\begin{notrsi}
 Clearly this relation is symmetrical, i.e.
 \(C_1\confl C_2\implies C_2\confl C_1\).
-\end{notrsi}
+
+% TODO
+Note that it is enough the check \(C_A(\pi); C_B(\gamma)\) and
+\(C_B(\gamma); C_A(\pi)\) against the laws...
 
 In appendix \ref{cbp:bp} we determine the relation between this
 definition and another one found in \BP.
