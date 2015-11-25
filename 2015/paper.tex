@@ -47,7 +47,9 @@
 \newcommand{\typeset}{\{\fsregcommandchar{D},\fsregcommandchar{F},\empt\}} % Set of types in commands
 \newcommand{\cc}{\circ} % Command / sequence concatenation
 \newcommand{\descendant}{\prec}
+\newcommand{\descendantEq}{\preceq}
 \newcommand{\ancestor}{\succ}
+\newcommand{\ancestorEq}{\succeq}
 
 \newcommand{\eqext}{\sqsubseteq}
 \newcommand{\eqnrw}{\sqsupseteq}
@@ -55,19 +57,22 @@
 \newcommand{\indep}{\wr\!\!\wr\,} % Independent commands, sequences
 \newcommand{\unrel}{\indep} % Unrelated nodes
 
-\newcommand{\works}[1]{{\mathbf{w}}({#1})}
-\newcommand{\worksc}[2]{{\mathbf{w}}({#1}|{#2})}
+\newcommand{\workssign}{\mathbf{w}}
+\newcommand{\works}[1]{\workssign({#1})}
+\newcommand{\worksc}[2]{\workssign({#1}|{#2})}
 
 \newcommand{\emptyseq}{[\,]} % TODO change
 
 \newcommand{\extset}[1]{\wp({#1})}
 \newcommand{\orderset}[1]{\vec{\wp}({#1})}
 \newcommand{\ordered}[1]{#1}
+\newcommand{\seqset}[1]{\underline{#1}} % Set of sequences
 
 \newcommand{\recchar}[3]{{#1}^{#3}_{\mathcal{R}|{#2}}}
 \newcommand{\reca}{\recchar{A}{B}{}} % Reconciled from A
-\newcommand{\recb}{\recchar{B}{A}{}}
+\newcommand{\recb}{\recchar{B}{A}{}} % Reconciled from B
 
+% TODO delete:
 \newcommand{\infer}[2]{\begin{array}{c}{#1}\\\hline{#2}\end{array}}
 \newcommand{\inferr}[3]{\begin{array}{c}{#1}\\{#2}\\\hline{#3}\end{array}}
 \newcommand{\inferrr}[4]{\begin{array}{c}{#1}\\{#2}\\{#3}\\\hline{#4}\end{array}}
@@ -355,11 +360,11 @@ Let us also define the following relations between nodes:
 
 \begin{mydef}{$n\descendant m$.}
 We write $n\descendant m$ if $n$ is the ancestor of $m$ ($n=\parent^n(m)$). % TODO (the transitive closure of the $\parent$ relation)
+We write $n\descendantEq m$ if $n\descendant m$ or $n=m$.
 \end{mydef}
 
 \begin{mydef}{$n\unrel m$.}
-We write $n\unrel m$, or ``$n$ and $m$ are unrelated'' if $n\not\descendant m$ and $n\not\ancestor m$
-and $n\neq m$.
+We write $n\unrel m$, or ``$n$ and $m$ are unrelated'' if $n\not\descendantEq m$ and $n\not\ancestorEq m$.
 \end{mydef}
 
 
@@ -405,12 +410,12 @@ $V_Y\in\setvx{Y}$ and $V_W\in\setvx{W}$.
 
 \begin{myax}\label{ax_separate_commute}
 Commands on unrelated nodes commute:
-$\cxy(n,V_Y)\cc  \czw(m,V_W) \equiv \czw(m,V_W)\cc \cxy(n,V_Y)$ where $n\unrel m$.
+$\cxy(n,V_Y)\cc \czw(m,V_W) \equiv \czw(m,V_W)\cc \cxy(n,V_Y)$ where $n\unrel m$.
 \end{myax}
 
 \begin{myax}\label{ax_separate_nobreaks}
 Commands on unrelated nodes do not break every filesystem:
-$\cxy(n,V_Y)\cc  \czw(m,V_W) \nequiv \cbrk$ where $n\unrel m$.
+$\cxy(n,V_Y)\cc \czw(m,V_W) \nequiv \cbrk$ where $n\unrel m$.
 \end{myax}
 
 \begin{myax}\label{ax_same_breaks}
@@ -767,7 +772,7 @@ We also know that $\works{A} \Leftrightarrow A\nequiv \cbrk$.
 
 \begin{mydef}
 For two sets of sequences, $\worksc{A_1,A_2,\ldots,A_k}{B_1,B_2,\ldots,B_l}$ means that 
-all of $A_1,A_2,\ldots,A_k$ work where all of $B_1,B_2,\ldots,B_l$ work,
+all of $A_1,\ldots,A_k$ work where all of $B_1,\ldots,B_l$ work,
 that is,
 % intended interpretation:
 \begin{align*}
@@ -779,10 +784,15 @@ that is,
 As above, the order of the sequences in the sets is not relevant.
 \end{mydef}
 
-% An inference rule in the algebra
-% $\worksc{X}{X}$ is always true for any set of sequences $X$,
+\begin{mydef}{Sets of sequences.}
+For brevity, we will use $\seqset{S}$ to note an arbitrary set of sequences,
+and $A\cc\seqset{S}$ to note the set of sequences $\{A\cc S|S\in\seqset{S}\}$.
+\end{mydef}
 
 It is easy to see that the following corollaries are true:
+
+% An inference rule in the algebra
+% $\worksc{X}{X}$ is always true for any set of sequences $X$,
 
 \begin{mycor}
 % An inference rule in the algebra
@@ -796,11 +806,12 @@ $\forall A,S: \worksc{A}{A\cc S}$
 
 \begin{mycor}
 % An inference rule in the algebra
-$\worksc{S}{T}$ can be chained:
-$ \worksc{A_1,\ldots,A_k}{B_1,\ldots,B_l} \wedge \worksc{C_1,\ldots,C_j}{A_1} \Rightarrow \worksc{A_1,\ldots,A_k,C_1,\ldots,C_j}{B_1,\ldots,B_l} $
+$\workssign$ can be chained:
+if $A_1\in\seqset{A}$, then
+$ \worksc{\seqset{A}}{\seqset{B}} \wedge \worksc{\seqset{C}}{A_1} \Rightarrow \worksc{\seqset{A}\cup\seqset{C}}{\seqset{B}} $
 \end{mycor}
 
-
+We will also prove the following lemmas.
 
 \begin{mylem}\label{worksinputmatch}
 If $A$ and $B$ are minimal sequences, $\works{A,B}$,
@@ -814,18 +825,58 @@ $\cxy(n, V_Y)$ or $\czw(n, V_W)$ would not break, and consequently $A$ and $B$ c
 
 \begin{mylem}\label{r_indep_combine}
 % An inference rule in the algebra
-\[ \worksc{T}{S} \wedge \worksc{U}{S} \wedge T\indep U \Rightarrow \worksc{T\cc U}{S} \]
+\[ \worksc{T}{\seqset{S}} \wedge \worksc{U}{\seqset{S}} \wedge T\indep U \Rightarrow \worksc{T\cc U}{\seqset{S}} \]
 \end{mylem}
 \begin{proof}
 % TODO Proof
 TODO
 \end{proof}
 
+\begin{mylem}\label{unrelated_is_independent}
+Two different commands that are not assertion commands are independent iff the nodes they change are unrelated:
+$\cxy(n,V_Y)\indep\czw(m,V_W) \Leftrightarrow n\unrel m$ 
+if $\cxy(n,V_Y)\neq\czw(m,V_W)$ and none of $\cxy$ and $\cxw$ is $\cbb$ or $\cdd$.
+\end{mylem}
+\begin{proof}
+We proceed in two steps; first, we prove that
+$\cxy(n,V_Y)\not\indep\czw(m,V_W) \wedge n\unrel m$ would lead to contradiction.
+By definition, if the two commands are not independent, then one of the following holds:
+\begin{itemize}
+\item $\czw(m,V_W)\cc \cqr(o,V_R) \equiv\cbrk$
+\item $\cqr(o,V_R)\cc \czw(m,V_W) \equiv\cbrk$
+\item $\czw(m,V_W)\cc \cqr(o,V_R) \nequiv \cqr(o,V_R)\cc \czw(m,V_W)$
+\end{itemize}
+However, from \cref{ax_separate_commute,ax_separate_nobreaks} we also know that
+if $n\unrel m$ then none of the above can be true.
+
+Next, we prove that
+$\cxy(n,V_Y)\indep\czw(m,V_W) \wedge n\not\unrel m$ would lead to contradiction.
+As $n\not\unrel m$
+we know that $n=m$, $n\descendant m$ or $m\descendant n$.
+
+If $n=m$, then from \cref{ax_same_breaks} we know $Y=Z$ and $W=X$
+as otherwise the commands, in one order or the other, would break all filesystems
+and they could not be independent.
+The commands are not assertion commands, and so from \cref{ax_same_singlec}
+we know that $\cxy(n,V_Y)\cc\czw(n,V_W)\equiv\czw(n,V_W)\cc\cxy(n,V_Y)$ can only happen if $Y=W$ and $V_Y=V_W$.
+Therefore $X=Y=Z=W$ which is only possible if both commands are $\cff$ and have the same
+output value. This, however, contradicts our assumption that they are different.
+
+If $n\descendant m$ or $m\descendant n$, then
+from \cref{ax_distantrel_breaks} we know that if they are not directly related,
+then $\cxy(n,V_Y)\cc\czw(m,V_W)$ breaks all filesystems, and they cannot be independent.
+From the construction and destruction pairs and 
+\cref{ax_directchild_breaks,ax_directparent_breaks} we also see that
+even if they are directly related, either
+$\cxy(n,V_Y)\cc\czw(m,V_W)$ or $\czw(m,V_W)\cc\cxy(n,V_Y)$ 
+breaks all filesystems, so they again cannot be independent.
+\end{proof}
+
 \medskip
 
 We continue by defining inverse commands and sequences
 which allow us to move parts of sequences between the
-two sets of $\worksc{S}{T}$.
+condition and consequence parts of $\workssign$.
 
 \begin{mydef}{Inverse commands and sequences.}
 The inverse of command $\cxy(n,V_Y)$ is $\cxy(n,V_Y)^{-1} = \cyx(n,V_X)$
@@ -838,8 +889,8 @@ Clearly, $(S^{-1})^{-1}\equiv S$ for any sequence.
 
 \begin{mylem}\label{r_invmove}
 \begin{gather*}
-\worksc{B\cc A}{S} \Rightarrow \worksc{A}{B^{-1}\cc S} \\
-\worksc{A}{B\cc S} \Rightarrow \worksc{B^{-1}\cc A}{S}
+\worksc{B\cc \seqset{A}}{\seqset{S}} \Rightarrow \worksc{\seqset{A}}{B^{-1}\cc \seqset{S}} \\
+\worksc{\seqset{A}}{B\cc \seqset{S}} \Rightarrow \worksc{B^{-1}\cc \seqset{A}}{\seqset{S}}
 \end{gather*}
 % TODO Proof
 TODO.
@@ -848,14 +899,14 @@ TODO: $A,S,B$ need to be simple?
 \end{mylem}
 
 \begin{mylem}\label{indep_prefix_combine}
-\[ \worksc{A\cc B}{S} \wedge \worksc{A\cc C}{S} \wedge B\indep C \Rightarrow \worksc{A\cc B\cc C}{S} \]
+\[ \worksc{A\cc B}{\seqset{S}} \wedge \worksc{A\cc C}{\seqset{S}} \wedge B\indep C \Rightarrow \worksc{A\cc B\cc C}{\seqset{S}} \]
 \end{mylem}
 \begin{proof}
 Based on \cref{r_invmove} we know
-$\worksc{B}{A^{-1}\cc S}$ and $\worksc{C}{A^{-1}\cc S}$,
+$\worksc{B}{A^{-1}\cc \seqset{S}}$ and $\worksc{C}{A^{-1}\cc \seqset{S}}$,
 and from \cref{r_indep_combine} we know
-$\worksc{B\cc C}{A^{-1}\cc S}$. Applying the second line of \cref{r_invmove} we get
-$\worksc{(A^{-1})^{-1}\cc B\cc C}{S}$, which proves our lemma as $(A^{-1})^{-1}\equiv A$.
+$\worksc{B\cc C}{A^{-1}\cc \seqset{S}}$. Applying the second line of \cref{r_invmove} we get
+$\worksc{(A^{-1})^{-1}\cc B\cc C}{\seqset{S}}$, which proves our lemma as $(A^{-1})^{-1}\equiv A$.
 \end{proof}
 
 
@@ -891,7 +942,7 @@ This is trivial unless $\works{A,B}$, so we assume that it is true.
 Let us first investigate the part of $A$ and $B$ that is excluded from
 $\reca$: their intersection.
 
-\begin{mylem}
+\begin{mylem}\label{can_move_intersection}
 Let $A$ and $B$ be two simple sequences so that $\works{A, B}$.
 Then their intersection works on any filesystem
 either of them works on:
@@ -900,13 +951,14 @@ $\worksc{A\cap B}{B}$.
 \end{mylem}
 
 \begin{proof}
-First we prove the following.
-Mark all commands in $A$ that also appear in $B$.
-Then there is an $A'$ in $\orderset{A}$ in which all marked commands are at the beginning.
-We show $A$ can be transformed via equivalences so that this would be true.
+First we prove the following:
+if all commands are marked in $A$ that also appear in $B$,
+then there is an $A'$ in $\orderset{A}$ in which all marked commands are at the beginning.
+
+We show that $A$ can be transformed via equivalences so that this would be true.
 Our proposition is that if the marked commands are not at the beginning, then
 the sequence contains an unmarked command followed by a marked command.
-We show that these can be reversed resulting in an equivalent sequence.
+We show that these can be swapped resulting in an equivalent sequence.
 Then, by repeating this process similarly to bubble sorting, we can generate 
 a suitable $A'$.
 
@@ -921,7 +973,7 @@ we know that these commands can only be on unrelated paths or form a constructio
 In the first case, swapping the commands results in a sequence equivalent to $A$,
 and we show that the last two cases are impossible as they would lead to contradiction.
 
-In these cases, either $m=\parent(n)$ or $p=\parent(m)$.
+In these cases, either $m=\parent(n)$ or $n=\parent(m)$.
 If $B$ has a command on $m$, then
 from \cref{lemma:neighbor}
 we know that there is a $B'$ in $\orderset{B}$ where it is next to $\cxy$ (also in $B$),
@@ -944,8 +996,8 @@ In either case, therefore,
 we have a minimal $B'$ which has a command on $m$ just before $\cxy(n, V_Y)$ and $B'\equiv B$.
 Let this command on $m$ be $\cqr(m, V_R)$.
 \begin{gather*}
-A = \cdots\cc  \czw(q, V_W)\cc  \cxy(p, V_Y)\cc  \cdots \\
-B' = \cdots\cc  \cqr(q, V_R)\cc  \cxy(p, V_Y)\cc  \cdots
+A = \cdots\cc  \czw(m, V_W)\cc  \cxy(n, V_Y)\cc  \cdots \\
+B' = \cdots\cc  \cqr(m, V_R)\cc  \cxy(n, V_Y)\cc  \cdots
 \end{gather*}
 
 As $\works{A,B}$ and so $\works{A,B'}$, 
@@ -972,104 +1024,112 @@ $\worksc{A\cap B}{A}$ and by symmetry $\worksc{A\cap B}{B}$.
 
 \medskip
 
+\newcommand{\acb}{(A\cap B)}
+\newcommand{\acbi}{\acb^{-1}}
+\newcommand{\amb}{(A\setminus B)}
+\newcommand{\bma}{(B\setminus A)}
 We would like to prove that $\worksc{B\cc \reca}{A,B}$.
 From the above we know that this is equivalent to
-$\worksc{(A\cap B)\cc (B\setminus A)\cc \reca}{A,B}$.
-As we already know that $\reca\indep (B\setminus A)$
-and that $\worksc{(A\cap B)\cc(B\setminus A)}{A,B}$
+$\worksc{\acb\cc \bma\cc \reca}{A,B}$.
+As we already know that $\reca\indep\bma$
+and that $\worksc{\acb\cc \bma}{A,B}$
 (as $\worksc{B}{A,B}$),
 based on \cref{indep_prefix_combine}
 we only need to prove that
-$\worksc{(A\cap B)\cc \reca}{A,B}$.
+$\worksc{\acb\cc \reca}{A,B}$.
 
-% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-\newcommand{\acbi}{(A\cap B)^{-1}}
-\newcommand{\amb}{(A\setminus B)}
-\newcommand{\bma}{(B\setminus A)}
 Using \cref{r_invmove} we can rephrase this as
-% TODO axiom doesn't specify multiple conditions
 $\worksc{\reca}{\acbi\cc A,\acbi\cc B}$.
 
-We already know the following things:
+To restate some results above, we therefore already know the following things:
 \begin{itemize}
 \item $\amb$ and $\bma$ are simple as $A$ and $B$ are simple
-% \item $\amb \cap \bma = \emptyset$
+\item $\amb \cap \bma = \emptyset$
 \item $\reca$ is the largest subset of $\amb$ for which $\reca\indep\amb$
-\item $\worksc{\ordered{\amb}\cc \ordered{\bma}}{\acbi\cc A,\acbi\cc B}$ as $\worksc{A,B}{A,B}$ based on \cref{r_invmove}
+\item $\worksc{\amb, \bma}{\acbi\cc A,\acbi\cc B}$ 
+based on \cref{r_invmove}
+as $\worksc{A,B}{A,B}$
+and $A\equiv\acb\cc\amb$, $B\equiv\acb\cc\bma$.
 \end{itemize}
 
 Our theorem is therefore proven if we prove the following lemma:
-
+\newcommand{\condSimple}{(c1)}
+\newcommand{\condDisj}{(c2)}
+\newcommand{\condApr}{(c3)}
+\newcommand{\condWork}{(c4)}
 \begin{mylem}
 If
    \begin{itemize}
-   \item \newcommand{\condSimple}{(1)} \condSimple $S$ and $T$ are simple sequences
-   % \item \newcommand{\condDisj}{(4)} \condDisj $S\cap T=\emptyset$
-   \item \newcommand{\condApr}{(2)} \condApr $S^*$ is the largest subset of $S$ where $S^*\indep T$
-   \item \newcommand{\condWork}{(3)} \condWork $\worksc{S,T}{C_1,\ldots,C_n}$
+   \item[\condSimple] $S$ and $T$ are simple sequences,
+   \item[\condDisj] $S\cap T=\emptyset$,
+   \item[\condApr] $S^*$ is the largest subset of $S$ where $S^*\indep T$, and
+   \item[\condWork] $\worksc{S,T}{\seqset{C}}$ for some set of sequences $\seqset{C}$,
    \end{itemize}
 then
-\[ \worksc{S^*}{C_1,\ldots,C_n} \]
+\[ \worksc{S^*}{\seqset{C}}. \]
 \end{mylem}
 
 \begin{proof}
-% TODO Refer back to conditions!
-This is trivial unless $\works{C_1,\ldots,C_n}$, so we will assume that it is true
+This is trivial unless $\works{\seqset{C}}$, so we will assume that it is true
 and therefore $\works{S,T}$.
-% TODO This probably needs an axiom
 
-Similarly to above, we prove that $S$ can be transformed into $S'$ by equivalences
-so that all commands in $S^*$ would be at its beginning.
+The proof is similar to that of \cref{can_move_intersection}.
+We mark all commands in $S$ that are in its subset $S^*$, and
+we prove that $S$ can be transformed into $S'$ via equivalences
+so that all marked commands would be at its beginning.
 If so, then based on \cref{worksextpostfix}
-$\worksc{S^*}{C_1,\ldots,C_n}$ as $\worksc{S'}{C_1,\ldots,C_n}$ and .
+$\worksc{S^*}{\seqset{C}}$ as $\worksc{S'}{\seqset{C}}$ and $S'=S^*\cc S_0$ 
+where $S_0$ contains the remaining (conflicting) commands.
 
-Also similarly to above,
-we proceed by induction on the number of commands in $S$ that are not in $S^*$, but which precede
-the last command in $S$ that is also in $S^*$.
-If the number is 0, the lemma is true.
-Otherwise let the last command in $S$ also in $S^*$ be $\cxy(p,V_Y)$
-and the preceding command in $S$ be $\czw(q,V_W)$.
+Again we know that if $S$ does not already have all marked commands at its beginning,
+then there is an unmarked command followed by a marked one.
+We show that these commands are independent and so they can be swapped
+resulting in an equivalent sequence.
+By repeating this process we can generate a suitable $S'$.
 
+Let therefore the marked command in $S$ be $\cxy(n,V_Y)$
+and the preceding unmarked command be $\czw(m,V_W)$.
 As $S$ is simple and $\works{S}$, from 
 \cref{ax_distantrel_breaks,ax_directchild_breaks,ax_directparent_breaks}
 we know that these commands can only be on unrelated paths or form a construction or destruction pair.
-In the first case, swapping the commands results in a sequence equivalent to $S$,
-with the number on relevant commands not in $S^*$ reduced by one.
-In the last two cases,
-either $q=\parent(p)$ or $p=\parent(q)$.
+In the first case, swapping the commands results in a sequence equivalent to $S$;
+we only need to show that the other two cases are not possible as they would lead to a contradiction.
 
-We also know that there must be a command $\cqr(r,V_R)$ in $T$ which is not independent of $\czw(q,V_W)$.
-By definition this means that one of the following must be true:
-\begin{itemize}
-\item $\czw(q,V_W)\cc \cqr(r,V_R) \equiv\cbrk$
-\item $\cqr(r,V_R)\cc \czw(q,V_W) \equiv\cbrk$
-\item $\czw(q,V_W)\cc \cqr(r,V_R) \nequiv \cqr(r,V_R)\cc \czw(q,V_W)$
-\end{itemize}
-From these and \cref{ax_separate_commute,ax_separate_nobreaks} we also know that
-either $q\descendant r$ or $r\descendant q$.
-By definition we also know that $\cxy(p,V_Y)\indep \cqr(r,V_R)$,
-and the same argument shows that therefore
-$p\not\descendant r$ and $r\not\descendant p$ and $p\neq r$. TODO CHECK
+In the last two cases, we know that either $m=\parent(n)$ or $n=\parent(m)$.
+We also know that because of {\condApr} there must be 
+a command $\cqr(o,V_R)$ in $T$ which is not independent of $\czw(m,V_W)$
+as $\czw(m,V_W)$ is not part of $S^*$.
+\begin{gather*}
+S = \cdots\cc  \czw(m, V_W)\cc  \cxy(n, V_Y)\cc  \cdots \\
+T = \cdots\cc  \cqr(o, V_R)\cc \cdots
+\end{gather*}
+We know none of these commands is an assertion command, and 
+from {\condDisj} that $\cqr(o,V_R)\neq\czw(m,V_W)$.
+Therefore, based on \cref{unrelated_is_independent} we know this means that
+either $m\descendantEq o$ or $o\descendantEq m$.
+From {\condApr} we also know that $\cxy(n,V_Y)\indep \cqr(o,V_R)$,
+and so because of \cref{unrelated_is_independent},
+$n\unrel o$.
 
-We therefore have four cases considering the relationships between $p,q$ and $r$:
+We therefore have four cases considering the relationships between $n,m$ and $o$:
 \begin{itemize}
-\item $p=\parent(q) \wedge r\descendant q$.
-   This would mean that $r\descendant p$ or $r=p$, which is a contradiction.
-\item $p=\parent(q) \wedge q\descendant r$.
-   This would mean that $p\descendant r$, which is a contradiction.
-\item $q=\parent(p) \wedge r\descendant q$.
-   This would mean that $r\descendant p$, which is a contradiction.  
-\item $q=\parent(p) \wedge q\descendant r$.
+\item $n=\parent(m) \wedge o\descendantEq m$.
+   This would mean that $o\descendantEq n$ or $n=\parent(o)$, which contradicts $n\unrel o$.
+\item $n=\parent(m) \wedge m\descendantEq o$.
+   This would mean that $n\descendant o$, which contradicts $n\unrel o$.
+\item $m=\parent(n) \wedge o\descendantEq m$.
+   This would mean that $o\descendant n$, which contradicts $n\unrel o$.
+\item $m=\parent(n) \wedge m\descendantEq o$.
    Let us continue with this case.
 \end{itemize}
 
-We know that $T$ cannot have a command on $q$ as $q=\parent(p)$ and $\cxy(p,V_Y)\indep T$.
-Create $T'\equiv T$ by inserting a command on $q$ before $\cqr(r,V_R)$
-into $T$ according to \cref{ax_parent_assert}.
-We now have $\cxy(p,V_Y)\indep T\equiv T'$ which is a contradiction as
-$T'$ has a command on $q$ and $q=\parent(p)$.
-
+We know that $T$ cannot have a command on $m$ as $m=\parent(n)$ and $\cxy(n,V_Y)\indep T$,
+and so $m\neq o$ and therefore $m\descendant o$.
+This means we can create a new sequence $T'\equiv T$ by inserting a command on 
+$m$ into $T$ before $\cqr(o,V_R)$
+according to \cref{ax_parent_assert}.
+We now have $\cxy(n,V_Y)\indep T\equiv T'$ which is a contradiction as
+$T'$ has a command on $m$ and $m=\parent(n)$.
 \end{proof}
 
 % TODO $\reca$ is maximal
