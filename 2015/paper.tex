@@ -79,18 +79,19 @@
 
 \newtheorem{myax}{Axiom}
 \crefname{myax}{axiom}{axioms}
-% \creflabelformat{myax}{A#2#1#3}
 
 \newtheorem{mylem}{Lemma}
 \crefname{mylem}{lemma}{lemmas}
-% \creflabelformat{mylem}{L#2#1#3}
 
 \newtheorem{myth}{Theorem}
 \crefname{myth}{theorem}{theorems}
 
+\newtheorem{mycor}{Corollary}
+\crefname{mycor}{corollary}{corollaries}
+
+% TODO delete:
 \newtheorem{myrul}{Rule}
 \crefname{myrul}{rule}{rules}
-% \creflabelformat{myrul}{R#2#1#3}
 
 \title{Correctness of Algebraic File Synchronization}
 
@@ -137,7 +138,7 @@ of synchronization based not on filesystem states, but filesystem changes or com
 
 We model a filesystem using a function $\FS$ with a set of nodes (filesystem paths) $\setn$ as its domain,
 and a set of possible contents $\setv$ as its codomain:
-\[ \FS : \setp \rightarrow \setv \] 
+\[ \FS : \setn \rightarrow \setv \] 
 In our model, $\setn$ contains all possible nodes, including the ones where there is no file or directory,
 and $\setv$ contains a special element, $\empt$, which is the value of $\FS$ at an empty node.
 We consider the contents of files, as well as any meta-information of files
@@ -358,7 +359,7 @@ We write $n\descendant m$ if $n$ is the ancestor of $m$ ($n=\parent^n(m)$). % TO
 
 \begin{mydef}{$n\unrel m$.}
 We write $n\unrel m$, or ``$n$ and $m$ are unrelated'' if $n\not\descendant m$ and $n\not\ancestor m$
-and $n\new m$.
+and $n\neq m$.
 \end{mydef}
 
 
@@ -522,7 +523,6 @@ where $X'\in\setvx{X}$ and $Y'\in\setvx{Y}$.
 To be able to describe such sequences better, let us introduce the following properties:
 
 \begin{mydef}{Minimal set or sequence.}
-% TODO Don't introduce?
 A sequence or set of commands is minimal if it contains at most one command on every node.
 \end{mydef}
 
@@ -589,6 +589,8 @@ By applying \cref{connected_changes} multiple times we see that if a simple set 
 contains two commands on related nodes, then it must contain a command on each
 node that is between these two nodes in the parent--child tree.
 
+\medskip
+
 We can now define our algorithm to generate orders of sets of commands.
 
 Let $U$ be a simple set of commands
@@ -602,7 +604,7 @@ components can be applied in any order.
 Therefore once we have ordered the commands inside a component, we generate
 all permutations of the components themselves, including the ones
 in which commands from separate components mix and overlap
-(but where the possible orders determined for the components are respected).
+(but where the possible orders determined for commands inside the components are respected).
 
 Next, consider the ordering inside a component.
 
@@ -660,7 +662,7 @@ $\extset{S} := \{S'|S\eqext S'\}$
 \begin{mylem}\label{simple_is_max}
 For any simple sequence $S\neq\cbrk$, $\forall T: S\eqext T \Rightarrow S\equiv T$;
 that is, the domains of simple sequences cannot be extended further.
-This is equivalent to $\extset{S} = \{S'|S\equiv S'\}$.
+This is equivalent to the proposition that $\extset{S} = \{S'|S\equiv S'\}$.
 \end{mylem}
 \begin{proof}
 TODO
@@ -721,7 +723,7 @@ our reconciliation algorithm.
 \begin{mydef}{Independent commands, sequences and sets.}
 For two commands $\cxy$ and $\czw$ we write $\cxy\indep\czw$ if $\cxy\cc \czw\equiv\czw\cc \cxy\nequiv\cbrk$.
 For two sequences or sets of commands $A$ and $B$ we write $A\indep B$ if
-$\forall a\in A \mbox{and~} \forall b\in B: a\indep b$.
+$\forall a\in A \mbox{~and~} \forall b\in B: a\indep b$.
 \end{mydef}
 
 \begin{mydef}{Reconciliation}\label{def:reconciliation}
@@ -736,70 +738,20 @@ $\forall a\in A \mbox{and~} \forall b\in B: a\indep b$.
 In other words, the sequence $\reca$ we apply to $\FS_B$ consists of all commands from $A\setminus B$
 that are independent of every command in $B\setminus A$.
 The order of commands in the sequence can be determined using the algorithm described in
-\cref{ordering} as any subset of $A$ is also simple.
+\cref{ordering} as any subset of $A$ is also simple,
+and $\recb$ can be obtained in a similar way by reversing $A$ and $B$.
 \end{mydef}
 
-
-
-
-
-
-
-Now we prove that $\reca\FS_B\neq\fsbroken$, and, in general:
-
-
-
-% 'Works'
-% -------
-
-\begin{mydef}{Inverse commands and sequences.}
-The inverse of command $\cxy(p,V_Y)$ is $\cxy(p,V_Y)^{-1} = \cyx(p,V_X)$
-where $V_X$ is an arbitrary value from $\setvx{X}$.
-The inverse of sequence $S$, $S^{-1}$, consists of the inverses of the commands in $S$
-in reverse order.
-\end{mydef}
-
-\begin{mylem}\label{r_invmove}
-\[ \infer{\worksc{S\cc A}{B}}{\worksc{A}{S^{-1}\cc B}} \]
-To see the soundness of this rule...
-Sequences are bijections on filesystems over type-equality.
-TODO: $A,S,B$ need to be simple?
-\end{mylem}
-
-
-
-
-\begin{myrul}\label{r_indep_combine}
-\[ \inferrr{\worksc{T}{S}}{\worksc{U}{S}}{T\indep U}{\worksc{T\cc U}{S}} \]
-To see the soundness of this rule...
-\end{myrul}
-
-\begin{mylem}\label{indep_prefix_combine}
-\[ \inferrr{\worksc{A\cc B}{S}}{\worksc{A\cc C}{S}}{B\indep C}{\worksc{A\cc B\cc C}{S}} \]
-\end{mylem}
-\begin{proof}
-From \cref{r_invmove,r_indep_combine}
-TODO reverse of \cref{r_invmove} needed
-\end{proof}
-
-
-\begin{myax}\label{worksextpostfix}
-$\worksc{A}{A\cc S}$ where $A$ and $S$ are arbitrary sequences of commands
-\end{myax}
-
-
-
-
-
-
-
-
-% Introducing 'works'
-% -------------------
-
-So that we can formalise statements (TODO) needed to prove this,
+We would now like to prove that $\reca$ and $\recb$ can be applied to the replicas,
+that is, without loss of generality,
+\[ \reca\FS_B\neq\fsbroken. \]
+So that we can formalise statements needed to prove this,
 let us introduce two relations that describe under what conditions
 sequences of commands work, that is, do not break a filesystem.
+
+
+% Works
+% -----
 
 \begin{mydef}
 % Unsure if this relation should be in the algebra.
@@ -810,7 +762,7 @@ $A_1,A_2,\ldots,A_k$ work at the same time, that is,
 \[\exists \FS: A_1\FS\neq\fsbroken \wedge \cdots \wedge A_k\FS\neq\fsbroken\]
 As the sequences form a set, their order is irrelevant.
 % inference rules:
-We also see that $\works{A} \Leftrightarrow A\nequiv \cbrk$. 
+We also know that $\works{A} \Leftrightarrow A\nequiv \cbrk$. 
 \end{mydef}
 
 \begin{mydef}
@@ -825,13 +777,30 @@ that is,
 &A_1\FS\neq\fsbroken \wedge \cdots \wedge A_l\FS\neq\fsbroken
 \end{align*}
 As above, the order of the sequences in the sets is not relevant.
-% inference rules:
-It is easy to see that 
-% $\worksc{X}{X}$ is always true for any set of sequences $X$,
-$B\eqext A \Rightarrow \worksc{A}{B}$
-and that this relation can be chained:
-$ \worksc{A_1,\ldots,A_k}{B_1,\ldots,B_l} \wedge \worksc{C_1,\ldots,C_j}{A_1} \Rightarrow \worksc{A_1,\ldots,A_k,C_1,\ldots,C_j}{B_1,\ldots,B_l} $
 \end{mydef}
+
+% An inference rule in the algebra
+% $\worksc{X}{X}$ is always true for any set of sequences $X$,
+
+It is easy to see that the following corollaries are true:
+
+\begin{mycor}
+% An inference rule in the algebra
+$B\eqext A \Rightarrow \worksc{A}{B}$
+\end{mycor}
+
+\begin{mycor}\label{worksextpostfix}
+% An inference rule in the algebra
+$\forall A,S: \worksc{A}{A\cc S}$
+\end{mycor}
+
+\begin{mycor}
+% An inference rule in the algebra
+$\worksc{S}{T}$ can be chained:
+$ \worksc{A_1,\ldots,A_k}{B_1,\ldots,B_l} \wedge \worksc{C_1,\ldots,C_j}{A_1} \Rightarrow \worksc{A_1,\ldots,A_k,C_1,\ldots,C_j}{B_1,\ldots,B_l} $
+\end{mycor}
+
+
 
 \begin{mylem}\label{worksinputmatch}
 If $A$ and $B$ are minimal sequences, $\works{A,B}$,
@@ -843,91 +812,154 @@ This is easily shown using an indirect proof: if $X\neq Z$, then there is no fil
 $\cxy(n, V_Y)$ or $\czw(n, V_W)$ would not break, and consequently $A$ and $B$ could not work on the same filesystem.
 \end{proof}
 
+\begin{mylem}\label{r_indep_combine}
+% An inference rule in the algebra
+\[ \worksc{T}{S} \wedge \worksc{U}{S} \wedge T\indep U \Rightarrow \worksc{T\cc U}{S} \]
+\end{mylem}
+\begin{proof}
+% TODO Proof
+TODO
+\end{proof}
+
+\medskip
+
+We continue by defining inverse commands and sequences
+which allow us to move parts of sequences between the
+two sets of $\worksc{S}{T}$.
+
+\begin{mydef}{Inverse commands and sequences.}
+The inverse of command $\cxy(n,V_Y)$ is $\cxy(n,V_Y)^{-1} = \cyx(n,V_X)$
+where $V_X$ is an arbitrary value from $\setvx{X}$.
+We write $S^{-1}$ for the inverse of sequence $S$, which consists of the inverses of the commands in $S$
+in reverse order.
+%
+Clearly, $(S^{-1})^{-1}\equiv S$ for any sequence.
+\end{mydef}
+
+\begin{mylem}\label{r_invmove}
+\begin{gather*}
+\worksc{B\cc A}{S} \Rightarrow \worksc{A}{B^{-1}\cc S} \\
+\worksc{A}{B\cc S} \Rightarrow \worksc{B^{-1}\cc A}{S}
+\end{gather*}
+% TODO Proof
+TODO.
+Sequences are bijections on filesystems over type-equality.
+TODO: $A,S,B$ need to be simple?
+\end{mylem}
+
+\begin{mylem}\label{indep_prefix_combine}
+\[ \worksc{A\cc B}{S} \wedge \worksc{A\cc C}{S} \wedge B\indep C \Rightarrow \worksc{A\cc B\cc C}{S} \]
+\end{mylem}
+\begin{proof}
+Based on \cref{r_invmove} we know
+$\worksc{B}{A^{-1}\cc S}$ and $\worksc{C}{A^{-1}\cc S}$,
+and from \cref{r_indep_combine} we know
+$\worksc{B\cc C}{A^{-1}\cc S}$. Applying the second line of \cref{r_invmove} we get
+$\worksc{(A^{-1})^{-1}\cc B\cc C}{S}$, which proves our lemma as $(A^{-1})^{-1}\equiv A$.
+\end{proof}
 
 
+\medskip
 
+% Correctness of reconciliation
+% -----------------------------
 
-
-
-
-
-
-
-
+We are now ready to prove that the proposed algorithm for reconciliation is correct,
+that is, applying its result is not going to break the replicas.
+We reformulate the original proposition, $\reca\FS_B\neq\fsbroken$,
+based on $\FS_B=B\FS$ and so we aim to prove that
+$B\cc\reca$ works wherever $A$ and $B$ work:
 
 \begin{myth}
 If $A, B$ are simple, then $\worksc{B\cc \reca}{A,B}$
 \end{myth}
+where, to restate the definition,
+{ % scope
+\renewcommand{\themydef}{\ref{def:reconciliation}}
+\begin{mydef}
+\begin{align*}
+\reca = \{c| & \\
+& c\in A\setminus B \\
+& \wedge \\
+& \forall c'\in B\setminus A: c\indep c'\\
+\}. &
+\end{align*}
+\end{mydef}
+} % scope
 
-This is trivial unless $\works{A,B}$.
+This is trivial unless $\works{A,B}$, so we assume that it is true.
+Let us first investigate the part of $A$ and $B$ that is excluded from
+$\reca$: their intersection.
 
 \begin{mylem}
 Let $A$ and $B$ be two simple sequences so that $\works{A, B}$.
 Then their intersection works on any filesystem
 either of them works on:
-$\worksc{\ordered{A\cap B}}{A}$, and, by symmetry, for $B$.
+$\worksc{A\cap B}{A}$, and, by symmetry,
+$\worksc{A\cap B}{B}$.
 \end{mylem}
 
 \begin{proof}
 First we prove the following.
 Mark all commands in $A$ that also appear in $B$.
-Then there is an $A'$ in $\orderset{A}$ in which the marked commands are at the beginning.
+Then there is an $A'$ in $\orderset{A}$ in which all marked commands are at the beginning.
+We show $A$ can be transformed via equivalences so that this would be true.
+Our proposition is that if the marked commands are not at the beginning, then
+the sequence contains an unmarked command followed by a marked command.
+We show that these can be reversed resulting in an equivalent sequence.
+Then, by repeating this process similarly to bubble sorting, we can generate 
+a suitable $A'$.
 
 \medskip
 
-TODO: unmarked-marked can be reversed -- but induction is wrong
-
-We show $A$ can be transformed via equivalences so that this would be true,
-by induction on the number of non-marked commands preceding the last marked command.
-If it is 0, no transformation is needed.
-For the induction step, consider the last marked command preceded by a non-marked command,
-and the non-marked command itself.
+Let us consider therefore the marked command preceded by an unmarked command in $A$.
+and let the marked command be $\cxy(n, V_Y)$, 
+and the preceding unmarked command be $\czw(m, V_W)$.
 As $A$ is a simple command and $\works{A}$, from 
-\cref{ax_distantchild_breaks,ax_distantparent_breaks,ax_directchild_breaks,ax_directparent_breaks}
+\cref{ax_distantrel_breaks,ax_directchild_breaks,ax_directparent_breaks}
 we know that these commands can only be on unrelated paths or form a construction or destruction pair.
 In the first case, swapping the commands results in a sequence equivalent to $A$,
-with the number on relevant non-marked commands reduced by one.
-In the last two cases,
-either $q=\parent(p)$ or $p=\parent(q)$.
+and we show that the last two cases are impossible as they would lead to contradiction.
 
-Let the marked command be $\cxy(p, V_Y)$ and the preceding unmarked command in $A$ be $\czw(q, V_W)$.
-
-If $B$ has a command on $q$, then
+In these cases, either $m=\parent(n)$ or $p=\parent(m)$.
+If $B$ has a command on $m$, then
 from \cref{lemma:neighbor}
-we know that there is a $B'$ in $\orderset{B}$ where it is next to $\cxy$,
-and from \cref{lemma:minextset,lemma:minextorder} we know that $B'\equiv B$.
-% TODO Use when describing ordering:
-Considering the eight construction and destruction pairs we see that the command
-on the parent path determines which group the pair belongs to.
-This in turn determines whether the command on the child path must
+we know that there is a $B'$ in $\orderset{B}$ where it is next to $\cxy$ (also in $B$),
+and from \cref{simple_is_max,lemma:minextorder} we know that $B'\equiv B$.
+When describing our ordering algorithm in \cref{ordering} we saw
+that the command on the parent path deremines whether a pair of commands
+is a construction or destruction pair,
+and that this, in turn, determines whether the command on the child path must
 precede or follow the other command as otherwise the sequence would break all filesystems.
-This argument holds for both $A$ and $B$, and so the command on $q$ must be on
-the same side of the command on $p$ in both sequences.
+This argument holds for both $A$ and $B$, and so the command on $m$ must be on
+the same side of the command on $n$ in both sequences.
 
-If $B$ has no command on $q$, then let $B'$ be $B$, but with an extra command added to it just before $\cxy$
-according to \cref{ax_child_assert,ax_parent_assert}, from which we know
-that $B'\equiv B$.
+If $B$ has no command on $m$, then let $B'$ be $B$, 
+but with an extra command added to it just before $\cxy$
+according to \cref{ax_child_assert,ax_parent_assert}, 
+from which we know that $B'\equiv B$.
 We also know that $B'$ is still minimal (but no longer simple).
 
-We therefore have a minimal $B'$ which has a command on $q$ just before $\cxy(p, V_Y)$ and $B'\equiv B$.
-Let this command on $q$ be $\cqr(q, V_R)$.
+In either case, therefore,
+we have a minimal $B'$ which has a command on $m$ just before $\cxy(n, V_Y)$ and $B'\equiv B$.
+Let this command on $m$ be $\cqr(m, V_R)$.
 \begin{gather*}
 A = \cdots\cc  \czw(q, V_W)\cc  \cxy(p, V_Y)\cc  \cdots \\
 B' = \cdots\cc  \cqr(q, V_R)\cc  \cxy(p, V_Y)\cc  \cdots
 \end{gather*}
 
-As $\works{A,B}$ and so $\works{A,B'}$ (via \cref{r_eq_ex,r_ex_w,r_w_w}), 
+As $\works{A,B}$ and so $\works{A,B'}$, 
 from \cref{worksinputmatch}
 we know that $Q=Z$. 
 
 Going back to the construction and destruction pairs we see that the output type of the first command
-is always the same, and it is either $D$ or $\empt$ depending on the relationship between $p$ and $q$.
-Therefore $R=W$ and $\cqr(q, V_R)=\czw(q, V_W)$
+is always the same, and it is either $D$ or $\empt$ depending on the relationship between $n$ and $m$.
+Therefore $R=W$ and $\cqr(m, V_R)=\czw(m, V_W)$
 as $|\setd|=|\setb|=1$. 
-If $B$ originally had a command on $q$,
+If $B$ originally had a command on $m$,
 this is a contradiction as $\czw$ was not marked, but we see it must also be in $B'$ and therefore in $B$.
-If $B$ had no command on $q$,
-this is a contradiction because the command on $q$ in $B'$ is an assertion command, so $Z=Q=R=W$, 
+If $B$ had no command on $m$,
+this is a contradiction because the command on $m$ in $B'$ is an assertion command, so $Z=Q=R=W$, 
 but $A$ contained no assertion commands.
 
 \medskip
@@ -935,24 +967,26 @@ but $A$ contained no assertion commands.
 We now know that there is an $A'\equiv A$ in which commands in $A\cap B$
 are at the beginning, and therefore 
 from \cref{worksextpostfix}
-$\worksc{\ordered{A\cap B}}{A}$ and by symmetry $\worksc{\ordered{A\cap B}}{B}$.
+$\worksc{A\cap B}{A}$ and by symmetry $\worksc{A\cap B}{B}$.
 \end{proof}
 
 \medskip
 
 We would like to prove that $\worksc{B\cc \reca}{A,B}$.
-From above we know that this is equivalent to
-$\worksc{\ordered{A\cap B}\cc \ordered{B\setminus A}\cc \reca}{A,B}$.
-As we already know that $\reca\indep B\setminus A$
-and that $\worksc{\ordered{A\cap B}\cc \ordered{B\setminus A}}{A,B}$
+From the above we know that this is equivalent to
+$\worksc{(A\cap B)\cc (B\setminus A)\cc \reca}{A,B}$.
+As we already know that $\reca\indep (B\setminus A)$
+and that $\worksc{(A\cap B)\cc(B\setminus A)}{A,B}$
 (as $\worksc{B}{A,B}$),
 based on \cref{indep_prefix_combine}
 we only need to prove that
-$\worksc{\ordered{A\cap B}\cc \reca}{A,B}$.
+$\worksc{(A\cap B)\cc \reca}{A,B}$.
 
-\newcommand{\acbi}{\ordered{A\cap B}^{-1}}
-\newcommand{\amb}{A\setminus B}
-\newcommand{\bma}{B\setminus A}
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\newcommand{\acbi}{(A\cap B)^{-1}}
+\newcommand{\amb}{(A\setminus B)}
+\newcommand{\bma}{(B\setminus A)}
 Using \cref{r_invmove} we can rephrase this as
 % TODO axiom doesn't specify multiple conditions
 $\worksc{\reca}{\acbi\cc A,\acbi\cc B}$.
@@ -987,8 +1021,8 @@ and therefore $\works{S,T}$.
 
 Similarly to above, we prove that $S$ can be transformed into $S'$ by equivalences
 so that all commands in $S^*$ would be at its beginning.
-If so then based on \cref{worksextpostfix}
-$\worksc{S^*}{C_1,\ldots,C_n}$ as $\worksc{S'}{C_1,\ldots,C_n}$.
+If so, then based on \cref{worksextpostfix}
+$\worksc{S^*}{C_1,\ldots,C_n}$ as $\worksc{S'}{C_1,\ldots,C_n}$ and .
 
 Also similarly to above,
 we proceed by induction on the number of commands in $S$ that are not in $S^*$, but which precede
