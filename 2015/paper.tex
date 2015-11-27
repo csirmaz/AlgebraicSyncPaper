@@ -22,7 +22,7 @@
 \newcommand{\GS}{\Xi} % another filesystem
 \newcommand{\nn}{n^*} % parent node
 
-\newcommand{\cbrk}{\mathtt{break}}
+\newcommand{\cbrk}{\mathtt{break}} % 'break' command
 \newcommand{\fscommand}[2]{{#1#2}}
 \newcommand{\fsregcommandchar}[1]{\mathtt{#1}}
 \newcommand{\fsregcommand}[2]{\fscommand{\fsregcommandchar{#1}}{\fsregcommandchar{#2}}}
@@ -51,23 +51,24 @@
 \newcommand{\ancestor}{\succ}
 \newcommand{\ancestorEq}{\succeq}
 
-\newcommand{\eqext}{\sqsubseteq}
-\newcommand{\eqnrw}{\sqsupseteq}
+\newcommand{\eqext}{\sqsubseteq} % equivalent to
+\newcommand{\eqnrw}{\sqsupseteq} % extended by
 \newcommand{\nequiv}{\not\equiv}
-\newcommand{\indep}{\,{\wr\wr}\,} % Independent commands, sequences
+\newcommand{\indep}{\mathrel{\wr\wr}} % Independent commands, sequences
 \newcommand{\unrel}{\indep} % Unrelated nodes
-\newcommand{\nindep}{\,{\centernot{\wr\wr}}\,}
-\newcommand{\nunrel}{\nindep}
+\newcommand{\nindep}{\,{\centernot{\wr\wr}}\,} % not \indep
+\newcommand{\nunrel}{\nindep} % not \unrel
 
 \newcommand{\workssign}{\mathbf{w}}
 \newcommand{\works}[1]{\workssign({#1})}
-\newcommand{\worksc}[2]{\workssign({#1}|{#2})}
+\newcommand{\worksc}[2]{\workssign({#1}\mathrel{|}{#2})}
 
-\newcommand{\emptyseq}{[\,]} % TODO change
+\newcommand{\typeeq}{\stackrel{t}{=}}
+\newcommand{\ntypeeq}{\centernot{\stackrel{t}{=}}}
 
-\newcommand{\extset}[1]{\wp({#1})}
+\newcommand{\emptyseq}{\lambda} % empty sequence
+
 \newcommand{\orderset}[1]{\vec{\wp}({#1})}
-\newcommand{\ordered}[1]{#1}
 \newcommand{\seqset}[1]{\underline{#1}} % Set of sequences
 
 \newcommand{\recchar}[3]{{#1}^{#3}_{\mathcal{R}|{#2}}}
@@ -157,8 +158,11 @@ To model this, in $\setv$ we distinguish between files ($\setf$) and directories
 if $\setb = \{\empt\}$ then:
 \[ \setv = \setb \cup \setf \cup \setd \]
 The tree propety can then be defined as
-\[ \forall n\in\setn : \FS(n) \neq \empt \wedge \parent(n) \neq \topnode \Rightarrow \FS(\parent(n)) \in \setd \]
-
+\begin{align*}
+\forall n\in\setn: &\FS(n) \neq \empt \\ % TODO alignment problem
+&\quad\wedge \parent(n) \neq \topnode \\
+&\Rightarrow \FS(\parent(n)) \in \setd 
+\end{align*}
 This means that as we move down from the root of a tree of nodes,
 the types of values we encounter in the filesystem can only change according to the following
 transition diagram:
@@ -178,27 +182,27 @@ of $\setd$. $V$ is a value from $\setv$ and $n$ and $m$ are nodes in $\setn$.
 Next we need to define commands on the filesystem.
 
 % <<<<<<<< TODO Rewrite: no algebra
-TODO: Rewrite:
- about which we will reason
-using our algebra.
-We will aim to draw conclusions or judgements about commands and sequences of commands
-based on the algebra we are aiming to construct.
-For example, if we believe that two sequences of commands are equivalent as their effect
-is the same, then we aim to be able to derive this from the axioms and inference rules of the
-algebra.
-As the algebra operates on commands only,
-these judgements, by definition, need to hold regardless of the filesystem the commands are applied to.
-Accordingly, we expect that the more information one encodes into the commands and the sequences,
-the better predicitons we will be able to make using our algebra,
-as then the commands and sequences will be more specific, and will select a smaller subset
-of potential filesystems on which they can meaningfully operate.
+%  about which we will reason
+% using our algebra.
+% We will aim to draw conclusions or judgements about commands and sequences of commands
+% based on the algebra we are aiming to construct.
+% For example, if we believe that two sequences of commands are equivalent as their effect
+% is the same, then we aim to be able to derive this from the axioms and inference rules of the
+% algebra.
+% As the algebra operates on commands only,
+% these judgements, by definition, need to hold regardless of the filesystem the commands are applied to.
+% Accordingly, we expect that the more information one encodes into the commands and the sequences,
+% the better predicitons we will be able to make using our algebra,
+% as then the commands and sequences will be more specific, and will select a smaller subset
+% of potential filesystems on which they can meaningfully operate.
 % >>>>>>>>>> to here
 
+...
 
 Let us consider what kind of information may be encoded in the commands.
 A usual set of commands, based on the most frequent tools implemented by filesystems,
 might be $create(n,V)$, $edit(n,V)$ and $remove(n)$ where $n\in\setn$ and $V\in\setv$ (but $V\neq\empt$).
-Regarding what we know of their output, that is, the state of the filesystem at $n$
+Regarding their output, that is, the state of the filesystem at $n$
 after applying the command,
 we know that after $create$ or $edit$, $\FS(n)\neq\empt$, whereas after $remove$,
 $\FS(n)$ will be $\empt$. 
@@ -230,12 +234,12 @@ For want of a better system, we will name our commands by concatenating
 two of $\fsregcommandchar{D}$, $\fsregcommandchar{F}$ and $\fsregcommandchar{\empt}$, 
 where the left sign denotes the type of value
 required in the filesystem before the command is applied, and the right sign notes the type
-afterwards. For example, $mkdir(n,D)$ will be $\cbd(n,D)$, and $rmdir(n)$ will be $\cdb(n)$.
+afterwards. For example, $mkdir(n,D)$ is $\cbd(n,D)$, and $rmdir(n)$ is $\cdb(n)$.
 
-A command can only succeeds if the original value at node $n$ has a type that matches
+A command can only succeed if the original value at node $n$ has a type that matches
 the input type of the command. If this is not the case, or if the resulting
 filesystem no longer has the tree property, then we say that the command
-\textbf{breaks} the filesystem. Broken filesystems are considered equal
+{\em breaks} the filesystem. Broken filesystems are considered equal
 (but not equal to any working filesystem), and we note them by $\FS=\fsbroken$.
 
 So that we could reason about sequences of commands that break every filesystem
@@ -274,10 +278,13 @@ At times we omit $V_Y$ if there is only one suitable value.
 \end{itemize}
 
 
-When we describe multiple or unknown commands, we may substitute one or both
-types with a variable, for example by writing $\cxy(n,V)$. In this context,
-if we write that $\cxy=\czw$, we mean that their input and output types
-are the same ($X=Z$ and $Y=W$).
+In general, when we describe multiple or unknown commands, we may substitute one or both
+of their types with variables, as we did with $\cxy(n,V_Y)$. In this context,
+if we write that $\cxy=\czw$, we mean that the input and output types
+of the commands are the same ($X=Z$ and $Y=W$), while a full equiality 
+($\cxy(n,V_Y)=\czw(n,V_W)$)
+implies
+that their output value is also the same.
 
 % Simplifications
 % ---------------
@@ -313,12 +320,16 @@ So that we could describe the effects of commands on a filesystem, let us introd
 and note some observations.
 
 The commands we aim to investigate do not occur in isolation:
-for example, when comparing to filesystems to determine the commands needed to transform one into the other,
+for example, when comparing filesystems to determine the commands needed to transform one into the other,
 we receive a set of commands with uncertain ordering.
 Applying commands to a filesystem, however, happens in time,
 so for this we need a sequence of commands.
 We use $\cc$ to concatenate commands to form a sequence, or concatenate sequences to form a longer sequence:
 $S=\cbd(n)\cc \cbf(m,F)$, or $S'=S\cc\cbb(o)$.
+We write $\emptyseq$ for the empty sequence.
+
+TODO: Sequences of commands, in the usual way,  form a free
+semigroup
 
 The following concepts allow us to investigate sequences independently of filesystems.
 In the definitions, $A,B,S,T$ stand for arbitrary sequences of commands.
@@ -373,7 +384,7 @@ of commands independently of that actual filesystems.
 In order to make this possible, we investigate the smallest building
 blocks of sequences: pairs of commands that act on a filesystem directly one after the other.
 This approach is useful as there are a limited number of command pairs,
-because, as we arguad above, we can disregard the exact output value of commands apart from its type,
+because, as we argued above, we can disregard the exact output values of commands apart from their type,
 and we can also abstract the relationship between the nodes in the two commands
 to a finite number of cases.
 
@@ -390,7 +401,7 @@ during synchronization, and what commands will never be compatible.
 
 Below we list a number of statements derived using this method.
 Although they can be proven by investigating all relevant possibilities
-in a filesystem, we refer to these in axioms because in a secondary algebraic model
+in a filesystem, we refer to these as axioms because in a secondary algebraic model
 that describes commands without reference to an underlying filesystem,
 these would function as meta-rules generating statements we would accept as true.
 See section (TODO) for more about such a model.
@@ -554,10 +565,10 @@ and if yes, what order,
 in which updates from multiple replicas can be applied to a filesystem.
 
 In this section we describe an algorithm with which all possible orderings of a
-set of sequences can be generated, but before doing so, let us consider the following lemma.
+simple set of commands can be generated, but before doing so, let us consider the following lemma.
 
 \begin{mylem}\label{connected_changes}
-If a simple set of commands that can be applied to a filesystem in some order without breaking it
+If a simple set of commands, which can be applied to a filesystem in some order without breaking it,
 contains commands on $n$ and $\nn$ where $\nn\descendant n$
 but $\nn\neq\parent(n)$, then the set must also contain a command on $\parent(n)$.
 \end{mylem}
@@ -574,7 +585,7 @@ Next, we create a new sequence $A'\equiv A$ in which $\cxy$ and $\czw$ are next 
 If they are already next to each other in $A$, there is nothing to do.
 Otherwise, consider the command next to $\cxy(n,V_Y)$ in the direction where $\czw(\nn,V_W)$ is.
 Let this command be $\cqr(m,V_R)$.
-If $\czw$ is to the right, the $A$ looks like the following:
+If $\czw$ is to the right, then $A$ looks like the following:
 \[ A = \cdots\cc\cxy(n,V_Y)\cc\cqr(m,V_R)\cc\cdots\cc\czw(\nn,V_W)\cc\cdots \]
 If $n\unrel m$, reverse $\cxy$ and $\cqr$. Based on \cref{ax_separate_commute} we know that the new
 sequence is equivalent to $A$.
@@ -588,7 +599,7 @@ is again a contradiction.
 
 By applying \cref{connected_changes} multiple times we see that if a simple set of commands
 contains two commands on related nodes, then it must contain a command on each
-node that is between these two nodes in the parent--child tree.
+node that is between these two nodes in the node tree.
 
 \medskip
 
@@ -625,7 +636,7 @@ and via \cref{ax_separate_commute} there would be no ordering of the whole set, 
 To order the commands in the component,
 select the command with the topmost node, so that there would be no command
 on its parent node (if there is one). 
-If the command removes content at this node (it is of the form $\fsregcommand{X}{\empt}$), 
+If the command removes content at this node (it is of the form $X\empt$), 
 then it must follow all other commands in the component, and
 all parent--child pairs in the whole component must be destruction pairs.
 Otherwise, the command with the topmost node needs to precede the other commands,
@@ -635,7 +646,8 @@ at no point can mix without causing any sequence to break all filesystems.
 
 Then move the command with the topmost node to the beginning or the end of
 the sequence we are creating out of the component,
-and recursively start the whole algorithm again on the commands in the component that remain.
+and recursively start the whole algorithm again on the commands in the component that remain,
+potentially splitting them into sub-components.
 The result of this process is a set of possible orders for each component,
 which are then combined into a set of possible orders for the whole set of commands.
 
@@ -653,38 +665,21 @@ there is a $U'\in\orderset{U}$ where they are next to each other.
 
 As a specific case, we can regard a sequence of commands $S$
 as a set and determine its $\orderset{S}$.
-Let us investigate the properties of simple sequences and this set a bit further.
 
-\begin{mydef}{$\extset{S}$.}
-For any sequence $S$ we can consider all sequences that extend it:
-$\extset{S} := \{S'|S\eqext S'\}$
-\end{mydef}
-
-\begin{mylem}\label{simple_is_max}
-For any simple sequence $S\neq\cbrk$, $\forall T: S\eqext T \Rightarrow S\equiv T$;
-that is, the domains of simple sequences cannot be extended further.
-This is equivalent to the proposition that for simple sequences $\extset{S} = \{S'|S\equiv S'\}$.
-\end{mylem}
-\begin{proof}
-TODO
+From the algorithm we also see that if a simple sequence $S$ works, then
+all sequences in $\orderset{S}$ are equivalent to it.
+As the sequences contain a single command on each node,
+their output must be the same on the same input unless
+they break the filesystem.
+However, the algorithm ensures that that will not be the case.
 % TODO
-\end{proof}
+(TODO: Is this enough?)
+Therefore:
 
-\begin{mylem}\label{lemma:minextorder}
-% TODO orderset only defined on simple
-For any minimal sequence $S\neq\cbrk$, $\orderset{S} = \extset{S}$.
-\end{mylem}
-\begin{proof}
-TODO
-% TODO
-\end{proof}
-
-\begin{mylem}
-All sequences in $\orderset{S}$ of a simple sequence $S$ are equivalent.
-\end{mylem}
-\begin{proof}
-This follows from \cref{simple_is_max,lemma:minextorder}.
-\end{proof}
+\begin{mycor}\label{simple_reorder_equiv}
+For any simple sequence $S\neq\cbrk$,
+all sequences in $\orderset{S}$ are equivalent.
+\end{mycor}
 
 It follows from this that given a simple set,
 we can simply assume that it has an order.
@@ -803,8 +798,8 @@ $\forall A,S: \worksc{A}{A\cc S}$, that is, if a sequence works, its prefix also
 \begin{mycor}\label{workschained}
 % An inference rule in the algebra
 $\workssign$ can be chained:
-if $A_1\in\seqset{A}$, then
-$ \worksc{\seqset{A}}{\seqset{B}} \wedge \worksc{\seqset{C}}{A_1} \Rightarrow \worksc{\seqset{A}\cup\seqset{C}}{\seqset{B}}$.
+if $\seqset{A'}\subset\seqset{A}$, then
+$ \worksc{\seqset{C}}{\seqset{A'}} \wedge \worksc{\seqset{A}}{\seqset{B}} \Rightarrow \worksc{\seqset{A}\cup\seqset{C}}{\seqset{B}}$.
 \end{mycor}
 
 We also prove the following lemmas.
@@ -817,7 +812,7 @@ if $\cxy(n,V_Y)\neq\czw(m,V_W)$ and none of $\cxy$ and $\cxw$ is $\cbb$ or $\cdd
 \begin{proof}
 We proceed in two steps; first, we prove that
 \[ \cxy(n,V_Y)\nindep\czw(m,V_W) \wedge n\unrel m \] would lead to contradiction.
-By definition, if the two commands are not independent, then one of the following holds:
+By definition, if the two commands are not independent, then at least one of the following holds:
 \begin{itemize}
 \item $\czw(m,V_W)\cc \cqr(o,V_R) \equiv\cbrk$
 \item $\cqr(o,V_R)\cc \czw(m,V_W) \equiv\cbrk$
@@ -853,9 +848,9 @@ breaks all filesystems, so they again cannot be independent.
 The combination of independent commands works wherever the original commands work:
 \begin{align*}
 \forall\FS: &\cxy(n,C_Y)\indep \czw(m,C_W) \\
-&\wedge \cxy(n,C_Y)\FS\neq\fsbroken \\
-&\wedge \czw(m,C_W)\FS\neq\fsbroken \\
-\Rightarrow &\cxy(n,C_Y)\cc \czw(m,C_W)\FS\neq\fsbroken.
+&\quad\wedge \cxy(n,C_Y)\FS\neq\fsbroken \\
+&\quad\wedge \czw(m,C_W)\FS\neq\fsbroken \\
+&\Rightarrow \cxy(n,C_Y)\cc \czw(m,C_W)\FS\neq\fsbroken.
 \end{align*}
 \end{myax}
 \begin{proof}
@@ -866,7 +861,7 @@ We know $\cxy(m,C_Y)\FS\neq\fsbroken$ so it must be applying
 $\czw(m,C_W)$ that breaks it.
 Applying a command can only result in a broken filesystem in three cases.
 First, if the filesystem was already broken, which cannot be the case here.
-Second, if there the input type does not match the filesystem,
+Second, if the input type does not match the filesystem,
 but we know $\FS(m)\in\setvx{W}$ and so
 $(\cxy(m,C_Y)\FS)(m)\in\setvx{W}$ as based on \cref{unrelated_is_independent}, $n\neq m$.
 Third, if the new filesystem violates the tree property.
@@ -888,10 +883,10 @@ $(S\cc T)\FS=\fsbroken$.
 
 From \cref{unrelated_is_independent,ax_separate_commute} we know that
 the commands in $S$ and $T$ pairwise commute, and so any sequence
-that contains the commands from $S$ and $T$ preserving their original order,
-but in any permutation between $S$ and $T$ is equivalent to $S\cc T$ on all filesystems.
+that contains the commands from $S$ and $T$ and preserve their original partial order
+is equivalent to $S\cc T$ on all filesystems.
 
-Let the command that breaks $\FS$ in $T$ be $t$
+Let the command that breaks $\FS$ in $T$ when applying $S\cc T$ be $t$
 so that $T=T_0\cc t\cc T_1$.
 It is still true that $(T_0 \cc t)\FS\neq\fsbroken$,
 and by definition $(S\cc T_0)\FS\neq\fsbroken$,
@@ -915,19 +910,9 @@ arrive at
 $(T_0 \cc s_1\cc s_2\cc t)\FS\neq\fsbroken$.
 This can be repeated until $S$ is exhausted and we get
 $(T_0 \cc S\cc t)\FS\neq\fsbroken$, which is a contradiction.
-
-
-
 \end{proof}
 
-From this and \cref{workschained} it follows that:
-
-\begin{mycor}\label{r_indep_combine}
-% An inference rule in the algebra
-The combination of independent sequences continues to work under the same conditions:
-\[ \worksc{S}{\seqset{U}} \wedge \worksc{T}{\seqset{U}} \wedge S\indep T \Rightarrow \worksc{S\cc T}{\seqset{U}} \]
-\end{mycor}
-
+Separately, we prove the following:
 
 \begin{mylem}\label{worksinputmatch}
 If $A$ and $B$ are minimal sequences, $\works{A,B}$,
@@ -953,9 +938,18 @@ The inverse of command $\cxy(n,V_Y)$ is $\cxy(n,V_Y)^{-1} = \cyx(n,V_X)$
 where $V_X$ is an arbitrary value from $\setvx{X}$.
 We write $S^{-1}$ for the inverse of sequence $S$, which consists of the inverses of the commands in $S$
 in reverse order.
-%
-Clearly, $(S^{-1})^{-1}\equiv S$ for any sequence.
 \end{mydef}
+
+\begin{mydef}{$\typeeq$.}
+For two filesystems we write $\FS\typeeq\GS$
+iff 
+at all nodes the types of their values are the same, or they are both broken.
+\end{mydef}
+
+From the definitions we can clearly see that
+\begin{mycor}\label{negneg_is_typeeq}
+$\forall \FS: (S^{-1})^{-1}\FS\typeeq \FS$.
+\end{mycor}
 
 \begin{mylem}\label{r_invmove}
 A common prefix of sequences can be moved to the other side of $\workssign$ by inverting it:
@@ -963,22 +957,54 @@ A common prefix of sequences can be moved to the other side of $\workssign$ by i
 \worksc{B\cc \seqset{A}}{\seqset{S}} \Rightarrow \worksc{\seqset{A}}{B^{-1}\cc \seqset{S}} \\
 \worksc{\seqset{A}}{B\cc \seqset{S}} \Rightarrow \worksc{B^{-1}\cc \seqset{A}}{\seqset{S}}
 \end{gather*}
-% TODO Proof
-TODO.
-Sequences are bijections on filesystems over type-equality.
-TODO: $A,S,B$ need to be simple?
 \end{mylem}
+\begin{proof}
+This is based on the fact that in our model, unless they break a filesystem,
+commands change one type of value into another, but never merge types.
+That is,
+sequences---as functions mapping filesystems to filesystems---are
+essentially bijections over type-equality
+with the only ``sink'' being $\fsbroken$:
+\begin{align*}
+\forall S,\FS,\GS: &S\FS\neq\fsbroken \Rightarrow \\
+&(S\FS\ntypeeq S\GS \Leftrightarrow \FS\ntypeeq \GS).
+\end{align*}
+
+For
+\[ \worksc{B\cc \seqset{A}}{\seqset{S}} \Rightarrow \worksc{\seqset{A}}{B^{-1}\cc \seqset{S}} \]
+the rest of the proof is illustrated by the diagram below
+where Dom($x$), the domain of $x$, represents the set of filesystems
+the sequence $x$ does not break, or neither of the sequences in the set $x$ breaks.
+
+\input{inverse-works} % TODO arrows to small
+
+We see that the set of filesystems the sequences in $\seqset{A}$ do not break intersect with the range of $B$.
+As $B$ is a bijection between its domain and range, we can use $B^{-1}$ to map this intersection back
+onto the domain of $B$.
+As $\worksc{B\cc \seqset{A}}{\seqset{S}}$ the domain of $\seqset{S}$ must be a subset of this
+projected intersection.
+If so, then we can use $B$ to map the domain of $\seqset{S}$, which yields the domain of $B^{-1}\cc \seqset{S}$.
+As it is also a part of the domain of $A$, we get $\worksc{\seqset{A}}{B^{-1}\cc \seqset{S}}$.
+
+The second part of the lemma can be proven in a similar way.
+\end{proof}
+
 
 \begin{mylem}\label{indep_prefix_combine}
-The combination of sequences with a common head and independent tail continues to work:
+The combination of sequences with a common head and independent tails continues to work under the same conditions:
 \[ \worksc{A\cc B}{\seqset{S}} \wedge \worksc{A\cc C}{\seqset{S}} \wedge B\indep C \Rightarrow \worksc{A\cc B\cc C}{\seqset{S}} \]
 \end{mylem}
 \begin{proof}
 Based on \cref{r_invmove} we know
 $\worksc{B}{A^{-1}\cc \seqset{S}}$ and $\worksc{C}{A^{-1}\cc \seqset{S}}$,
-and from \cref{r_indep_combine} we know
-$\worksc{B\cc C}{A^{-1}\cc \seqset{S}}$. Applying the second line of \cref{r_invmove} we get
-$\worksc{(A^{-1})^{-1}\cc B\cc C}{\seqset{S}}$, which proves our lemma as $(A^{-1})^{-1}\equiv A$.
+and from \cref{combine_independent_sequences} we know
+$\worksc{B\cc C}{B,C}$.
+Combining these using \cref{workschained}
+we get
+$\worksc{B\cc C}{A^{-1}\cc \seqset{S}}$. 
+Finally, applying the second line of \cref{r_invmove} yields
+$\worksc{(A^{-1})^{-1}\cc B\cc C}{\seqset{S}}$, which proves our lemma 
+as $(A^{-1})^{-1}\typeeq A$. % \cref{negneg_is_typeeq}.
 \end{proof}
 
 
@@ -994,8 +1020,7 @@ based on $\FS_B=B\FS$ and so we aim to prove that
 $B\cc\reca$ works wherever $A$ and $B$ work:
 
 \begin{myth}
-If $A, B$ are simple, then $\worksc{B\cc \reca}{A,B}$
-\end{myth}
+If $A, B$ are simple, then $\worksc{B\cc \reca}{A,B}$,
 where, to restate \cref{def:reconciliation},
 % { % scope
 % \renewcommand{\themydef}{\ref{def:reconciliation}}
@@ -1009,6 +1034,7 @@ where, to restate \cref{def:reconciliation},
 \end{align*}
 % \end{mydef}
 % } % scope
+\end{myth}
 
 This is trivial unless $\works{A,B}$, so we assume that it is true.
 Let us first investigate the part of $A$ and $B$ that is excluded from
@@ -1049,7 +1075,7 @@ In these cases, either $m=\parent(n)$ or $n=\parent(m)$.
 If $B$ has a command on $m$, then
 from \cref{lemma:neighbor}
 we know that there is a $B'$ in $\orderset{B}$ where it is next to $\cxy$ (also in $B$),
-and from \cref{simple_is_max,lemma:minextorder} we know that $B'\equiv B$.
+and from \cref{simple_reorder_equiv} we know that $B'\equiv B$.
 When describing our ordering algorithm in \cref{ordering} we saw
 that the command on the parent path deremines whether a pair of commands
 is a construction or destruction pair,
@@ -1118,7 +1144,7 @@ To restate some results above, we therefore already know the following things:
 \item $\amb \cap \bma = \emptyset$
 \item $\reca$ is the largest subset of $\amb$ for which $\reca\indep\amb$
 \item $\worksc{\amb, \bma}{\acbi\cc A,\acbi\cc B}$ 
-based on \cref{r_invmove}
+because of \cref{r_invmove}
 as $\worksc{A,B}{A,B}$,
 and $A\equiv\acb\cc\amb$, and $B\equiv\acb\cc\bma$.
 \end{itemize}
@@ -1208,6 +1234,9 @@ TODO: $\reca$ is maximal
 
 % TODO
 TODO: About setting up an algebra / calculus
+
+% TODO
+TODO: Are these results quite obvious as this is a well-known kind of algebra or system?
 
 \begin{thebibliography}{99}
 
