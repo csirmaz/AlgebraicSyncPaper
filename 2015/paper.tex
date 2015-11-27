@@ -431,7 +431,8 @@ $\cxy(n,V_Y)\cc \czw(n,V_W) \equiv \cbrk$ where $Y\ne Z$.
 
 \begin{myax}\label{ax_same_emptyseq}
 Commands on the same node simplify:
-$\cxy(n,V_Y)\cc \czw(n,V_W) \eqext \emptyseq$ where $Y=Z$ and $X=W=\fsregcommandchar{\empt}$ or $X=W=\fsregcommandchar{D}$.
+$\cxy(n,V_Y)\cc \czw(n,V_W) \eqext \emptyseq$ where $Y=Z$ and $X=W=\fsregcommandchar{\empt}$ 
+or $X=W=\fsregcommandchar{D}$.
 \end{myax}
 
 \begin{myax}\label{ax_same_singlec}
@@ -447,7 +448,8 @@ where $\nn\descendant n$ and $\nn\neq\parent(n)$ and $\cxy\neq\cdd$ and $\czw\ne
 \end{myax}
 
 \begin{mydef}{Construction pair.}
-A pair of commands on nodes $\nn$ and $n$ is a construction pair if $\nn=\parent(n)$ and the commands are one
+A pair of commands on nodes $\nn$ and $n$ is a construction pair if $\nn=\parent(n)$ 
+and the commands are one
 of the following:
    \begin{gather*}
    % bd>bf
@@ -499,12 +501,14 @@ and we do not note their output value as it is determined.
 
 \begin{myax}\label{ax_child_assert}
 An assertion command can be added on a descendant node:
-$\cbb(n)\cc \cxy(\nn,V_Y) \equiv \cxy(\nn,V_Y) \equiv \cxy(\nn,V_Y)\cc \cbb(n)$ where $\nn\descendant n$ and $\cxy\neq\cdd$.
+$\cbb(n)\cc \cxy(\nn,V_Y) \equiv \cxy(\nn,V_Y) \equiv \cxy(\nn,V_Y)\cc \cbb(n)$ 
+where $\nn\descendant n$ and $\cxy\neq\cdd$.
 \end{myax}
 
 \begin{myax}\label{ax_parent_assert}
 An assertion command can be added on an ancestor node:
-$\cdd(\nn)\cc \cxy(n,V_Y) \equiv \cxy(n,V_Y) \equiv \cxy(n,V_Y)\cc \cdd(\nn)$ where $\nn\descendant n$ and $\cxy\neq\cbb$.
+$\cdd(\nn)\cc \cxy(n,V_Y) \equiv \cxy(n,V_Y) \equiv \cxy(n,V_Y)\cc \cdd(\nn)$ 
+where $\nn\descendant n$ and $\cxy\neq\cbb$.
 \end{myax}
 
 \begin{myax}\label{ax_assert}
@@ -976,7 +980,7 @@ the rest of the proof is illustrated by the diagram below
 where Dom($x$), the domain of $x$, represents the set of filesystems
 the sequence $x$ does not break, or neither of the sequences in the set $x$ breaks.
 
-\input{inverse-works} % TODO arrows to small
+\input{inverse-works} % TODO arrows too small
 
 We see that the set of filesystems the sequences in $\seqset{A}$ do not break intersect with the range of $B$.
 As $B$ is a bijection between its domain and range, we can use $B^{-1}$ to map this intersection back
@@ -1042,14 +1046,15 @@ $\reca$: their intersection.
 
 \begin{mylem}\label{can_move_intersection}
 Let $A$ and $B$ be two simple sequences so that $\works{A, B}$.
-Then their intersection works on any filesystem
+Then their intersection, in some suitable order, also works on any filesystem
 either of them works on:
 $\worksc{A\cap B}{A}$, and, by symmetry,
 $\worksc{A\cap B}{B}$.
 \end{mylem}
 
 \begin{proof}
-First we prove the following:
+The difficulty is that commands in $A\cap B$ can occur anywhere in $A$.
+Therefore, first we prove the following:
 if all commands are marked in $A$ that also appear in $B$,
 then there is an $A'$ in $\orderset{A}$ in which all marked commands are at the beginning.
 
