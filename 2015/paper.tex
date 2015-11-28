@@ -552,9 +552,9 @@ assertion commands in the set.
 The next step in generating the sequences is to order the commands collected.
 As this task is at the heart of reconciliation itself independently of update detection,
 we discuss it in the next section.
+Then, in \cref{update_works}, we prove that the resulting sequence actually
+works without breaking the filesystem.
 
-% TODO
-TODO: Proof of correctness of update detection - the generated order will work
 
 % Ordering commands
 % ----------------
@@ -572,13 +572,21 @@ In this section we describe an algorithm with which all possible orderings of a
 simple set of commands can be generated, but before doing so, let us consider the following lemma.
 
 \begin{mylem}\label{connected_changes}
-If a simple set of commands, which can be applied to a filesystem in some order without breaking it,
-contains commands on $n$ and $\nn$ where $\nn\descendant n$
-but $\nn\neq\parent(n)$, then the set must also contain a command on $\parent(n)$.
+Given a set of commands that
+does not contain assertion commands,
+and which can be applied to a filesystem in some order without breaking it,
+and which contains commands on $n$ and $\nn$ where $\nn\descendant n$
+but $\nn\neq\parent(n)$, then the set must also contain a commands
+on each node between $n$ and $\nn$.
 \end{mylem}
 \begin{proof}
-We will prove this statement for simple sequences, as if all sequences must contain a command on $\parent(n)$
-under the given conditions, then so must sets because otherwise there would be no order in which thay can be
+We prove that under the given conditions, the set must contain a command on $\parent(n)$.
+Then, by repeating this statement, we how that the set must contain commands on every
+ancestor of $n$ up to $\nn$.
+
+Furthermore,
+we prove this proposition for sequences, not sets, as if all sequences must contain a command on $\parent(n)$,
+then so must sets because otherwise there would be no order in which they can be
 applied to any filesystem.
 
 Let $A$ be a sequence that satisfies the conditions;
@@ -591,7 +599,7 @@ Otherwise, consider the command next to $\cxy(n,V_Y)$ in the direction where $\c
 Let this command be $\cqr(m,V_R)$.
 If $\czw$ is to the right, then $A$ looks like the following:
 \[ A = \cdots\cc\cxy(n,V_Y)\cc\cqr(m,V_R)\cc\cdots\cc\czw(\nn,V_W)\cc\cdots \]
-If $n\unrel m$, reverse $\cxy$ and $\cqr$. Based on \cref{ax_separate_commute} we know that the new
+If $n\unrel m$, swap $\cxy$ and $\cqr$. Based on \cref{ax_separate_commute} we know that the new
 sequence is equivalent to $A$.
 Otherwise, we know $m\neq\parent(n)$ as there are no commands on $\parent(n)$, and so
 from \cref{ax_distantrel_breaks} we get $A\equiv\cbrk$ which contradicts our assumptions.
@@ -600,10 +608,6 @@ By repeating this step we can therefore convert $A$ into $A'$ where $\cxy$ and $
 However, then \cref{ax_distantrel_breaks} applies to the sequence and therefore $A\equiv A'\equiv\cbrk$ which
 is again a contradiction.
 \end{proof}
-
-By applying \cref{connected_changes} multiple times we see that if a simple set of commands
-contains two commands on related nodes, then it must contain a command on each
-node that is between these two nodes in the node tree.
 
 \medskip
 
@@ -669,27 +673,79 @@ there is a $U'\in\orderset{U}$ where they are next to each other.
 
 As a specific case, we can regard a sequence of commands $S$
 as a set and determine its $\orderset{S}$.
+An important property of simple sequences is that
+all of their valid permutations are equivalent,
+and all equivalent sequences are mere permutations:
 
-From the algorithm we also see that if a simple sequence $S$ works, then
-all sequences in $\orderset{S}$ are equivalent to it.
-As the sequences contain a single command on each node,
-their output must be the same on the same input unless
-they break the filesystem.
-However, the algorithm ensures that that will not be the case.
-% TODO
-(TODO: Is this enough?)
-Therefore:
-
-\begin{mycor}\label{simple_reorder_equiv}
+\begin{mylem}\label{simple_reorder_equiv}
 For any simple sequence $S\neq\cbrk$,
-all sequences in $\orderset{S}$ are equivalent.
-\end{mycor}
+$T\equiv S \Leftrightarrow T\in\orderset{S}$.
+\end{mylem}
+\begin{proof}
+TODO
+\end{proof}
 
 It follows from this that given a simple set,
 we can simply assume that it has an order.
 Accordingly, we will at times treat not only sequences as sets,
 but simple sets as sequences.
 
+
+\medskip
+
+% Correctness of update detection
+% -------------------------------
+
+Based on \cref{connected_changes} we can also show that
+the update detector does function as intended as:
+
+\begin{mylem}\label{update_works}
+A sequence returned by the update detector
+when comparing $\FS^*$ to the original $\FS$
+will not break $\FS$ if it is applied to it.
+\end{mylem}
+\begin{proof}
+Let $\FS\neq\fsbroken$ be the original filesystem, and $\FS^*\neq\fsbroken$
+be the filesystem after the changes we intend to detect.
+Let us assume that some mechanism recorded all changes that occurred
+to $\FS$ until it reached the state $\FS^*$.
+Our set if commands is sufficient to record any change, as
+there are commands for every input and output type pair, therefore
+we know that the changes can be recorded as a sequence of commands $S$
+where $S\FS=\FS^*$.
+Note that $S$ will not contain assertion commands, as they do not
+represent an actual change in the filesystem.
+
+Therefore, \cref{connected_changes} applies to $S$ and we know
+if it contains commands on $\nn$ and $n$ where $\nn\descendant n$,
+then it also contains commands on nodes in between;
+which is equivalent to saying that if $\FS$ changed
+at node $\nn$ and $n$, then it had to change on the nodes in between.
+
+If so, then, similarly to what happens in the ordering algorithm,
+we can separate $S$ into components of commands on related nodes,
+as commands from separate components freely commute yielding an equivalent sequence.
+From the arguments above, we also know that each component
+must be made up of only desctruction or only construction pairs,
+but not a mixture of the two.
+This means that in each component, parents either strictly precede or succeed child nodes
+(as otherwise $S\equiv\cbrk$ would hold),
+from which it follows that once the components are separated
+in a new sequence $S'\equiv S$,
+commands on the same nodes are next to each other in $S'$.
+
+Based on \cref{ax_same_emptyseq,ax_same_singlec} there is
+an $S''\eqnrw S'$ in which multiple commands on the same nodes
+are simplified into a single command or an empty sequence,
+and therefore $S''$ is simple and $S\equiv S'\eqext S''$.
+It is easy to see that $S''$ must contain the same commands
+as the output of the update detector, $U$, as both are simple
+but reflect all changes between $\FS$ and $\FS^*$.
+If so, then based on \cref{simple_reorder_equiv}
+we have $S''\in\orderset{U}$, from which
+$S\equiv S'\eqext S''\equiv U$, and as $S\FS = \FS^* \neq \fsbroken$,
+therefore $U\FS\neq\fsbroken$.
+\end{proof}
 
 \section{Reconciliation}
 
