@@ -679,7 +679,7 @@ and all equivalent sequences are mere permutations:
 
 \begin{mylem}\label{simple_reorder_equiv}
 For any simple sequence $S\neq\cbrk$,
-$T\equiv S \Leftrightarrow T\in\orderset{S}$.
+$\forall T: T\equiv S \Leftrightarrow T\in\orderset{S}$.
 \end{mylem}
 \begin{proof}
 TODO
@@ -699,11 +699,11 @@ but simple sets as sequences.
 Based on \cref{connected_changes} we can also show that
 the update detector does function as intended as:
 
-\begin{mylem}\label{update_works}
-A sequence returned by the update detector
+\begin{myth}\label{update_works}
+A sequence of commands returned by the update detector
 when comparing $\FS^*$ to the original $\FS$
 will not break $\FS$ if it is applied to it.
-\end{mylem}
+\end{myth}
 \begin{proof}
 Let $\FS\neq\fsbroken$ be the original filesystem, and $\FS^*\neq\fsbroken$
 be the filesystem after the changes we intend to detect.
@@ -1030,7 +1030,7 @@ with the only ``sink'' being $\fsbroken$:
 &(S\FS\ntypeeq S\GS \Leftrightarrow \FS\ntypeeq \GS).
 \end{align*}
 
-For
+For the proposition
 \[ \worksc{B\cc \seqset{A}}{\seqset{S}} \Rightarrow \worksc{\seqset{A}}{B^{-1}\cc \seqset{S}} \]
 the rest of the proof is illustrated by the diagram below
 where Dom($x$), the domain of $x$, represents the set of filesystems
