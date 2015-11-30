@@ -9,7 +9,7 @@
 \usepackage{cleveref}
 
 \newcommand{\setv}{\mathcal{V}} % Set of values
-\newcommand{\setvx}[1]{\mathcal{V}_{#1}}
+\newcommand{\setvx}[1]{\mathcal{V}_{#1}} % Set of values with custom index
 \newcommand{\setf}{\setvx{F}} % Set of file values
 \newcommand{\setd}{\setvx{D}} % Set of directory values
 \newcommand{\setb}{\setvx{\empt}} % Set of empty values
@@ -23,28 +23,52 @@
 \newcommand{\nn}{n^*} % parent node
 
 \newcommand{\cbrk}{\mathtt{break}} % 'break' command
-\newcommand{\fscommand}[2]{{#1#2}}
-\newcommand{\fsregcommandchar}[1]{\mathtt{#1}}
-\newcommand{\fsregcommand}[2]{\fscommand{\fsregcommandchar{#1}}{\fsregcommandchar{#2}}}
-\newcommand{\cbb}{\fsregcommand{\empt}{\empt}}
-\newcommand{\cbf}{\fsregcommand{\empt}{F}}
-\newcommand{\cbd}{\fsregcommand{\empt}{D}}
-\newcommand{\cfb}{\fsregcommand{F}{\empt}}
-\newcommand{\cff}{\fsregcommand{F}{F}}
-\newcommand{\cfd}{\fsregcommand{F}{D}}
-\newcommand{\cdb}{\fsregcommand{D}{\empt}}
-\newcommand{\cdf}{\fsregcommand{D}{F}}
-\newcommand{\cdd}{\fsregcommand{D}{D}}
-\newcommand{\cxy}{\fscommand{X}{Y}}
-\newcommand{\cyx}{\fscommand{Y}{X}}
-\newcommand{\cyz}{\fscommand{Y}{Z}}
-\newcommand{\cxz}{\fscommand{X}{Z}}
-\newcommand{\cxw}{\fscommand{X}{W}}
-\newcommand{\czw}{\fscommand{Z}{W}}
-\newcommand{\cqr}{\fscommand{Q}{R}}
-\newcommand{\cqq}{\fscommand{Q}{Q}}
+\newcommand{\ccharb}{\empt}
+\newcommand{\ccharf}{\mathtt{F}}
+\newcommand{\cchard}{\mathtt{D}}
+\newcommand{\vald}{d} % Directory value
+\newcommand{\valdi}{d_1}
+\newcommand{\valdii}{d_2}
+\newcommand{\valf}{f} % File value
+\newcommand{\valvx}{v_X} % Value of type X
+\newcommand{\valvy}{v_Y} % Value of type Y
+\newcommand{\valvw}{v_W}
+\newcommand{\valvr}{v_R}
+\newcommand{\typeset}{\{\cchard,\ccharf,\ccharb\}} % Set of types in commands
+\newcommand{\caa}[2]{\langle{#1,#2}\rangle}
+\newcommand{\caaa}[3]{\langle{#1,#2,#3}\rangle}
+\newcommand{\caaaa}[4]{\langle{#1,#2,#3,#4}\rangle}
+\newcommand{\cbb}{\caa{\ccharb}{\ccharb}}
+\newcommand{\cbba}[1]{\caaa{\ccharb}{\ccharb}{#1}}
+\newcommand{\cbf}{\caa{\ccharb}{\ccharf}}
+\newcommand{\cbfaa}[2]{\caaaa{\ccharb}{\ccharf}{#1}{#2}}
+\newcommand{\cbd}{\caa{\ccharb}{\cchard}}
+\newcommand{\cbdaa}[2]{\caaaa{\ccharb}{\cchard}{#1}{#2}}
+\newcommand{\cfb}{\caa{\ccharf}{\ccharb}}
+\newcommand{\cfba}[1]{\caaa{\ccharf}{\ccharb}{#1}}
+\newcommand{\cff}{\caa{\ccharf}{\ccharf}}
+\newcommand{\cfd}{\caa{\ccharf}{\cchard}}
+\newcommand{\cfdaa}[2]{\caaaa{\ccharf}{\cchard}{#1}{#2}}
+\newcommand{\cdb}{\caa{\cchard}{\ccharb}}
+\newcommand{\cdba}[1]{\caaa{\cchard}{\ccharb}{#1}}
+\newcommand{\cdf}{\caa{\cchard}{\ccharf}}
+\newcommand{\cdfaa}[2]{\caaaa{\cchard}{\ccharf}{#1}{#2}}
+\newcommand{\cdd}{\caa{\cchard}{\cchard}}
+\newcommand{\cdda}[1]{\caaa{\cchard}{\cchard}{#1}}
+\newcommand{\cxy}{\caa{X}{Y}}
+\newcommand{\cxyaa}[2]{\caaaa{X}{Y}{#1}{#2}}
+\newcommand{\cxynv}{\caaaa{X}{Y}{n}{\valvy}}
+\newcommand{\cxynnv}{\caaaa{X}{Y}{\nn}{\valvy}}
+\newcommand{\cxw}{\caa{X}{W}}
+\newcommand{\cxwnv}{\caaaa{X}{W}{n}{\valvw}}
+\newcommand{\czw}{\caa{Z}{W}}
+\newcommand{\czwnv}{\caaaa{Z}{W}{n}{\valvw}}
+\newcommand{\czwnnv}{\caaaa{Z}{W}{\nn}{\valvw}}
+\newcommand{\czwmv}{\caaaa{Z}{W}{m}{\valvw}}
+\newcommand{\cqr}{\caa{Q}{R}}
+\newcommand{\cqrmv}{\caaaa{Q}{R}{m}{\valvr}}
+\newcommand{\cqrov}{\caaaa{Q}{R}{o}{\valvr}}
 
-\newcommand{\typeset}{\{\fsregcommandchar{D},\fsregcommandchar{F},\empt\}} % Set of types in commands
 \newcommand{\cc}{\circ} % Command / sequence concatenation
 \newcommand{\descendant}{\prec}
 \newcommand{\descendantEq}{\preceq}
@@ -169,8 +193,8 @@ transition diagram:
 
 \input{type-transition}
 
-In this paper, we write $F$ for an arbitrary element of $\setf$, and $D$ for an arbitrary element
-of $\setd$. $V$ is a value from $\setv$ and $n$ and $m$ are nodes in $\setn$.
+In this paper, we write $\valf$ for an arbitrary element of $\setf$, and $\vald$ for an arbitrary element
+of $\setd$. $TODO$ is a value from $\setv$ and $n$ and $m$ are nodes in $\setn$.
 
 
 
@@ -229,12 +253,13 @@ and in order to resolve this asymmetry, we propose a set of commands that encode
 the type of the original state of $\FS(n)$ as well.
 (Some real-life filesystem commands like $rmdir$ do this already.)
 
+% TODO: tuple / quadruple
 We therefore propose to have a command for each pair of types.
 For want of a better system, we will name our commands by concatenating
-two of $\fsregcommandchar{D}$, $\fsregcommandchar{F}$ and $\fsregcommandchar{\empt}$, 
+two of $\cchard$, $\ccharf$ and $\ccharb$, 
 where the left sign denotes the type of value
 required in the filesystem before the command is applied, and the right sign notes the type
-afterwards. For example, $mkdir(n,D)$ is $\cbd(n,D)$, and $rmdir(n)$ is $\cdb(n)$.
+afterwards. For example, $mkdir(n,D)$ is $\cbdaa{n}{D}$, and $rmdir(n)$ is $\cdba{n}$.
 
 A command can only succeed if the original value at node $n$ has a type that matches
 the input type of the command. If this is not the case, or if the resulting
@@ -246,7 +271,7 @@ So that we could reason about sequences of commands that break every filesystem
 in the algebra, we introduce the command $\cbrk$ that simply breaks every filesystem.
 
 We note that a command or a sequence of commands is applied to a filsystem
-by prefixing the command or sequence to it, for example: $\cbrk\FS$, $\cbd(n,D)\FS$, 
+by prefixing the command or sequence to it, for example: $\cbrk\FS$, $\cbdaa{n}{\vald}\FS$, 
 or $S\FS$ if $S$ is a sequence of commands.
 
 \begin{mydef}
@@ -263,11 +288,11 @@ The exact behavior of our commands is as follows:
 \begin{itemize}
 \item $\cbrk\FS = \fsbroken$
 \item
-All other commands have the generic form $\cxy(n,V_Y)$ where
+All other commands have the generic form $\cxynv$ where
 $X$ and $Y$ are types in $\typeset$,
-$n\in\setn$ and $V_Y$ is a value of the appropriate type from $\setvx{Y}$.
-At times we omit $V_Y$ if there is only one suitable value.
-\[ \cxy(n,V_Y)\FS = 
+$n\in\setn$ and $\valvy$ is a value of the appropriate type from $\setvx{Y}$.
+At times we omit $\valvy$ if there is only one suitable value.
+\[ \cxynv\FS = 
    \begin{cases}
    \fsbroken &\mbox{if~} \FS=\fsbroken\\
    \fsbroken &\mbox{if~} \FS(n)\not\in\setvx{X}\\
@@ -279,10 +304,10 @@ At times we omit $V_Y$ if there is only one suitable value.
 
 
 In general, when we describe multiple or unknown commands, we may substitute one or both
-of their types with variables, as we did with $\cxy(n,V_Y)$. In this context,
-if we write that $\cxy=\czw$, we mean that the input and output types
+of their types with variables, as we did with $\cxynv$. In this context,
+if we write that $\cxy=\czw$, we mean that the input and output types % TODO needed?
 of the commands are the same ($X=Z$ and $Y=W$), while a full equiality 
-($\cxy(n,V_Y)=\czw(n,V_W)$)
+($\cxynv=\czwmv$)
 implies
 that their output value is also the same.
 
@@ -325,7 +350,7 @@ we receive a set of commands with uncertain ordering.
 Applying commands to a filesystem, however, happens in time,
 so for this we need a sequence of commands.
 We use $\cc$ to concatenate commands to form a sequence, or concatenate sequences to form a longer sequence:
-$S=\cbd(n)\cc \cbf(m,F)$, or $S'=S\cc\cbb(o)$.
+$S=\cbdaa{n}{\vald}\cc\cbfaa{m}{\valf}$, or $S'=S\cc\cbba{o}$.
 We write $\emptyseq$ for the empty sequence.
 
 TODO: Sequences of commands, in the usual way,  form a free
@@ -409,41 +434,41 @@ See section (TODO) for more about such a model.
 \medskip
 
 Pairs of commands in general have the form
-\[ \cxy(n,V_Y)\cc  \czw(m,V_W) \]
+\[ \cxynv\cc  \czwmv \]
 where $X,Y,Z,W\in\typeset$, $n,m\in\setn$, 
 and values are of the appropriate type: 
-$V_Y\in\setvx{Y}$ and $V_W\in\setvx{W}$.
+$\valvy\in\setvx{Y}$ and $\valvw\in\setvx{W}$.
 
 \begin{myax}\label{ax_separate_commute}
 Commands on unrelated nodes commute:
-$\cxy(n,V_Y)\cc \czw(m,V_W) \equiv \czw(m,V_W)\cc \cxy(n,V_Y)$ where $n\unrel m$.
+$\cxynv\cc\czwmv \equiv \czwmv\cc\cxynv$ where $n\unrel m$.
 \end{myax}
 
 \begin{myax}\label{ax_separate_nobreaks}
 Commands on unrelated nodes do not break every filesystem:
-$\cxy(n,V_Y)\cc \czw(m,V_W) \nequiv \cbrk$ where $n\unrel m$.
+$\cxynv\cc\czwmv \nequiv \cbrk$ where $n\unrel m$.
 \end{myax}
 
 \begin{myax}\label{ax_same_breaks}
 Commands on the same node break every filesystem if their types are incompatible:
-$\cxy(n,V_Y)\cc \czw(n,V_W) \equiv \cbrk$ where $Y\ne Z$.
+$\cxynv\cc\czwnv \equiv \cbrk$ where $Y\ne Z$.
 \end{myax}
 
 \begin{myax}\label{ax_same_emptyseq}
 Commands on the same node simplify:
-$\cxy(n,V_Y)\cc \czw(n,V_W) \eqext \emptyseq$ where $Y=Z$ and $X=W=\fsregcommandchar{\empt}$ 
-or $X=W=\fsregcommandchar{D}$.
+$\cxynv\cc\czwnv \eqext \emptyseq$ where $Y=Z$ and $X=W=\ccharb$ 
+or $X=W=\cchard$.
 \end{myax}
 
 \begin{myax}\label{ax_same_singlec}
 Commands on the same node simplify:
-$\cxy(n,V_Y)\cc  \czw(n,V_W) \equiv \cxw(n,V_W)$ where $Y=Z$ and $XW\neq\cbb$ and $XW\neq\cdd$.
+$\cxynv\cc \czwnv \equiv \cxwnv$ where $Y=Z$ and $\cxw\neq\cbb$ and $\cxw\neq\cdd$.
 \end{myax}
 
 \begin{myax}\label{ax_distantrel_breaks}
 Commands on distant relatives break all filesystems:
-$\cxy(\nn,V_Y)\cc  \czw(n,V_W) \equiv \cbrk$
-and $\czw(n,V_W)\cc \cxy(\nn,V_Y) \equiv\cbrk$
+$\cxynnv\cc\czwnv \equiv \cbrk$
+and $\czwnv\cc\cxynnv \equiv\cbrk$
 where $\nn\descendant n$ and $\nn\neq\parent(n)$ and $\cxy\neq\cdd$ and $\czw\neq\cbb$.
 \end{myax}
 
@@ -453,19 +478,19 @@ and the commands are one
 of the following:
    \begin{gather*}
    % bd>bf
-            \cbd(\nn, D)\cc  \cbf(n, F) \\
+            \cbdaa{\nn}{\vald}\cc  \cbfaa{n}{\valf} \\
    % bd>bd
-            \cbd(\nn, D_1)\cc  \cbd(n, D_2) \\
+            \cbdaa{\nn}{\valdi}\cc  \cbdaa{n}{\valdii} \\
    % fd>bf
-            \cfd(\nn, D)\cc  \cbf(n, F) \\
+            \cfdaa{\nn}{\vald}\cc  \cbfaa{n}{\valf} \\
    % fd>bd
-            \cfd(\nn, D_1)\cc  \cbd(n, D_2)
+            \cfdaa{\nn}{\valdi}\cc  \cbdaa{n}{\valdii}
    \end{gather*}
 \end{mydef}
 
 \begin{myax}\label{ax_directchild_breaks}
 All other commands on a child break every filesystem:
-$\cxy(\nn,V_Y)\cc  \czw(n,V_W) \equiv \cbrk$ where $\nn=\parent(n)$ and $\cxy\neq\cdd$ and $\czw\neq\cbb$
+$\cxynnv\cc\czwnv \equiv \cbrk$ where $\nn=\parent(n)$ and $\cxy\neq\cdd$ and $\czw\neq\cbb$
 and the pair is not a construction pair.
 \end{myax}
 
@@ -474,19 +499,19 @@ A pair of commands on nodes $n$ and $\nn$ is a destruction pair if $\parent(n)=\
 of the following:
    \begin{gather*}
    % fb<db ??
-            \cfb(n)\cc  \cdb(\nn) \\
+            \cfba{n}\cc  \cdba{\nn} \\
    % fb<df ??
-            \cfb(n)\cc  \cdf(\nn, F) \\
+            \cfba{n}\cc  \cdfaa{\nn}{\valf} \\
    % db<db ??
-            \cdb(n)\cc  \cdb(\nn) \\
+            \cdba{n}\cc  \cdba{\nn} \\
    % db<df ??
-            \cdb(n)\cc  \cdf(\nn, F)
+            \cdba{n}\cc  \cdfaa{\nn}{\valf}
    \end{gather*}
 \end{mydef}
 
 \begin{myax}\label{ax_directparent_breaks}
 All other commands on a parent break every filsystem:
-$\cxy(n,V_Y)\cc  \czw(\nn,V_W) \equiv \cbrk$ where $\parent(n)=\nn$ and $\cxy\neq\cbb$ and $\czw\neq\cdd$
+$\cxynv\cc\czwnnv \equiv \cbrk$ where $\parent(n)=\nn$ and $\cxy\neq\cbb$ and $\czw\neq\cdd$
 and the pair is not a destruction pair.
 \end{myax}
 
@@ -495,25 +520,25 @@ A command is an assertion command if
 for every filesystem it either breaks it or leaves it in the same state.
 In other words, assertion commands have the same input and output type,
 and there must also be only one possible value for their output.
-Accordingly, in our current algebra, $\cbb(n)$ and $\cdd(n)$ are the only two assertion commands,
+Accordingly, in our current algebra, $\cbba{n}$ and $\cdda{n}$ are the only two assertion commands,
 and we do not note their output value as it is determined.
 \end{mydef}
 
 \begin{myax}\label{ax_child_assert}
 An assertion command can be added on a descendant node:
-$\cbb(n)\cc \cxy(\nn,V_Y) \equiv \cxy(\nn,V_Y) \equiv \cxy(\nn,V_Y)\cc \cbb(n)$ 
+$\cbba{n}\cc\cxynnv \equiv \cxynnv \equiv \cxynnv\cc\cbba{n}$ 
 where $\nn\descendant n$ and $\cxy\neq\cdd$.
 \end{myax}
 
 \begin{myax}\label{ax_parent_assert}
 An assertion command can be added on an ancestor node:
-$\cdd(\nn)\cc \cxy(n,V_Y) \equiv \cxy(n,V_Y) \equiv \cxy(n,V_Y)\cc \cdd(\nn)$ 
+$\cdda{\nn}\cc\cxynv \equiv \cxynv \equiv \cxynv\cc\cdda{\nn}$ 
 where $\nn\descendant n$ and $\cxy\neq\cbb$.
 \end{myax}
 
 \begin{myax}\label{ax_assert}
 Assertion commands can be removed:
-$\cxy(n,V_Y) \eqext \emptyseq$ where $\cxy=\cbb$ or $\cxy=\cdd$.
+$\cxynv \eqext \emptyseq$ where $\cxy=\cbb$ or $\cxy=\cdd$.
 \end{myax}
 
 
@@ -532,7 +557,7 @@ by comparing $\FS_A$ and $\FS_B$ to their common ancestor, $\FS$. This is called
 A sequence that transforms $\FS$ into $\FS_A$ must contain at least one command on each node
 that changes between the two states of the filesystem. Also, it is easy to see that this is also
 sufficient, as there are commands available for any input and output value. 
-Specifically, if at node $n$, $\FS(n)=X'$ and $\FS_A(n)=Y'\neq X'$, then we add the command $\cxy(n,Y')$ to $A$
+Specifically, if at node $n$, $\FS(n)=X'$ and $\FS_A(n)=Y'\neq X'$, then we add the command $\cxyaa{n}{Y'}$ to $A$
 where $X'\in\setvx{X}$ and $Y'\in\setvx{Y}$.
 
 To be able to describe such sequences better, let us introduce the following properties:
@@ -590,21 +615,21 @@ then so must sets because otherwise there would be no order in which they can be
 applied to any filesystem.
 
 Let $A$ be a sequence that satisfies the conditions;
-we therefore know that it contains a command $\cxy(n,V_Y)$ on $n$
-and another command $\czw(\nn,V_W)$ on $\nn$.
+we therefore know that it contains a command $\cxynv$ on $n$
+and another command $\czwnnv$ on $\nn$.
 We use an indirect proof and assume that there are no commands on $\parent(n)$ in $A$.
 Next, we create a new sequence $A'\equiv A$ in which $\cxy$ and $\czw$ are next to each other.
 If they are already next to each other in $A$, there is nothing to do.
-Otherwise, consider the command next to $\cxy(n,V_Y)$ in the direction where $\czw(\nn,V_W)$ is.
-Let this command be $\cqr(m,V_R)$.
+Otherwise, consider the command next to $\cxynv$ in the direction where $\czwnnv$ is.
+Let this command be $\cqrmv$.
 If $\czw$ is to the right, then $A$ looks like the following:
-\[ A = \cdots\cc\cxy(n,V_Y)\cc\cqr(m,V_R)\cc\cdots\cc\czw(\nn,V_W)\cc\cdots \]
-If $n\unrel m$, swap $\cxy$ and $\cqr$. Based on \cref{ax_separate_commute} we know that the new
+\[ A = \cdots\cc\cxynv\cc\cqrmv\cc\cdots\cc\czwnnv\cc\cdots \]
+If $n\unrel m$, swap $\cxynv$ and $\cqrmv$. Based on \cref{ax_separate_commute} we know that the new
 sequence is equivalent to $A$.
 Otherwise, we know $m\neq\parent(n)$ as there are no commands on $\parent(n)$, and so
 from \cref{ax_distantrel_breaks} we get $A\equiv\cbrk$ which contradicts our assumptions.
 (Note that $A$ cannot contains assertion commands.)
-By repeating this step we can therefore convert $A$ into $A'$ where $\cxy$ and $\czw$ are neighboring commands.
+By repeating this step we can therefore convert $A$ into $A'$ where $\cxynv$ and $\czwnnv$ are neighboring commands.
 However, then \cref{ax_distantrel_breaks} applies to the sequence and therefore $A\equiv A'\equiv\cbrk$ which
 is again a contradiction.
 \end{proof}
@@ -674,8 +699,8 @@ there is a $U'\in\orderset{U}$ where they are next to each other.
 As a specific case, we can regard a sequence of commands $S$
 as a set and determine its $\orderset{S}$.
 An important property of simple sequences is that
-all of their valid permutations are equivalent,
-and all equivalent sequences are mere permutations:
+all of their valid orderings are equivalent,
+and all equivalent sequences are mere reorderings:
 
 \begin{mylem}\label{simple_reorder_equiv}
 For any simple sequence $S\neq\cbrk$,
@@ -777,7 +802,7 @@ we can now define independent sequences and
 our reconciliation algorithm.
 
 \begin{mydef}{Independent commands, sequences and sets.}
-For two commands $\cxy$ and $\czw$ we write $\cxy\indep\czw$ if $\cxy\cc \czw\equiv\czw\cc \cxy\nequiv\cbrk$.
+For two commands $\cxynv$ and $\czwmv$ we write $\cxynv\indep\czwmv$ if $\cxynv\cc\czwmv \equiv \czwnv\cc\cxynv \nequiv \cbrk$.
 For two sequences or sets of commands $A$ and $B$ we write $A\indep B$ if
 $\forall a\in A \mbox{~and~} \forall b\in B: a\indep b$.
 \end{mydef}
@@ -866,23 +891,23 @@ We also prove the following lemmas.
 
 \begin{mylem}\label{unrelated_is_independent}
 Two different commands that are not assertion commands are independent iff the nodes they change are unrelated:
-\[ \cxy(n,V_Y)\indep\czw(m,V_W) \Leftrightarrow n\unrel m \]
-if $\cxy(n,V_Y)\neq\czw(m,V_W)$ and none of $\cxy$ and $\cxw$ is $\cbb$ or $\cdd$.
+\[ \cxynv\indep\czwmv \Leftrightarrow n\unrel m \]
+if $\cxynv\neq\czwmv$ and none of $\cxy$ and $\cxw$ is $\cbb$ or $\cdd$.
 \end{mylem}
 \begin{proof}
 We proceed in two steps; first, we prove that
-\[ \cxy(n,V_Y)\nindep\czw(m,V_W) \wedge n\unrel m \] would lead to contradiction.
+\[ \cxynv\nindep\czwmv \wedge n\unrel m \] would lead to contradiction.
 By definition, if the two commands are not independent, then at least one of the following holds:
 \begin{itemize}
-\item $\czw(m,V_W)\cc \cqr(o,V_R) \equiv\cbrk$
-\item $\cqr(o,V_R)\cc \czw(m,V_W) \equiv\cbrk$
-\item $\czw(m,V_W)\cc \cqr(o,V_R) \nequiv \cqr(o,V_R)\cc \czw(m,V_W)$
+\item $\czwmv\cc \cqrov \equiv\cbrk$
+\item $\cqrov\cc \czwmv \equiv\cbrk$
+\item $\czwmv\cc \cqrov \nequiv \cqrov\cc \czwmv$
 \end{itemize}
 However, from \cref{ax_separate_commute,ax_separate_nobreaks} we also know that
 if $n\unrel m$ then none of the above can be true.
 
 Next, we prove that
-\[ \cxy(n,V_Y)\indep\czw(m,V_W) \wedge n\nunrel m \] would lead to contradiction.
+\[ \cxynv\indep\czwmv \wedge n\nunrel m \] would lead to contradiction.
 As $n\nunrel m$
 we know that $n=m$, $n\descendant m$ or $m\descendant n$.
 
@@ -890,44 +915,44 @@ If $n=m$, then from \cref{ax_same_breaks} we know $Y=Z$ and $W=X$
 as otherwise the commands, in one order or the other, would break all filesystems
 and they could not be independent.
 The commands are not assertion commands, and so from \cref{ax_same_singlec}
-we know that $\cxy(n,V_Y)\cc\czw(n,V_W)\equiv\czw(n,V_W)\cc\cxy(n,V_Y)$ can only happen if $Y=W$ and $V_Y=V_W$.
+we know that $\cxynv\cc\czwnv\equiv\czwnv\cc\cxynv$ can only happen if $Y=W$ and $\valvy=\valvw$.
 Therefore $X=Y=Z=W$ which is only possible if both commands are $\cff$ and have the same
 output value. This, however, contradicts our assumption that they are different.
 
 If $n\descendant m$ or $m\descendant n$, then
 from \cref{ax_distantrel_breaks} we know that if they are not directly related,
-then $\cxy(n,V_Y)\cc\czw(m,V_W)$ breaks all filesystems, and they cannot be independent.
+then $\cxynv\cc\czwmv$ breaks all filesystems, and they cannot be independent.
 From the construction and destruction pairs and 
 \cref{ax_directchild_breaks,ax_directparent_breaks} we also see that
 even if they are directly related, either
-$\cxy(n,V_Y)\cc\czw(m,V_W)$ or $\czw(m,V_W)\cc\cxy(n,V_Y)$ 
+$\cxynv\cc\czwmv$ or $\czwmv\cc\cxynv$ 
 breaks all filesystems, so they again cannot be independent.
 \end{proof}
 
 \begin{myax}\label{combine_independent_commands}
 The combination of independent commands works wherever the original commands work:
 \begin{align*}
-\forall\FS: &\cxy(n,C_Y)\indep \czw(m,C_W) \\
-&\quad\wedge \cxy(n,C_Y)\FS\neq\fsbroken \\
-&\quad\wedge \czw(m,C_W)\FS\neq\fsbroken \\
-&\Rightarrow \cxy(n,C_Y)\cc \czw(m,C_W)\FS\neq\fsbroken.
+\forall\FS: &\cxynv\indep \czwmv \\
+&\quad\wedge \cxynv\FS\neq\fsbroken \\
+&\quad\wedge \czwmv\FS\neq\fsbroken \\
+&\Rightarrow \cxynv\cc \czwmv\FS\neq\fsbroken.
 \end{align*}
 \end{myax}
 \begin{proof}
 We name this proposition an axiom for the same reason as above,
 but it is easy to provide an indirect proof based on our filesystem model.
-Assume that $\cxy(n,C_Y)\cc \czw(m,C_W)\FS=\fsbroken$.
-We know $\cxy(m,C_Y)\FS\neq\fsbroken$ so it must be applying 
-$\czw(m,C_W)$ that breaks it.
+Assume that $\cxynv\cc \czwmv\FS=\fsbroken$.
+We know $\cxynv\FS\neq\fsbroken$ so it must be applying 
+$\czwmv$ that breaks it.
 Applying a command can only result in a broken filesystem in three cases.
 First, if the filesystem was already broken, which cannot be the case here.
 Second, if the input type does not match the filesystem,
 but we know $\FS(m)\in\setvx{W}$ and so
-$(\cxy(m,C_Y)\FS)(m)\in\setvx{W}$ as based on \cref{unrelated_is_independent}, $n\neq m$.
+$(\cxynv\FS)(m)\in\setvx{W}$ as based on \cref{unrelated_is_independent}, $n\neq m$.
 Third, if the new filesystem violates the tree property.
 This again cannot be the case because we also know that $n\unrel m$
 and the tree property only depends on the types of the parent and children of $m$,
-which therefore cannot be changed by $\cxy(m,C_Y)$.
+which therefore cannot be changed by $\cxynv$.
 \end{proof}
 
 This result can be extended to sequences:
@@ -976,12 +1001,12 @@ Separately, we prove the following:
 
 \begin{mylem}\label{worksinputmatch}
 If $A$ and $B$ are minimal sequences, $\works{A,B}$,
-and there are commands on node $n$ in both $A$ ($\cxy(n, V_Y)\in A$) and $B$ ($\czw(n, V_W)\in B$)
+and there are commands on node $n$ in both $A$ ($\cxynv\in A$) and $B$ ($\czwnv\in B$)
 then their input types must match ($X=Z$).
 \end{mylem}
 \begin{proof}
 This is easily shown using an indirect proof: if $X\neq Z$, then there is no filesystem that
-either $\cxy(n, V_Y)$ or $\czw(n, V_W)$ would not break, 
+either $\cxynv$ or $\czwnv$ would not break, 
 and consequently $A$ and $B$ cannot work on the same filesystem.
 \end{proof}
 
@@ -994,7 +1019,7 @@ which allow us to move parts of sequences between the
 condition and consequence parts of $\workssign$.
 
 \begin{mydef}{Inverse commands and sequences.}
-The inverse of command $\cxy(n,V_Y)$ is $\cxy(n,V_Y)^{-1} = \cyx(n,V_X)$
+The inverse of command $\cxynv$ is $\cxynv^{-1} = \caaaa{Y}{X}{n}{\valvx}$
 where $V_X$ is an arbitrary value from $\setvx{X}$.
 We write $S^{-1}$ for the inverse of sequence $S$, which consists of the inverses of the commands in $S$
 in reverse order.
@@ -1124,8 +1149,8 @@ a suitable $A'$.
 \medskip
 
 Let us consider therefore the marked command preceded by an unmarked command in $A$,
-and let the marked command be $\cxy(n, V_Y)$, 
-and the preceding unmarked command be $\czw(m, V_W)$.
+and let the marked command be $\cxynv$, 
+and the preceding unmarked command be $\czwmv$.
 As $A$ is simple and $\works{A}$, from 
 \cref{ax_distantrel_breaks,ax_directchild_breaks,ax_directparent_breaks}
 we know that these commands can only be on unrelated paths or form a construction or destruction pair.
@@ -1152,11 +1177,11 @@ from which we know that $B'\equiv B$.
 We also know that $B'$ is still minimal (but no longer simple).
 
 In either case, therefore,
-we have a minimal $B'$ which has a command on $m$ just before $\cxy(n, V_Y)$ and $B'\equiv B$.
-Let this command on $m$ be $\cqr(m, V_R)$.
+we have a minimal $B'$ which has a command on $m$ just before $\cxynv$ and $B'\equiv B$.
+Let this command on $m$ be $\cqrmv$.
 \begin{gather*}
-A = \cdots\cc  \czw(m, V_W)\cc  \cxy(n, V_Y)\cc  \cdots \\
-B' = \cdots\cc  \cqr(m, V_R)\cc  \cxy(n, V_Y)\cc  \cdots
+A = \cdots\cc  \czwmv\cc  \cxynv\cc  \cdots \\
+B' = \cdots\cc  \cqrmv\cc  \cxynv\cc  \cdots
 \end{gather*}
 
 As $\works{A,B}$ and so $\works{A,B'}$, 
@@ -1165,7 +1190,7 @@ we know that $Q=Z$.
 
 Going back to the construction and destruction pairs we see that the output type of the first command
 is always the same, and it is either $D$ or $\empt$ depending on the relationship between $n$ and $m$.
-Therefore $R=W$ and $\cqr(m, V_R)=\czw(m, V_W)$
+Therefore $R=W$ and $\cqrmv=\czwmv$
 as $|\setd|=|\setb|=1$. 
 If $B$ originally had a command on $m$,
 this is a contradiction as $\czw$ was not marked, but we see it must also be in $B'$ and therefore in $B$.
@@ -1245,8 +1270,8 @@ We show that these commands are independent and so they can be swapped
 resulting in an equivalent sequence.
 By repeating this process we can generate a suitable $S'$.
 
-Let therefore the marked command in $S$ be $\cxy(n,V_Y)$
-and the preceding unmarked command be $\czw(m,V_W)$.
+Let therefore the marked command in $S$ be $\cxynv$
+and the preceding unmarked command be $\czwmv$.
 As $S$ is simple and $\works{S}$, from 
 \cref{ax_distantrel_breaks,ax_directchild_breaks,ax_directparent_breaks}
 we know that these commands can only be on unrelated paths or form a construction or destruction pair.
@@ -1255,17 +1280,17 @@ we only need to show that the other two cases are not possible as they would lea
 
 In the last two cases, we know that either $m=\parent(n)$ or $n=\parent(m)$.
 We also know that because of {\condApr} there must be 
-a command $\cqr(o,V_R)$ in $T$ which is not independent of $\czw(m,V_W)$
-as $\czw(m,V_W)$ is not part of $S^*$.
+a command $\cqrov$ in $T$ which is not independent of $\czwmv$
+as $\czwmv$ is not part of $S^*$.
 \begin{gather*}
-S = \cdots\cc  \czw(m, V_W)\cc  \cxy(n, V_Y)\cc  \cdots \\
-T = \cdots\cc  \cqr(o, V_R)\cc \cdots
+S = \cdots\cc  \czwmv\cc  \cxynv\cc  \cdots \\
+T = \cdots\cc  \cqrov\cc \cdots
 \end{gather*}
 We know none of these commands is an assertion command, and 
-from {\condDisj} that $\cqr(o,V_R)\neq\czw(m,V_W)$.
+from {\condDisj} that $\cqrov\neq\czwmv$.
 Therefore, based on \cref{unrelated_is_independent} we know this means that
 either $m\descendantEq o$ or $o\descendantEq m$.
-From {\condApr} we also know that $\cxy(n,V_Y)\indep \cqr(o,V_R)$,
+From {\condApr} we also know that $\cxynv\indep \cqrov$,
 and so because of \cref{unrelated_is_independent},
 $n\unrel o$.
 
@@ -1281,14 +1306,24 @@ We therefore have four cases considering the relationships between $n,m$ and $o$
    Let us continue with this case.
 \end{itemize}
 
-We know that $T$ cannot have a command on $m$ as $m=\parent(n)$ and $\cxy(n,V_Y)\indep T$,
+We know that $T$ cannot have a command on $m$ as $m=\parent(n)$ and $\cxynv\indep T$,
 and so $m\neq o$ and therefore $m\descendant o$.
 This means we can create a new sequence $T'\equiv T$ by inserting a command on 
-$m$ into $T$ before $\cqr(o,V_R)$
+$m$ into $T$ before $\cqrov$
 according to \cref{ax_parent_assert}.
-We now have $\cxy(n,V_Y)\indep T\equiv T'$ which is a contradiction as
+We now have $\cxynv\indep T\equiv T'$ which is a contradiction as
 $T'$ has a command on $m$ and $m=\parent(n)$.
 \end{proof}
+
+
+\medskip
+
+% Reconciliation is maximal
+% -------------------------
+% This is where we're using |D|=1
+% C.f. strict / liberal etc. reconciliation in references
+
+
 
 % TODO
 TODO: $\reca$ is maximal
