@@ -87,7 +87,7 @@
 \newcommand{\works}[1]{\workssign({#1})}
 \newcommand{\worksc}[2]{\workssign({#1}\mathrel{|}{#2})}
 
-\newcommand{\typeeq}{\stackrel{t}{=}}
+\newcommand{\typeeq}{\stackrel{t}{=}} % Type equality
 \newcommand{\ntypeeq}{\centernot{\stackrel{t}{=}}}
 
 \newcommand{\emptyseq}{\lambda} % empty sequence
@@ -99,13 +99,18 @@
 \newcommand{\reca}{\recchar{A}{B}{}} % Reconciled from A
 \newcommand{\recb}{\recchar{B}{A}{}} % Reconciled from B
 
+\newcommand{\acb}{(A\cap B)}
+\newcommand{\acbi}{\acb^{-1}}
+\newcommand{\amb}{(A\setminus B)}
+\newcommand{\bma}{(B\setminus A)}
+
 \theoremstyle{definition}
 
 \newtheorem{mydef}{Definition}
 \crefname{mydef}{definition}{definitions}
 
-\newtheorem{myax}{Axiom}
-\crefname{myax}{axiom}{axioms}
+\newtheorem{myax}{Rule}
+\crefname{myax}{rule}{rules}
 
 \newtheorem{mylem}{Lemma}
 \crefname{mylem}{lemma}{lemmas}
@@ -117,8 +122,7 @@
 \crefname{mycor}{corollary}{corollaries}
 
 
-\title{The Correctness of Algebraic File Synchronization}
-
+\title{Complete Algebraic File Synchronization}
 \author{Elod Pal Csirmaz}
 
 \begin{document}
@@ -128,6 +132,8 @@ Abstract goes here
 \end{abstract}
 
 \section{Introduction}
+
+% TODO Thank-you Laszlo Csirmaz, Bill Zissimopoulos
 
 Synchronizing data structures, and filesystems in particular,
 is a task that we encounter more and more often in our world
@@ -193,8 +199,11 @@ transition diagram:
 
 \input{type-transition}
 
-In this paper, we write $\valf$ for an arbitrary element of $\setf$, and $\vald$ for an arbitrary element
-of $\setd$. $TODO$ is a value from $\setv$ and $n$ and $m$ are nodes in $\setn$.
+In this paper, 
+we write $n$ and $m$ for nodes in $\setn$,
+and use lowercase Greek letters to denote commands. % TODO but very rarely
+We use $\valf$ for an arbitrary element of $\setf$, and $\vald$ for an arbitrary element
+of $\setd$. $TODO$ is a value from $\setv$ .
 
 
 
@@ -402,7 +411,7 @@ We write $n\unrel m$, or ``$n$ and $m$ are unrelated'' if $n\not\descendantEq m$
 % Command pairs - Axioms
 % ----------------------
 
-\section{Investigating command pairs}
+\section{Investigating command pairs}\label{section_axioms}
 
 Our aim is to derive information about the effects of sequences
 of commands independently of that actual filesystems.
@@ -618,11 +627,11 @@ Let $A$ be a sequence that satisfies the conditions;
 we therefore know that it contains a command $\cxynv$ on $n$
 and another command $\czwnnv$ on $\nn$.
 We use an indirect proof and assume that there are no commands on $\parent(n)$ in $A$.
-Next, we create a new sequence $A'\equiv A$ in which $\cxy$ and $\czw$ are next to each other.
+Next, we create a new sequence $A'\equiv A$ in which $\cxynv$ and $\czwnnv$ are next to each other.
 If they are already next to each other in $A$, there is nothing to do.
 Otherwise, consider the command next to $\cxynv$ in the direction where $\czwnnv$ is.
 Let this command be $\cqrmv$.
-If $\czw$ is to the right, then $A$ looks like the following:
+If $\czwnnv$ is to the right, then $A$ looks like the following:
 \[ A = \cdots\cc\cxynv\cc\cqrmv\cc\cdots\cc\czwnnv\cc\cdots \]
 If $n\unrel m$, swap $\cxynv$ and $\cqrmv$. Based on \cref{ax_separate_commute} we know that the new
 sequence is equivalent to $A$.
@@ -669,7 +678,7 @@ and via \cref{ax_separate_commute} there would be no ordering of the whole set, 
 To order the commands in the component,
 select the command with the topmost node, so that there would be no command
 on its parent node (if there is one). 
-If the command removes content at this node (it is of the form $X\empt$), 
+If the command removes content at this node (it is of the form $\caa{X}{\ccharb}$), 
 then it must follow all other commands in the component, and
 all parent--child pairs in the whole component must be destruction pairs.
 Otherwise, the command with the topmost node needs to precede the other commands,
@@ -766,8 +775,8 @@ and therefore $S''$ is simple and $S\equiv S'\eqext S''$.
 It is easy to see that $S''$ must contain the same commands
 as the output of the update detector, $U$, as both are simple
 but reflect all changes between $\FS$ and $\FS^*$.
-If so, then based on \cref{simple_reorder_equiv}
-we have $S''\in\orderset{U}$, from which
+If so, then $S''\in\orderset{U}$ and based on \cref{simple_reorder_equiv}
+we have
 $S\equiv S'\eqext S''\equiv U$, and as $S\FS = \FS^* \neq \fsbroken$,
 therefore $U\FS\neq\fsbroken$.
 \end{proof}
@@ -804,20 +813,21 @@ our reconciliation algorithm.
 \begin{mydef}{Independent commands, sequences and sets.}
 For two commands $\cxynv$ and $\czwmv$ we write $\cxynv\indep\czwmv$ if $\cxynv\cc\czwmv \equiv \czwnv\cc\cxynv \nequiv \cbrk$.
 For two sequences or sets of commands $A$ and $B$ we write $A\indep B$ if
-$\forall a\in A \mbox{~and~} \forall b\in B: a\indep b$.
+$\forall \alpha\in A \mbox{~and~} \forall \beta\in B: \alpha\indep\beta$.
 \end{mydef}
 
 \begin{mydef}{Reconciliation.}\label{def:reconciliation}
 \begin{align*}
-\reca = \{c| & \\
-& c\in A\setminus B \\
+\reca = \{\alpha| & \\
+& \alpha\in A\setminus B \\
 & \wedge \\
-& \forall c'\in B\setminus A: c\indep c'\\
+& \forall \beta\in B\setminus A: \alpha\indep\beta\\
 \} &
 \end{align*}
 
-In other words, the sequence $\reca$ we apply to $\FS_B$ consists of all commands from $A\setminus B$
-that are independent of every command in $B\setminus A$.
+In other words, the sequence $\reca$ we apply to $\FS_B$ 
+is the largest subset of $A\setminus B$
+that is independent of $B\setminus A$.
 The order of commands in the sequence can be determined using the algorithm described in
 \cref{ordering} as any subset of $A$ is also simple.
 In a similar way, $\recb$ can be obtained by reversing $A$ and $B$.
@@ -895,19 +905,18 @@ Two different commands that are not assertion commands are independent iff the n
 if $\cxynv\neq\czwmv$ and none of $\cxy$ and $\cxw$ is $\cbb$ or $\cdd$.
 \end{mylem}
 \begin{proof}
-We proceed in two steps; first, we prove that
-\[ \cxynv\nindep\czwmv \wedge n\unrel m \] would lead to contradiction.
-By definition, if the two commands are not independent, then at least one of the following holds:
-\begin{itemize}
-\item $\czwmv\cc \cqrov \equiv\cbrk$
-\item $\cqrov\cc \czwmv \equiv\cbrk$
-\item $\czwmv\cc \cqrov \nequiv \cqrov\cc \czwmv$
-\end{itemize}
-However, from \cref{ax_separate_commute,ax_separate_nobreaks} we also know that
-if $n\unrel m$ then none of the above can be true.
+This is easy to show based on the output of the software that investigates the behavior of command pairs,
+and which we used to derive the \namecrefs{ax_separate_commute} in \cref{section_axioms}.
+However, this proposition can also be derived from the \namecrefs{ax_separate_commute} already listed
+in the following way.
+
+We proceed in two steps. First, we note that
+from \cref{ax_separate_commute,ax_separate_nobreaks} we know that
+if $n\unrel m$, then $\cxynv$ and $\czwmv$ must necessarily be independent, and therefore
+$ \cxynv\nindep\czwmv \wedge n\unrel m $ cannot be the case.
 
 Next, we prove that
-\[ \cxynv\indep\czwmv \wedge n\nunrel m \] would lead to contradiction.
+\[ \cxynv\indep\czwmv \wedge n\nunrel m \] is also impossible as it would lead to contradiction.
 As $n\nunrel m$
 we know that $n=m$, $n\descendant m$ or $m\descendant n$.
 
@@ -1076,7 +1085,8 @@ The second part of the lemma can be proven in a similar way.
 
 
 \begin{mylem}\label{indep_prefix_combine}
-The combination of sequences with a common head and independent tails continues to work under the same conditions:
+The combination of sequences with a common head and independent tails 
+continues to work under the same conditions:
 \[ \worksc{A\cc B}{\seqset{S}} \wedge \worksc{A\cc C}{\seqset{S}} \wedge B\indep C \Rightarrow \worksc{A\cc B\cc C}{\seqset{S}} \]
 \end{mylem}
 \begin{proof}
@@ -1111,10 +1121,10 @@ where, to restate \cref{def:reconciliation},
 % \renewcommand{\themydef}{\ref{def:reconciliation}}
 % \begin{mydef}
 \begin{align*}
-\reca = \{c| & \\
-& c\in A\setminus B \\
+\reca = \{\alpha| & \\
+& \alpha\in A\setminus B \\
 & \wedge \\
-& \forall c'\in B\setminus A: c\indep c'\\
+& \forall \beta\in B\setminus A: \alpha\indep\beta\\
 \}. &
 \end{align*}
 % \end{mydef}
@@ -1160,7 +1170,7 @@ and we show that the last two cases are impossible as they would lead to contrad
 In these cases, either $m=\parent(n)$ or $n=\parent(m)$.
 If $B$ has a command on $m$, then
 from \cref{lemma:neighbor}
-we know that there is a $B'$ in $\orderset{B}$ where it is next to $\cxy$ (also in $B$),
+we know that there is a $B'$ in $\orderset{B}$ where it is next to $\cxynv$ (also in $B$),
 and from \cref{simple_reorder_equiv} we know that $B'\equiv B$.
 When describing our ordering algorithm in \cref{ordering} we saw
 that the command on the parent path deremines whether a pair of commands
@@ -1171,7 +1181,7 @@ This argument holds for both $A$ and $B$, and so the command on $m$ must be on
 the same side of the command on $n$ in both sequences.
 
 If $B$ has no command on $m$, then let $B'$ be $B$, 
-but with an extra command added to it just before $\cxy$
+but with an extra command added to it just before $\cxynv$
 according to \cref{ax_child_assert,ax_parent_assert}, 
 from which we know that $B'\equiv B$.
 We also know that $B'$ is still minimal (but no longer simple).
@@ -1193,7 +1203,7 @@ is always the same, and it is either $D$ or $\empt$ depending on the relationshi
 Therefore $R=W$ and $\cqrmv=\czwmv$
 as $|\setd|=|\setb|=1$. 
 If $B$ originally had a command on $m$,
-this is a contradiction as $\czw$ was not marked, but we see it must also be in $B'$ and therefore in $B$.
+this is a contradiction as $\czwmv$ was not marked, but we see it must also be in $B'$ and therefore in $B$.
 If $B$ had no command on $m$,
 this is a contradiction because the command on $m$ in $B'$ is an assertion command, so $Z=Q=R=W$, 
 but $A$ contained no assertion commands.
@@ -1208,10 +1218,7 @@ $\worksc{A\cap B}{A}$ and by symmetry $\worksc{A\cap B}{B}$.
 
 \medskip
 
-\newcommand{\acb}{(A\cap B)}
-\newcommand{\acbi}{\acb^{-1}}
-\newcommand{\amb}{(A\setminus B)}
-\newcommand{\bma}{(B\setminus A)}
+
 We would like to prove that $\worksc{B\cc \reca}{A,B}$.
 From the above we know that this is equivalent to
 \[ \worksc{\acb\cc \bma\cc \reca}{A,B}. \]
@@ -1316,23 +1323,85 @@ $T'$ has a command on $m$ and $m=\parent(n)$.
 \end{proof}
 
 
-\medskip
+\subsection{Reconciliation is complete}
 
 % Reconciliation is maximal
 % -------------------------
 % This is where we're using |D|=1
-% C.f. strict / liberal etc. reconciliation in references
+% TODO C.f. strict / liberal etc. reconciliation in references
 
+The reconciliation algorithm defined above is also complete, that is,
+it is not possible to apply any further commands from $A\setminus B$ to $\FS_B$.
+To show this, we are going to prove the following \namecref{rec_is_complete}:
 
+\begin{myth}\label{rec_is_complete}
+If $A$ and $B$ are simple sequences,
+and we select a sequence $S\subset \amb$ so that
+it contains a command $\cxynv$ for which $\cxynv\nindep\bma$,
+then $B\cc S$ either breaks all filesystems $A$ and $B$ do not break
+(that is, $S$ breaks all possible $\FS_B$ replicas),
+or it overrides incompatible changes introduced in the replica by $B$.
+\end{myth}
+Overriding changes is not desirable as in these cases the reconciler
+does not have enough information to decide whether to promote
+the change introduced by $A$ over that introduced by $B$ or vice versa.
+These cases should be treated as conflicts and
+the affected nodes or commands marked for review
+by a human or a different system.
+\begin{proof}
+The proof is similar to the ones we have seen above.
+Without loss of generality, we assume that $\cxynv$ is the first command in $S$
+that is not independent of $\bma$.
+If so, we can split $S$ into $S_0\cc\cxynv\cc S_1$ where $S_0\indep\bma$.
+Let us also split $\bma$ into $T_0\cc\czwmv\cc T_1$ where $T_1\indep\cxynv$.
+From \cref{can_move_intersection} we know that
+$B\cc S \equiv \acb\cc\bma\cc S$.
+We also know commands in $S_0$ and $\bma$ commute, and so this is equivalent to
+$\acb\cc S_0\cc\bma\cc\cxynv\cc S_1$.
+Expanding $\bma$ and swapping $T_1$ and $\cxynv$ we get
+\[ \acb\cc S_0\cc T_0 \cc \czwmv \cc \cxynv\cc T_1\cc S_1. \]
 
-% TODO
-TODO: $\reca$ is maximal
+First, we prove that this sequence breaks all filesystems
+unless $n=m$.
+Let us therefore suppose $n\neq m$ and, to use an inverse proof,
+that the sequence works on $\FS$ where $A\FS\neq\fsbroken$.
+If so, its prefix, $\acb\cc S_0\cc T_0 \cc \czwmv \cc \cxynv$ must also work.
+
+We know $\cxynv\nindep\czwmv$, and so from \cref{unrelated_is_independent}, $n\nunrel m$.
+As the sequence works, $\czwmv\cc\cxynv$ can only be a construction or destruction pair.
+As $\czwmv$ and $T_0$ originate from $B\setminus A$ and $B$ is simple, we also know there are
+no commands on $m$ in $A\cap B$ or $T_0$,
+and that there are no commands on $m$ in $S_0$ as $S_0\indep\bma$.
+
+On the one hand we therefore know that $\FS(m)$ must be of type $Z$,
+but on the other, from \cref{ax_directchild_breaks,ax_directparent_breaks},
+we also know that $\cxynv$ cannot be applied to $\FS$ without
+changing $\FS(m)$ first.
+As $A\FS\neq\fsbroken$, this means that $A$ must contain a command on $m$.
+Let this command be $\cqrmv$.
+
+Clearly $Q=Z$ (from \cref{worksinputmatch}), and from the construction and destruction
+pairs we also see that $R=W$ must hold, where $W=\cchard$ or $W=\ccharb$.
+As $|\setd|=1$ and $|\setb|=1$, this also means that $v_R=v_W$ and therefore
+$\cqrmv = \czwmv$.
+This is a contradiction as $\cqrmv\in A$, but $\czwmv\in\bma$.
+
+The only possibility is therefore $n=m$.
+As $A$ and $B$ are simple, we therefore know that these are the first commands on $n$,
+and so (again from \cref{worksinputmatch}) $Z=X$.
+We also know $\valvw\neq\valvy$ as otherwise the two commands would be equal and
+would be included in $A\cap B$,
+but this means that $\cxynv$, from $A$, overrides a change introduced 
+by $\czwnv$, from $B$, which should be treated as a conflict.
+\end{proof}
+
+From the proof it is apparent that this result depends on $|\setd|=1$.
+
 
 % TODO
 TODO: About setting up an algebra / calculus
 
-% TODO
-TODO: Are these results quite obvious as this is a well-known kind of algebra or system?
+TODO: next steps. multiple replicas
 
 \begin{thebibliography}{99}
 
