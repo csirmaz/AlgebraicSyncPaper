@@ -1,0 +1,113 @@
+
+\newcommand{\setv}{\mathcal{V}} % Set of values
+\newcommand{\setvx}[1]{\mathcal{V}_{#1}} % Set of values with custom index
+\newcommand{\setf}{\setvx{F}} % Set of file values
+\newcommand{\setd}{\setvx{D}} % Set of directory values
+\newcommand{\setb}{\setvx{\empt}} % Set of empty values
+\newcommand{\setn}{\mathcal{N}} % Set of nodes / paths
+\newcommand{\empt}{\bot}
+\newcommand{\parent}{\mathtt{parent}}
+\newcommand{\topnode}{\mathtt{None}} % return value of parent()
+\newcommand{\fsbroken}{\mathtt{Broken}} % broken FS value
+\newcommand{\FS}{\Phi} % a filesystem
+\newcommand{\GS}{\Xi} % another filesystem
+\newcommand{\nn}{n^*} % parent node
+
+\newcommand{\cbrk}{\mathtt{break}} % 'break' command
+\newcommand{\ccharb}{\empt}
+\newcommand{\ccharf}{\mathtt{F}}
+\newcommand{\cchard}{\mathtt{D}}
+\newcommand{\vald}{d} % Directory value
+\newcommand{\valdi}{d_1}
+\newcommand{\valdii}{d_2}
+\newcommand{\valf}{f} % File value
+\newcommand{\valvx}{v_X} % Value of type X
+\newcommand{\valvy}{v_Y} % Value of type Y
+\newcommand{\valvw}{v_W}
+\newcommand{\valvr}{v_R}
+\newcommand{\typeset}{\{\cchard,\ccharf,\ccharb\}} % Set of types in commands
+\newcommand{\caa}[2]{\langle{#1,#2}\rangle}
+\newcommand{\caaa}[3]{\langle{#1,#2,#3}\rangle}
+\newcommand{\caaaa}[4]{\langle{#1,#2,#3,#4}\rangle}
+\newcommand{\cbb}{\caa{\ccharb}{\ccharb}}
+\newcommand{\cbba}[1]{\caaa{\ccharb}{\ccharb}{#1}}
+\newcommand{\cbf}{\caa{\ccharb}{\ccharf}}
+\newcommand{\cbfaa}[2]{\caaaa{\ccharb}{\ccharf}{#1}{#2}}
+\newcommand{\cbd}{\caa{\ccharb}{\cchard}}
+\newcommand{\cbdaa}[2]{\caaaa{\ccharb}{\cchard}{#1}{#2}}
+\newcommand{\cfb}{\caa{\ccharf}{\ccharb}}
+\newcommand{\cfba}[1]{\caaa{\ccharf}{\ccharb}{#1}}
+\newcommand{\cff}{\caa{\ccharf}{\ccharf}}
+\newcommand{\cfd}{\caa{\ccharf}{\cchard}}
+\newcommand{\cfdaa}[2]{\caaaa{\ccharf}{\cchard}{#1}{#2}}
+\newcommand{\cdb}{\caa{\cchard}{\ccharb}}
+\newcommand{\cdba}[1]{\caaa{\cchard}{\ccharb}{#1}}
+\newcommand{\cdf}{\caa{\cchard}{\ccharf}}
+\newcommand{\cdfaa}[2]{\caaaa{\cchard}{\ccharf}{#1}{#2}}
+\newcommand{\cdd}{\caa{\cchard}{\cchard}}
+\newcommand{\cdda}[1]{\caaa{\cchard}{\cchard}{#1}}
+\newcommand{\cxy}{\caa{X}{Y}}
+\newcommand{\cxyaa}[2]{\caaaa{X}{Y}{#1}{#2}}
+\newcommand{\cxynv}{\caaaa{X}{Y}{n}{\valvy}}
+\newcommand{\cxynnv}{\caaaa{X}{Y}{\nn}{\valvy}}
+\newcommand{\cxw}{\caa{X}{W}}
+\newcommand{\cxwnv}{\caaaa{X}{W}{n}{\valvw}}
+\newcommand{\czw}{\caa{Z}{W}}
+\newcommand{\czwnv}{\caaaa{Z}{W}{n}{\valvw}}
+\newcommand{\czwnnv}{\caaaa{Z}{W}{\nn}{\valvw}}
+\newcommand{\czwmv}{\caaaa{Z}{W}{m}{\valvw}}
+\newcommand{\cqr}{\caa{Q}{R}}
+\newcommand{\cqrmv}{\caaaa{Q}{R}{m}{\valvr}}
+\newcommand{\cqrov}{\caaaa{Q}{R}{o}{\valvr}}
+
+\newcommand{\cc}{\circ} % Command / sequence concatenation
+\newcommand{\descendant}{\prec}
+\newcommand{\descendantEq}{\preceq}
+\newcommand{\ancestor}{\succ}
+\newcommand{\ancestorEq}{\succeq}
+
+\newcommand{\eqext}{\sqsubseteq} % equivalent to
+\newcommand{\eqnrw}{\sqsupseteq} % extended by
+\newcommand{\nequiv}{\not\equiv}
+\newcommand{\indep}{\mathrel{\wr\wr}} % Independent commands, sequences
+\newcommand{\unrel}{\indep} % Unrelated nodes
+\newcommand{\nindep}{\,{\centernot{\wr\wr}}\,} % not \indep
+\newcommand{\nunrel}{\nindep} % not \unrel
+
+\newcommand{\workssign}{\mathbf{w}}
+\newcommand{\works}[1]{\workssign({#1})}
+\newcommand{\worksc}[2]{\workssign({#1}\mathrel{|}{#2})}
+
+\newcommand{\typeeq}{\stackrel{t}{=}} % Type equality
+\newcommand{\ntypeeq}{\centernot{\stackrel{t}{=}}}
+
+\newcommand{\emptyseq}{\lambda} % empty sequence
+
+\newcommand{\orderset}[1]{\vec{\wp}({#1})}
+\newcommand{\seqset}[1]{\underline{#1}} % Set of sequences
+
+\newcommand{\recchar}[3]{{#1}^{#3}_{\mathcal{R}|{#2}}}
+\newcommand{\reca}{\recchar{A}{B}{}} % Reconciled from A
+\newcommand{\recb}{\recchar{B}{A}{}} % Reconciled from B
+
+\newcommand{\acb}{(A\cap B)}
+\newcommand{\acbi}{\acb^{-1}}
+\newcommand{\amb}{(A\setminus B)}
+\newcommand{\bma}{(B\setminus A)}
+
+\theoremstyle{definition}
+
+\newtheorem{mydef}{Definition}
+\crefname{mydef}{definition}{definitions}
+
+\newtheorem{myax}{Rule}
+\crefname{myax}{rule}{rules}
+
+\newtheorem{mylem}{Lemma}
+\crefname{mylem}{lemma}{lemmas}
+
+\newtheorem{myth}{Theorem}
+\crefname{myth}{theorem}{theorems}
+
+\newtheorem{mycor}{Corollary}
+\crefname{mycor}{corollary}{corollaries}
