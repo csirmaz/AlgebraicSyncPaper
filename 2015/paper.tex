@@ -33,7 +33,7 @@ that need to synchronize themselves with low latency to serve the
 same content.
 
 In this paper we
-continue the work in \cite{NREC:alg} and add to the theoretical understanding
+continue the work in \cite{NREC} and add to the theoretical understanding
 of synchronization based not on filesystem states, but filesystem changes or commands.
 
 
@@ -196,18 +196,62 @@ therefore $U\FS\neq\fsbroken$.
 \input{rec-complete}
 
 
+\section{Comparisons}
+
+We consider the reconciliation algorithm described here an improvement over
+the one derved during our previous research (see \cite{NREC})
+as the previous algorithm not only fails to propagate all possible commands
+wherever it is possible (that is, where it does not break the filesystem),
+but the current algorithm is also simpler.
+This is because the previous reconciliation algorithm excludes
+commands from being propagated which must be preceded by a command that conflicts.
+
+The former observation is supported by Berzan and Ramsey, who in \cite{CBNR} 
+describe between different reconciliation policies.
+The liberal (maximal) policy propagates all updates to all replicas where
+the command does not break the filesystem, while a conservative policy
+refrains from updating any node that is below a node with conflicting commands.
+They show that the reconciliation algorithm in \cite{NREC} implements
+an intermediate policy as one can easily construct two- or three-replica scenarios
+where an update could clearly be propagated, but it is excluded.
+To rephrase the example in \cite{CBNR}, consider the following two
+update sequences that have been applied to replicas $\FS_A$ and $\FS_B$:
+\begin{align*}
+A&=\cbdaa{\nn}{\valdi}\cc\cbfaa{n}{\valf} \\
+B&=\cbdaa{\nn}{\valdii}
+\end{align*}
+where $\parent(n)=\nn$ (\cite{NREC} did not require all directories to have the same value).
+Clearly $\cbfaa{n}{\valf}$ could be applied to $\FS_B$, but it is not as
+it must be preceded by creating the directory, which conflicts with the same operation in $B$
+due to the different value.
+(Introducing a third replica which has not changed at all further complicates the picture.)
+The current algorithm no longer needs to specify that there can be no conflicts
+on preceding commands, and, to use the above terminology, implements a fully liberal policy.
+
+
 
 % TODO
 TODO: About setting up an algebra / calculus
 
 TODO: next steps. multiple replicas
 
+\section{Acknowledgments}
+
+I thank Laszlo Csirmaz for his invaluable input on previous drafts of this paper,
+and Bill Zissimopoulos for his observations on algebraic file synchronization that triggered this research.
+
+
+
 \begin{thebibliography}{99}
 
-\bibitem{NREC:alg} Ramsey, Norman and Elod Csirmaz: {\it An algebraic approach to
+\bibitem{NREC} Ramsey, Norman and Elod Csirmaz: {\it An algebraic approach to
 file synchronization...}
 
-\bibitem{BZ} Bill Zissimopoulos, personal communication, ...
+\bibitem{CBNR} Constantin Berzan, Norman Ramsey: Summer Scholars Technical Report
+Tufts University, Medford, MA, USA, 2010
+http://thirld.com/files/summerscholars\_techreport.pdf
+Accessed 29 November 2015
+
 
 \end{thebibliography}
 
