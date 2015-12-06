@@ -1,0 +1,219 @@
+
+\subsection{The Correctness of Reconciliation}
+
+% Correctness of reconciliation
+% -----------------------------
+
+We are now ready to prove that the proposed algorithm for reconciliation is correct,
+that is, applying its result is not going to break the replicas.
+We reformulate the original proposition, $\reca\FS_B\neq\fsbroken$,
+based on $\FS_B=B\FS$ and so we aim to prove that
+$B\cc\reca$ works wherever $A$ and $B$ work:
+
+\begin{myth}
+If $A, B$ are simple, then $\worksc{B\cc \reca}{A,B}$,
+where, to restate \cref{def:reconciliation},
+% { % scope
+% \renewcommand{\themydef}{\ref{def:reconciliation}}
+% \begin{mydef}
+\begin{align*}
+\reca = \{\alpha| & \\
+& \alpha\in A\setminus B \\
+& \wedge \\
+& \forall \beta\in B\setminus A: \alpha\indep\beta\\
+\}. &
+\end{align*}
+% \end{mydef}
+% } % scope
+\end{myth}
+
+This is trivial unless $\works{A,B}$, so we assume that it is true.
+Let us first investigate the part of $A$ and $B$ that is excluded from
+$\reca$: their intersection.
+
+\begin{mylem}\label{can_move_intersection}
+Let $A$ and $B$ be two simple sequences so that $\works{A, B}$.
+Then their intersection, in some suitable order, also works on any filesystem
+either of them works on:
+$\worksc{A\cap B}{A}$, and, by symmetry,
+$\worksc{A\cap B}{B}$.
+\end{mylem}
+
+\begin{proof}
+The difficulty is that commands in $A\cap B$ can occur anywhere in $A$.
+Therefore, first we prove the following:
+if all commands are marked in $A$ that also appear in $B$,
+then there is an $A'$ in $\orderset{A}$ in which all marked commands are at the beginning.
+
+We show that $A$ can be transformed via equivalences so that this would be true.
+Our proposition is that if the marked commands are not at the beginning, then
+the sequence contains an unmarked command followed by a marked command.
+We show that these can be swapped resulting in an equivalent sequence.
+Then, by repeating this process similarly to bubble sorting, we can generate 
+a suitable $A'$.
+
+\medskip
+
+Let us consider therefore the marked command preceded by an unmarked command in $A$,
+and let the marked command be $\cxynv$, 
+and the preceding unmarked command be $\czwmv$.
+As $A$ is simple and $\works{A}$, from 
+\cref{ax_distantrel_breaks,ax_directchild_breaks,ax_directparent_breaks}
+we know that these commands can only be on unrelated paths or form a construction or destruction pair.
+In the first case, swapping the commands results in a sequence equivalent to $A$,
+and we show that the last two cases are impossible as they would lead to contradiction.
+
+In these cases, either $m=\parent(n)$ or $n=\parent(m)$.
+If $B$ has a command on $m$, then
+from \cref{lemma:neighbor}
+we know that there is a $B'$ in $\orderset{B}$ where it is next to $\cxynv$ (also in $B$),
+and from \cref{simple_reorder_equiv} we know that $B'\equiv B$.
+When describing our ordering algorithm in \cref{ordering} we saw
+that the command on the parent path deremines whether a pair of commands
+is a construction or destruction pair,
+and that this, in turn, determines whether the command on the child path must
+precede or follow the other command as otherwise the sequence would break all filesystems.
+This argument holds for both $A$ and $B$, and so the command on $m$ must be on
+the same side of the command on $n$ in both sequences.
+
+If $B$ has no command on $m$, then let $B'$ be $B$, 
+but with an extra command added to it just before $\cxynv$
+according to \cref{ax_child_assert,ax_parent_assert}, 
+from which we know that $B'\equiv B$.
+We also know that $B'$ is still minimal (but no longer simple).
+
+In either case, therefore,
+we have a minimal $B'$ which has a command on $m$ just before $\cxynv$ and $B'\equiv B$.
+Let this command on $m$ be $\cqrmv$.
+\begin{gather*}
+A = \cdots\cc  \czwmv\cc  \cxynv\cc  \cdots \\
+B' = \cdots\cc  \cqrmv\cc  \cxynv\cc  \cdots
+\end{gather*}
+
+As $\works{A,B}$ and so $\works{A,B'}$, 
+from \cref{worksinputmatch}
+we know that $Q=Z$. 
+
+Going back to the construction and destruction pairs we see that the output type of the first command
+is always the same, and it is either $D$ or $\empt$ depending on the relationship between $n$ and $m$.
+Therefore $R=W$ and $\cqrmv=\czwmv$
+as $|\setd|=|\setb|=1$. 
+If $B$ originally had a command on $m$,
+this is a contradiction as $\czwmv$ was not marked, but we see it must also be in $B'$ and therefore in $B$.
+If $B$ had no command on $m$,
+this is a contradiction because the command on $m$ in $B'$ is an assertion command, so $Z=Q=R=W$, 
+but $A$ contained no assertion commands.
+
+\medskip
+
+We now know that there is an $A'\equiv A$ in which commands in $A\cap B$
+are at the beginning, and therefore 
+from \cref{worksextpostfix}
+$\worksc{A\cap B}{A}$ and by symmetry $\worksc{A\cap B}{B}$.
+\end{proof}
+
+\medskip
+
+
+We would like to prove that $\worksc{B\cc \reca}{A,B}$.
+From the above we know that this is equivalent to
+\[ \worksc{\acb\cc \bma\cc \reca}{A,B}. \]
+As we already know that $\reca\indep\bma$
+and that $\worksc{\acb\cc \bma}{A,B}$
+(as $\worksc{B}{A,B}$),
+based on \cref{indep_prefix_combine}
+we only need to prove that
+\[ \worksc{\acb\cc \reca}{A,B}. \]
+Using \cref{r_invmove} we can rephrase this as
+\[ \worksc{\reca}{\acbi\cc A,\acbi\cc B}. \]
+
+To restate some results above, we therefore already know the following things:
+\begin{itemize}
+\item $\amb$ and $\bma$ are simple as $A$ and $B$ are simple
+\item $\amb \cap \bma = \emptyset$
+\item $\reca$ is the largest subset of $\amb$ for which $\reca\indep\amb$
+\item $\worksc{\amb, \bma}{\acbi\cc A,\acbi\cc B}$ 
+because of \cref{r_invmove}
+as $\worksc{A,B}{A,B}$,
+and $A\equiv\acb\cc\amb$, and $B\equiv\acb\cc\bma$.
+\end{itemize}
+
+Our theorem is therefore proven if we prove the following lemma:
+\newcommand{\condSimple}{(c1)}
+\newcommand{\condDisj}{(c2)}
+\newcommand{\condApr}{(c3)}
+\newcommand{\condWork}{(c4)}
+\begin{mylem}
+If
+   \begin{itemize}
+   \item[\condSimple] $S$ and $T$ are simple sequences,
+   \item[\condDisj] $S\cap T=\emptyset$,
+   \item[\condApr] $S^*$ is the largest subset of $S$ where $S^*\indep T$, and
+   \item[\condWork] $\worksc{S,T}{\seqset{C}}$ for some set of sequences $\seqset{C}$,
+   \end{itemize}
+then
+\[ \worksc{S^*}{\seqset{C}}. \]
+\end{mylem}
+
+\begin{proof}
+This is trivial unless $\works{\seqset{C}}$, so we will assume that it is true
+and therefore $\works{S,T}$.
+
+The proof is similar to that of \cref{can_move_intersection}.
+We mark all commands in $S$ that are in its subset $S^*$, and
+we prove that $S$ can be transformed into $S'$ via equivalences
+so that all marked commands would be at its beginning.
+If so, then based on \cref{worksextpostfix}
+$\worksc{S^*}{\seqset{C}}$ as $\worksc{S'}{\seqset{C}}$ and $S'=S^*\cc S_0$ 
+where $S_0$ contains the remaining (conflicting) commands.
+
+Again we know that if $S$ does not already have all marked commands at its beginning,
+then there is an unmarked command followed by a marked one.
+We show that these commands are independent and so they can be swapped
+resulting in an equivalent sequence.
+By repeating this process we can generate a suitable $S'$.
+
+Let therefore the marked command in $S$ be $\cxynv$
+and the preceding unmarked command be $\czwmv$.
+As $S$ is simple and $\works{S}$, from 
+\cref{ax_distantrel_breaks,ax_directchild_breaks,ax_directparent_breaks}
+we know that these commands can only be on unrelated paths or form a construction or destruction pair.
+In the first case, swapping the commands results in a sequence equivalent to $S$;
+we only need to show that the other two cases are not possible as they would lead to a contradiction.
+
+In the last two cases, we know that either $m=\parent(n)$ or $n=\parent(m)$.
+We also know that because of {\condApr} there must be 
+a command $\cqrov$ in $T$ which is not independent of $\czwmv$
+as $\czwmv$ is not part of $S^*$.
+\begin{gather*}
+S = \cdots\cc  \czwmv\cc  \cxynv\cc  \cdots \\
+T = \cdots\cc  \cqrov\cc \cdots
+\end{gather*}
+We know none of these commands is an assertion command, and 
+from {\condDisj} that $\cqrov\neq\czwmv$.
+Therefore, based on \cref{unrelated_is_independent} we know this means that
+either $m\descendantEq o$ or $o\descendantEq m$.
+From {\condApr} we also know that $\cxynv\indep \cqrov$,
+and so because of \cref{unrelated_is_independent},
+$n\unrel o$.
+
+We therefore have four cases considering the relationships between $n,m$ and $o$:
+\begin{itemize}
+\item $n=\parent(m) \wedge o\descendantEq m$.
+   This would mean that $o\descendantEq n$ or $n=\parent(o)$, which contradicts $n\unrel o$.
+\item $n=\parent(m) \wedge m\descendantEq o$.
+   This would mean that $n\descendant o$, which contradicts $n\unrel o$.
+\item $m=\parent(n) \wedge o\descendantEq m$.
+   This would mean that $o\descendant n$, which contradicts $n\unrel o$.
+\item $m=\parent(n) \wedge m\descendantEq o$.
+   Let us continue with this case.
+\end{itemize}
+
+We know that $T$ cannot have a command on $m$ as $m=\parent(n)$ and $\cxynv\indep T$,
+and so $m\neq o$ and therefore $m\descendant o$.
+This means we can create a new sequence $T'\equiv T$ by inserting a command on 
+$m$ into $T$ before $\cqrov$
+according to \cref{ax_parent_assert}.
+We now have $\cxynv\indep T\equiv T'$ which is a contradiction as
+$T'$ has a command on $m$ and $m=\parent(n)$.
+\end{proof}

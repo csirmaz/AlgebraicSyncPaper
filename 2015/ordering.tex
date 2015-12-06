@@ -1,0 +1,168 @@
+
+\section{Ordering commands}\label{ordering}
+
+We often encounter the case where we only have a set of commands without a specified order.
+As we have seen above, this can occur after the first stage of update detection,
+but, more importantly,
+it is actually the task of the reconciler to determine whether there is an order,
+and if yes, what order,
+in which updates from multiple replicas can be applied to a filesystem.
+
+In this section we describe an algorithm with which all possible orderings of a
+simple set of commands can be generated, but before doing so, let us consider the following lemma.
+
+\begin{mylem}\label{connected_changes}
+Given a set of commands that
+does not contain assertion commands,
+and which can be applied to a filesystem in some order without breaking it,
+and which contains commands on $n$ and $\nn$ where $\nn\descendant n$
+but $\nn\neq\parent(n)$, then the set must also contain a commands
+on each node between $n$ and $\nn$.
+\end{mylem}
+\begin{proof}
+We prove that under the given conditions, the set must contain a command on $\parent(n)$.
+Then, by repeating this statement, we how that the set must contain commands on every
+ancestor of $n$ up to $\nn$.
+
+Furthermore,
+we prove this proposition for sequences, not sets, as if all sequences must contain a command on $\parent(n)$,
+then so must sets because otherwise there would be no order in which they can be
+applied to any filesystem.
+
+Let $A$ be a sequence that satisfies the conditions;
+we therefore know that it contains a command $\cxynv$ on $n$
+and another command $\czwnnv$ on $\nn$.
+We use an indirect proof and assume that there are no commands on $\parent(n)$ in $A$.
+Next, we create a new sequence $A'\equiv A$ in which $\cxynv$ and $\czwnnv$ are next to each other.
+If they are already next to each other in $A$, there is nothing to do.
+Otherwise, consider the command next to $\cxynv$ in the direction where $\czwnnv$ is.
+Let this command be $\cqrmv$.
+If $\czwnnv$ is to the right, then $A$ looks like the following:
+\[ A = \cdots\cc\cxynv\cc\cqrmv\cc\cdots\cc\czwnnv\cc\cdots \]
+If $n\unrel m$, swap $\cxynv$ and $\cqrmv$. Based on \cref{ax_separate_commute} we know that the new
+sequence is equivalent to $A$.
+Otherwise, we know $m\neq\parent(n)$ as there are no commands on $\parent(n)$, and so
+from \cref{ax_distantrel_breaks} we get $A\equiv\cbrk$ which contradicts our assumptions.
+(Note that $A$ cannot contains assertion commands.)
+By repeating this step we can therefore convert $A$ into $A'$ where $\cxynv$ and $\czwnnv$ are neighboring commands.
+However, then \cref{ax_distantrel_breaks} applies to the sequence and therefore $A\equiv A'\equiv\cbrk$ which
+is again a contradiction.
+\end{proof}
+
+\medskip
+
+We can now define our algorithm to generate orders of sets of commands.
+
+Let $U$ be a simple set of commands
+that we know can be applied to at least one filesystem in some order without breaking it.
+Then we can split $U$ into a maximum number of disjunct subsets
+(components) so that the nodes of two commands from two different subsets are unrelated.
+These will simply be the components of the subset of the node forest that contains the nodes affected by the set.
+
+From \cref{ax_separate_commute} we know that commands from different 
+components can be applied in any order.
+Therefore once we have ordered the commands inside a component, we generate
+all permutations of the components themselves, including the ones
+in which commands from separate components mix and overlap
+(but where the possible orders determined for commands inside the components are respected).
+
+Next, consider the ordering inside a component.
+
+This is not a problem in the case of components containing a single command only.
+(Note that $\cff$ can only appear in a component of one.)
+
+In each component that is larger than one, 
+we know that all nodes are related, and from \cref{connected_changes}
+we also know that it must contain commands on all nodes in between.
+Therefore the nodes
+form a rooted ordered tree,
+and the pairs of commands connected by the edges in the tree 
+must be construction or destruction pairs.
+(Otherwise, there would be no ordering of the component that is not equivalent to $\cbrk$
+and via \cref{ax_separate_commute} there would be no ordering of the whole set, either.)
+
+To order the commands in the component,
+select the command with the topmost node, so that there would be no command
+on its parent node (if there is one). 
+If the command removes content at this node (it is of the form $\caa{X}{\ccharb}$), 
+then it must follow all other commands in the component, and
+all parent--child pairs in the whole component must be destruction pairs.
+Otherwise, the command with the topmost node needs to precede the other commands,
+and the component must be made of construction pairs.
+These follow from the patterns of construction and destruction pairs, which
+at no point can mix without causing any sequence to break all filesystems.
+
+Then move the command with the topmost node to the beginning or the end of
+the sequence we are creating out of the component,
+and recursively start the whole algorithm again on the commands in the component that remain,
+potentially splitting them into sub-components.
+The result of this process is a set of possible orders for each component,
+which are then combined into a set of possible orders for the whole set of commands.
+
+\begin{mydef}{$\orderset{U}$.}
+We use $\orderset{U}$ to denote the set of sequences that contain all commands in
+the simple set $U$
+and represent all orders generated by this algorithm.
+\end{mydef}
+
+It follows from the algorithm that:
+\begin{mycor}\label{lemma:neighbor}
+If $U$ contains commands on both $n$ and $\parent(n)$, then
+there is a $U'\in\orderset{U}$ where they are next to each other.
+\end{mycor}
+
+As a specific case, we can regard a sequence of commands $S$
+as a set and determine its $\orderset{S}$.
+An important property of simple sequences is that
+all of their valid orderings are equivalent,
+and all equivalent sequences are mere reorderings:
+
+\begin{mylem}\label{simple_reorder_equiv}
+For any simple sequence $S\neq\cbrk$,
+$\forall T: T\equiv S \Leftrightarrow T\in\orderset{S}$.
+\end{mylem}
+\begin{proof}
+First, as $S$ only has at most one command on each node,
+any sequence in $\orderset{S}$ either breaks a filesystem,
+or it leaves it in the same state as $S$.
+
+Second, based on the algorithm we also know that $\orderset{S}$ contains
+all possible orderings of $S$ as the only ordering between commands
+it prescribes are when the commands in the reverse order would break every filesystem.
+
+If, for example, in a component or sub-component
+made up of construction pairs,
+the command on the topmost node, $\cxynv$, was not before all other commands
+in the component as described by the algorithm,
+then any resulting sequence would necessarily contain
+a $\czwmv$ where $n\descendant m$, potentially followed by commands
+on unrelated paths, and then followed by $\cxynv$.
+From \cref{ax_separate_commute} we know we can convert this sequence
+to an equivalent sequence by swapping the unrelated commands with
+$\czmv$, which sequence would therefore have the commands on
+$m$ and $n$ next to each other. Then from \cref{ax_distantrel_breaks,ax_directparent_breaks}
+we know the sequence would break all filesystems
+as a reversed construction pair is never a valid destruction pair.
+
+We can prove that an order not generated by the algorithm
+in case of components made of destruction pairs breaks all filesystems
+in a similar way.
+
+Also, from \cref{ax_separate_commute} we know
+that the order between any other command pairs is not fixed in the sense
+that if one order works, so will the other.
+
+From these we know that all sequences in $\orderset{S}$
+are equivalent, and that any sequence $T$ outside it
+necessarily breaks all filesystems.
+
+Therefore if $S\nequiv\cbrk$ then $S\in\orderset{S}$,
+and $S$ cannot equivalent to any sequence of the same commands
+not in $\orderset{S}$.
+\end{proof}
+
+It follows from this that given a simple set,
+we can simply assume that it has an order.
+Accordingly, we will at times treat not only sequences as sets,
+but simple sets as sequences.
+
