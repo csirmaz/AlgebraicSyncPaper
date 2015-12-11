@@ -1,43 +1,100 @@
 from itertools import chain
 import sys
 
+"""
+This script is part of the paper available at
+...
+
+It is used to test pairs of commands on filesystems and determine
+(1) if they break all filesystems, 
+(2) or they are equivalent to (or extended by) an empty sequence of commands
+(3) or they are equivalent to (or extended by) a single command
+(4) or they are equivalent to (or extended by) the same commands applied in reverse order.
+
+The commands are tested on minimal model of a filesystem that includes information
+about two nodes, their immediate surroundings that determine the tree-property
+the filesystem needs to satisfy, and the relationship between the nodes.
+
+The script considers the following possible relationships between the nodes
+to which the commands are applied:
+"""
+
+# Constants for Filesystem.rel and CommandPair.rel:
+DISTANT_PARENT     = 'DistantParent'     # p2 is an ancestor of p1 but not its parent
+DIRECT_PARENT      = 'DirectParent'      # p2 is the parent of p1 and p1 is not the only child
+DIRECT_PARENT_ONLY = 'DirectParentOnly'  # p2 is the parent of p1 and p1 is the only child
+DISTANT_CHILD      = 'DistantChild'      # p2 is the descendant of p1 but not its child
+DIRECT_CHILD       = 'DirectChild'       # p2 is the child of p2 and p2 is not the only child
+DIRECT_CHILD_ONLY  = 'DirectChildOnly'   # p2 is the child of p1 and p2 is the only child
+SAME               = 'Same'              # two paths are the same (used for command pairs)
+SEPARATE           = 'Separate'          # all other cases
+
+"""
+For each relationship, the script outputs 4 matrices according to the four properties
+to investigate. In each matrix, the rows represent the first command, and columns
+represent the second command. The notation for the commands is derived from the paper,
+and the first character notes the input type, while the second character notes the
+output type:
+b - Empty
+F - File
+D - Directory
+
+Each cell in the matrix has one of the following values:
+BR - the command pair breaks all filesystems (for (1) and (3))
+== - the pair is equivalent to the empty sequence, single command or reversed pair
+[[ - the pair is extended by the empty sequence, single command or reversed pair
+.. - none of the above is true    
+
+Finally, the script prints rules for substituting command pairs with single commands
+whenever the single command is not "break".
+"""
+
+# CONFIGURATION STARTS
+
 # Whether directories have equal contents, i.e. there is only a single
-# directory-type value in the filesystem.
+# directory-type value (object).
 ONE_DIRECTORY_VALUE = True
 
-# Whether a rule using a DISTANT relationship should be tested on DIRECT and DIRECT_ONLY,
-# and a rule using a DIRECT relationship should be tested on DIRECT_ONLY.
+# Whether a command pairs should be tested not only using the relationship 
+# between the nodes (paths) they specify,
+# but a DISTANT relationship should also be tested on DIRECT and DIRECT_ONLY,
+# and a rule using a DIRECT relationship should also be tested on DIRECT_ONLY.
 RULE_RELATIONSHIPS_INCLUSIVE = False
 
+# Increase the debug level to have results of internal calculations printed
 DEBUG = 0
-STYLE = 'normal' # Style of info() methods: 'normal or 'debug'
+
+# Style of info() methods: 'normal or 'debug'
+STYLE = 'normal'
+
+# CONFIGURATION ENDS
 
 # Constants for Content.type:
-DIR   = ' Dir'
+DIR   = 'Dir'
 FILE  = 'File'
 EMPTY = 'Empty'
 
 
 class Content:
-    """Represents some content (element of set V) at a given path in the filesystem
+    """Represents some value (object; element of set V) at a given node (path) in the filesystem
     
     Private properties:
         type (enum): DIR or FILE or EMPTY
-        value (str): an arbitrary string representing e.g. file contents and metadata
-        
+        value (str): an arbitrary string representing contents and metadata
+
     """
 
     def __init__(self, type=EMPTY, value='Unknown'):
         """Constructor
         
         Args:
-            type (Optional[enum]):
-            value (Optional[str]):
+            type (Optional[enum]): see above
+            value (Optional[str]): see above
         
         """
         self.type = type
         self.value = value
-        
+ 
     def clone(self):
         """Returns a deep clone of the object."""
         return self.__class__(self.type, self.value)
@@ -49,14 +106,15 @@ class Content:
             addvalue (bool): whether to add a description of the value
         
         """
-        r = self.type
+        disp = { EMPTY:'b', FILE:'F', DIR:'D' }
+        r = disp[self.type]
         if STYLE == 'debug' or (addvalue and not self.isEmpty() and not(ONE_DIRECTORY_VALUE and self.isDir())):
             r += '(' + self.value + ')'
         return r
     
     def label(self):
         """Returns a short string describing some parts of the object."""
-        disp = { EMPTY:'b', FILE:'f', DIR:'d' }
+        disp = { EMPTY:'b', FILE:'F', DIR:'D' }
         return disp[self.type]
         
     def isSame(self, content):
@@ -70,7 +128,7 @@ class Content:
         return self.type
     
     def getValue(self):
-        if self.isEmpty(): return 'Unknown'
+        if self.isEmpty(): return 'EmptyValue'
         return self.value
         
     def isDir(self):
@@ -102,12 +160,12 @@ def ContentFactory(value='Unknown'):
 
 
 class Node:
-    """Represents a path in the filesystem and information about its environment
+    """Represents a node (path) in the filesystem and information about its environment
 
     Private properties:    
-        has_parent (bool): whether the node has a parent (i.e. there is a directory at the parent path)
+        has_parent (bool): whether the node has a parent (i.e. there is a directory at the parent node)
         content (Content): a content object
-        has_child (bool): whether the node has a child (i.e. one of the child paths is not empty)
+        has_child (bool): whether the node has a child (i.e. one of the child nodes is not empty)
         broken (None|str): None if the filesystem is not broken at this node;
             the reason for being broken otherwise
 
@@ -194,10 +252,15 @@ class Node:
             self
 
         """
+
+        # The node has content but the parent is not a directory
         if not self.content.isEmpty() and not self.has_parent:
             self.broken = 'tree-nonempty-noparent'
+
+        # The node has child(ren) but is not a directoy
         if self.has_child and not self.content.isDir():
             self.broken = 'tree-notdir-haschild'
+
         return self
         
     def assertDescendant(self):
@@ -279,16 +342,6 @@ def NodeFactory(contents='Unknown'):
                     yield node
 
 
-# Constants for Filesystem.rel and CommandPair.rel:
-DISTANT_PARENT     = 'DistantParent'     # p2 is an ancestor of p1 but not its parent
-DIRECT_PARENT      = 'DirectParent'      # p2 is the parent of p1 and p1 is not the only child
-DIRECT_PARENT_ONLY = 'DirectParentOnly'  # p2 is the parent of p1 and p1 is the only child
-DISTANT_CHILD      = 'DistantChild'      # p2 is the descendant of p1 but not its child
-DIRECT_CHILD       = 'DirectChild'       # p2 is the child of p2 and p2 is not the only child
-DIRECT_CHILD_ONLY  = 'DirectChildOnly'   # p2 is the child of p1 and p2 is the only child
-SAME               = 'Same'              # two paths are the same (used for command pairs)
-SEPARATE           = 'Separate'          # all other cases
-
 def isChildRel(rel):
     """Returns if according to the relation p2 is a descendant"""
     return (rel in [DISTANT_CHILD, DIRECT_CHILD, DIRECT_CHILD_ONLY])
@@ -363,18 +416,18 @@ class Filesystem:
         if self.isBroken() and not STYLE == 'debug':
             return "[Broken]"
         Dsep = {
-            SEPARATE: ' =x= ',
-            DISTANT_CHILD: ' >=> ',
-            DIRECT_CHILD: ' =<> ',
-            DIRECT_CHILD_ONLY: ' =>> ',
-            DISTANT_PARENT: ' >~> ',
-            DIRECT_PARENT: ' ~<> ',
-            DIRECT_PARENT_ONLY: ' ~>> ',
-            SAME: ' -=- '
+            SEPARATE:           '=x=',
+            DISTANT_CHILD:      '>=>',
+            DIRECT_CHILD:       '=<>',
+            DIRECT_CHILD_ONLY:  '=>>',
+            DISTANT_PARENT:     '>~>',
+            DIRECT_PARENT:      '~<>',
+            DIRECT_PARENT_ONLY: '~>>',
+            SAME:               '-=-'
         }
         if self.rel == SEPARATE or isChildRel(self.rel):
-            return self.p1.info() + Dsep[self.rel] + self.p2.info()
-        return self.p2.info() + Dsep[self.rel] + self.p1.info()
+            return self.p1.info() + '  '  + Dsep[self.rel] + '  ' + self.p2.info()
+        return self.p2.info() + '  ' + Dsep[self.rel] + '  ' + self.p1.info()
     
     def clone(self):
         """Returns a deep clone of the object."""
@@ -547,7 +600,10 @@ class Command:
         
     def info(self):
         """Returns a human-readable string describing the object."""
-        return "{" + self.path + ":" + self.inp.info(False) + ">" + self.outp.info(True) + "}"
+        r = "<" + self.inp.info(False) + "," + self.outp.info(False) + "," + self.path
+        if self.outp.isEmpty() or (self.outp.isDir() and ONE_DIRECTORY_VALUE):
+            return r + ">"
+        return r + "," + self.outp.getValue() + ">"
         
     def label(self):
         """Returns a short string describing some parts of the object."""
@@ -664,16 +720,16 @@ class CommandPair(Sequence):
     def info(self):
         """Returns a human-readable string describing the object"""
         Dsep = {
-            SEPARATE: '-x-',
-            DISTANT_CHILD: '>->',
-            DIRECT_CHILD: '-<>',
-            DIRECT_CHILD_ONLY: '->>',
-            DISTANT_PARENT: '<-<',
-            DIRECT_PARENT: '<>-',
+            SEPARATE:           '-x-',
+            DISTANT_CHILD:      '>->',
+            DIRECT_CHILD:       '-<>',
+            DIRECT_CHILD_ONLY:  '->>',
+            DISTANT_PARENT:     '<-<',
+            DIRECT_PARENT:      '<>-',
             DIRECT_PARENT_ONLY: '<<-',
-            SAME: '---'
+            SAME:               '---'
         }
-        return self.commands[0].info() + ' ' + Dsep[self.rel] + ' ' + self.commands[1].info()
+        return self.commands[0].info() + '  ' + Dsep[self.rel] + '  ' + self.commands[1].info()
         
     def label(self):
         """Returns a short string describing some of the object"""
@@ -726,43 +782,48 @@ def CommandPairFactory(rel):
             yield CommandPair(c1, c2, rel)
         pr('\n')
 
-# We test command pairs and aim to answer the following questions:
-# - Will the pair break all filesystems?
-# - Can the pair be substituted by no commands at all?
-# - Can the pair be substituted by a single command?
-# - Can the pair be reversed?
-# We are also interested in substitutions that extend the domain of the sequence.
 
 def pr(s):
+    """Print to STDOUT (without newline) and flush"""
     sys.stdout.write(s)
     sys.stdout.flush()
 
-print 'BR : breaks all filesystems'
-print '== : equivalent to'
-print '[[ : extended by'
-    
+SingleCommandRules = ""
+
+def pr_s(s):
+    """Print to STDOUT and save to single command rules"""
+    global SingleCommandRules
+    SingleCommandRules += s
+    pr(s)
+
+
+def checkBreaksAll(sq):
+    """Returns if the command pair sq breaks all filesystems"""
+    for fs in FilesystemFactory(fs_rel):
+        if DEBUG > 1: print ". 0 " + fs.info()
+        fs.applySequence(sq)
+        if DEBUG > 1: print ". 1 " + fs.info()
+        if not fs.isBroken():
+            return False
+    return True
+
+
 for rel in [SEPARATE, SAME, DISTANT_CHILD, DIRECT_CHILD, DIRECT_CHILD_ONLY, DISTANT_PARENT, DIRECT_PARENT, DIRECT_PARENT_ONLY]:
-    print '\n===== ' + rel + ' ====='
+    pr_s('\n===== Relationship between nodes: ' + rel + ' =====\n')
     fs_rel = getFilesystemRelationship(rel)
 
-    print '\nBreak:'
+    pr('\nDo they break all filesystems:\n')
     for sq in CommandPairFactory(rel):
 
         # Does the pair break all filesystems?
-        breaksAll = True
         if DEBUG > 1: print ". breaksAll?"
-        for fs in FilesystemFactory(fs_rel):
-            if DEBUG > 1: print ". 0 " + fs.info()
-            fs.applySequence(sq)
-            if DEBUG > 1: print ". 1 " + fs.info()
-            if not fs.isBroken():
-                breaksAll = False
-                break
-            
-        if DEBUG > 0 and breaksAll: print "* breaksAll"
-        pr('BR ' if breaksAll else '.. ')
+        if checkBreaksAll(sq):
+            if DEBUG > 0: print "* breaksAll"
+            pr('BR ')
+        else:
+            pr('.. ')
 
-    print '\nEmpty sequence:'
+    pr('\nRelationship to an empty sequence:\n')
     for sq in CommandPairFactory(rel):
 
         # Is the pair the same as no command at all?
@@ -783,8 +844,12 @@ for rel in [SEPARATE, SAME, DISTANT_CHILD, DIRECT_CHILD, DIRECT_CHILD_ONLY, DIST
             elif nothingExt: pr('[[ ')
             else: pr('.. ')
         
-    print '\nSingle command:'
+    pr('\nRelationship to a single command:\n')
     for sq in CommandPairFactory(rel):
+
+        if checkBreaksAll(sq):
+            pr('BR ')
+            continue
 
         # Try to find a single command with the same effect
         # We try to find a command based on both commands in the pair.
@@ -810,10 +875,12 @@ for rel in [SEPARATE, SAME, DISTANT_CHILD, DIRECT_CHILD, DIRECT_CHILD_ONLY, DIST
                 if not fs_res.isSame(fs_single): simplifiesEq = False
                 if not fs_res.isExtendedBy(fs_single): simplifiesExt = False
             if simplifiesEq:
+                SingleCommandRules += sq.info() + " == " + command.info() + "\n"
                 if simplifiedByEq is None or not simplifiedByEq.isSame(command):
                     simplifiedByEq = command
                     if DEBUG > 1: print ". * equals " + command.info()
             elif simplifiesExt:
+                SingleCommandRules += sq.info() + " [[ " + command.info() + "\n"
                 if simplifiedByExt is None or not simplifiedByExt.isSame(command):
                     simplifiedByExt = command
                     if DEBUG > 1: print ". * extended by " + command.info()
@@ -826,7 +893,7 @@ for rel in [SEPARATE, SAME, DISTANT_CHILD, DIRECT_CHILD, DIRECT_CHILD_ONLY, DIST
             elif not simplifiedByExt is None: pr('[[ ')
             else: pr('.. ')
         
-    print '\nReverse sequence:'
+    pr('\nRelationship to the reverse sequence:\n')
     for sq in CommandPairFactory(rel):
 
         # Reverse sequence
@@ -856,3 +923,4 @@ for rel in [SEPARATE, SAME, DISTANT_CHILD, DIRECT_CHILD, DIRECT_CHILD_ONLY, DIST
             elif reverseExt: pr('[[ ')
             else: pr('.. ')
 
+print "\n\n===== Substitutions for single commands =====\n\n" + SingleCommandRules
