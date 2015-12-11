@@ -36,6 +36,7 @@ In this paper we
 continue the work in \cite{NREC} and add to the theoretical understanding
 of synchronization based not on filesystem states, but filesystem changes or commands.
 
+% TODO operation-based vs state-based
 
 % Synchronization:
 % Main aim: apply updates (where possible) from other replicas
@@ -50,7 +51,14 @@ of synchronization based not on filesystem states, but filesystem changes or com
 % New:
 % better command (instruction) set
 % simpler reconciliation algorithm
-% proof of correctness
+% proof of correctness and completeness
+
+% rigorous proof, non-trivial
+
+% Update detection
+% - ordering
+% Reconciliation
+% - conditional operation & inverse sequences
 
 \section{Definitions}
 
@@ -124,17 +132,14 @@ works without breaking the filesystem.
 
 \input{ordering}
 
-\medskip
-
-% Correctness of update detection
-% -------------------------------
+\subsection{The Correctness of Update Detection}
 
 Based on \cref{connected_changes} we can also show that
 the update detector does function as intended as:
 
 \begin{myth}\label{update_works}
 A sequence of commands returned by the update detector
-when comparing $\FS^*$ to the original $\FS$
+when comparing the non-broken $\FS^*$ to the original $\FS$
 will not break $\FS$ if it is applied to it.
 \end{myth}
 \begin{proof}
