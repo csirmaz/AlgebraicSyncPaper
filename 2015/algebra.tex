@@ -1,0 +1,49 @@
+
+\subsection{Towards and Algebraic System}
+
+Similarly to \cite{NREC} we can consider creating an algebra over command sequences
+which will enable us to draw conclusions about the behaviours of the sequences
+independently of filesystems.
+This would provide a secondary model of (filesystem) commands above the model a filesystems
+defined in this paper. The new model would no longer describe filesystems as such,
+but use known relationships between sequences as its starting point.
+
+In this algebra, equivalence ($\equiv$) and extension ($\eqext$) would become relations,
+and logical rules involving them
+(e.g. $ A\equiv B \Rightarrow S\cc A\cc T\equiv S\cc B\cc T $) would be re-cast as inference rules.
+In addition to these, the \namecrefs{ax_separate_commute} listed in \cref{section_axioms}
+would become axioms that we accept as true, and from which other true statements can be derived
+using the inference rules.
+Such a system can allow us to deduce, for example, whether two sequences are equivalent
+or one extends the other
+without reference to filesystems.
+
+We note, however, that the \namecrefs{ax_separate_commute} to be used as axioms 
+specify the relationships between the nodes
+the commands act on, which would require a more complicated set of symbols to represent
+in the algebra.
+To avoid this, we think it will be more fruitful to regard commands (and sequences)
+on different nodes as different, and, in effect, have nine times as many commands 
+in the algebra as there are nodes in the namespace of the filesystems.
+This allows us to reduce the number of types of symbols in our algebra, and regard
+the \namecrefs{ax_separate_commute} not as axioms, but as templates for axioms
+from which all axioms (for pairs of separate nodes, etc.) can be generated.
+
+We expect that the soundness and completeness of such an algebra can be proven
+similarly to the proofs described in \cite{NREC}.
+Indeed, results in the current paper can serve as building blocks of such a proof:
+the computer program used to check the \namecrefs{ax_separate_commute}
+in effect proves the soundness of all axioms,
+and \cref{simple_reorder_equiv} proves completeness in a limited sense.
+It is also worth noting that the majority of proofs presented in this paper
+do not actually refer to specific filesystems or the definition of commands,
+but draw on known relationships and the
+\namecrefs{ax_separate_commute} in \cref{section_axioms}.
+In other words, many proofs are transferable to the algebra that we describe here.
+
+In a more complete algebra from which the correctness and completeness
+of reconciliation could also be derived,
+one can also include symbols, inference rules and axioms for 
+$\works{x}$ and $\worksc{x}{y}$.
+We see proving the soundness and completeness of this extended algebra
+an intriguing problem that is worthy of further research.

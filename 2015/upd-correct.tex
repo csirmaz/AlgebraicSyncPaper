@@ -1,0 +1,53 @@
+
+\subsection{The Correctness of Update Detection}
+
+Based on \cref{connected_changes} we can also show that
+the update detector does function as intended as:
+
+\begin{myth}\label{update_works}
+A sequence of commands returned by the update detector
+when comparing the non-broken $\FS^*$ to the original $\FS$
+will not break $\FS$ if it is applied to it.
+\end{myth}
+\begin{proof}
+Let $\FS\neq\fsbroken$ be the original filesystem, and $\FS^*\neq\fsbroken$
+be the filesystem after the changes we intend to detect.
+Let us assume that some mechanism recorded all changes that occurred
+to $\FS$ until it reached the state $\FS^*$.
+Our set if commands is sufficient to record any change, as
+there are commands for every input and output type pair, therefore
+we know that the changes can be recorded as a sequence of commands $S$
+where $S\FS=\FS^*$.
+Note that $S$ will not contain assertion commands, as they do not
+represent an actual change in the filesystem.
+
+Therefore, \cref{connected_changes} applies to $S$ and we know
+if it contains commands on $\nn$ and $n$ where $\nn\descendant n$,
+then it also contains commands on nodes in between;
+which is equivalent to saying that if $\FS$ changed
+at node $\nn$ and $n$, then it had to change on the nodes in between.
+
+If so, then, similarly to what happens in the ordering algorithm,
+we can separate $S$ into components of commands on related nodes,
+as commands from separate components freely commute yielding an equivalent sequence.
+From the arguments above, we also know that each component
+must be made up of only desctruction or only construction pairs,
+but not a mixture of the two.
+This means that in each component, parents either strictly precede or succeed child nodes
+(as otherwise $S\equiv\cbrk$ would hold),
+from which it follows that once the components are separated
+in a new sequence $S'\equiv S$,
+commands on the same nodes are next to each other in $S'$.
+
+Based on \cref{ax_same_emptyseq,ax_same_singlec} there is
+an $S''\eqnrw S'$ in which multiple commands on the same nodes
+are simplified into a single command or an empty sequence,
+and therefore $S''$ is simple and $S\equiv S'\eqext S''$.
+It is easy to see that $S''$ must contain the same commands
+as the output of the update detector, $U$, as both are simple
+but reflect all changes between $\FS$ and $\FS^*$.
+If so, then $S''\in\orderset{U}$ and based on \cref{simple_reorder_equiv}
+we have
+$S\equiv S'\eqext S''\equiv U$, and as $S\FS = \FS^* \neq \fsbroken$,
+therefore $U\FS\neq\fsbroken$.
+\end{proof}

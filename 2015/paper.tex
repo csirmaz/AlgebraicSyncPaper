@@ -19,46 +19,11 @@
 Abstract goes here
 \end{abstract}
 
-\section{Introduction}
 
-% TODO Thank-you Laszlo Csirmaz, Bill Zissimopoulos
 
-Synchronizing data structures, and filesystems in particular,
-is a task that we encounter more and more often in our world
-of multiple mobile devices, cloud solutions and distributed systems.
-Applications of synchronization ranges from
-solutions for end users who expect to access personal data seamlessly
-on multiple devices and personal clouds to geographically distributed server networks
-that need to synchronize themselves with low latency to serve the 
-same content.
+\input{intro}
 
-In this paper we
-continue the work in \cite{NREC} and add to the theoretical understanding
-of synchronization based not on filesystem states, but filesystem changes or commands.
 
-% TODO operation-based vs state-based
-
-% Synchronization:
-% Main aim: apply updates (where possible) from other replicas
-% update detection -> conflict detection -> merging updates -> ordering updates -> apply updates from other replicas
-% Problems: conflict detection, ordering
-
-% ORDERING - because when taking updates from different replicas we get an essentially unordered set
-% Insight: (Prof. Norman Ramsey)
-% - updates where two orders (AB vs BA) are not equivalent are incompatible
-% - we only have a set of updates and need to create an order
-
-% New:
-% better command (instruction) set
-% simpler reconciliation algorithm
-% proof of correctness and completeness
-
-% rigorous proof, non-trivial
-
-% Update detection
-% - ordering
-% Reconciliation
-% - conditional operation & inverse sequences
 
 \section{Definitions}
 
@@ -66,127 +31,19 @@ of synchronization based not on filesystem states, but filesystem changes or com
 
 \input{def-commands}
 
+
+
 \input{axioms}
 
-% <<<<<<<< TODO Rewrite: no algebra
-%  about which we will reason
-% using our algebra.
-% We will aim to draw conclusions or judgements about commands and sequences of commands
-% based on the algebra we are aiming to construct.
-% For example, if we believe that two sequences of commands are equivalent as their effect
-% is the same, then we aim to be able to derive this from the axioms and inference rules of the
-% algebra.
-% As the algebra operates on commands only,
-% these judgements, by definition, need to hold regardless of the filesystem the commands are applied to.
-% Accordingly, we expect that the more information one encodes into the commands and the sequences,
-% the better predicitons we will be able to make using our algebra,
-% as then the commands and sequences will be more specific, and will select a smaller subset
-% of potential filesystems on which they can meaningfully operate.
-% >>>>>>>>>> to here
 
-
-
-
-
-
-
-
-% Update detection
-% ----------------
 
 \section{Update detection}
 
-In a command-based reconciliation solution we assume that we have two sequences of commands
-$A$ and $B$ that have modified a single filesystem $\FS$ yielding two different replicas $\FS_A$ and $\FS_B$ that we
-need to reconcile. While it is conceivable that the sequences would be based on a record of
-all operations that modified the two filesystems, in most filesystem implementations
-such records are not implemented, and therefore we must construct suitable sequences
-by comparing $\FS_A$ and $\FS_B$ to their common ancestor, $\FS$. This is called update detection.
-
-A sequence that transforms $\FS$ into $\FS_A$ must contain at least one command on each node
-that changes between the two states of the filesystem. Also, it is easy to see that this is also
-sufficient, as there are commands available for any input and output value. 
-Specifically, if at node $n$, $\FS(n)=X'$ and $\FS_A(n)=Y'\neq X'$, then we add the command $\cxyaa{n}{Y'}$ to $A$
-where $X'\in\setvx{X}$ and $Y'\in\setvx{Y}$.
-
-To be able to describe such sequences better, let us introduce the following properties:
-
-\begin{mydef}{Minimal set or sequence.}
-A sequence or set of commands is minimal if it contains at most one command on every node.
-\end{mydef}
-
-\begin{mydef}{Simple set or sequence.}
-A sequence or set of commands is simple if it is minimal and it does not contain assertion commands.
-\end{mydef}
-
-This update detector therefore yields a simple set of commands because we only add a single command
-for each node, and we only add commands that are necessary, that is, there will be no 
-assertion commands in the set.
-
-The next step in generating the sequences is to order the commands collected.
-As this task is at the heart of reconciliation itself independently of update detection,
-we discuss it in the next section.
-Then, in \cref{update_works}, we prove that the resulting sequence actually
-works without breaking the filesystem.
-
+\input{upd-def}
 
 \input{ordering}
 
-\subsection{The Correctness of Update Detection}
-
-Based on \cref{connected_changes} we can also show that
-the update detector does function as intended as:
-
-\begin{myth}\label{update_works}
-A sequence of commands returned by the update detector
-when comparing the non-broken $\FS^*$ to the original $\FS$
-will not break $\FS$ if it is applied to it.
-\end{myth}
-\begin{proof}
-Let $\FS\neq\fsbroken$ be the original filesystem, and $\FS^*\neq\fsbroken$
-be the filesystem after the changes we intend to detect.
-Let us assume that some mechanism recorded all changes that occurred
-to $\FS$ until it reached the state $\FS^*$.
-Our set if commands is sufficient to record any change, as
-there are commands for every input and output type pair, therefore
-we know that the changes can be recorded as a sequence of commands $S$
-where $S\FS=\FS^*$.
-Note that $S$ will not contain assertion commands, as they do not
-represent an actual change in the filesystem.
-
-Therefore, \cref{connected_changes} applies to $S$ and we know
-if it contains commands on $\nn$ and $n$ where $\nn\descendant n$,
-then it also contains commands on nodes in between;
-which is equivalent to saying that if $\FS$ changed
-at node $\nn$ and $n$, then it had to change on the nodes in between.
-
-If so, then, similarly to what happens in the ordering algorithm,
-we can separate $S$ into components of commands on related nodes,
-as commands from separate components freely commute yielding an equivalent sequence.
-From the arguments above, we also know that each component
-must be made up of only desctruction or only construction pairs,
-but not a mixture of the two.
-This means that in each component, parents either strictly precede or succeed child nodes
-(as otherwise $S\equiv\cbrk$ would hold),
-from which it follows that once the components are separated
-in a new sequence $S'\equiv S$,
-commands on the same nodes are next to each other in $S'$.
-
-Based on \cref{ax_same_emptyseq,ax_same_singlec} there is
-an $S''\eqnrw S'$ in which multiple commands on the same nodes
-are simplified into a single command or an empty sequence,
-and therefore $S''$ is simple and $S\equiv S'\eqext S''$.
-It is easy to see that $S''$ must contain the same commands
-as the output of the update detector, $U$, as both are simple
-but reflect all changes between $\FS$ and $\FS^*$.
-If so, then $S''\in\orderset{U}$ and based on \cref{simple_reorder_equiv}
-we have
-$S\equiv S'\eqext S''\equiv U$, and as $S\FS = \FS^* \neq \fsbroken$,
-therefore $U\FS\neq\fsbroken$.
-\end{proof}
-
-
-
+\input{upd-correct}
 
 
 
@@ -199,6 +56,7 @@ therefore $U\FS\neq\fsbroken$.
 \input{rec-sound}
 
 \input{rec-complete}
+
 
 
 \section{Comparisons}
@@ -234,11 +92,16 @@ The current algorithm no longer needs to specify that there can be no conflicts
 on preceding commands, and, to use the above terminology, implements a fully liberal policy.
 
 
+% TODO Conclusions
 
-% TODO
-TODO: About setting up an algebra / calculus
+
+\section{Further Research}
+
 
 TODO: next steps. multiple replicas
+
+\input{algebra}
+
 
 \section{Acknowledgments}
 

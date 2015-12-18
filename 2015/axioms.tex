@@ -18,9 +18,10 @@ We write $\emptyseq$ for the empty sequence.
 TODO: Sequences of commands, in the usual way,  form a free
 semigroup
 
-The following concepts allow us to investigate sequences independently of filesystems.
+The following concepts 
+(which echo the ones defined in \cite{NREC})
+allow us to investigate sequences independently of filesystems.
 In the definitions, $A,B,S,T$ stand for arbitrary sequences of commands.
-These relations echo the ones defined in \cite{NREC:alg}.
 
 \begin{mydef}
 % Relation in the algebra
@@ -62,7 +63,7 @@ We write $n\unrel m$, or ``$n$ and $m$ are unrelated'' if $n\not\descendantEq m$
 
 
 Our aim is to derive information about the effects of sequences
-of commands independently of that actual filesystems.
+of commands independently of the actual filesystems.
 In order to make this possible, we investigate the smallest building
 blocks of sequences: pairs of commands that act on a filesystem directly one after the other.
 This approach is useful as there are a limited number of command pairs,
@@ -75,7 +76,7 @@ to determine
 which pairs of commands cause errors all the time,
 which can be simplified to one or no commands, and which can be reversed
 without any change in their overall effect.
-% TODO: Footnote: URL
+% TODO: Footnote: https://github.com/csirmaz/AlgebraicSyncPaper/blob/master/2015/prove.py
 Our basis for this investigation was the model of filesystems introduced in this paper.
 These properties of command pairs are crucial as they determine
 how a set of commands can be re-ordered to be applied to a filesystem
