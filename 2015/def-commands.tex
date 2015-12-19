@@ -3,7 +3,7 @@
 
 Next we need to define commands on the filesystem.
 
-...
+... TODO ...
 
 Let us consider what kind of information may be encoded in the commands.
 A usual set of commands, based on the most frequent tools implemented by filesystems,
@@ -13,20 +13,21 @@ after applying the command,
 we know that after $create$ or $edit$, $\FS(n)\neq\empt$, whereas after $remove$,
 $\FS(n)$ will be $\empt$. 
 However, from \cite{NREC} and \cite{CBNR} we know that a useful set of axioms
-will in some cases need to distinguish between edits that result in directories ($edit(n,D)$) and
+will in some cases need to distinguish between, for example,
+edits that result in directories ($edit(n,D)$) and
 ones that result in files ($edit(n,F)$), and treat them as separate commands.
-Indeed, Bill Zissimopoulos suggested (\cite{BZ}) that extending this distinction to more commands
+Indeed, Bill Zissimopoulos suggested (TODO) that extending this distinction to more commands
 utlimately simplifies
 the definition of conflicting commands, as our model will then able to predict the behavior of commands
 more precisely.
 In other words, encoding the type of the output ($D$, $F$ or $\empt$) in the commands is definitely useful.
 At the same time, there is never any need to encode information about the
-\emph{exact} output value of a command,
+output \emph{value} of a command,
 as the success or failure of filesystem commands only depend on the types of values in the filesystem.
 
 Notice, however, that the commands listed above also encode some information about 
-their input, the filesystem
-\emph{before} the command is applied; namely, $create(n,V)$ requires that there are no files
+their input, the state of the filesystem
+before the command is applied. In particular, $create(n,V)$ requires that there are no files
 or directories at $n$, while $edit(n,V)$ and $remove(n)$ require the opposite.
 This creates an arbitrary asymmetry where
 there is now more information encoded into commands about their output than about their input.
@@ -35,13 +36,18 @@ and in order to resolve this asymmetry, we propose a set of commands that encode
 the type of the original state of $\FS(n)$ as well.
 (Some real-life filesystem commands like $rmdir$ do this already.)
 
-% TODO: tuple / quadruple
-We therefore propose to have a command for each pair of types.
-For want of a better system, we will name our commands by concatenating
-two of $\cchard$, $\ccharf$ and $\ccharb$, 
-where the left sign denotes the type of value
-required in the filesystem before the command is applied, and the right sign notes the type
-afterwards. For example, $mkdir(n,D)$ is $\cbdaa{n}{D}$, and $rmdir(n)$ is $\cdba{n}$.
+We therefore have four pieces of information related to each command:
+its input type, its output type, the node to which it is applied, and finally
+the value that it stores at the node.
+We will denote commands using quadruples that list these,
+and use $\cchard$, $\ccharf$ or $\ccharb$ to represent the different
+input and output types. In this system, $\cbdaa{n}{\vald}$ 
+is what represents $mkdir(n,\vald)$.
+Alternatively, we use a triple of the two types and a node if 
+there is only a single suitable output value for the given type (e.g. $\empt$).
+For example, $\cdba{n}$ represents $rmdir(n)$.
+
+\medskip
 
 A command can only succeed if the original value at node $n$ has a type that matches
 the input type of the command. If this is not the case, or if the resulting
@@ -49,12 +55,12 @@ filesystem no longer has the tree property, then we say that the command
 {\em breaks} the filesystem. Broken filesystems are considered equal
 (but not equal to any working filesystem), and we note them by $\FS=\fsbroken$.
 
-So that we could reason about sequences of commands that break every filesystem
-in the algebra, we introduce the command $\cbrk$ that simply breaks every filesystem.
+So that we could reason about sequences of commands that break every filesystem, 
+we introduce the command $\cbrk$ that simply breaks every filesystem.
 
 We note that a command or a sequence of commands is applied to a filsystem
 by prefixing the command or sequence to it, for example: $\cbrk\FS$, $\cbdaa{n}{\vald}\FS$, 
-or $S\FS$ if $S$ is a sequence of commands.
+or simply $S\FS$ if $S$ is a sequence of commands.
 
 \begin{mydef}
 Using $\FS[V/n]$ we denote a filesystem derived from $\FS$:
@@ -73,7 +79,6 @@ The exact behavior of our commands is as follows:
 All other commands have the generic form $\cxynv$ where
 $X$ and $Y$ are types in $\typeset$,
 $n\in\setn$ and $\valvy$ is a value of the appropriate type from $\setvx{Y}$.
-At times we omit $\valvy$ if there is only one suitable value.
 \[ \cxynv\FS = 
    \begin{cases}
    \fsbroken &\mbox{if~} \FS=\fsbroken\\
@@ -87,11 +92,11 @@ At times we omit $\valvy$ if there is only one suitable value.
 
 In general, when we describe multiple or unknown commands, we may substitute one or both
 of their types with variables, as we did with $\cxynv$. In this context,
-if we write that $\cxy=\czw$, we mean that the input and output types % TODO needed?
-of the commands are the same ($X=Z$ and $Y=W$), while a full equiality 
+if we write that $\cxy=\czw$, we mean that the input and output types
+of the commands are the same ($X=Z$ and $Y=W$), while a full equality 
 ($\cxynv=\czwmv$)
 implies
-that their output value is also the same.
+that their nodes and output value is also the same.
 
 % Simplifications
 % ---------------

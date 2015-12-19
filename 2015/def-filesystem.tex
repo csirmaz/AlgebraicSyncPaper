@@ -4,14 +4,16 @@
 % TODO namespace, data objects / inodes
 
 We model a filesystem using a function $\FS$ with a set of nodes (filesystem paths) $\setn$ as its domain,
-and a set of possible contents $\setv$ as its codomain:
+and a set of possible contents or values, $\setv$, as its codomain:
 \[ \FS : \setn \rightarrow \setv \] 
 In our model, $\setn$ 
-serves as a ``skeleton'' of the filesystem, and it
+serves as a namespace or ``skeleton'' for the filesystem, and it
 contains all possible nodes, including the ones where there is no file or directory.
-To mark empty nodes, $\setv$ contains a special element, $\empt$, which is the value of $\FS$ at these nodes.
+To model empty nodes, $\setv$ 
+contains a special element ($\empt$) which is the value of $\FS$ at these nodes.
 We consider the contents of files, as well as any meta-information of files
 and directories (e.g. permissions and other flags) part of the values in $\setv$.
+
 
 The nodes form a disjoint union of rooted directed trees.
 \begin{mydef}

@@ -108,7 +108,7 @@ The combination of independent commands works wherever the original commands wor
 \end{align*}
 \end{myax}
 \begin{proof}
-We name this proposition an axiom (TODO) for the same reason as above,
+We name this proposition a \namecrefs{combine_independent_commands} for the same reason as above,
 but it is easy to provide an indirect proof based on our filesystem model.
 Assume that $\cxynv\cc \czwmv\FS=\fsbroken$.
 We know $\cxynv\FS\neq\fsbroken$ so it must be applying 
@@ -189,7 +189,7 @@ condition and consequence parts of $\workssign$.
 
 \begin{mydef}{Inverse commands and sequences.}
 The inverse of command $\cxynv$ is $\cxynv^{-1} = \caaaa{Y}{X}{n}{\valvx}$
-where $V_X$ is an arbitrary value from $\setvx{X}$.
+where $\valvx$ is an arbitrary value from $\setvx{X}$.
 We write $S^{-1}$ for the inverse of sequence $S$, which consists of the inverses of the commands in $S$
 in reverse order.
 \end{mydef}
@@ -217,7 +217,7 @@ This is based on the fact that in our model, unless they break a filesystem,
 commands change one type of value into another, but never merge types.
 That is,
 sequences---as functions mapping filesystems to filesystems---are
-essentially bijections over type-equality
+essentially bijections over type-equality ($\typeeq$)
 with the only ``sink'' being $\fsbroken$:
 \begin{align*}
 \forall S,\FS,\GS: &S\FS\neq\fsbroken \Rightarrow \\
