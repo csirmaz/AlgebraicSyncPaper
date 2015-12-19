@@ -17,7 +17,7 @@ will in some cases need to distinguish between, for example,
 edits that result in directories ($edit(n,D)$) and
 ones that result in files ($edit(n,F)$), and treat them as separate commands.
 Indeed, Bill Zissimopoulos suggested (TODO) that extending this distinction to more commands
-utlimately simplifies
+ultimately simplifies
 the definition of conflicting commands, as our model will then able to predict the behavior of commands
 more precisely.
 In other words, encoding the type of the output ($D$, $F$ or $\empt$) in the commands is definitely useful.
@@ -58,7 +58,7 @@ filesystem no longer has the tree property, then we say that the command
 So that we could reason about sequences of commands that break every filesystem, 
 we introduce the command $\cbrk$ that simply breaks every filesystem.
 
-We note that a command or a sequence of commands is applied to a filsystem
+We note that a command or a sequence of commands is applied to a filesystem
 by prefixing the command or sequence to it, for example: $\cbrk\FS$, $\cbdaa{n}{\vald}\FS$, 
 or simply $S\FS$ if $S$ is a sequence of commands.
 
