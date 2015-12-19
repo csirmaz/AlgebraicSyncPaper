@@ -1,39 +1,88 @@
 
 \section{Introduction}
 
-Synchronizing data structures, and filesystems in particular,
-is a task that we encounter more and more often in our world
-of multiple mobile devices, cloud solutions and distributed systems.
-Applications of synchronization ranges from
-solutions for end users who expect to access personal data seamlessly
-on multiple devices and personal clouds to geographically distributed server networks
-that need to synchronize themselves with low latency to serve the 
-same content.
+Synchronization of data structures
+is a mechanism behind many services we take for granted today:
+accessing and editing calendar events, documents and spreadsheets
+on multiple devices, version control systems and
+geographically distributed internet and web services that
+guarantee a fast and responsive user experience.
 
-In this paper we
-continue the work in \cite{NREC} and add to the theoretical understanding
-of synchronization based not on filesystem states, but filesystem changes or commands.
+In this paper we investigate an operation- or command-based approach
+to filesystem synchronization.
+Presented with multiple copies (replicas) of a filesystem that have been independently modified,
+we regard the aim of the synchronizer to modify these replicas further
+to make them as similar as possible.
+The synchronization algorithm we describe
+follows the two main steps described by Balasubramaniam and Pierce (\cite{BP}):
+update detection, where we identify modifications that have been applied to the replicas
+since they diverged,
+and reconciliation, where we identify updates that can be propagated to other replicas and do so.
+The remaining updates, which could not be propagated, are conflicting updates;
+resolving these requires a separate system or human intervention.
 
-% TODO operation-based vs state-based
+In this paper we build on the work done 
+on command-based algebraic file synchronization
+in \cite{NREC} and add to the theoretical understanding
+of synchronization by providing rigorous proofs that the algorithms
+we describe work as intended
+and offer a solution in our framework that cannot be improved on.
 
-% Synchronization:
-% Main aim: apply updates (where possible) from other replicas
-% update detection -> conflict detection -> merging updates -> ordering updates -> apply updates from other replicas
-% Problems: conflict detection, ordering
+A central problem of command-based synchronisers during both update detection and reconciliation
+is ordering.
+If update detection is based on comparing the original state of the filesystem
+to its new state, then we can easily collect a set of updates,
+but we need to order these in a way that they could be applied in
+without causing an error 
+(for example, a directory needs to be created first before a file can be created under it).
+Similarly, during reconciliation when we consider all the updates that
+have been applied to the different replicas, we need to find a way of
+merging these and creating a global ordering that we can apply
+to the filesystems.
+In fact, an insight in \cite{NREC} is that
+if the ordering changes the effect of two commands,
+then under certain circumstances they are not compatible and will give rise to conflicts.
+Accordingly, in this paper command-pairs and their properties
+play a special role.
 
-% ORDERING - because when taking updates from different replicas we get an essentially unordered set
-% Insight: (Prof. Norman Ramsey)
-% - updates where two orders (AB vs BA) are not equivalent are incompatible
-% - we only have a set of updates and need to create an order
+In \cref{sec_def} we define a model of filesystems and a set of commands
+that we will use to describe updates and modifications.
+This is followed by investigating the properties and behaviors
+of command pairs in \cref{section_axioms}.
+\Cref{sec_update} describes update detection, and it is
+in \cref{ordering} that we describe how commands can be ordered
+and prove that under some conditions are valid orders
+have the same effect.
 
-% New:
-% better command (instruction) set
-% simpler reconciliation algorithm
-% proof of correctness and completeness
+Finally, \cref{sec_rec} defines our reconciliation algorithm
+and when two updates from different replicas give rise to a conflict.
+We then proceed to prove that the output of this algorithm
+is sound in the sense that 
+it can be applied to the replicas without causing an error,
+and that the described algorithm provides a complete solution
+inasmuch as no further updates can be applied under any circumstances.
+In order to be able to do this, we introduce
+the concept of {\emph conditional operation} of commands,
+and show that it has a number of highly convenient properties.
 
-% rigorous proof, non-trivial
+The approach in the present paper offers an improvement
+over rersults presented in \cite{NREC} in multiple ways.
+We introduce a new set of commands that is symmetric and
+captures more information about the updates.
+This has the effect that reasoning about commands
+becomes simpler as there are fewer edge cases,
+and more powerful as with the additional information
+content predictions made by the reasoning are more accurate.
+In fact, the new command set not only simplifies
+our reconciliation algorithm, but also makes it complete.
 
-% Update detection
-% - ordering
-% Reconciliation
-% - conditional operation & inverse sequences
+The previous work also lacked proofs that the update detection
+and reconciliation algorithms it presented work as intended,
+which we provide in the current paper.
+While the results are intuitive, providing rigorous proofs
+is far from trivial.
+During the process, we define a number of useful concepts
+and show their relationships and the properties they possess.
+In our view these construct an algebraic model
+that is worthy of interest and further research on its own.
+
