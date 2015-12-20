@@ -32,7 +32,8 @@ A central problem of command-based synchronizers during both update detection an
 is ordering.
 If update detection is based on comparing the original state of the filesystem
 to its new state, then we can easily collect a set of updates,
-but we need to order these in a way that they could be applied in
+but we need to order these in a way that they could be applied
+to the filesystems
 without causing an error 
 (for example, a directory needs to be created first before a file can be created under it).
 Similarly, during reconciliation when we consider all the updates that
@@ -44,6 +45,9 @@ if the ordering changes the effect of two commands,
 then under certain circumstances they are not compatible and will give rise to conflicts.
 Accordingly, in this paper command-pairs and their properties
 play a special role.
+Other research also shows the essential nature of ordering:
+in IceCube multiple orders are tested to find an acceptable one \cite{KRSD},
+or in Bayou reconciling updates happens by redoing them in an acceptable order \cite{TTPDSH}.
 
 In \cref{sec_def} we define a model of filesystems and a set of commands
 that we will use to describe updates and modifications.
@@ -51,18 +55,18 @@ This is followed by investigating the properties and behaviors
 of command pairs in \cref{section_axioms}.
 \Cref{sec_update} describes update detection, and it is
 in \cref{ordering} that we describe how commands can be ordered
-and prove that under some conditions are valid orders
+and prove that under some conditions all valid orders
 have the same effect.
 
-Finally, \cref{sec_rec} defines our reconciliation algorithm
-and when two updates from different replicas give rise to a conflict.
-We then proceed to prove that the output of this algorithm
+Finally, \cref{sec_rec} defines our reconciliation 
+and conflict detection algorithms.
+We then proceed to prove that the output of reconciliation
 is sound in the sense that 
 it can be applied to the replicas without causing an error,
 and that the described algorithm provides a complete solution
 inasmuch as no further updates can be applied under any circumstances.
 In order to be able to do this, we introduce
-the concept of {\emph conditional operation} of commands,
+the concept of \emph{conditional operation} of sequences of commands,
 and show that it has a number of highly convenient properties.
 
 The approach in the present paper offers an improvement
@@ -71,8 +75,9 @@ We introduce a new set of commands that is symmetric and
 captures more information about the updates.
 This has the effect that reasoning about commands
 becomes simpler as there are fewer edge cases,
-and more powerful as with the additional information
-content predictions made by the reasoning are more accurate.
+and more powerful as 
+predictions made by the reasoning are more accurate
+due to the additional information content.
 In fact, the new command set not only simplifies
 our reconciliation algorithm, but also makes it complete.
 
@@ -83,6 +88,6 @@ While the results are intuitive, providing rigorous proofs
 is far from trivial.
 During the process, we define a number of useful concepts
 and show their relationships and the properties they possess.
-In our view these construct an algebraic model
-that is worthy of interest and further research on its own.
+In our view these construct a special algebraic model
+that is worthy of interest and of further research on its own.
 

@@ -37,7 +37,8 @@ The tree property can then be defined as
 \end{align*}
 This means that as we move down from the root of a tree of nodes,
 the types of values we encounter in the filesystem can only change according to the
-transition diagram in \cref{fig_transition}.
+transition diagram in \cref{fig_transition}, from directories ($\cchard$) to files ($\ccharf$)
+to empty nodes ($\ccharb$).
 
 \begin{figure}[htb]
 \input{fig-type-transition}
@@ -48,7 +49,6 @@ In this paper, $n$, $m$ and $o$ denote nodes in $\setn$.
 We use $\valf$ for an arbitrary element in $\setf$, 
 and $\vald$ for an arbitrary element in $\setd$,
 and by $\valvx$ we mean a value of type $X$ in $\setvx{X}$.
-
 
 
 Another simplification we will assume in this paper is regarding directories.

@@ -1,12 +1,12 @@
 
 \newcommand{\setv}{\mathcal{V}} % Set of values
 \newcommand{\setvx}[1]{\mathcal{V}_{#1}} % Set of values with custom index
-\newcommand{\setf}{\setvx{F}} % Set of file values
-\newcommand{\setd}{\setvx{D}} % Set of directory values
-\newcommand{\setb}{\setvx{\empt}} % Set of empty values
+\newcommand{\setf}{\setvx{\ccharf}} % Set of file values
+\newcommand{\setd}{\setvx{\cchard}} % Set of directory values
+\newcommand{\setb}{\setvx{\ccharb}} % Set of empty values
 \newcommand{\setn}{\mathcal{N}} % Set of nodes / paths
 \newcommand{\empt}{\bot} % Empty value
-\newcommand{\parent}{\mathtt{parent}}
+\newcommand{\parent}{\mathtt{parent}} % parent function
 \newcommand{\topnode}{\mathtt{None}} % return value of parent()
 \newcommand{\fsbroken}{\mathtt{Broken}} % broken FS value
 \newcommand{\FS}{\Phi} % a filesystem
@@ -14,9 +14,9 @@
 \newcommand{\nn}{n^*} % parent node
 
 \newcommand{\cbrk}{\mathtt{break}} % 'break' command
-\newcommand{\ccharb}{\empt}
-\newcommand{\ccharf}{\mathtt{F}}
-\newcommand{\cchard}{\mathtt{D}}
+\newcommand{\ccharb}{\empt} % character for empty type in commands
+\newcommand{\ccharf}{\mathtt{F}} % Character for file type in commands
+\newcommand{\cchard}{\mathtt{D}} % Character for dir type in commands
 \newcommand{\vald}{d} % Directory value
 \newcommand{\valdi}{d_1}
 \newcommand{\valdii}{d_2}
@@ -26,7 +26,7 @@
 \newcommand{\valvw}{v_W}
 \newcommand{\valvr}{v_R}
 \newcommand{\typeset}{\{\cchard,\ccharf,\ccharb\}} % Set of types in commands
-\newcommand{\caa}[2]{\langle{#1,#2}\rangle}
+\newcommand{\caa}[2]{\langle{#1,#2}\rangle} % Command template
 \newcommand{\caaa}[3]{\langle{#1,#2,#3}\rangle}
 \newcommand{\caaaa}[4]{\langle{#1,#2,#3,#4}\rangle}
 \newcommand{\cbb}{\caa{\ccharb}{\ccharb}}
