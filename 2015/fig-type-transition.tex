@@ -1,0 +1,16 @@
+\begin{center}\begin{tikzpicture}
+ [bend angle=45,
+ sq/.style={rectangle,inner sep=3pt, minimum size=7mm,
+fill=black!3,draw=black}]
+\node[sq] (dnode) at (0,0) {$D$};
+\node[sq] (fnode) at (2,0) {$F$};
+\node[sq] (enode) at (4,0) {$\bot$};
+%\node at (dnode) {$D$};
+%\node at (fnode) {$F$};
+%\node at (enode) {$\bot$};
+\draw[->,line width=1.8pt] (dnode) -- (fnode);
+\draw[->,line width=1.8pt] (fnode) -- (enode);
+\draw[->,line width=1.5pt] (-0.35,0.35) arc(35:315:0.7cm and 0.55cm);
+\draw[->,line width=1.5pt] (4.35,0.35) arc(145:-135:0.7cm and 0.55cm);
+\draw[->,line width=1.5pt] (0.35,-0.35) arc(230:310:2.55cm and 1.4cm);
+\end{tikzpicture}\end{center}

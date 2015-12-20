@@ -36,10 +36,13 @@ The tree property can then be defined as
 &\Rightarrow \FS(\parent(n)) \in \setd 
 \end{align*}
 This means that as we move down from the root of a tree of nodes,
-the types of values we encounter in the filesystem can only change according to the following
-transition diagram:
+the types of values we encounter in the filesystem can only change according to the
+transition diagram in \cref{fig_transition}.
 
-\input{type-transition}
+\begin{figure}[htb]
+\input{fig-type-transition}
+\caption{Transitions between types of values in a filesystem}\label{fig_transition}
+\end{figure}
 
 In this paper, $n$, $m$ and $o$ denote nodes in $\setn$.
 We use $\valf$ for an arbitrary element in $\setf$, 
