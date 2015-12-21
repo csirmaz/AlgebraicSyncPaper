@@ -3,20 +3,17 @@
 \section{Investigating Command Pairs}\label{section_axioms}
 
 % TODO Ref back to intro; further abstraction - no need to go the FS. break-all, equiv, extend
+
 So that we could describe the effects of commands on a filesystem, let us introduce some notation
 and note some observations.
-
-The commands we aim to investigate do not occur in isolation:
-for example, when comparing filesystems to determine the commands needed to transform one into the other,
-we receive a set of commands with uncertain ordering.
-Applying commands to a filesystem, however, happens in time,
-so for this we need a sequence of commands.
+We already know that
+commands usually do not occur in isolation,
+and are applied to filesystems in time.
+Therefore we will investigate sequences of commands with a well-defined order
+(which form a free semigroup).
 We use $\cc$ to concatenate commands to form a sequence, or concatenate sequences to form a longer sequence:
 $S=\cbdaa{n}{\vald}\cc\cbfaa{m}{\valf}$, or $S'=S\cc\cbba{o}$.
 We write $\emptyseq$ for the empty sequence.
-
-TODO: Sequences of commands, in the usual way,  form a free
-semigroup
 
 The following concepts 
 (which echo the ones defined in \cite{NREC})
@@ -71,12 +68,13 @@ because, as we argued above, we can disregard the exact output values of command
 and we can also abstract the relationship between the nodes in the two commands
 to a finite number of cases.
 
-We methodically investigated of all possibilities using a computer program
+We methodically investigated of all possibilities using a computer 
+program\footnote{The program is accessible on-line at \\
+https://github.com/csirmaz/AlgebraicSyncPaper/blob/master/2015/prove.py.}
 to determine
 which pairs of commands cause errors all the time,
 which can be simplified to one or no commands, and which can be reversed
 without any change in their overall effect.
-% TODO: Footnote: https://github.com/csirmaz/AlgebraicSyncPaper/blob/master/2015/prove.py
 Our basis for this investigation was the model of filesystems introduced in this paper.
 These properties of command pairs are crucial as they determine
 how a set of commands can be re-ordered to be applied to a filesystem
@@ -135,13 +133,9 @@ A pair of commands on nodes $\nn$ and $n$ is a construction pair if $\nn=\parent
 and the commands are one
 of the following:
    \begin{gather*}
-   % bd>bf
             \cbdaa{\nn}{\vald}\cc  \cbfaa{n}{\valf} \\
-   % bd>bd
             \cbdaa{\nn}{\valdi}\cc  \cbdaa{n}{\valdii} \\ % TODO all directories are the same?
-   % fd>bf
             \cfdaa{\nn}{\vald}\cc  \cbfaa{n}{\valf} \\
-   % fd>bd
             \cfdaa{\nn}{\valdi}\cc  \cbdaa{n}{\valdii} % TODO all directories are the same?
    \end{gather*}
 \end{mydef}
@@ -156,13 +150,9 @@ and the pair is not a construction pair.
 A pair of commands on nodes $n$ and $\nn$ is a destruction pair if $\parent(n)=\nn$ and the commands are one
 of the following:
    \begin{gather*}
-   % fb<db ??
             \cfba{n}\cc  \cdba{\nn} \\
-   % fb<df ??
             \cfba{n}\cc  \cdfaa{\nn}{\valf} \\
-   % db<db ??
             \cdba{n}\cc  \cdba{\nn} \\
-   % db<df ??
             \cdba{n}\cc  \cdfaa{\nn}{\valf}
    \end{gather*}
 \end{mydef}
@@ -178,8 +168,7 @@ A command is an assertion command if
 for every filesystem it either breaks it or leaves it in the same state.
 In other words, assertion commands have the same input and output type,
 and there must also be only one possible value for their output.
-Accordingly, in our current algebra, $\cbba{n}$ and $\cdda{n}$ are the only two assertion commands,
-and we do not note their output value as it is determined.
+Accordingly, in our current algebra, $\cbba{n}$ and $\cdda{n}$ are the only two assertion commands.
 \end{mydef}
 
 \begin{myax}\label{ax_child_assert}

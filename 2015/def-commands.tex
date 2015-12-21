@@ -7,28 +7,29 @@ Next we need to define commands on the filesystem.
 
 Let us consider what kind of information may be encoded in the commands.
 A usual set of commands, based on the most frequent tools implemented by filesystems,
-might be $create(n,V)$, $edit(n,V)$ and $remove(n)$ where $n\in\setn$ and $V\in\setv$ (but $V\neq\empt$).
+might be $create(n,\valv)$, $edit(n,\valv)$ and $remove(n)$ 
+where $n\in\setn$ and $\valv\in\setv$ (but $\valv\neq\empt$).
 Regarding their output, that is, the state of the filesystem at $n$
 after applying the command,
 we know that after $create$ or $edit$, $\FS(n)\neq\empt$, whereas after $remove$,
 $\FS(n)$ will be $\empt$. 
 However, from \cite{NREC} and \cite{CBNR} we know that a useful set of axioms
 will in some cases need to distinguish between, for example,
-edits that result in directories ($edit(n,D)$) and
-ones that result in files ($edit(n,F)$), and treat them as separate commands.
+edits that result in directories ($edit(n,\vald)$) and
+ones that result in files ($edit(n,\valf)$), and treat them as separate commands.
 Indeed, Bill Zissimopoulos suggested (TODO) that extending this distinction to more commands
 ultimately simplifies
 the definition of conflicting commands, as our model will then able to predict the behavior of commands
 more precisely.
-In other words, encoding the type of the output ($D$, $F$ or $\empt$) in the commands is definitely useful.
+In other words, encoding the type of the output ($\cchard$, $\ccharf$ or $\ccharb$) in the commands is definitely useful.
 At the same time, there is never any need to encode information about the
 output \emph{value} of a command,
 as the success or failure of filesystem commands only depend on the types of values in the filesystem.
 
 Notice, however, that the commands listed above also encode some information about 
 their input, the state of the filesystem
-before the command is applied. In particular, $create(n,V)$ requires that there are no files
-or directories at $n$, while $edit(n,V)$ and $remove(n)$ require the opposite.
+before the command is applied. In particular, $create(n,\valv)$ requires that there are no files
+or directories at $n$, while $edit(n,\valv)$ and $remove(n)$ require the opposite.
 This creates an arbitrary asymmetry where
 there is now more information encoded into commands about their output than about their input.
 In line with the aim to encode as much information as possible in the commands, % TODO Where is this mentioned?
@@ -96,7 +97,9 @@ if we write that $\cxy=\czw$, we mean that the input and output types
 of the commands are the same ($X=Z$ and $Y=W$), while a full equality 
 ($\cxynv=\czwmv$)
 implies
-that their nodes and output value is also the same.
+that their nodes and output values are also the same.
+
+\medskip
 
 % Simplifications
 % ---------------

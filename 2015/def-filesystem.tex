@@ -1,8 +1,6 @@
 
 \subsection{The Filesystem}
 
-% TODO namespace, data objects / inodes
-
 We model a filesystem using a function $\FS$ with a set of nodes (filesystem paths) $\setn$ as its domain,
 and a set of possible contents or values, $\setv$, as its codomain:
 \[ \FS : \setn \rightarrow \setv \] 
@@ -13,7 +11,6 @@ To model empty nodes, $\setv$
 contains a special element ($\empt$) which is the value of $\FS$ at these nodes.
 We consider the contents of files, as well as any meta-information of files
 and directories (e.g. permissions and other flags) part of the values in $\setv$.
-
 
 The nodes form a disjoint union of rooted directed trees.
 \begin{mydef}
@@ -52,8 +49,7 @@ and by $\valvx$ we mean a value of type $X$ in $\setvx{X}$.
 
 
 Another simplification we will assume in this paper is regarding directories.
-As Bill Zissimopoulos pointed out (\cite{BZ}), we often do not want to consider metadata stored in
+As Bill Zissimopoulos pointed 
+out,\footnote{Bill Zissimopoulos, personal communication, August 2015.} we often do not want to consider metadata stored in
 directories during synchronization. In other words, the contents of directories are all equal,
 which can be modelled by assuming that $|\setd|=1$.
-% This also creates a convenient symmetry where there is only a single value
-% for each type that can be repeated as we move from a path to its child ($D$ and $\empt$).
