@@ -1,13 +1,17 @@
 
 \subsection{Commands on Filesystems}
 
-Next we need to define commands on the filesystem.
+Next we define commands on the filesystem.
+As described above, we aimed to select a set of commands
+that capture as much information as possible
+about the operations, and is also symmetric.
+We start by summarizing our reasons for doing so.
 
-... TODO ...
-
-Let us consider what kind of information may be encoded in the commands.
+Let us consider what kind of information is usually encoded in filesystem operations.
 A usual set of commands, based on the most frequent tools implemented by filesystems,
-might be $create(n,\valv)$, $edit(n,\valv)$ and $remove(n)$ 
+may be $create(n,\valv)$---create the object $\valv$ at node $n$,
+$edit(n,\valv)$---modify the object at $n$ to become $\valv$,
+and $remove(n)$---delete the object at node $n$; 
 where $n\in\setn$ and $\valv\in\setv$ (but $\valv\neq\empt$).
 Regarding their output, that is, the state of the filesystem at $n$
 after applying the command,
@@ -16,9 +20,11 @@ $\FS(n)$ will be $\empt$.
 However, from \cite{NREC} and \cite{CBNR} we know that a useful set of axioms
 will in some cases need to distinguish between, for example,
 edits that result in directories ($edit(n,\vald)$) and
-ones that result in files ($edit(n,\valf)$), and treat them as separate commands.
-Indeed, Bill Zissimopoulos suggested (TODO) that extending this distinction to more commands
-ultimately simplifies
+ones that result in files ($edit(n,\valf)$), and treat them as separate commands,
+as their behaviors when combined with other commands are quite different.
+Indeed, Bill Zissimopoulos' work 
+demonstrated\footnote{Bill Zissimopoulos, personal communication, August 2015.}
+that extending this distinction to more commands ultimately simplifies
 the definition of conflicting commands, as our model will then able to predict the behavior of commands
 more precisely.
 In other words, encoding the type of the output ($\cchard$, $\ccharf$ or $\ccharb$) in the commands is definitely useful.
@@ -32,8 +38,10 @@ before the command is applied. In particular, $create(n,\valv)$ requires that th
 or directories at $n$, while $edit(n,\valv)$ and $remove(n)$ require the opposite.
 This creates an arbitrary asymmetry where
 there is now more information encoded into commands about their output than about their input.
-In line with the aim to encode as much information as possible in the commands, % TODO Where is this mentioned?
-and in order to resolve this asymmetry, we propose a set of commands that encode
+As, based on the above, we expect that encoding more information in the commands
+results in a model with greater predictive powers,
+and in order to resolve this asymmetry, 
+we propose a set of commands that encode
 the type of the original state of $\FS(n)$ as well.
 (Some real-life filesystem commands like $rmdir$ do this already.)
 
@@ -42,11 +50,11 @@ its input type, its output type, the node to which it is applied, and finally
 the value that it stores at the node.
 We will denote commands using quadruples that list these,
 and use $\cchard$, $\ccharf$ or $\ccharb$ to represent the different
-input and output types. In this system, $\cbdaa{n}{\vald}$ 
-is what represents $mkdir(n,\vald)$.
+input and output types. For example, $\cbdaa{n}{\vald}$ 
+will represent $mkdir(n,\vald)$.
 Alternatively, we use a triple of the two types and a node if 
 there is only a single suitable output value for the given type (e.g. $\empt$).
-For example, $\cdba{n}$ represents $rmdir(n)$.
+That is, $\cdba{n}$ will represent $rmdir(n)$.
 
 \medskip
 
@@ -73,7 +81,7 @@ Using $\FS[V/n]$ we denote a filesystem derived from $\FS$:
 \]
 \end{mydef}
 
-The exact behavior of our commands is as follows:
+The exact behavior of the commands is as follows:
 \begin{itemize}
 \item $\cbrk\FS = \fsbroken$
 \item
@@ -101,8 +109,8 @@ that their nodes and output values are also the same.
 
 \medskip
 
-% Simplifications
-% ---------------
+% Simplification
+% --------------
 
 For reasons also listed in \cite{NREC}, in this paper we will not consider
 a $move$ or $rename$ command. Regarding the theoretical reasoning we aim to follow,

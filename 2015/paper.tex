@@ -59,48 +59,23 @@ Abstract goes here
 
 
 
-\section{Comparisons}
+\input{comparisons}
 
-We consider the reconciliation algorithm described here an improvement over
-the one derved during our previous research (see \cite{NREC})
-as the previous algorithm not only fails to propagate all possible commands
-wherever it is possible (that is, where it does not break the filesystem),
-but the current algorithm is also simpler.
-This is because the previous reconciliation algorithm excludes
-commands from being propagated which must be preceded by a command that conflicts.
-
-The former observation is supported by Berzan and Ramsey, who in \cite{CBNR} 
-describe between different reconciliation policies.
-The liberal (maximal) policy propagates all updates to all replicas where
-the command does not break the filesystem, while a conservative policy
-refrains from updating any node that is below a node with conflicting commands.
-They show that the reconciliation algorithm in \cite{NREC} implements
-an intermediate policy as one can easily construct two- or three-replica scenarios
-where an update could clearly be propagated, but it is excluded.
-To rephrase the example in \cite{CBNR}, consider the following two
-update sequences that have been applied to replicas $\FS_A$ and $\FS_B$:
-\begin{align*}
-A&=\cbdaa{\nn}{\valdi}\cc\cbfaa{n}{\valf} \\
-B&=\cbdaa{\nn}{\valdii}
-\end{align*}
-where $\parent(n)=\nn$ (\cite{NREC} did not require all directories to have the same value).
-Clearly $\cbfaa{n}{\valf}$ could be applied to $\FS_B$, but it is not as
-it must be preceded by creating the directory, which conflicts with the same operation in $B$
-due to the different value.
-(Introducing a third replica which has not changed at all further complicates the picture.)
-The current algorithm no longer needs to specify that there can be no conflicts
-on preceding commands, and, to use the above terminology, implements a fully liberal policy.
-
-
-% TODO Conclusions
 
 
 \section{Further Research}
 
-
 TODO: next steps. multiple replicas
 
 \input{algebra}
+
+
+
+\section{Conclusions}
+
+% TODO
+Conclusions go here
+
 
 
 \section{Acknowledgments}

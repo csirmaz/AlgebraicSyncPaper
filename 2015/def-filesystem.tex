@@ -13,6 +13,8 @@ We consider the contents of files, as well as any meta-information of files
 and directories (e.g. permissions and other flags) part of the values in $\setv$.
 
 The nodes form a disjoint union of rooted directed trees.
+Tao et al. in \cite{TSR} describe a similar filesystem model, although
+they also model inodes and restrict the filesystem to a just single tree.
 \begin{mydef}
 The function $\parent(n)$ returns the parent node of $n$, or
 returns $\topnode$ if $n$ is the root of a tree.
@@ -47,9 +49,15 @@ We use $\valf$ for an arbitrary element in $\setf$,
 and $\vald$ for an arbitrary element in $\setd$,
 and by $\valvx$ we mean a value of type $X$ in $\setvx{X}$.
 
+% Simplification
+% --------------
 
-Another simplification we will assume in this paper is regarding directories.
+A simplification we will assume in this paper is regarding directories.
 As Bill Zissimopoulos pointed 
-out,\footnote{Bill Zissimopoulos, personal communication, August 2015.} we often do not want to consider metadata stored in
-directories during synchronization. In other words, the contents of directories are all equal,
+out,\footnote{Bill Zissimopoulos, personal communication, August 2015.} 
+we often do not want to consider metadata stored in
+directories (e.g. permission settings) during synchronization,
+as these are not generally understood by users,
+and, if needed, conflict resolution on these settings can be easily automated.
+In other words, the contents of directories are all equal,
 which can be modelled by assuming that $|\setd|=1$.

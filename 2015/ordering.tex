@@ -6,7 +6,7 @@ As we have seen above, this can occur after the first stage of update detection,
 but, more importantly,
 it is actually the task of the reconciler to determine whether there is an order,
 and if yes, what order,
-in which updates from multiple replicas can be applied to a filesystem.
+in which updates from different replicas can be applied to a filesystem.
 
 In this section we describe an algorithm with which all possible orderings of a
 simple set of commands can be generated, but before doing so, let us consider the following lemma.
@@ -16,12 +16,12 @@ Given a set of commands that
 does not contain assertion commands,
 and which can be applied to a filesystem in some order without breaking it,
 and which contains commands on $n$ and $\nn$ where $\nn\descendant n$
-but $\nn\neq\parent(n)$, then the set must also contain a commands
+but $\nn\neq\parent(n)$, then the set must also contain a command
 on each node between $n$ and $\nn$.
 \end{mylem}
 \begin{proof}
 We prove that under the given conditions, the set must contain a command on $\parent(n)$.
-Then, by repeating this statement, we how that the set must contain commands on every
+Then, by repapplying this result, we how that the set must contain commands on every
 ancestor of $n$ up to $\nn$.
 
 Furthermore,
