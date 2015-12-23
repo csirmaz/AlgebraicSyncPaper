@@ -59,8 +59,8 @@ $ \worksc{\seqset{C}}{\seqset{A'}} \wedge \worksc{\seqset{A}}{\seqset{B}} \Right
 
 We also prove the following lemmas.
 
-\begin{mylem}\label{unrelated_is_independent}
-Two different commands that are not assertion commands are independent iff the nodes they change are unrelated:
+\begin{mylem}\label{incomparable_is_independent}
+Two different commands that are not assertion commands are independent iff the nodes they change are incomparable:
 \[ \cxynv\indep\czwmv \Leftrightarrow n\unrel m \]
 if $\cxynv\neq\czwmv$ and none of $\cxy$ and $\cxw$ is $\cbb$ or $\cdd$.
 \end{mylem}
@@ -117,7 +117,7 @@ Applying a command can only result in a broken filesystem in three cases.
 First, if the filesystem was already broken, which cannot be the case here.
 Second, if the input type does not match the filesystem,
 but we know $\FS(m)\in\setvx{W}$ and so
-$(\cxynv\FS)(m)\in\setvx{W}$ as based on \cref{unrelated_is_independent}, $n\neq m$.
+$(\cxynv\FS)(m)\in\setvx{W}$ as based on \cref{incomparable_is_independent}, $n\neq m$.
 Third, if the new filesystem violates the tree property.
 This again cannot be the case because we also know that $n\unrel m$
 and the tree property only depends on the types of the parent and children of $m$,
@@ -135,7 +135,7 @@ Assume that there is a filesystem $\FS$ so that
 $S\FS\neq\fsbroken$ and $T\FS\neq\fsbroken$, but
 $(S\cc T)\FS=\fsbroken$.
 
-From \cref{unrelated_is_independent,ax_separate_commute} we know that
+From \cref{incomparable_is_independent,ax_separate_commute} we know that
 the commands in $S$ and $T$ pairwise commute, and so any sequence
 that contains the commands from $S$ and $T$ and preserve their original partial order
 is equivalent to $S\cc T$ on all filesystems.

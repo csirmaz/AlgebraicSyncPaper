@@ -59,7 +59,7 @@ and let the marked command be $\cxynv$,
 and the preceding unmarked command be $\czwmv$.
 As $A$ is simple and $\works{A}$, from 
 \cref{ax_distantrel_breaks,ax_directchild_breaks,ax_directparent_breaks}
-we know that these commands can only be on unrelated paths or form a construction or destruction pair.
+we know that these commands can only be on incomparable nodes or form a construction or destruction pair.
 In the first case, swapping the commands results in a sequence equivalent to $A$,
 and we show that the last two cases are impossible as they would lead to contradiction.
 
@@ -179,7 +179,7 @@ Let therefore the marked command in $S$ be $\cxynv$
 and the preceding unmarked command be $\czwmv$.
 As $S$ is simple and $\works{S}$, from 
 \cref{ax_distantrel_breaks,ax_directchild_breaks,ax_directparent_breaks}
-we know that these commands can only be on unrelated paths or form a construction or destruction pair.
+we know that these commands can only be on incomparable nodes or form a construction or destruction pair.
 In the first case, swapping the commands results in a sequence equivalent to $S$;
 we only need to show that the other two cases are not possible as they would lead to a contradiction.
 
@@ -193,10 +193,10 @@ T = \cdots\cc  \cqrov\cc \cdots
 \end{gather*}
 We know none of these commands is an assertion command, and 
 from {\condDisj} that $\cqrov\neq\czwmv$.
-Therefore, based on \cref{unrelated_is_independent} we know this means that
+Therefore, based on \cref{incomparable_is_independent} we know this means that
 either $m\descendantEq o$ or $o\descendantEq m$.
 From {\condApr} we also know that $\cxynv\indep \cqrov$,
-and so because of \cref{unrelated_is_independent},
+and so because of \cref{incomparable_is_independent},
 $n\unrel o$.
 
 We therefore have four cases considering the relationships between $n,m$ and $o$:

@@ -56,7 +56,7 @@ We can now define our algorithm to generate orders of sets of commands.
 Let $U$ be a simple set of commands
 that we know can be applied to at least one filesystem in some order without breaking it.
 Then we can split $U$ into a maximum number of disjunct subsets
-(components) so that the nodes of two commands from two different subsets are unrelated.
+(components) so that the nodes of two commands from two different subsets are incomparable.
 These will simply be the components of the subset of the node forest that contains the nodes affected by the set.
 
 From \cref{ax_separate_commute} we know that commands from different 
@@ -136,9 +136,9 @@ the command on the topmost node, $\cxynv$, was not before all other commands
 in the component as described by the algorithm,
 then any resulting sequence would necessarily contain
 a $\czwmv$ where $n\descendant m$, potentially followed by commands
-on unrelated paths, and then followed by $\cxynv$.
+on incomparable nodes, and then followed by $\cxynv$.
 From \cref{ax_separate_commute} we know we can convert this sequence
-to an equivalent sequence by swapping the unrelated commands with
+to an equivalent sequence by swapping the commands on incomparable nodes with
 $\czwmv$, which sequence would therefore have the commands on
 $m$ and $n$ next to each other. Then from \cref{ax_distantrel_breaks,ax_directparent_breaks}
 we know the sequence would break all filesystems

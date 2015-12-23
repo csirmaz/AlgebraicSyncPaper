@@ -55,7 +55,7 @@ We write $n\descendantEq m$ if $n\descendant m$ or $n=m$.
 \end{mydef}
 
 \begin{mydef}{$n\unrel m$.}
-We write $n\unrel m$, or ``$n$ and $m$ are unrelated'' if $n\not\descendantEq m$ and $n\not\ancestorEq m$.
+We write $n\unrel m$, or ``$n$ and $m$ are incomparable'' if $n\not\descendantEq m$ and $n\not\ancestorEq m$.
 \end{mydef}
 
 
@@ -96,12 +96,12 @@ and values are of the appropriate type:
 $\valvy\in\setvx{Y}$ and $\valvw\in\setvx{W}$.
 
 \begin{myax}\label{ax_separate_commute}
-Commands on unrelated nodes commute:
+Commands on incomparable nodes commute:
 $\cxynv\cc\czwmv \equiv \czwmv\cc\cxynv$ where $n\unrel m$.
 \end{myax}
 
 \begin{myax}\label{ax_separate_nobreaks}
-Commands on unrelated nodes do not break every filesystem:
+Commands on incomparable nodes do not break every filesystem:
 $\cxynv\cc\czwmv \nequiv \cbrk$ where $n\unrel m$.
 \end{myax}
 

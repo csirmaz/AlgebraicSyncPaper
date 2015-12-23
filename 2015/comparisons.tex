@@ -31,3 +31,66 @@ due to the different value.
 (Introducing a third replica which has not changed at all further complicates the picture.)
 The current algorithm no longer needs to specify that there can be no conflicts
 on preceding commands, and, to use the above terminology, implements a fully liberal policy.
+
+
+\subsection{Comparing Definitions of Conflicts}
+As a test of the proposed reconciliation algorithm, we compare our definition of conflicting
+updates to how conflicts are defined by Balasubramaniam and Pierce (\cite{BP}).
+The update detector described in \cite{BP} provides a safe estimate of nodes
+(paths) at which updates occurred.
+It marks some nodes as \emph{dirty} in a way that we know that at non-dirty paths
+the filesystem has not changed between its original and current states
+(see their Definition 3.1.1).
+The \emph{dirty} marks are also up-closed, that is, all ancestor nodes of a dirty node
+are also dirty (their Fact 3.1.3).
+And finally, a conflict is detected between replicas $\FS_A$ and $\FS_B$ at node $n$
+if $n$ is marked as dirty in both $\FS_A$ and $\FS_B$, and
+$\FS_A(n)\neq\FS_B(n)$, and $n$ does not point to a directory in both replicas
+($\FS_A(n)\not\in\setd \vee \FS_B(n)\not\in\setd$; see section 4.1 in \cite{BP}).
+
+It can be easily seen that not all conflicts detected based on the above definition
+entails a conflict based on our system; that is, \cite{BP} describes a more
+conservative policy.
+For example, if $\nn=\parent(n)$ and $\FS(\nn)=\vald$ and $\FS(n)=\valf$, and
+the two replicas are derived in the following way:
+\begin{gather*}
+\FS_A = \cfba{n} \cc \cdba{\nn} \FS \\
+\FS_B = \cfba{n} \FS,
+\end{gather*}
+then $\nn$ is dirty in both replicas:
+in $\FS_A$ it was modified, and in $\FS_B$ one of its descendants was modified.
+Moreover, $\FS_A(\nn)\neq\FS_B(\nn)$ and $\FS_A(\nn)=\empt\not\in\setd$,
+and therefore a conflict is detected at $\nn$.
+Our reconciliation algorithm detects no conflicts;
+instead, it propagates $\cdba{\nn}$ to $\FS_B$, which we think is as expected
+and desired.
+
+At the same time, it can be shown that if our command-based reconciler
+detects a conflict, it entails a conflict based on the \emph{dirty}
+property.
+Balasubramaniam and Pierce also suppose that all directories are equal,
+therefore we are safe to continue to assume that $|\setd|=1$.
+Let $A$ and $B$ be two simple sequences returned by the update detector
+for the two replicas $\FS_A$ and $\FS_B$.
+A conflict between the commands $\cxynv\in A$ and $\czwmv\in B$
+means that even though $\cxynv\in A\setminus B$
+and $\czwmv\in B\setminus A$, they cannot be included in
+$\reca$ and $\recb$, respectively, because
+$\cxynv\nindep\czwmv$ (see \cref{def:reconciliation}).
+
+From \cref{incomparable_is_independent} we therefore know that $n\nunrel m$.
+Without loss of generality we can assume that $n\descendantEq m$.
+From this we see that $n$ is \emph{dirty} in both $\FS_A$ and $\FS_B$,
+as the filesystem changes at $n$ in $\FS_A$ and at a descendant in $\FS_B$
+(none of the commands are assertion commands).
+
+We now only need to show that $\FS_A(n)\neq\FS_B(n)$, as from this we will also
+know that at least one of these values is not a directory.
+If $n=m$, this follows from the fact that $\cxynv\neq\czwmv$ (as they are not in
+$A\cap B$), which in this case can only be if $\FS_A(n)=\valvy\neq\valvw=\FS_B(n)$.
+If $n\descendant m$ and there is no command on $n$ in $B$, then it is also
+true as $\cxynv$ is not an assertion command, and therefore 
+$\FS_A(n)\neq\FS(n)=\FS_B(n)$.
+The final case is when there is a command on $n$ in $B$; let it be $\cqrnv$.
+
+
