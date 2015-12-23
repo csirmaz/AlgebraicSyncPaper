@@ -20,14 +20,17 @@ adding any command left out from $\reca$ or $\recb$ will break the filesystems.
 
 We assume that $A$ and $B$ are returned by an update detector,
 and so they are simple sequences.
-(Otherwise, they can be simplified to become simple sequences.)
+(Otherwise, they can be simplified to become simple sequences; see \cref{update_works}.)
 We also assume that $\FS_A$ and $\FS_B$ are not broken.
 With these assumptions,
 we can now define independent sequences and
 our reconciliation algorithm.
 
 \begin{mydef}{Independent commands, sequences and sets.}
-For two commands $\cxynv$ and $\czwmv$ we write $\cxynv\indep\czwmv$ if $\cxynv\cc\czwmv \equiv \czwnv\cc\cxynv \nequiv \cbrk$.
+Two commands $\cxynv$ and $\czwmv$ 
+are independent, and we write $\cxynv\indep\czwmv$ if 
+they have the same effect in either order and do not break all filesystems:
+$\cxynv\cc\czwmv \equiv \czwnv\cc\cxynv \nequiv \cbrk$.
 For two sequences or sets of commands $A$ and $B$ we write $A\indep B$ if
 $\forall \alpha\in A \mbox{~and~} \forall \beta\in B: \alpha\indep\beta$.
 \end{mydef}
@@ -42,11 +45,13 @@ $\forall \alpha\in A \mbox{~and~} \forall \beta\in B: \alpha\indep\beta$.
 \end{align*}
 
 In other words, the sequence $\reca$ we apply to $\FS_B$ 
+to reconcile it with $\FS_A$
 is the largest subset of $A\setminus B$
 that is independent of $B\setminus A$.
 The order of commands in the sequence can be determined using the algorithm described in
 \cref{ordering} as any subset of $A$ is also simple.
-In a similar way, $\recb$ can be obtained by reversing $A$ and $B$.
+In a similar way, $\recb$ can be obtained by reversing $A$ and $B$
+in the definition.
 \end{mydef}
 
 We would now like to prove that $\reca$ and $\recb$ can be applied to the replicas,

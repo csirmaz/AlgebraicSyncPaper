@@ -108,9 +108,10 @@ The combination of independent commands works wherever the original commands wor
 \end{align*}
 \end{myax}
 \begin{proof}
-We name this proposition a \namecrefs{combine_independent_commands} for the same reason as above,
-but it is easy to provide an indirect proof based on our filesystem model.
-Assume that $\cxynv\cc \czwmv\FS=\fsbroken$.
+We name this proposition a \namecref{combine_independent_commands} 
+because to prove it, we must reach back to our filesystem model.
+We proceed in an indirect way and
+assume that $\cxynv\cc \czwmv\FS=\fsbroken$.
 We know $\cxynv\FS\neq\fsbroken$ so it must be applying 
 $\czwmv$ that breaks it.
 Applying a command can only result in a broken filesystem in three cases.
@@ -180,9 +181,9 @@ and consequently $A$ and $B$ cannot work on the same filesystem.
 \end{proof}
 
 
+\bigskip
 
-\medskip
-
+\noindent
 We continue by defining inverse commands and sequences
 which allow us to move parts of sequences between the
 condition and consequence parts of $\workssign$.
@@ -214,7 +215,8 @@ A common prefix of sequences can be moved to the other side of $\workssign$ by i
 \end{mylem}
 \begin{proof}
 This is based on the fact that in our model, unless they break a filesystem,
-commands change one type of value into another, but never merge types.
+commands leave the type of the filesystem value unchanged 
+or change one type into another, but never merge types.
 That is,
 sequences---as functions mapping filesystems to filesystems---are
 essentially bijections over type-equality ($\typeeq$)

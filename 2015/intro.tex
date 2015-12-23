@@ -33,9 +33,8 @@ is ordering.
 If update detection is based on comparing the original state of the filesystem
 to its new state, then we can easily collect a set of updates,
 but we need to order these in a way that they could be applied
-to the filesystems
-without causing an error 
-(for example, a directory needs to be created first before a file can be created under it).
+to the filesystems without causing an error 
+(for example, a directory needs to be created before a file can be created under it).
 Similarly, during reconciliation when we consider all the updates that
 have been applied to the different replicas, we need to find a way of
 merging these and creating a global ordering that we can apply
@@ -55,7 +54,7 @@ This is followed by investigating the properties and behaviors
 of command pairs in \cref{section_axioms}.
 \Cref{sec_update} describes update detection, and it is
 in \cref{ordering} that we describe how commands can be ordered
-and prove that under some conditions all valid orders
+and prove that under some simple conditions all valid orders
 have the same effect.
 
 \Cref{sec_rec} defines our reconciliation 
@@ -63,7 +62,7 @@ and conflict detection algorithms.
 We then proceed to prove that the output of reconciliation
 is sound in the sense that 
 it can be applied to the replicas without causing an error,
-and that the described algorithm provides a complete solution
+and it is complete
 inasmuch as no further updates can be applied under any circumstances.
 In order to be able to do this, we introduce
 the concept of \emph{conditional operation} of sequences of commands,

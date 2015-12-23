@@ -9,13 +9,13 @@ by comparing $\FS_A$ and $\FS_B$ to their common ancestor, $\FS$. This is called
 A sequence that transforms $\FS$ into $\FS_A$ must contain at least one command on each node
 that changes between the two states of the filesystem. Also, it is easy to see that this is also
 sufficient, as there are commands available for any input and output value. 
-Specifically, if at node $n$, $\FS(n)=X'$ and $\FS_A(n)=Y'\neq X'$, then we add the command $\cxyaa{n}{Y'}$ to $A$
-where $X'\in\setvx{X}$ and $Y'\in\setvx{Y}$.
+Specifically, if at node $n$, $\FS(n)=\valvx$ and $\FS_A(n)=\valvy\neq \valvx$, then we add the command $\cxyaa{n}{\valvy}$ to $A$
+where $\valvx\in\setvx{X}$ and $\valvy\in\setvx{Y}$.
 
 To be able to describe such sequences better, let us introduce the following properties:
 
 \begin{mydef}{Minimal set or sequence.}
-A sequence or set of commands is minimal if it contains at most one command on every node.
+A sequence or set of commands is minimal if it contains at most one command on each node.
 \end{mydef}
 
 \begin{mydef}{Simple set or sequence.}
@@ -29,5 +29,5 @@ assertion commands in the set.
 The next step in generating the sequences is to order the commands collected.
 As this task is at the heart of reconciliation itself independently of update detection,
 we discuss it in the next section.
-Then, in \cref{update_works}, we prove that the resulting sequence actually
-works without breaking the filesystem.
+Then, in \cref{update_works}, we prove that the resulting sequence 
+returned by the update detector actually works without breaking the filesystem.

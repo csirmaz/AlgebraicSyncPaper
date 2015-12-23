@@ -25,7 +25,7 @@ if the filesystem is not empty at a node, and the node has a parent,
 then there must be a directory at the parent node.
 
 To model this, in $\setv$ we distinguish between 
-file contents ($\setf$) and directory contents ($\setd$), that is,
+file values ($\setf$) and directory values ($\setd$), that is,
 if $\setb = \{\empt\}$ then:
 \[ \setv = \setb \cup \setf \cup \setd \]
 The tree property can then be defined as
@@ -57,7 +57,7 @@ As Bill Zissimopoulos pointed
 out,\footnote{Bill Zissimopoulos, personal communication, August 2015.} 
 we often do not want to consider metadata stored in
 directories (e.g. permission settings) during synchronization,
-as these are not generally understood by users,
+as these are not generally understood well by users,
 and, if needed, conflict resolution on these settings can be easily automated.
 In other words, the contents of directories are all equal,
 which can be modelled by assuming that $|\setd|=1$.

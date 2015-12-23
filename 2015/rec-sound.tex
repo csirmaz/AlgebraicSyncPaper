@@ -45,18 +45,19 @@ Therefore, first we prove the following:
 if all commands are marked in $A$ that also appear in $B$,
 then there is an $A'$ in $\orderset{A}$ in which all marked commands are at the beginning.
 
-We show that $A$ can be transformed via equivalences so that this would be true.
+We show that $A$ can be transformed via equivalences into $A'$ for which it is true.
 Our proposition is that if the marked commands are not at the beginning, then
 the sequence contains an unmarked command followed by a marked command.
 We show that these can be swapped resulting in an equivalent sequence.
 Then, by repeating this process similarly to bubble sorting, we can generate 
 a suitable $A'$.
 
-\medskip
-
 Let us consider therefore the marked command preceded by an unmarked command in $A$,
 and let the marked command be $\cxynv$, 
 and the preceding unmarked command be $\czwmv$.
+\begin{gather*}
+A = \cdots\cc  \czwmv\cc  \cxynv\cc  \cdots
+\end{gather*}
 As $A$ is simple and $\works{A}$, from 
 \cref{ax_distantrel_breaks,ax_directchild_breaks,ax_directparent_breaks}
 we know that these commands can only be on incomparable nodes or form a construction or destruction pair.
@@ -69,7 +70,7 @@ from \cref{lemma:neighbor}
 we know that there is a $B'$ in $\orderset{B}$ where it is next to $\cxynv$ (also in $B$),
 and from \cref{simple_reorder_equiv} we know that $B'\equiv B$.
 When describing our ordering algorithm in \cref{ordering} we saw
-that the command on the parent path deremines whether a pair of commands
+that the command on the parent path determines whether a pair of commands
 is a construction or destruction pair,
 and that this, in turn, determines whether the command on the child path must
 precede or follow the other command as otherwise the sequence would break all filesystems.
@@ -95,7 +96,7 @@ from \cref{worksinputmatch}
 we know that $Q=Z$. 
 
 Going back to the construction and destruction pairs we see that the output type of the first command
-is always the same, and it is either $D$ or $\empt$ depending on the relationship between $n$ and $m$.
+is always the same, and it is either $\cchard$ or $\ccharb$ depending on the relationship between $n$ and $m$.
 Therefore $R=W$ and $\cqrmv=\czwmv$
 as $|\setd|=|\setb|=1$. 
 If $B$ originally had a command on $m$,
@@ -104,25 +105,24 @@ If $B$ had no command on $m$,
 this is a contradiction because the command on $m$ in $B'$ is an assertion command, so $Z=Q=R=W$, 
 but $A$ contained no assertion commands.
 
-\medskip
-
 We now know that there is an $A'\equiv A$ in which commands in $A\cap B$
 are at the beginning, and therefore 
-from \cref{worksextpostfix}
+from \cref{worksextpostfix} we know that
 $\worksc{A\cap B}{A}$ and by symmetry $\worksc{A\cap B}{B}$.
 \end{proof}
 
-\medskip
+\bigskip
 
-
+\noindent
 We would like to prove that $\worksc{B\cc \reca}{A,B}$.
-From the above we know that this is equivalent to
+From the above we know that we can move commands in $A\cap B$
+to the beginning of $B$ and so this is equivalent to
 \[ \worksc{\acb\cc \bma\cc \reca}{A,B}. \]
 As we already know that $\reca\indep\bma$
 and that $\worksc{\acb\cc \bma}{A,B}$
 (as $\worksc{B}{A,B}$),
-based on \cref{indep_prefix_combine}
-we only need to prove that
+we can prove our theorem based on \cref{indep_prefix_combine}
+if we can prove that
 \[ \worksc{\acb\cc \reca}{A,B}. \]
 Using \cref{r_invmove} we can rephrase this as
 \[ \worksc{\reca}{\acbi\cc A,\acbi\cc B}. \]
@@ -138,7 +138,8 @@ as $\worksc{A,B}{A,B}$,
 and $A\equiv\acb\cc\amb$, and $B\equiv\acb\cc\bma$.
 \end{itemize}
 
-Our theorem is therefore proven if we prove the following lemma:
+Our theorem is therefore proven if we prove the following lemma,
+in which we rename $A\setminus B$ to $S$ and $B\setminus A$ to $T$:
 \newcommand{\condSimple}{(c1)}
 \newcommand{\condDisj}{(c2)}
 \newcommand{\condApr}{(c3)}
@@ -180,8 +181,8 @@ and the preceding unmarked command be $\czwmv$.
 As $S$ is simple and $\works{S}$, from 
 \cref{ax_distantrel_breaks,ax_directchild_breaks,ax_directparent_breaks}
 we know that these commands can only be on incomparable nodes or form a construction or destruction pair.
-In the first case, swapping the commands results in a sequence equivalent to $S$;
-we only need to show that the other two cases are not possible as they would lead to a contradiction.
+In the first case, swapping the commands results in a sequence equivalent to $S$,
+and we show that the other two cases are not possible as they would lead to a contradiction.
 
 In the last two cases, we know that either $m=\parent(n)$ or $n=\parent(m)$.
 We also know that because of {\condApr} there must be 

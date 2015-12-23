@@ -11,7 +11,7 @@ commands usually do not occur in isolation,
 and are applied to filesystems in time.
 Therefore we will investigate sequences of commands with a well-defined order
 (which form a free semigroup).
-We use $\cc$ to concatenate commands to form a sequence, or concatenate sequences to form a longer sequence:
+We use ``$\cc$'' to concatenate commands to form a sequence, or concatenate sequences to form a longer sequence:
 $S=\cbdaa{n}{\vald}\cc\cbfaa{m}{\valf}$, or $S'=S\cc\cbba{o}$.
 We write $\emptyseq$ for the empty sequence.
 
@@ -79,16 +79,11 @@ Our basis for this investigation was the model of filesystems introduced in this
 These properties of command pairs are crucial as they determine
 how a set of commands can be re-ordered to be applied to a filesystem
 during synchronization, and what commands will never be compatible.
-
 Below we list a number of statements derived using this method.
-Although they can be proven by investigating all relevant possibilities
-in a filesystem, we refer to these as axioms because in a secondary algebraic model
-that describes commands without reference to an underlying filesystem,
-these would function as meta-rules generating statements we would accept as true.
-See \cref{sec_algebra} for more about such a model.
 
-\medskip
+\bigskip
 
+\noindent
 Pairs of commands in general have the form
 \[ \cxynv\cc  \czwmv \]
 where $X,Y,Z,W\in\typeset$, $n,m\in\setn$, 
@@ -134,9 +129,9 @@ and the commands are one
 of the following:
    \begin{gather*}
             \cbdaa{\nn}{\vald}\cc  \cbfaa{n}{\valf} \\
-            \cbdaa{\nn}{\valdi}\cc  \cbdaa{n}{\valdii} \\ % TODO all directories are the same?
+            \cbdaa{\nn}{\vald}\cc  \cbdaa{n}{\vald} \\
             \cfdaa{\nn}{\vald}\cc  \cbfaa{n}{\valf} \\
-            \cfdaa{\nn}{\valdi}\cc  \cbdaa{n}{\valdii} % TODO all directories are the same?
+            \cfdaa{\nn}{\vald}\cc  \cbdaa{n}{\vald}
    \end{gather*}
 \end{mydef}
 
@@ -168,13 +163,15 @@ A command is an assertion command if
 for every filesystem it either breaks it or leaves it in the same state.
 In other words, assertion commands have the same input and output type,
 and there must also be only one possible value for their output.
-Accordingly, in our current algebra, $\cbba{n}$ and $\cdda{n}$ are the only two assertion commands.
+Accordingly, $\cbba{n}$ and $\cdda{n}$ are the only two assertion commands.
 \end{mydef}
 
 \begin{myax}\label{ax_child_assert}
 An assertion command can be added on a descendant node:
 $\cbba{n}\cc\cxynnv \equiv \cxynnv \equiv \cxynnv\cc\cbba{n}$ 
 where $\nn\descendant n$ and $\cxy\neq\cdd$.
+(Note that this and next rule is true because the assertion command is
+adjacent to the original command.)
 \end{myax}
 
 \begin{myax}\label{ax_parent_assert}

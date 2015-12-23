@@ -1,17 +1,17 @@
 
 \subsection{Commands on Filesystems}
 
-Next we define commands on the filesystem.
+Next we define commands on filesystems.
 As described above, we aimed to select a set of commands
-that capture as much information as possible
+that captures as much information as possible
 about the operations, and is also symmetric.
 We start by summarizing our reasons for doing so.
 
 Let us consider what kind of information is usually encoded in filesystem operations.
 A usual set of commands, based on the most frequent tools implemented by filesystems,
-may be $create(n,\valv)$---create the object $\valv$ at node $n$,
-$edit(n,\valv)$---modify the object at $n$ to become $\valv$,
-and $remove(n)$---delete the object at node $n$; 
+may be $create(n,\valv)$---create the value $\valv$ at node $n$,
+$edit(n,\valv)$---modify the value at $n$ to become $\valv$,
+and $remove(n)$---delete the value at node $n$; 
 where $n\in\setn$ and $\valv\in\setv$ (but $\valv\neq\empt$).
 Regarding their output, that is, the state of the filesystem at $n$
 after applying the command,
@@ -19,17 +19,17 @@ we know that after $create$ or $edit$, $\FS(n)\neq\empt$, whereas after $remove$
 $\FS(n)$ will be $\empt$. 
 However, from \cite{NREC} and \cite{CBNR} we know that a useful set of axioms
 will in some cases need to distinguish between, for example,
-edits that result in directories ($edit(n,\vald)$) and
+$edit$s that result in directories ($edit(n,\vald)$) and
 ones that result in files ($edit(n,\valf)$), and treat them as separate commands,
-as their behaviors when combined with other commands are quite different.
+as their behaviors are quite different when combined with other commands.
 Indeed, Bill Zissimopoulos' work 
 demonstrated\footnote{Bill Zissimopoulos, personal communication, August 2015.}
 that extending this distinction to more commands ultimately simplifies
 the definition of conflicting commands, as our model will then able to predict the behavior of commands
 more precisely.
 In other words, encoding the type of the output ($\cchard$, $\ccharf$ or $\ccharb$) in the commands is definitely useful.
-At the same time, there is never any need to encode information about the
-output \emph{value} of a command,
+At the same time, there is never any need to consider the
+exact output \emph{value} of a command,
 as the success or failure of filesystem commands only depend on the types of values in the filesystem.
 
 Notice, however, that the commands listed above also encode some information about 
@@ -37,7 +37,7 @@ their input, the state of the filesystem
 before the command is applied. In particular, $create(n,\valv)$ requires that there are no files
 or directories at $n$, while $edit(n,\valv)$ and $remove(n)$ require the opposite.
 This creates an arbitrary asymmetry where
-there is now more information encoded into commands about their output than about their input.
+there is now more information available about their output than about their input.
 As, based on the above, we expect that encoding more information in the commands
 results in a model with greater predictive powers,
 and in order to resolve this asymmetry, 
@@ -48,16 +48,21 @@ the type of the original state of $\FS(n)$ as well.
 We therefore have four pieces of information related to each command:
 its input type, its output type, the node to which it is applied, and finally
 the value that it stores at the node.
-We will denote commands using quadruples that list these,
-and use $\cchard$, $\ccharf$ or $\ccharb$ to represent the different
-input and output types. For example, $\cbdaa{n}{\vald}$ 
+We will denote commands using quadruples that list these
+in a the following format:
+\[ \cxynv, \]
+where $X$ is the input type, $Y$ is the output type, $n$ is the node,
+and $\valvy$ is a value of the appropriate type from $\setvx{Y}$.
+We use $\cchard$, $\ccharf$ or $\ccharb$ to represent the different
+types. For example, $\cbdaa{n}{\vald}$ 
 will represent $mkdir(n,\vald)$.
 Alternatively, we use a triple of the two types and a node if 
 there is only a single suitable output value for the given type (e.g. $\empt$).
 That is, $\cdba{n}$ will represent $rmdir(n)$.
 
-\medskip
+\bigskip
 
+\noindent
 A command can only succeed if the original value at node $n$ has a type that matches
 the input type of the command. If this is not the case, or if the resulting
 filesystem no longer has the tree property, then we say that the command
@@ -69,7 +74,7 @@ we introduce the command $\cbrk$ that simply breaks every filesystem.
 
 We note that a command or a sequence of commands is applied to a filesystem
 by prefixing the command or sequence to it, for example: $\cbrk\FS$, $\cbdaa{n}{\vald}\FS$, 
-or simply $S\FS$ if $S$ is a sequence of commands.
+or simply $S\FS$ if $S$ is a sequence of commands. % TODO Add space between command and FS
 
 \begin{mydef}
 Using $\FS[V/n]$ we denote a filesystem derived from $\FS$:
@@ -85,9 +90,6 @@ The exact behavior of the commands is as follows:
 \begin{itemize}
 \item $\cbrk\FS = \fsbroken$
 \item
-All other commands have the generic form $\cxynv$ where
-$X$ and $Y$ are types in $\typeset$,
-$n\in\setn$ and $\valvy$ is a value of the appropriate type from $\setvx{Y}$.
 \[ \cxynv\FS = 
    \begin{cases}
    \fsbroken &\mbox{if~} \FS=\fsbroken\\
@@ -107,19 +109,20 @@ of the commands are the same ($X=Z$ and $Y=W$), while a full equality
 implies
 that their nodes and output values are also the same.
 
-\medskip
-
 % Simplification
 % --------------
 
+\bigskip
+
+\noindent
 For reasons also listed in \cite{NREC}, in this paper we will not consider
 a $move$ or $rename$ command. Regarding the theoretical reasoning we aim to follow,
-this turns out to be useful because these would be the only commands that affect
+this turns out to be useful because this would be the only command that affects
 filesystems at two nodes at once, therefore describing 
-the dependencies affecting these commands
-would call for a more complicated model.
+the dependencies for $move$ would call for a more complicated model.
 From a pragmatic perspective, this restriction does not mean that in an application
 implementing conflict resolution using the algorithm described here would not be
 able to handle renames by pre- and post-processing changes in the filesystem to
-discover them, which (especially when a rename is combined with changes to the content)
+discover them, which can enhance usability, but which
+(especially when a rename is combined with changes to the content)
 is a non-trivial problem in itself.
