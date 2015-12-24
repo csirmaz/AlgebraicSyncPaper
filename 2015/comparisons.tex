@@ -1,10 +1,10 @@
 
-\section{Comparisons}
+\section{Related Work}
 
-\subsection{Liberal and conservative Reconciliation}
+\subsection{Liberal and Conservative Reconciliation}
 
 We consider the reconciliation algorithm described here an improvement over
-the one derved during our previous research (see \cite{NREC})
+the one derved during our previous research (\cite{NREC})
 as the previous algorithm not only fails to propagate all possible commands
 wherever it is possible (that is, where it does not break the filesystem),
 but the current algorithm is also simpler.
@@ -12,9 +12,9 @@ This is because the previous reconciliation algorithm excludes
 commands from being propagated which must be preceded by a command that conflicts.
 
 The former observation is supported by Berzan and Ramsey, who in \cite{CBNR} 
-describe between different reconciliation policies.
+describe different general reconciliation policies.
 The liberal (maximal) policy propagates all updates to all replicas where
-the command does not break the filesystem, while a conservative policy
+the update does not break the filesystem, while a conservative policy
 refrains from updating any node that is below a node with conflicting commands.
 They show that the reconciliation algorithm in \cite{NREC} implements
 an intermediate policy as one can easily construct two- or three-replica scenarios
@@ -40,10 +40,10 @@ As a test of the proposed reconciliation algorithm,
 we compare our definition of conflicting
 updates to how conflicts are defined by Balasubramaniam and Pierce
 in their state-based approach (\cite{BP}).
-The update detector described in \cite{BP} provides a safe estimate of nodes
+The update detector they describe provides a safe estimate of nodes
 (paths) at which updates occurred.
 It marks some nodes as \emph{dirty} in a way that we know that at non-dirty nodes
-the filesystem have not changed between their original and current states
+the filesystems (replicas) have not changed between their common original state and current state
 (see Definition 3.1.1 in \cite{BP}).
 The \emph{dirty} marks are also up-closed, that is, all ancestor nodes of a dirty node
 are also dirty (Fact 3.1.3 in \cite{BP}).

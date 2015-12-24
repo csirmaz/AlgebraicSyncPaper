@@ -70,7 +70,7 @@ Abstract goes here
 \section{Conclusions and Further Research}
 
 % TODO
-Conclusions go here -- same approach to other systems
+Conclusions go here --- same approach to other systems
 \medskip
 
 % Further research
@@ -79,7 +79,7 @@ Apart from constructing an algebra,
 there are many other ways in which further work can extend the current results.
 We think one of the most interesting extensions would be to
 consider reconciling not only two, but more replicas in a single step and
-prove the correctness of the algorithm proposed.
+prove the correctness and completeness of the algorithm proposed.
 A related problem is to model cases where reconciliation cannot
 complete fully (due to a system or network failure, for example)
 or if only a subset of the replicas are reconciled,
@@ -88,13 +88,13 @@ have different common ancestors, that is,
 the updates specific to the replicas start from different points
 in the update history of the filesystem.
 Identifying the information one needs to keep to perform
-update detection is such cases and devising a suitable algorithm
-will be an essential part of any implementation of a reconciler
+update detection in such cases and devising a suitable algorithm
+would be beneficial for any implementation of a reconciler
 based on the ideas presented here.
 
 An extension of these results could also entail relaxing
 the simplifying assumptions we used.
-Identifying which results depend on assuming that $|\setd|=1$
+Identifying which results depend on the assumption that $|\setd|=1$
 and devising updated proofs or algorithms,
 or a pre-processing step that reconciles meta-information in directories
 can enable the algebraic system or an implementation

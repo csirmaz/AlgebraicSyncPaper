@@ -15,13 +15,12 @@ and we select a sequence $S\subset \amb$ so that
 it contains a command $\cxynv$ for which $\cxynv\nindep\bma$,
 then $B\cc S$ either breaks all filesystems $A$ and $B$ do not break
 (that is, $S$ breaks all possible $\FS_B$ replicas),
-or it overrides incompatible changes introduced in the replica by $B$.
+or it changes a node that $B$ has already changed to a different value,
+that is, it overrides a change in $\FS_B$.
 \end{myth}
-Overriding changes is not desirable as in these cases the reconciler
-does not have enough information to decide whether to promote
-the change introduced by $A$ over that introduced by $B$ or vice versa.
-These cases should be treated as conflicts and
-the affected nodes or commands marked for review
+Such an override could occur if a given node was modified differently in
+$A$ and $B$ (to different values but the same type), which is clearly
+a conflict that should be marked for review
 by a human or a different system.
 \begin{proof}
 The proof is similar to the ones we have seen above.
@@ -31,7 +30,7 @@ If so, we can split $S$ into $S_0\cc\cxynv\cc S_1$ where $S_0\indep\bma$.
 Let us also split $\bma$ into $T_0\cc\czwmv\cc T_1$ where $T_1\indep\cxynv$.
 From \cref{can_move_intersection} we know that
 $B\cc S \equiv \acb\cc\bma\cc S$.
-We also know commands in $S_0$ and $\bma$ commute, and so this is equivalent to
+We also know that commands in $S_0$ and $\bma$ commute, and so this is equivalent to
 $\acb\cc S_0\cc\bma\cc\cxynv\cc S_1$.
 Expanding $\bma$ and swapping $T_1$ and $\cxynv$ we get
 \[ \acb\cc S_0\cc T_0 \cc \czwmv \cc \cxynv\cc T_1\cc S_1. \]
