@@ -33,7 +33,7 @@ if $\setb = \{\empt\}$ then:
 The tree property can then be defined as
 \begin{mydef}[Tree property]
 \begin{align*}
-\forall n\in\setn: &\FS(n) \neq \empt \\ % TODO alignment problem
+\forall n\in\setn:{} &\FS(n) \neq \empt \\
 &\quad\wedge \parent(n) \neq \topnode \\
 &\Rightarrow \FS(\parent(n)) \in \setd. 
 \end{align*}
@@ -58,7 +58,7 @@ and by $\valvx$ we mean a value of type $X$ in $\setvx{X}$.
 
 A simplification we will assume in this paper is regarding directories.
 As Bill Zissimopoulos pointed 
-out,\footnote{Bill Zissimopoulos, personal communication, August 2015.} 
+out (\cite{BZ}),
 we often do not want to consider metadata stored in
 directories (e.g. permission settings) during synchronization,
 as these are not generally understood well by users,

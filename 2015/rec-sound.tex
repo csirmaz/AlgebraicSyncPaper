@@ -1,13 +1,10 @@
 
 \subsection{The Correctness of Reconciliation}
 
-% Correctness of reconciliation
-% -----------------------------
-
 We are now ready to prove that the proposed algorithm for reconciliation is correct,
 that is, applying its result is not going to break the replicas.
-We reformulate the original proposition, $\reca\FS_B\neq\fsbroken$,
-based on $\FS_B=B\FS$ and so we aim to prove that
+We reformulate the original proposition, $\reca\aFS_B\neq\fsbroken$,
+based on $\FS_B=B\aFS$ and so we aim to prove that
 $B\cc\reca$ works wherever $A$ and $B$ work:
 
 \begin{myth}
@@ -17,7 +14,7 @@ where, to restate \cref{def:reconciliation},
 % \renewcommand{\themydef}{\ref{def:reconciliation}}
 % \begin{mydef}
 \begin{align*}
-\reca = \{\alpha| & \\
+\reca = \{\alpha|{}& \\
 & \alpha\in A\setminus B \\
 & \wedge \\
 & \forall \beta\in B\setminus A: \alpha\indep\beta\\
@@ -35,12 +32,12 @@ $\reca$: their intersection.
 Let $A$ and $B$ be two simple sequences so that $\works{A, B}$.
 Then their intersection, in some suitable order, also works on any filesystem
 either of them works on:
-$\worksc{A\cap B}{A}$, and, by symmetry,
-$\worksc{A\cap B}{B}$.
+$\worksc{\acbnp}{A}$, and, by symmetry,
+$\worksc{\acbnp}{B}$.
 \end{mylem}
 
 \begin{proof}
-The difficulty is that commands in $A\cap B$ can occur anywhere in $A$.
+The difficulty is that commands in $\acbnp$ can occur anywhere in $A$.
 Therefore, first we prove the following:
 if all commands are marked in $A$ that also appear in $B$,
 then there is an $A'$ in $\orderset{A}$ in which all marked commands are at the beginning.
@@ -105,17 +102,17 @@ If $B$ had no command on $m$,
 this is a contradiction because the command on $m$ in $B'$ is an assertion command, so $Z=Q=R=W$, 
 but $A$ contained no assertion commands.
 
-We now know that there is an $A'\equiv A$ in which commands in $A\cap B$
+We now know that there is an $A'\equiv A$ in which commands in $\acbnp$
 are at the beginning, and therefore 
 from \cref{worksextpostfix} we know that
-$\worksc{A\cap B}{A}$ and by symmetry $\worksc{A\cap B}{B}$.
+$\worksc{\acbnp}{A}$ and by symmetry $\worksc{\acbnp}{B}$.
 \end{proof}
 
 \bigskip
 
 \noindent
 We would like to prove that $\worksc{B\cc \reca}{A,B}$.
-From the above we know that we can move commands in $A\cap B$
+From the above we know that we can move commands in $\acbnp$
 to the beginning of $B$ and so this is equivalent to
 \[ \worksc{\acb\cc \bma\cc \reca}{A,B}. \]
 As we already know that $\reca\indep\bma$
@@ -139,7 +136,7 @@ and $A\equiv\acb\cc\amb$, and $B\equiv\acb\cc\bma$.
 \end{itemize}
 
 Our theorem is therefore proven if we prove the following lemma,
-in which we rename $A\setminus B$ to $S$ and $B\setminus A$ to $T$:
+in which we rename $\ambnp$ to $S$ and $\bmanp$ to $T$:
 \newcommand{\condSimple}{(c1)}
 \newcommand{\condDisj}{(c2)}
 \newcommand{\condApr}{(c3)}
@@ -217,6 +214,6 @@ and so $m\neq o$ and therefore $m\descendant o$.
 This means we can create a new sequence $T'\equiv T$ by inserting a command on 
 $m$ into $T$ before $\cqrov$
 according to \cref{ax_parent_assert}.
-We now have $\cxynv\indep T\equiv T'$ which is a contradiction as
+We now have $\cxynv\indep T\equiv T'$, which is a contradiction as
 $T'$ has a command on $m$ and $m=\parent(n)$.
 \end{proof}

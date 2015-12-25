@@ -22,8 +22,8 @@ all of $A_1,\ldots,A_k$ work where all of $B_1,\ldots,B_l$ work,
 that is,
 % intended interpretation:
 \begin{align*}
-\forall \FS:&\\ 
-&B_1\FS\neq\fsbroken \wedge \cdots \wedge B_k\FS\neq\fsbroken\\
+\forall \FS:{}& 
+B_1\FS\neq\fsbroken \wedge \cdots \wedge B_k\FS\neq\fsbroken\\
 &\Rightarrow\\
 &A_1\FS\neq\fsbroken \wedge \cdots \wedge A_l\FS\neq\fsbroken
 \end{align*}
@@ -31,8 +31,9 @@ As above, the order of the sequences in the sets is not relevant.
 \end{mydef}
 
 \begin{mydef}[Sets of sequences]
-For brevity, we will use $\seqset{S}$ to note an arbitrary set of sequences,
-and $A\cc\seqset{S}$ to note the set of sequences $\{A\cc S|S\in\seqset{S}\}$.
+For brevity, we will use calligraphic letters (e.g. $\seqset{A, B, C}$ and $\seqset{S}$)
+to denote sets of sequences,
+and, in general, $A\cc\seqset{B}$ to note the set of sequences $\{A\cc B|B\in\seqset{B}\}$.
 \end{mydef}
 
 It is easy to see that the following corollaries are true:
@@ -59,66 +60,27 @@ $ \worksc{\seqset{C}}{\seqset{A'}} \wedge \worksc{\seqset{A}}{\seqset{B}} \Right
 
 We also prove the following lemmas.
 
-\begin{mylem}\label{incomparable_is_independent}
-Two different commands that are not assertion commands are independent iff the nodes they change are incomparable:
-\[ \cxynv\indep\czwmv \Leftrightarrow n\unrel m \]
-if $\cxynv\neq\czwmv$ and none of $\cxy$ and $\cxw$ is $\cbb$ or $\cdd$.
-\end{mylem}
-\begin{proof}
-This is easy to show based on the output of the software that investigates the behavior of command pairs,
-and which we used to derive the \namecrefs{ax_separate_commute} in \cref{section_axioms}.
-However, this proposition can also be derived from the \namecrefs{ax_separate_commute} already listed
-in the following way.
-
-We proceed in two steps. First, we note that
-from \cref{ax_separate_commute,ax_separate_nobreaks} we know that
-if $n\unrel m$, then $\cxynv$ and $\czwmv$ must necessarily be independent, and therefore
-$ \cxynv\nindep\czwmv \wedge n\unrel m $ cannot be the case.
-
-Next, we prove that
-\[ \cxynv\indep\czwmv \wedge n\nunrel m \] is also impossible as it would lead to contradiction.
-As $n\nunrel m$
-we know that $n=m$, $n\descendant m$ or $m\descendant n$.
-
-If $n=m$, then from \cref{ax_same_breaks} we know $Y=Z$ and $W=X$
-as otherwise the commands, in one order or the other, would break all filesystems
-and they could not be independent.
-The commands are not assertion commands, and so from \cref{ax_same_singlec}
-we know that $\cxynv\cc\czwnv\equiv\czwnv\cc\cxynv$ can only happen if $Y=W$ and $\valvy=\valvw$.
-Therefore $X=Y=Z=W$ which is only possible if both commands are $\cff$ and have the same
-output value. This, however, contradicts our assumption that they are different.
-
-If $n\descendant m$ or $m\descendant n$, then
-from \cref{ax_distantrel_breaks} we know that if they are not directly related,
-then $\cxynv\cc\czwmv$ breaks all filesystems, and they cannot be independent.
-From the construction and destruction pairs and 
-\cref{ax_directchild_breaks,ax_directparent_breaks} we also see that
-even if they are directly related, either
-$\cxynv\cc\czwmv$ or $\czwmv\cc\cxynv$ 
-breaks all filesystems, so they again cannot be independent.
-\end{proof}
-
 \begin{myax}\label{combine_independent_commands}
 The combination of independent commands works wherever the original commands work:
 \begin{align*}
-\forall\FS: &\cxynv\indep \czwmv \\
-&\quad\wedge \cxynv\FS\neq\fsbroken \\
-&\quad\wedge \czwmv\FS\neq\fsbroken \\
-&\Rightarrow \cxynv\cc \czwmv\FS\neq\fsbroken.
+\forall\FS:{}&\cxynv\indep \czwmv \\
+&\quad\wedge \cxynv\aFS\neq\fsbroken \\
+&\quad\wedge \czwmv\aFS\neq\fsbroken \\
+&\Rightarrow \cxynv\cc \czwmv\aFS\neq\fsbroken.
 \end{align*}
 \end{myax}
 \begin{proof}
 We name this proposition a \namecref{combine_independent_commands} 
 because to prove it, we must reach back to our filesystem model.
 We proceed in an indirect way and
-assume that $\cxynv\cc \czwmv\FS=\fsbroken$.
-We know $\cxynv\FS\neq\fsbroken$ so it must be applying 
+assume that $\cxynv\cc \czwmv\aFS=\fsbroken$.
+We know $\cxynv\aFS\neq\fsbroken$ so it must be applying 
 $\czwmv$ that breaks it.
 Applying a command can only result in a broken filesystem in three cases.
 First, if the filesystem was already broken, which cannot be the case here.
 Second, if the input type does not match the filesystem,
 but we know $\FS(m)\in\setvx{W}$ and so
-$(\cxynv\FS)(m)\in\setvx{W}$ as based on \cref{incomparable_is_independent}, $n\neq m$.
+$(\cxynv\aFS)(m)\in\setvx{W}$ as based on \cref{incomparable_is_independent}, $n\neq m$.
 Third, if the new filesystem violates the tree property.
 This again cannot be the case because we also know that $n\unrel m$
 and the tree property only depends on the types of the parent and children of $m$,
@@ -133,7 +95,7 @@ The combination of independent sequences works wherever the original sequences w
 \end{mylem}
 \begin{proof}
 Assume that there is a filesystem $\FS$ so that
-$S\FS\neq\fsbroken$ and $T\FS\neq\fsbroken$, but
+$S\aFS\neq\fsbroken$ and $T\aFS\neq\fsbroken$, but
 $(S\cc T)\FS=\fsbroken$.
 
 From \cref{incomparable_is_independent,ax_separate_commute} we know that
@@ -167,7 +129,7 @@ This can be repeated until $S$ is exhausted and we get
 $(T_0 \cc S\cc t)\FS\neq\fsbroken$, which is a contradiction.
 \end{proof}
 
-Separately, we prove the following:
+We also prove the following:
 
 \begin{mylem}\label{worksinputmatch}
 If $A$ and $B$ are minimal sequences, $\works{A,B}$,
@@ -203,14 +165,14 @@ at all nodes the types of their values are the same, or they are both broken.
 
 From the definitions we can clearly see that
 \begin{mycor}\label{negneg_is_typeeq}
-$\forall \FS: (S^{-1})^{-1}\FS\typeeq \FS$.
+$\forall \FS: (S^{-1})^{-1}\aFS\typeeq S\aFS$.
 \end{mycor}
 
 \begin{mylem}\label{r_invmove}
-A common initial segment of sequences can be moved to the other side of $\workssign$ by inverting it:
+A common initial segment of a set of sequences can be moved to the other side of $\workssign$ by inverting it:
 \begin{gather*}
-\worksc{B\cc \seqset{A}}{\seqset{S}} \Rightarrow \worksc{\seqset{A}}{B^{-1}\cc \seqset{S}} \\
-\worksc{\seqset{A}}{B\cc \seqset{S}} \Rightarrow \worksc{B^{-1}\cc \seqset{A}}{\seqset{S}}
+\worksc{B\cc \seqset{A}}{\seqset{C}} \Rightarrow \worksc{\seqset{A}}{B^{-1}\cc \seqset{C}} \\
+\worksc{\seqset{A}}{B\cc \seqset{C}} \Rightarrow \worksc{B^{-1}\cc \seqset{A}}{\seqset{C}}
 \end{gather*}
 \end{mylem}
 \begin{proof}
@@ -222,12 +184,12 @@ sequences---as functions mapping filesystems to filesystems---are
 essentially bijections over type-equality ($\typeeq$)
 with the only ``sink'' being $\fsbroken$:
 \begin{align*}
-\forall S,\FS,\GS: &S\FS\neq\fsbroken \Rightarrow \\
-&(S\FS\ntypeeq S\GS \Leftrightarrow \FS\ntypeeq \GS).
+\forall S,\FS,\GS:{}&S\aFS\neq\fsbroken \Rightarrow \\
+&(S\aFS\ntypeeq S\aGS \Longleftrightarrow \FS\ntypeeq \GS).
 \end{align*}
 
 For the proposition
-\[ \worksc{B\cc \seqset{A}}{\seqset{S}} \Rightarrow \worksc{\seqset{A}}{B^{-1}\cc \seqset{S}} \]
+\[ \worksc{B\cc \seqset{A}}{\seqset{C}} \Rightarrow \worksc{\seqset{A}}{B^{-1}\cc \seqset{C}} \]
 the rest of the proof is illustrated by \cref{fig_invmove}
 where $\textrm{Dom}(x)$, the domain of $x$, represents the set of filesystems
 the sequence $x$ does not break, or neither of the sequences in the set $x$ breaks.
@@ -240,10 +202,10 @@ the sequence $x$ does not break, or neither of the sequences in the set $x$ brea
 We see that the set of filesystems the sequences in $\seqset{A}$ do not break intersect with the range of $B$.
 As $B$ is a bijection between its domain and range, we can use $B^{-1}$ to map this intersection back
 onto the domain of $B$.
-As $\worksc{B\cc \seqset{A}}{\seqset{S}}$ the domain of $\seqset{S}$ must be a subset of this
+As $\worksc{B\cc \seqset{A}}{\seqset{C}}$ the domain of $\seqset{C}$ must be a subset of this
 projected intersection.
-If so, then we can use $B$ to map the domain of $\seqset{S}$, which yields the domain of $B^{-1}\cc \seqset{S}$.
-As it is also a part of the domain of $A$, we get $\worksc{\seqset{A}}{B^{-1}\cc \seqset{S}}$.
+If so, then we can use $B$ to map the domain of $\seqset{C}$, which yields the domain of $B^{-1}\cc \seqset{C}$.
+As it is also a part of the domain of $A$, we get $\worksc{\seqset{A}}{B^{-1}\cc \seqset{C}}$.
 
 The second part of the lemma can be proven in a similar way.
 \end{proof}
@@ -264,5 +226,5 @@ we get
 $\worksc{B\cc C}{A^{-1}\cc \seqset{S}}$. 
 Finally, applying the second line of \cref{r_invmove} yields
 $\worksc{(A^{-1})^{-1}\cc B\cc C}{\seqset{S}}$, which proves our lemma 
-as $\forall\FS: (A^{-1})^{-1}\FS\typeeq A\FS$ (\cref{negneg_is_typeeq}).
+as $\forall\FS: (A^{-1})^{-1}\aFS\typeeq A\aFS$ (\cref{negneg_is_typeeq}).
 \end{proof}

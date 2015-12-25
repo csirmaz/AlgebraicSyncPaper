@@ -1,8 +1,8 @@
 
 If we start with two copies of the filesystem $\FS$,
-and two different sequences are applied to the copies to yield $\FS_A:=A\FS$
-and $\FS_B:=B\FS$, then our aim is to define sequences of commands $\reca$ and $\recb$
-so that $\recb\FS_A$ and $\reca\FS_B$ would be as close to each other as possible.
+and two different sequences are applied to the copies to yield $\FS_A:=A\aFS$
+and $\FS_B:=B\aFS$, then our aim is to define sequences of commands $\reca$ and $\recb$
+so that $\recb\aFS_A$ and $\reca\aFS_B$ would be as close to each other as possible.
 
 We work based on the assumption that to achieve this, we need
 to apply to $\FS_B$ the commands that have been applied to $\FS_A$, and \emph{vice versa}.
@@ -14,7 +14,7 @@ in $A$ and $B$.
 Our aim is therefore to provide an algorithm that selects the commands 
 $\reca \subset A\setminus B$
 and $\recb \subset B\setminus A$ 
-so that $\reca\FS_B\neq\fsbroken$ and $\recb\FS_A\neq\fsbroken$,
+so that $\reca\aFS_B\neq\fsbroken$ and $\recb\aFS_A\neq\fsbroken$,
 and show that these are the longest sequences with this property, that is,
 adding any command left out from $\reca$ or $\recb$ will break the filesystems.
 
@@ -23,31 +23,20 @@ and so they are simple sequences.
 (Otherwise, they can be simplified to become simple sequences; see \cref{update_works}.)
 We also assume that $\FS_A$ and $\FS_B$ are not broken.
 With these assumptions,
-we can now define independent sequences and
-our reconciliation algorithm.
-
-\begin{mydef}[$A\indep B$: Independent commands, sequences and sets]
-Two commands $\cxynv$ and $\czwmv$ 
-are independent, and we write $\cxynv\indep\czwmv$ if 
-they have the same effect in either order and do not break all filesystems:
-$\cxynv\cc\czwmv \equiv \czwnv\cc\cxynv \nequiv \cbrk$.
-For two sequences or sets of commands $A$ and $B$ we write $A\indep B$ if
-$\forall \alpha\in A \mbox{~and~} \forall \beta\in B: \alpha\indep\beta$.
-\end{mydef}
+we can now define our reconciliation algorithm.
 
 \begin{mydef}[Reconciliation]\label{def:reconciliation}
+We determine $\reca$---which we apply to $\FS_B$ 
+to reconcile it with $\FS_A$---to be
+the largest subset of $A\setminus B$
+that is independent of $B\setminus A$:
 \begin{align*}
-\reca = \{\alpha| & \\
+\reca = \{\alpha|{}& \\
 & \alpha\in A\setminus B \\
 & \wedge \\
 & \forall \beta\in B\setminus A: \alpha\indep\beta\\
-\} &
+\}. &
 \end{align*}
-
-In other words, the sequence $\reca$ we apply to $\FS_B$ 
-to reconcile it with $\FS_A$
-is the largest subset of $A\setminus B$
-that is independent of $B\setminus A$.
 The order of commands in the sequence can be determined using the algorithm described in
 \cref{ordering} as any subset of $A$ is also simple.
 In a similar way, $\recb$ can be obtained by reversing $A$ and $B$
@@ -56,7 +45,7 @@ in the definition.
 
 We would now like to prove that $\reca$ and $\recb$ can be applied to the replicas,
 that is, without loss of generality,
-\[ \reca\FS_B\neq\fsbroken. \]
+\[ \reca\aFS_B\neq\fsbroken. \]
 So that we can formalize statements needed to prove this,
 let us introduce two relations that describe under what conditions
 sequences of commands work, that is, do not break a filesystem.

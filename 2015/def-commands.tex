@@ -1,6 +1,8 @@
 
 \subsection{Commands on Filesystems}
 
+% TODO identity command?
+
 Next we define commands on filesystems.
 As described above, we aimed to select a set of commands
 that captures as much information as possible
@@ -22,8 +24,8 @@ will in some cases need to distinguish between, for example,
 $edit$s that result in directories ($edit(n,\vald)$) and
 ones that result in files ($edit(n,\valf)$), and treat them as separate commands,
 as their behaviors are quite different when combined with other commands.
-Indeed, Bill Zissimopoulos' work 
-demonstrated\footnote{Bill Zissimopoulos, personal communication, August 2015.}
+Indeed, Bill Zissimopoulos' work
+demonstrated (\cite{BZ})
 that extending this distinction to more commands ultimately simplifies
 the definition of conflicting commands, as our model will then able to predict the behavior of commands
 more precisely.
@@ -50,12 +52,14 @@ its input type, its output type, the node to which it is applied, and finally
 the value that it stores at the node.
 We will denote commands using quadruples that list these
 in a the following format:
+% TODO convert into definition
 \[ \cxynv, \]
 where $X$ is the input type, $Y$ is the output type, $n$ is the node,
 and $\valvy$ is a value of the appropriate type from $\setvx{Y}$.
 We use $\cchard$, $\ccharf$ or $\ccharb$ to represent the different
 types. For example, $\cbdaa{n}{\vald}$ 
 will represent $mkdir(n,\vald)$.
+% TODO Just say "omit"
 Alternatively, we use a triple of the two types and a node if 
 there is only a single suitable output value for the given type (e.g. $\empt$).
 That is, $\cdba{n}$ will represent $rmdir(n)$.
@@ -73,36 +77,35 @@ So that we could reason about sequences of commands that break every filesystem,
 we introduce the command $\cbrk$ that simply breaks every filesystem.
 
 We note that a command or a sequence of commands is applied to a filesystem
-by prefixing the command or sequence to it, for example: $\cbrk\FS$, $\cbdaa{n}{\vald}\FS$, 
-or simply $S\FS$ if $S$ is a sequence of commands. % TODO Add space between command and FS
+by prefixing the command or sequence to it, for example: $\cbrk\aFS$, $\cbdaa{n}{\vald}\aFS$, 
+or simply $S\aFS$ if $S$ is a sequence of commands.
 
 To define the exact effect of the commands we use
 the \emph{replacement operator}  which changes the
 value of the filesystem at a given point only.
 
+% TODO include command in def
 \begin{mydef}[Replacement operator]
-Using $\FS[V/n]$ we denote a filesystem derived from $\FS$:
-\[ \FS[V/n](m) :=
+Using $\FS[\valv/n]$ we denote a filesystem derived from $\FS$:
+\[ \FS[\valv/n](m) :=
    \begin{cases}
-   V &\mbox{if~} m=n\\
+   \valv &\mbox{if~} m=n\\
    \FS(m) &\mbox{otherwise.}
    \end{cases}
 \]
 \end{mydef}
 
 The effect of the commands is as follows:
-\begin{itemize}
-\item $\cbrk\FS = \fsbroken$
-\item
-\[ \cxynv\FS = 
+\begin{align*}
+&\cbrk\aFS = \fsbroken \\
+&\cxynv\aFS = 
    \begin{cases}
    \fsbroken &\mbox{if~} \FS=\fsbroken\\
    \fsbroken &\mbox{if~} \FS(n)\not\in\setvx{X}\\
-   \fsbroken &\mbox{if~} \FS[V/n] \mbox{~violates the tree property}\\
-   \FS[V/n] &\mbox{otherwise.}
+   \fsbroken &\mbox{if~} \FS[\valvy/n] \mbox{~violates the tree property}\\
+   \FS[\valvy/n] &\mbox{otherwise.}
    \end{cases}
-\]
-\end{itemize}
+\end{align*}
 
 
 In general, when we describe multiple or unknown commands, we may substitute one or both

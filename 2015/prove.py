@@ -750,7 +750,7 @@ class CommandPair(Sequence):
             DIRECT_PARENT_ONLY: '<<-',
             SAME:               '---'
         }
-        return self.commands[0].info() + '  ' + Dsep[self.rel] + '  ' + self.commands[1].info()
+        return self.commands[0].info() + ' ' + Dsep[self.rel] + ' ' + self.commands[1].info()
         
     def label(self):
         """Returns a short string describing some of the object"""
@@ -828,6 +828,8 @@ def checkBreaksAll(sq):
             return False
     return True
 
+
+print "Please see the documentation in the script";
 
 for rel in [SEPARATE, SAME, DISTANT_CHILD, DIRECT_CHILD, DIRECT_CHILD_ONLY, DISTANT_PARENT, DIRECT_PARENT, DIRECT_PARENT_ONLY]:
     pr_s('\n===== Relationship between nodes: ' + rel + ' =====\n')

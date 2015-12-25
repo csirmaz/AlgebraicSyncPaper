@@ -55,11 +55,11 @@ $\FS_A(n)\neq\FS_B(n)$, and $n$ does not point to a directory in both replicas
 It can be easily seen that not all conflicts detected based on the above definition
 entails a conflict based on our system; that is, \cite{BP} describes a more
 conservative policy.
-For example, if $\nn=\parent(n)$ and $\FS(\nn)=\vald$ and $\FS(n)=\valf$, and
+For example, if $\nn=\parent(n)$ and $\FS(\nn)$ is a directory and $\FS(n)$ is a file, and
 the two replicas are derived in the following way:
 \begin{gather*}
-\FS_A = \cfba{n} \cc \cdba{\nn} \FS \\
-\FS_B = \cfba{n} \FS,
+\FS_A = \cfba{n} \cc \cdba{\nn} \aFS \\
+\FS_B = \cfba{n} \aFS,
 \end{gather*}
 then $\nn$ is dirty in both replicas:
 in $\FS_A$ it was modified, and in $\FS_B$ one of its descendants was modified.

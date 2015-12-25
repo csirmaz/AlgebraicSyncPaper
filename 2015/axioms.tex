@@ -2,9 +2,8 @@
 
 \section{Investigating Command Pairs}\label{section_axioms}
 
-% TODO Ref back to intro; further abstraction - no need to go the FS. break-all, equiv, extend
-
-So that we could describe the effects of commands on a filesystem, let us introduce some notation
+So that we could describe the effects of commands in general,
+let us introduce some notation
 and note some observations.
 We already know that
 commands usually do not occur in isolation,
@@ -14,7 +13,7 @@ Therefore we will investigate sequences of commands with a well-defined order.
 We use ``$\cc$'' to concatenate commands to form a sequence, or concatenate sequences to form a longer sequence:
 $S=\cbdaa{n}{\vald}\cc\cbfaa{m}{\valf}$, or $S'=S\cc\cbba{o}$,
 with the meaning that the command on the left is applied first:
-\[ \alpha\cc\beta\FS = \beta(\alpha\FS). \]
+\[ \alpha\cc\beta\aFS = \beta(\alpha\aFS). \]
 Sequences of commands form a free semigroup, and, as usual,
 $\emptyseq$ denotes its unit element, the empty sequence,
 which by definition leaves all filesystems unchanged.
@@ -30,7 +29,7 @@ In the definitions, $A,B,S,T$ stand for arbitrary sequences of commands.
 $A\equiv B$ means that $A$ and $B$ are equivalent,
 % intended interpretation:
 that is, they behave in the same way on
-all filesystems: $\forall \FS: A\FS=B\FS$.
+all filesystems: $\forall \FS: A\aFS=B\aFS$.
 It is a reflexive, commutative and transitive relation,
 and clearly
 % inference rule:
@@ -43,7 +42,7 @@ $A\eqext B$ means that $B$ extends $A$,
 % intended interpretation:
 that is, they behave in the same way
 on any filesystem $A$ does not break:
-$\forall \FS: A\FS\neq\fsbroken\Rightarrow A\FS=B\FS$.
+$\forall \FS: A\FS\neq\fsbroken\Rightarrow A\aFS=B\aFS$.
 It is a reflexive and transitive relation,
 and we can see that
 % inference rules:
@@ -177,7 +176,7 @@ Accordingly, $\cbba{n}$ and $\cdda{n}$ are the only two assertion commands.
 
 \begin{myax}\label{ax_child_assert}
 An assertion command can be added on a descendant node:
-$\cbba{n}\cc\cxynnv \equiv \cxynnv \equiv \cxynnv\cc\cbba{n}$ 
+\[ \cbba{n}\cc\cxynnv \equiv \cxynnv \equiv \cxynnv\cc\cbba{n} \] 
 where $\nn\descendant n$ and $\cxy\neq\cdd$.
 (Note that this and next rule is true because the assertion command is
 adjacent to the original command.)
@@ -185,7 +184,7 @@ adjacent to the original command.)
 
 \begin{myax}\label{ax_parent_assert}
 An assertion command can be added on an ancestor node:
-$\cdda{\nn}\cc\cxynv \equiv \cxynv \equiv \cxynv\cc\cdda{\nn}$ 
+\[ \cdda{\nn}\cc\cxynv \equiv \cxynv \equiv \cxynv\cc\cdda{\nn} \]
 where $\nn\descendant n$ and $\cxy\neq\cbb$.
 \end{myax}
 
@@ -193,3 +192,64 @@ where $\nn\descendant n$ and $\cxy\neq\cbb$.
 Assertion commands can be removed:
 $\cxynv \eqext \emptyseq$ where $\cxy=\cbb$ or $\cxy=\cdd$.
 \end{myax}
+
+% TODO We will only use these except for...
+
+
+\bigskip
+
+\noindent
+We also define the concept of two commands being independent:
+
+\begin{mydef}[$A\indep B$: Independent commands, sequences and sets]
+Two commands $\cxynv$ and $\czwmv$ 
+are independent, and we write $\cxynv\indep\czwmv$ if 
+they have the same effect in either order and do not break all filesystems:
+\[ \cxynv\cc\czwmv \equiv \czwnv\cc\cxynv \nequiv \cbrk. \]
+For two sequences or unordered sets of commands $A$ and $B$ we write $A\indep B$ if
+for all $\alpha$ in $A$ and all $\beta$ in $B$, $\alpha\indep\beta$.
+\end{mydef}
+
+It is intentional that we use the same symbol for independent commands
+and sequences as for incomparable nodes. As we will in the next
+\namecref{incomparable_is_independent},
+these two concepts are closely related.
+
+\begin{mylem}\label{incomparable_is_independent}
+Two different commands that are not assertion commands are independent iff the nodes they change are incomparable:
+\[ \cxynv\indep\czwmv \Leftrightarrow n\unrel m \]
+if $\cxynv\neq\czwmv$ and none of $\cxy$ and $\cxw$ is $\cbb$ or $\cdd$.
+\end{mylem}
+\begin{proof}
+This is easy to show based on the output of the software that investigates the behavior of command pairs.
+However, this proposition can also be derived from the \namecrefs{ax_separate_commute} already listed
+in the following way.
+
+We proceed in two steps. First, we note that
+from \cref{ax_separate_commute,ax_separate_nobreaks} we know that
+if $n\unrel m$, then $\cxynv$ and $\czwmv$ must necessarily be independent, and therefore
+$ \cxynv\nindep\czwmv \wedge n\unrel m $ cannot be the case.
+
+Next, we prove that
+\[ \cxynv\indep\czwmv \wedge n\nunrel m \] is also impossible as it would lead to contradiction.
+As $n\nunrel m$
+we know that $n=m$, $n\descendant m$ or $m\descendant n$.
+
+If $n=m$, then from \cref{ax_same_breaks} we know $Y=Z$ and $W=X$
+as otherwise the commands, in one order or the other, would break all filesystems
+and they could not be independent.
+The commands are not assertion commands, and so from \cref{ax_same_singlec}
+we know that $\cxynv\cc\czwnv\equiv\czwnv\cc\cxynv$ can only happen if $Y=W$ and $\valvy=\valvw$.
+Therefore $X=Y=Z=W$ which is only possible if both commands are $\cff$ and have the same
+output value. This, however, contradicts our assumption that they are different.
+
+If $n\descendant m$ or $m\descendant n$, then
+from \cref{ax_distantrel_breaks} we know that if they are not directly related,
+then $\cxynv\cc\czwmv$ breaks all filesystems, and they cannot be independent.
+From the construction and destruction pairs and 
+\cref{ax_directchild_breaks,ax_directparent_breaks} we also see that
+even if they are directly related, either
+$\cxynv\cc\czwmv$ or $\czwmv\cc\cxynv$ 
+breaks all filesystems, so they again cannot be independent.
+\end{proof}
+

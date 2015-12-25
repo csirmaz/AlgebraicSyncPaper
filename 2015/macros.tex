@@ -1,16 +1,18 @@
 
-\newcommand{\setv}{\mathcal{V}} % Set of values
-\newcommand{\setvx}[1]{\mathcal{V}_{#1}} % Set of values with custom index
+\newcommand{\setv}{\mathbb{V}} % Set of values
+\newcommand{\setn}{\mathbb{N}} % Set of nodes / paths
+\newcommand{\setvx}[1]{\setv_{#1}} % Set of values with custom index
 \newcommand{\setf}{\setvx{\ccharf}} % Set of file values
 \newcommand{\setd}{\setvx{\cchard}} % Set of directory values
 \newcommand{\setb}{\setvx{\ccharb}} % Set of empty values
-\newcommand{\setn}{\mathcal{N}} % Set of nodes / paths
 \newcommand{\empt}{\bot} % Empty value
 \newcommand{\parent}{\mathtt{parent}} % parent function
 \newcommand{\topnode}{\mathtt{None}} % return value of parent()
 \newcommand{\fsbroken}{\mathtt{Broken}} % broken FS value
 \newcommand{\FS}{\Phi} % a filesystem
 \newcommand{\GS}{\Xi} % another filesystem
+\newcommand{\aFS}{\,\FS} % a filesystem preceded by something applied to it
+\newcommand{\aGS}{\,\GS} % a filesystem preceded by something applied to it
 \newcommand{\nn}{n^*} % parent node
 
 \newcommand{\cbrk}{\mathtt{break}} % 'break' command
@@ -77,40 +79,49 @@
 \newcommand{\nunrel}{\nindep} % not \unrel
 
 \newcommand{\workssign}{\mathbf{w}}
-\newcommand{\works}[1]{\workssign({#1})}
-\newcommand{\worksc}[2]{\workssign({#1}\mathrel{|}{#2})}
+\newcommand{\works}[1]{\workssign({#1})} % works
+\newcommand{\worksc}[2]{\workssign({#1}\mathrel{|}{#2})} % works on condition
 
-\newcommand{\typeeq}{\stackrel{t}{=}} % Type equality
-\newcommand{\ntypeeq}{\centernot{\stackrel{t}{=}}}
+\newcommand{\typeeq}{\simeq} % Type equality
+\newcommand{\ntypeeq}{\not\typeeq}
 
 \newcommand{\emptyseq}{\lambda} % empty sequence
 
 \newcommand{\ordersetsign}{\vec{\wp}}
 \newcommand{\orderset}[1]{\ordersetsign({#1})}
-\newcommand{\seqset}[1]{\underline{#1}} % Set of sequences
+\newcommand{\seqset}[1]{\mathcal{#1}} % Set of sequences
 
 \newcommand{\recchar}[3]{{#1}^{#3}_{\mathcal{R}|{#2}}}
 \newcommand{\reca}{\recchar{A}{B}{}} % Reconciled from A
 \newcommand{\recb}{\recchar{B}{A}{}} % Reconciled from B
 
-\newcommand{\acb}{(A\cap B)}
+\newcommand{\acbnp}{A\mynegsp\cap\mynegsp B}
+\newcommand{\acb}{(\acbnp)}
 \newcommand{\acbi}{\acb^{-1}}
-\newcommand{\amb}{(A\setminus B)}
-\newcommand{\bma}{(B\setminus A)}
+\newcommand{\mynegsp}{\nobreak\hspace{-1pt plus 1pt}\nobreak}
+\newcommand{\ambnp}{A\mynegsp\setminus\mynegsp B}
+\newcommand{\amb}{(\ambnp)}
+\newcommand{\bmanp}{B\mynegsp\setminus\mynegsp A}
+\newcommand{\bma}{(\bmanp)}
+
+% TODO All labels should be capitalised?
 
 \theoremstyle{definition}
-
 \newtheorem{mydef}{Definition}
 \crefname{mydef}{definition}{definitions}
 
+\theoremstyle{definition}
 \newtheorem{myax}{Rule}
 \crefname{myax}{rule}{rules}
 
+\theoremstyle{plain}
 \newtheorem{mylem}{Lemma}
 \crefname{mylem}{lemma}{lemmas}
 
+\theoremstyle{plain}
 \newtheorem{myth}{Theorem}
 \crefname{myth}{theorem}{theorems}
 
+\theoremstyle{plain}
 \newtheorem{mycor}{Corollary}
 \crefname{mycor}{corollary}{corollaries}

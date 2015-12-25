@@ -1,11 +1,14 @@
 \begin{center}\begin{tikzpicture}
 [line width=1pt]
 \node at  (1.6+2, 0.1) [right] {$\textrm{Dom}(\seqset{A})$};
-\draw[fill=black!5] (1.6, 0.1) ellipse (2cm and 0.8cm); %% Dom A
-\draw               (1.6, 2.4) ellipse (2cm and 0.8cm); %% Img A
-\draw[-latex] (1.6+2, 0.1)--(1.6+2, 2.4-.2); %% A right
-\draw[-latex] (1.6-2, 0.1)--(1.6-2, 2.4-.2); %% A left
-\node at  (1.6-2-.1, 1.6) [left] {$A$};
+\draw[fill=black!5]     (1.6, 0.1) ellipse (2cm and 0.8cm); %% Dom A
+\draw                   (1.3, 2.4) ellipse (2cm and 0.8cm); %% Img A1
+\draw[line width=0.5pt] (1.9, 2.4) ellipse (2cm and 0.8cm); %% Img A2
+\draw[-latex]                  (1.6+2, 0.1)--(1.3+2, 2.4-.2); %% A1 right
+\draw[-latex]                  (1.6-2, 0.1)--(1.3-2, 2.4-.2); %% A1 left
+\draw[-latex,line width=0.5pt] (1.6+2, 0.1)--(1.9+2, 2.4-.2); %% A2 right
+\draw[-latex,line width=0.5pt] (1.6-2, 0.1)--(1.9-2, 2.4-.2); %% A2 left
+\node at  (1.4-2-.1, 1.4) [left] {$A_i\in\seqset{A}$};
 %%
 \node at (1.1-2-.1, -2.9) [left] {$\textrm{Dom}(B)$};
 \draw[fill=black!5] (1.1, -2.9) ellipse (2cm and 0.8cm); %% Dom B
@@ -20,9 +23,12 @@
 \draw         (2.1, -2.9) ellipse (0.6cm and 0.3cm); %% Dom S
 \draw[dotted] (1-0.6, 0)--(2.1-0.6, -2.9); %% B-1
 \draw[dotted] (1+0.6, 0)--(2.1+0.6, -2.9); %% B-1
-\draw                     (3.9, -1.1) ellipse (0.6cm and 0.3cm); %% Img S
-\draw[-latex] (2.1-0.6, -2.9+.08)    --(3.9-0.6-.05, -1.1+.05); %% Left S
-\draw[-latex] (2.1+0.6-.02, -2.9-.08)--(3.9+0.6-.1, -1.1-.2); %% Right S
-\node at  (3.7,-2.2) [right] {$S$};
-\draw[-latex,thin] (3.5, -3.5) node[right]{$\mathrm{Dom}(\seqset{S})$} -- (2.1+0.5, -2.9-0.2);
+\draw                     (3.9, -1.1) ellipse (0.6cm and 0.3cm); %% Img S1
+\draw[line width=0.5pt]   (4.2, -1.1) ellipse (0.6cm and 0.3cm); %% Img S2
+\draw[-latex]                  (2.1-0.6, -2.9+.08)    --(3.9-0.6-.05, -1.1+.05); %% Left S1
+\draw[-latex]                  (2.1+0.6-.02, -2.9-.08)--(3.9+0.6-.1, -1.1-.2); %% Right S1
+\draw[-latex,line width=0.5pt] (2.1-0.6, -2.9+.08)    --(4.2-0.6-.05, -1.1+.05); %% Left S2
+\draw[-latex,line width=0.5pt] (2.1+0.6-.02, -2.9-.08)--(4.2+0.6-.1, -1.1-.2); %% Right S2
+\node at  (3.8,-2.2) [right] {$C_j\in\seqset{C}$};
+\draw[-latex,thin] (3.5, -3.5) node[right]{$\mathrm{Dom}(\seqset{C})$} -- (2.1+0.5, -2.9-0.2);
 \end{tikzpicture}\end{center}

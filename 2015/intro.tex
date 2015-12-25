@@ -10,7 +10,7 @@ guarantee a fast and responsive user experience.
 
 In this paper we investigate an operation- or command-based approach
 to filesystem synchronization.
-Presented with multiple copies (replicas) of a filesystem that have been independently modified,
+Presented with multiple copies (replicas) of the same filesystem that have been independently modified,
 we regard the aim of the synchronizer to modify these replicas further
 to make them as similar as possible.
 The synchronization algorithm we describe
@@ -60,9 +60,9 @@ have the same effect.
 \Cref{sec_rec} defines our reconciliation 
 and conflict detection algorithms.
 We then proceed to prove that the output of reconciliation
-is sound in the sense that 
+is correct in the sense that 
 it can be applied to the replicas without causing an error,
-and it is complete
+and it is maximal
 inasmuch as no further updates can be applied under any circumstances.
 In order to be able to do this, we introduce
 the concept of \emph{conditional operation} of sequences of commands,
@@ -81,7 +81,7 @@ and more powerful as
 predictions made by the reasoning are more accurate
 due to the additional information content.
 In fact, the new command set not only simplifies
-our reconciliation algorithm, but also makes it complete.
+our reconciliation algorithm, but also makes it maximal.
 
 The previous work also lacked proofs that the update detection
 and reconciliation algorithms it presented work as intended,
