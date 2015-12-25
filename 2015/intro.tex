@@ -22,13 +22,14 @@ The remaining updates, which could not be propagated, are conflicting updates;
 resolving these requires a separate system or human intervention.
 
 In this paper we build on the work done 
-on command-based algebraic file synchronization
+on an algebraic approach to synchronization
 in \cite{NREC} and add to the theoretical understanding
 of synchronization by providing rigorous proofs that the algorithms
 we describe work as intended
 and offer a solution in our framework that cannot be improved on.
 
-A central problem of command-based synchronizers during both update detection and reconciliation
+A central problem of command-based synchronizers 
+during both update detection and reconciliation
 is ordering.
 If update detection is based on comparing the original state of the filesystem
 to its new state, then we can easily collect a set of updates,
@@ -40,7 +41,7 @@ have been applied to the different replicas, we need to find a way of
 merging these and creating a global ordering that we can apply
 to the filesystems.
 In fact, an insight in \cite{NREC} is that
-if the ordering changes the effect of two commands,
+if the ordering changes the effect of two commands (updates),
 then under certain circumstances they are not compatible and will give rise to conflicts.
 Accordingly, in this paper command-pairs and their properties
 play a special role.

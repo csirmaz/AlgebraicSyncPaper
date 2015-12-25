@@ -29,7 +29,9 @@ we can now define our reconciliation algorithm.
 We determine $\reca$---which we apply to $\FS_B$ 
 to reconcile it with $\FS_A$---to be
 the largest subset of $A\setminus B$
-that is independent of $B\setminus A$:
+that is independent of $B\setminus A$,
+where $A$ and $B$ are simple sequences representing
+the updates applied to replicas $\FS_A$ and $\FS_B$:
 \begin{align*}
 \reca = \{\alpha|{}& \\
 & \alpha\in A\setminus B \\
@@ -44,7 +46,7 @@ either based on \cref{def_indep} and the rules listed in \cref{section_axioms},
 or based on \cref{incomparable_is_independent} 
 in at most $O(x^2)$ time, where $x$ is the number of commands.
 Then, to generate the sequence $\reca$ from the resulting set, 
-we order the commands using the algorithm described in
+we can order the commands using the algorithm described in
 \cref{ordering} as any subset of $A$ is also simple.
 
 $\recb$ can be obtained in a similar way by reversing $A$ and $B$
