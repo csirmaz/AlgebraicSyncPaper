@@ -4,7 +4,7 @@
 
 \subsection{Conditional Operation and Inverse Sequences}
 
-\begin{mydef}
+\begin{mydef}[$\works{x}$]
 % Unsure if this relation should be in the algebra.
 For a set of $k$ sequences
 $\works{A_1,A_2,\ldots,A_k}$ means that 
@@ -16,7 +16,7 @@ As the sequences form a set, their order is irrelevant.
 We also know that $\works{A} \Leftrightarrow A\nequiv \cbrk$. 
 \end{mydef}
 
-\begin{mydef}
+\begin{mydef}[$\worksc{x}{y}$]
 For two sets of sequences, $\worksc{A_1,A_2,\ldots,A_k}{B_1,B_2,\ldots,B_l}$ means that 
 all of $A_1,\ldots,A_k$ work where all of $B_1,\ldots,B_l$ work,
 that is,
@@ -30,7 +30,7 @@ that is,
 As above, the order of the sequences in the sets is not relevant.
 \end{mydef}
 
-\begin{mydef}{Sets of sequences.}
+\begin{mydef}[Sets of sequences]
 For brevity, we will use $\seqset{S}$ to note an arbitrary set of sequences,
 and $A\cc\seqset{S}$ to note the set of sequences $\{A\cc S|S\in\seqset{S}\}$.
 \end{mydef}
@@ -47,7 +47,7 @@ $B\eqext A \Rightarrow \worksc{A}{B}$.
 
 \begin{mycor}\label{worksextpostfix}
 % An inference rule in the algebra
-$\forall A,S: \worksc{A}{A\cc S}$, that is, if a sequence works, its prefix also works.
+$\forall A,S: \worksc{A}{A\cc S}$, that is, if a sequence works, its initial segment also works.
 \end{mycor}
 
 \begin{mycor}\label{workschained}
@@ -188,14 +188,14 @@ We continue by defining inverse commands and sequences
 which allow us to move parts of sequences between the
 condition and consequence parts of $\workssign$.
 
-\begin{mydef}{Inverse commands and sequences.}
+\begin{mydef}[Inverse commands and sequences]
 The inverse of command $\cxynv$ is $\cxynv^{-1} = \caaaa{Y}{X}{n}{\valvx}$
 where $\valvx$ is an arbitrary value from $\setvx{X}$.
 We write $S^{-1}$ for the inverse of sequence $S$, which consists of the inverses of the commands in $S$
 in reverse order.
 \end{mydef}
 
-\begin{mydef}{$\typeeq$.}
+\begin{mydef}[$\typeeq$]
 For two filesystems we write $\FS\typeeq\GS$
 iff 
 at all nodes the types of their values are the same, or they are both broken.
@@ -207,7 +207,7 @@ $\forall \FS: (S^{-1})^{-1}\FS\typeeq \FS$.
 \end{mycor}
 
 \begin{mylem}\label{r_invmove}
-A common prefix of sequences can be moved to the other side of $\workssign$ by inverting it:
+A common initial segment of sequences can be moved to the other side of $\workssign$ by inverting it:
 \begin{gather*}
 \worksc{B\cc \seqset{A}}{\seqset{S}} \Rightarrow \worksc{\seqset{A}}{B^{-1}\cc \seqset{S}} \\
 \worksc{\seqset{A}}{B\cc \seqset{S}} \Rightarrow \worksc{B^{-1}\cc \seqset{A}}{\seqset{S}}

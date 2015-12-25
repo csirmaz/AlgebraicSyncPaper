@@ -9,18 +9,23 @@ and note some observations.
 We already know that
 commands usually do not occur in isolation,
 and are applied to filesystems in time.
-Therefore we will investigate sequences of commands with a well-defined order
-(which form a free semigroup).
+Therefore we will investigate sequences of commands with a well-defined order.
+\begin{mydef}[$\cc$ and $\emptyseq$]
 We use ``$\cc$'' to concatenate commands to form a sequence, or concatenate sequences to form a longer sequence:
-$S=\cbdaa{n}{\vald}\cc\cbfaa{m}{\valf}$, or $S'=S\cc\cbba{o}$.
-We write $\emptyseq$ for the empty sequence.
+$S=\cbdaa{n}{\vald}\cc\cbfaa{m}{\valf}$, or $S'=S\cc\cbba{o}$,
+with the meaning that the command on the left is applied first:
+\[ \alpha\cc\beta\FS = \beta(\alpha\FS). \]
+Sequences of commands form a free semigroup, and, as usual,
+$\emptyseq$ denotes its unit element, the empty sequence,
+which by definition leaves all filesystems unchanged.
+\end{mydef}
 
 The following concepts 
 (which echo the ones defined in \cite{NREC})
 allow us to investigate sequences independently of filesystems.
 In the definitions, $A,B,S,T$ stand for arbitrary sequences of commands.
 
-\begin{mydef}
+\begin{mydef}[$\equiv$]
 % Relation in the algebra
 $A\equiv B$ means that $A$ and $B$ are equivalent,
 % intended interpretation:
@@ -32,7 +37,7 @@ and clearly
 $ A\equiv B \Rightarrow S\cc A\cc T\equiv S\cc B\cc T $.
 \end{mydef}
 
-\begin{mydef}
+\begin{mydef}[$\eqext$]
 % Relation in the algebra
 $A\eqext B$ means that $B$ extends $A$,
 % intended interpretation:
@@ -49,13 +54,17 @@ $ A\equiv B \Rightarrow A\eqext B$.
 
 Let us also define the following relations between nodes:
 
-\begin{mydef}{$n\descendant m$.}
-We write $n\descendant m$ if $n$ is the ancestor of $m$ ($n=\parent^n(m)$). % TODO (the transitive closure of the $\parent$ relation)
+\begin{mydef}[$n\descendant m$]
+The partial ordering determined by the parent relation is denoted by $\descendant$:
+we write $n\descendant m$ if $n$ is the ancestor of $m$ ($n=\parent^n(m)$),
+that is, the path name of $n$ is an initial segment of that of $m$. 
 We write $n\descendantEq m$ if $n\descendant m$ or $n=m$.
 \end{mydef}
 
-\begin{mydef}{$n\unrel m$.}
+\begin{mydef}[$n\unrel m$]
 We write $n\unrel m$, or ``$n$ and $m$ are incomparable'' if $n\not\descendantEq m$ and $n\not\ancestorEq m$.
+incomparable nodes are on different branches or on different trees;
+none of the path names describing their location is an initial segment of the other.
 \end{mydef}
 
 
@@ -123,7 +132,7 @@ and $\czwnv\cc\cxynnv \equiv\cbrk$
 where $\nn\descendant n$ and $\nn\neq\parent(n)$ and $\cxy\neq\cdd$ and $\czw\neq\cbb$.
 \end{myax}
 
-\begin{mydef}{Construction pair.}
+\begin{mydef}[Construction pair]
 A pair of commands on nodes $\nn$ and $n$ is a construction pair if $\nn=\parent(n)$ 
 and the commands are one
 of the following:
@@ -141,7 +150,7 @@ $\cxynnv\cc\czwnv \equiv \cbrk$ where $\nn=\parent(n)$ and $\cxy\neq\cdd$ and $\
 and the pair is not a construction pair.
 \end{myax}
 
-\begin{mydef}{Destruction pair.}
+\begin{mydef}[Destruction pair]
 A pair of commands on nodes $n$ and $\nn$ is a destruction pair if $\parent(n)=\nn$ and the commands are one
 of the following:
    \begin{gather*}
@@ -158,7 +167,7 @@ $\cxynv\cc\czwnnv \equiv \cbrk$ where $\parent(n)=\nn$ and $\cxy\neq\cbb$ and $\
 and the pair is not a destruction pair.
 \end{myax}
 
-\begin{mydef}{Assertion command.}
+\begin{mydef}[Assertion command]
 A command is an assertion command if
 for every filesystem it either breaks it or leaves it in the same state.
 In other words, assertion commands have the same input and output type,

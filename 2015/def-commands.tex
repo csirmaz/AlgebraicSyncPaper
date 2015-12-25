@@ -8,11 +8,11 @@ about the operations, and is also symmetric.
 We start by summarizing our reasons for doing so.
 
 Let us consider what kind of information is usually encoded in filesystem operations.
-A usual set of commands, based on the most frequent tools implemented by filesystems,
-may be $create(n,\valv)$---create the value $\valv$ at node $n$,
-$edit(n,\valv)$---modify the value at $n$ to become $\valv$,
-and $remove(n)$---delete the value at node $n$; 
-where $n\in\setn$ and $\valv\in\setv$ (but $\valv\neq\empt$).
+A minimal set of commands, based on the most frequent tools implemented by filesystems,
+may be $create(n,\valv)$, which creates a file or directory ($\valv$) at the empty node $n$;
+$edit(n,\valv)$, which replaces the earlier value at $n$ with $\valv$;
+and $remove(n)$, which deletes the value at $n$---where 
+$n\in\setn$ and $\valv\in\setv$ (but $\valv\neq\empt$).
 Regarding their output, that is, the state of the filesystem at $n$
 after applying the command,
 we know that after $create$ or $edit$, $\FS(n)\neq\empt$, whereas after $remove$,
@@ -76,7 +76,11 @@ We note that a command or a sequence of commands is applied to a filesystem
 by prefixing the command or sequence to it, for example: $\cbrk\FS$, $\cbdaa{n}{\vald}\FS$, 
 or simply $S\FS$ if $S$ is a sequence of commands. % TODO Add space between command and FS
 
-\begin{mydef}
+To define the exact effect of the commands we use
+the \emph{replacement operator}  which changes the
+value of the filesystem at a given point only.
+
+\begin{mydef}[Replacement operator]
 Using $\FS[V/n]$ we denote a filesystem derived from $\FS$:
 \[ \FS[V/n](m) :=
    \begin{cases}
@@ -86,7 +90,7 @@ Using $\FS[V/n]$ we denote a filesystem derived from $\FS$:
 \]
 \end{mydef}
 
-The exact behavior of the commands is as follows:
+The effect of the commands is as follows:
 \begin{itemize}
 \item $\cbrk\FS = \fsbroken$
 \item

@@ -3,7 +3,9 @@
 
 We model a filesystem using a function $\FS$ with a set of nodes (filesystem paths) $\setn$ as its domain,
 and a set of possible contents or values, $\setv$, as its codomain:
+\begin{mydef}[Filesystem]
 \[ \FS : \setn \rightarrow \setv \] 
+\end{mydef}
 In our model, $\setn$ 
 serves as a namespace or ``skeleton'' for the filesystem, and it
 contains all possible nodes, including the ones where there is no file or directory.
@@ -15,12 +17,12 @@ and directories (e.g. permissions and other flags) part of the values in $\setv$
 The nodes form a disjoint union of rooted directed trees.
 Tao et al. in \cite{TSR} describe a similar filesystem model, although
 they also model inodes and restrict the filesystem to a just single tree.
-\begin{mydef}
+\begin{mydef}[$\parent$]
 The function $\parent(n)$ returns the parent node of $n$, or
 returns $\topnode$ if $n$ is the root of a tree.
 \end{mydef}
 
-Every filesystem has a so-called \textbf{tree property}, which means that
+Every filesystem has a so-called \emph{tree property}, which means that
 if the filesystem is not empty at a node, and the node has a parent,
 then there must be a directory at the parent node.
 
@@ -29,11 +31,13 @@ file values ($\setf$) and directory values ($\setd$), that is,
 if $\setb = \{\empt\}$ then:
 \[ \setv = \setb \cup \setf \cup \setd \]
 The tree property can then be defined as
+\begin{mydef}[Tree property]
 \begin{align*}
 \forall n\in\setn: &\FS(n) \neq \empt \\ % TODO alignment problem
 &\quad\wedge \parent(n) \neq \topnode \\
-&\Rightarrow \FS(\parent(n)) \in \setd 
+&\Rightarrow \FS(\parent(n)) \in \setd. 
 \end{align*}
+\end{mydef}
 This means that as we move down from the root of a tree of nodes,
 the types of values we encounter in the filesystem can only change according to the
 transition diagram in \cref{fig_transition}, from directories ($\cchard$) to files ($\ccharf$)
