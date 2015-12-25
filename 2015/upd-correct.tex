@@ -40,7 +40,8 @@ from which it follows that once the components are separated
 in a new sequence $S'\equiv S$,
 commands on the same nodes are next to each other in $S'$.
 
-Based on \cref{ax_same_emptyseq,ax_same_singlec} there is
+Applying \cref{ax_same_emptyseq,ax_same_singlec} we can
+convert $S'$ into
 an $S''\eqnrw S'$ in which multiple commands on the same nodes
 are simplified into a single command or an empty sequence,
 and therefore $S''$ is simple and $S\equiv S'\eqext S''$.
@@ -52,3 +53,8 @@ we have
 $S\equiv S'\eqext S''\equiv U$, and as $S\aFS = \FS^* \neq \fsbroken$,
 therefore $U\aFS\neq\fsbroken$.
 \end{proof}
+
+An important consequence of this proof is that any sequence
+of recorded updates that were applied to a filesystem can be
+converted to a simple sequence using the rules listed in
+\cref{section_axioms} alone.

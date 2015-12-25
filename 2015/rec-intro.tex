@@ -37,13 +37,23 @@ that is independent of $B\setminus A$:
 & \forall \beta\in B\setminus A: \alpha\indep\beta\\
 \}. &
 \end{align*}
-The order of commands in the sequence can be determined using the algorithm described in
-\cref{ordering} as any subset of $A$ is also simple.
-In a similar way, $\recb$ can be obtained by reversing $A$ and $B$
-in the definition.
 \end{mydef}
 
-We would now like to prove that $\reca$ and $\recb$ can be applied to the replicas,
+Whether two commands are independent is easy to determine programmatically
+either based on \cref{def_indep} and the rules listed in \cref{section_axioms},
+or based on \cref{incomparable_is_independent} 
+in at most $O(x^2)$ time, where $x$ is the number of commands.
+Then, to generate the sequence $\reca$ from the resulting set, 
+we order the commands using the algorithm described in
+\cref{ordering} as any subset of $A$ is also simple.
+
+$\recb$ can be obtained in a similar way by reversing $A$ and $B$
+in the definition.
+
+\bigskip
+
+\noindent
+Next, we would now like to prove that $\reca$ and $\recb$ can be applied to the replicas,
 that is, without loss of generality,
 \[ \reca\aFS_B\neq\fsbroken. \]
 So that we can formalize statements needed to prove this,
