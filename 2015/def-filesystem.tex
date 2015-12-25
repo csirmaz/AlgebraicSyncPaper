@@ -1,20 +1,27 @@
 
 \subsection{The Filesystem}
 
-We model a filesystem using a function $\FS$ with a set of nodes (filesystem paths) $\setn$ as its domain,
-and a set of possible contents or values, $\setv$, as its codomain:
+We model a working filesystem
+using a function $\FS$ with a set of nodes (filesystem paths) $\setn$ as its domain,
+and a set of possible contents or values $\setv$ as its codomain.
+Alternatively, if the filesystem has encountered a problem and is no longer usable, 
+we assign it the special value $\fsbroken$:
 \begin{mydef}[Filesystem]
-\[ \FS : \setn \rightarrow \setv \] 
+\begin{gather*}
+\FS
+\begin{cases}
+\setn \rightarrow \setv \\
+\fsbroken
+\end{cases}
+\end{gather*}
 \end{mydef}
 In our model, $\setn$ 
 serves as a namespace or ``skeleton'' for the filesystem, and it
-contains all possible nodes, including the ones where there is no file or directory.
-To model empty nodes, $\setv$ 
-contains a special element ($\empt$) which is the value of $\FS$ at these nodes.
-We consider the contents of files, as well as any meta-information of files
-and directories (e.g. permissions and other flags) part of the values in $\setv$.
+contains all possible nodes, including the ones where there is no file or directory,
+which we denote using a special value $\empt\in\setv$.
 
-The nodes form a disjoint union of rooted directed trees.
+The nodes form a disjoint union of rooted directed trees,
+which determines the following $\parent$ function.
 Tao et al. in \cite{TSR} describe a similar filesystem model, although
 they also model inodes and restrict the filesystem to a just single tree.
 \begin{mydef}[$\parent$]
@@ -22,14 +29,28 @@ The function $\parent(n)$ returns the parent node of $n$, or
 returns $\topnode$ if $n$ is the root of a tree.
 \end{mydef}
 
-Every filesystem has a so-called \emph{tree property}, which means that
+Every working filesystem has a so-called \emph{tree property}, which means that
 if the filesystem is not empty at a node, and the node has a parent,
 then there must be a directory at the parent node.
+To model this, in $\setv$ we select another special value
+to represent directories, as we assume that apart from their location
+in the filesystem, all directories are equal.
+We do this because, as Bill Zissimopoulos pointed 
+out (\cite{BZ}),
+we often do not want to consider metadata stored in
+directories (e.g. permission settings) during synchronization,
+as these are not generally understood well by users,
+and, if needed, conflict resolution on these settings can be easily automated.
+We will also see that this assumption makes it possible
+to define a maximal reconciliation algorithm.
 
-To model this, in $\setv$ we distinguish between 
-file values ($\setf$) and directory values ($\setd$), that is,
-if $\setb = \{\empt\}$ then:
-\[ \setv = \setb \cup \setf \cup \setd \]
+Let therefore the value representing directories be $\vald$,
+and let us define subsets of $\setv$ for each type of value:
+let $\setd$ be $\{\vald\}$, let $\setb$ be $\{\empt\}$, 
+and let $\setf$ contain all remaining values that represent
+different file contents together with any metadata associated with them:
+\[ \setv = \setb \cup \setf \cup \setd. \]
+
 The tree property can then be defined as
 \begin{mydef}[Tree property]
 \begin{align*}
@@ -50,18 +71,5 @@ to empty nodes ($\ccharb$).
 
 In this paper, $n$, $m$ and $o$ denote nodes in $\setn$.
 We use $\valf$ for an arbitrary element in $\setf$, 
-and $\vald$ for an arbitrary element in $\setd$,
 and by $\valvx$ we mean a value of type $X$ in $\setvx{X}$.
 
-% Simplification
-% --------------
-
-A simplification we will assume in this paper is regarding directories.
-As Bill Zissimopoulos pointed 
-out (\cite{BZ}),
-we often do not want to consider metadata stored in
-directories (e.g. permission settings) during synchronization,
-as these are not generally understood well by users,
-and, if needed, conflict resolution on these settings can be easily automated.
-In other words, the contents of directories are all equal,
-which can be modelled by assuming that $|\setd|=1$.

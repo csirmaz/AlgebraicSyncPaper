@@ -5,8 +5,8 @@
 
 Next we define commands on filesystems.
 As described above, we aimed to select a set of commands
-that captures as much information as possible
-about the operations, and is also symmetric.
+that captures as much information
+about the operations as possible, and is also symmetric.
 We start by summarizing our reasons for doing so.
 
 Let us consider what kind of information is usually encoded in filesystem operations.
@@ -47,22 +47,21 @@ we propose a set of commands that encode
 the type of the original state of $\FS(n)$ as well.
 (Some real-life filesystem commands like $rmdir$ do this already.)
 
-We therefore have four pieces of information related to each command:
-its input type, its output type, the node to which it is applied, and finally
-the value that it stores at the node.
-We will denote commands using quadruples that list these
-in a the following format:
-% TODO convert into definition
+\begin{mydef}[Regular commands]
+Therefore we have four pieces of information related to each command,
+and represent them using quadruples that list
+their input type ($X$), output type ($Y$),
+the node to which they are applied ($n$),
+and the value they store at the node ($\valvy$):
 \[ \cxynv, \]
-where $X$ is the input type, $Y$ is the output type, $n$ is the node,
-and $\valvy$ is a value of the appropriate type from $\setvx{Y}$.
+where $\valvy\in\setvx{Y}$.
+
 We use $\cchard$, $\ccharf$ or $\ccharb$ to represent the different
-types. For example, $\cbdaa{n}{\vald}$ 
-will represent $mkdir(n,\vald)$.
-% TODO Just say "omit"
-Alternatively, we use a triple of the two types and a node if 
-there is only a single suitable output value for the given type (e.g. $\empt$).
-That is, $\cdba{n}$ will represent $rmdir(n)$.
+types, and omit the final value if it is determined by the output type
+(when it is $\empt$ or $\vald$).
+For example, $\cbdaa{n}{\vald}$ will represent $mkdir(n,\vald)$,
+and $\cdba{n}$ will represent $rmdir(n)$.
+\end{mydef}
 
 \bigskip
 
@@ -70,11 +69,12 @@ That is, $\cdba{n}$ will represent $rmdir(n)$.
 A command can only succeed if the original value at node $n$ has a type that matches
 the input type of the command. If this is not the case, or if the resulting
 filesystem no longer has the tree property, then we say that the command
-{\em breaks} the filesystem. Broken filesystems are considered equal
-(but not equal to any working filesystem), and we note them by $\FS=\fsbroken$.
+{\em breaks} the filesystem, and assigns $\fsbroken$ to it.
+Broken filesystems are considered equal, but not equal to any working filesystem.
 
 So that we could reason about sequences of commands that break every filesystem, 
-we introduce the command $\cbrk$ that simply breaks every filesystem.
+we introduce, in addition to the regular commands,
+the command $\cbrk$ that simply breaks every filesystem.
 
 We note that a command or a sequence of commands is applied to a filesystem
 by prefixing the command or sequence to it, for example: $\cbrk\aFS$, $\cbdaa{n}{\vald}\aFS$, 
@@ -84,18 +84,16 @@ To define the exact effect of the commands we use
 the \emph{replacement operator}  which changes the
 value of the filesystem at a given point only.
 
-% TODO include command in def
-\begin{mydef}[Replacement operator]
-Using $\FS[\valv/n]$ we denote a filesystem derived from $\FS$:
+\begin{mydef}[Effect of commands]
+We use a \emph{replacement operator} of the form
+$\FS[\valv/n]$ to denote a filesystem derived from $\FS$:
 \[ \FS[\valv/n](m) :=
    \begin{cases}
    \valv &\mbox{if~} m=n\\
    \FS(m) &\mbox{otherwise.}
    \end{cases}
 \]
-\end{mydef}
-
-The effect of the commands is as follows:
+The effect of the commands is then as follows:
 \begin{align*}
 &\cbrk\aFS = \fsbroken \\
 &\cxynv\aFS = 
@@ -106,7 +104,7 @@ The effect of the commands is as follows:
    \FS[\valvy/n] &\mbox{otherwise.}
    \end{cases}
 \end{align*}
-
+\end{mydef}
 
 In general, when we describe multiple or unknown commands, we may substitute one or both
 of their types with variables, as we did with $\cxynv$. In this context,
