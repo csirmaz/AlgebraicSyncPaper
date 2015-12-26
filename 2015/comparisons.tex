@@ -52,7 +52,8 @@ if $n$ is marked as dirty in both $\FS_A$ and $\FS_B$, and
 $\FS_A(n)\neq\FS_B(n)$, and $n$ does not point to a directory in both replicas
 ($\FS_A(n)\not\in\setd \vee \FS_B(n)\not\in\setd$; see section 4.1 in \cite{BP}).
 
-It can be easily seen that not all conflicts detected based on the above definition
+Similarly to \cite{NREC},
+it can be easily seen that not all conflicts detected based on the above definition
 entails a conflict based on our system; that is, \cite{BP} describes a more
 conservative policy.
 For example, if $\nn=\parent(n)$ and $\FS(\nn)$ is a directory and $\FS(n)$ is a file, and

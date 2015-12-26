@@ -21,12 +21,29 @@ contains all possible nodes, including the ones where there is no file or direct
 which we denote using a special value $\empt\in\setv$.
 
 The nodes form a disjoint union of rooted directed trees,
-which determines the following $\parent$ function.
+which determines the following $\parent$ function,
+and \emph{ancestor / descendant} and \emph{incomparable} relations.
 Tao et al. in \cite{TSR} describe a similar filesystem model, although
 they also model inodes and restrict the filesystem to a just single tree.
 \begin{mydef}[$\parent$]
 The function $\parent(n)$ returns the parent node of $n$, or
 returns $\topnode$ if $n$ is the root of a tree.
+\end{mydef}
+
+\begin{mydef}[$n\descendant m$]
+On $\setn$ the \emph{ancestor / descendant} relation is the
+partial ordering determined by the $\parent$ function.
+We write $n\descendant m$ if $n$ is the ancestor of $m$,
+that is, $n=\parent^n(m)$ for some integer $n\ge 1$.
+% or the path name of $n$ is an initial segment of that of $m$. 
+We write $n\descendantEq m$ if $n\descendant m$ or $n=m$.
+\end{mydef}
+
+\begin{mydef}[$n\unrel m$]
+We write $n\unrel m$, or $n$ and $m$ are \emph{incomparable}
+if $n\not\descendantEq m$ and $n\not\ancestorEq m$;
+that is, incomparable nodes are on different branches or on different trees.
+% none of the path names describing their location is an initial segment of the other.
 \end{mydef}
 
 Every working filesystem has a so-called \emph{tree property}, which means that

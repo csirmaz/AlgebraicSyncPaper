@@ -51,22 +51,6 @@ and
 $ A\equiv B \Rightarrow A\eqext B$.
 \end{mydef}
 
-Let us also define the following relations between nodes:
-
-\begin{mydef}[$n\descendant m$]
-The partial ordering determined by the parent relation is denoted by $\descendant$:
-we write $n\descendant m$ if $n$ is the ancestor of $m$ ($n=\parent^n(m)$),
-that is, the path name of $n$ is an initial segment of that of $m$. 
-We write $n\descendantEq m$ if $n\descendant m$ or $n=m$.
-\end{mydef}
-
-\begin{mydef}[$n\unrel m$]
-We write $n\unrel m$, or ``$n$ and $m$ are incomparable'' if $n\not\descendantEq m$ and $n\not\ancestorEq m$.
-incomparable nodes are on different branches or on different trees;
-none of the path names describing their location is an initial segment of the other.
-\end{mydef}
-
-
 Our aim is to derive information about the effects of sequences
 of commands independently of the actual filesystems.
 In order to make this possible, we investigate the smallest building

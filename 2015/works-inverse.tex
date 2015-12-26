@@ -134,7 +134,7 @@ We also prove the following:
 \begin{mylem}\label{worksinputmatch}
 If $A$ and $B$ are minimal sequences, $\works{A,B}$,
 and there are commands on node $n$ in both $A$ ($\cxynv\in A$) and $B$ ($\czwnv\in B$)
-then their input types must match ($X=Z$).
+then the input types of these commands must match ($X=Z$).
 \end{mylem}
 \begin{proof}
 This is easily shown using an indirect proof: if $X\neq Z$, then there is no filesystem that
@@ -165,7 +165,7 @@ at all nodes the types of their values are the same, or they are both broken.
 
 From the definitions we can clearly see that
 \begin{mycor}\label{negneg_is_typeeq}
-$\forall \FS: (S^{-1})^{-1}\aFS\typeeq S\aFS$.
+$\forall S, \FS: (S^{-1})^{-1}\aFS\typeeq S\aFS$.
 \end{mycor}
 
 \begin{mylem}\label{r_invmove}
