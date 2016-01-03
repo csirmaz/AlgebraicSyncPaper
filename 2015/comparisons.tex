@@ -42,7 +42,7 @@ As a test of the proposed reconciliation algorithm,
 we compare our definition of conflicting
 updates to how conflicts are defined by Balasubramaniam and Pierce
 in their state-based approach (\cite{BP}).
-The update detector they describe provides a safe estimate of nodes
+As we noted in \cite{NREC}, the update detector they describe provides a safe estimate of nodes
 (paths) at which updates occurred.
 It marks some nodes as \emph{dirty} in a way that we know that at non-dirty nodes
 the filesystems (replicas) have not changed between their common original state and current state
@@ -54,17 +54,17 @@ if $n$ is marked as dirty in both $\FS_A$ and $\FS_B$, and
 $\FS_A(n)\neq\FS_B(n)$, and $n$ does not point to a directory in both replicas
 ($\FS_A(n)\not\in\setd \vee \FS_B(n)\not\in\setd$; see section 4.1 in \cite{BP}).
 
-Similarly to \cite{NREC},
-it can be easily seen that not all conflicts detected based on the above definition
+It can be easily seen that not all conflicts detected based on the above definition
 entails a conflict based on our system; that is, \cite{BP} describes a more
 conservative policy.
-For example, if $\nn=\parent(n)$ and $\FS(\nn)$ is a directory and $\FS(n)$ is a file, and
+We use the example we described in \cite{NREC},
+where $\nn=\parent(n)$ and $\FS(\nn)$ is a directory and $\FS(n)$ is a file, and
 the two replicas are derived in the following way:
 \begin{gather*}
 \FS_A = \cfba{n} \cc \cdba{\nn} \aFS \\
-\FS_B = \cfba{n} \aFS,
+\FS_B = \cfba{n} \aFS.
 \end{gather*}
-then $\nn$ is dirty in both replicas:
+Then, $\nn$ is dirty in both replicas:
 in $\FS_A$ it was modified, and in $\FS_B$ one of its descendants was modified.
 Moreover, $\FS_A(\nn)\neq\FS_B(\nn)$ and $\FS_A(\nn)=\empt\not\in\setd$,
 and therefore a conflict is detected at $\nn$.
