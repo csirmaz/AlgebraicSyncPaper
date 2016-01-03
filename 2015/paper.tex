@@ -1,7 +1,5 @@
 \documentclass[12pt]{article}
 
-% \usepackage{times}
-% TODO IEEE format
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
@@ -12,7 +10,9 @@
 
 \input{macros}
 
-\title{An Algebraic Theory of File Synchronization}
+% fitness, validity, integrity, well-founded
+% foundation, groundwork
+\title{New Foundations and Fitness of Algebraic File Synchronization}
 \author{Elod Pal Csirmaz\\
 \texttt{\rot{\rot{maz.}{csir}{ep}com}{@}{elod}}}
 
@@ -22,13 +22,44 @@
 
 \input{abstract}
 
+\bigskip\noindent
+{\bf Keywords:} % (4-6)
+file synchronization,
+algebraic approach,
+distributed systems,
+reconciliation,
+data replication
+% conflict detection,
+% operation-based 
+% conflict resolution
+% computer algebra
+
+\bigskip\noindent
+{\bf MSC classes:} % http://www.ams.org/mathscinet/msc/msc2010.html
+08A70, % Applications of universal algebra in computer science
+68M07, % Mathematical problems of computer architecture
+68M14, % Distributed systems
+68P05, % Data structures
+68P20 % Information storage and retrieval
+% 68N25         Operating systems
+
+\bigskip\noindent
+{\bf ACM classes:} % http://www.acm.org/about/class/ccs98-html
+% (D) Software (D.4) Operating systems
+D.4.3, % File systems management
+% (E) Data
+E.5, % Files
+% (F) Theory of computation (F.2) ANALYSIS OF ALGORITHMS AND PROBLEM COMPLEXITY
+F.2.2, % Nonnumerical Algorithms and Problems
+% (G) Mathematics of Computing
+G.2 % DISCRETE MATHEMATICS
+% (H) Information Systems (H.3) INFORMATION STORAGE AND RETRIEVAL
+% H.3.4 % Systems and Software
+
 \end{abstract}
 
-
-
+% section
 \input{intro}
-
-
 
 \section{Definitions}\label{sec_def}
 
@@ -36,11 +67,8 @@
 
 \input{def-commands}
 
-
-
+% section
 \input{axioms}
-
-
 
 \section{Update Detection}\label{sec_update}
 
@@ -49,8 +77,6 @@
 \input{ordering}
 
 \input{upd-correct}
-
-
 
 \section{Reconciliation}\label{sec_rec}
 
@@ -62,23 +88,19 @@
 
 \input{rec-complete}
 
-
-
+% section
 \input{comparisons}
 
-
-
+% section
 \input{algebra}
 
-
+% section
 \input{conclusion}
-
 
 \section{Acknowledgments}
 
 I thank Laszlo Csirmaz for his invaluable input on previous drafts of this paper,
 and Bill Zissimopoulos for his observations on algebraic file synchronization that triggered this research.
-
 
 \begin{thebibliography}{99}
 
