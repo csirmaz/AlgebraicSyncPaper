@@ -16,9 +16,10 @@ we assign it the special value $\fsbroken$:
 \end{gather*}
 \end{mydef}
 In our model, $\setn$ 
-serves as a namespace or ``skeleton'' for the filesystem, and it
-contains all possible nodes, including the ones where there is no file or directory,
-which we denote using a special value $\empt\in\setv$.
+serves as a namespace or ``skeleton'' for the filesystem.
+It contains all possible nodes, including the ones 
+where the file system contains no file or directory,
+where in our model $\FS$ has a special value, $\empt\in\setv$.
 
 The nodes form a disjoint union of rooted directed trees,
 which determines the following $\parent$ function,
