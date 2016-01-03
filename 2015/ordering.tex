@@ -15,11 +15,12 @@ simple set of commands can be generated, but before doing so, let us consider th
 Given a set of commands that
 does not contain assertion commands,
 and which can be applied to a filesystem in some order without breaking it,
-and which contains commands on $n$ and $\nn$ where $\nn\descendant n$
-but $\nn\neq\parent(n)$, then the set must also contain a command
+and which contains commands on $n$ and $\nn$ where $\nn\descendant n$,
+then the set must also contain a command
 on each node between $n$ and $\nn$.
 \end{mylem}
 \begin{proof}
+Without loss of generality, we can assume that $\nn\neq\parent(n)$.
 We prove that under the given conditions, the set must contain a command on $\parent(n)$.
 Then, by reapplying this result, we know that the set must contain commands on every
 ancestor of $n$ up to $\nn$.
