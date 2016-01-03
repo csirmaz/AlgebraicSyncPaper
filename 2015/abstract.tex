@@ -1,24 +1,25 @@
 
 With distributed computing and mobile applications,
-synchronizing divergent replicas of data is a more and more common problem.
-We investigate an operation-based approach to filesystem synchronization
-and further our theoretical understanding of this problem
-by presenting rigorous algebraic proofs that the algorithms described for
-update detection and reconciliation return working solutions
-that cannot be improved on.
+synchronizing divergening replicas of data structures is a more and more common problem.
+We use algebraic methods to reason about filesystem operations, 
+and introduce a simplified definition of conflicting updates.
+We also define algorithms for update detection and reconciliation
+and present rigorous proofs that they not only work as intended,
+but also cannot be improved on.
 
-To do this, we present our filesystem model 
-and a novel, symmetric set of filesystem commands
+To achieve this, we introduce a novel, symmetric set of filesystem commands
 with higher information content,
-which allow us to simplify our definition of conflicting updates
-compared to our previous approach,
-and to ensure that we propagate all updates that do not cause errors.
-We also present a number of generally useful properties of sequences of commands
-including introducing the concept of inverse sequences and conditional operation.
+which removes edge cases
+and increases the predictive powers of our algebraic model.
+We also present a number of generally useful classes and properties
+of sequences of commands.
 
-These results are essential in
-determining the outcome of an
-application implementing an algebraic approach to synchronization
-and in ensuring that it is error-free,
-and as a step towards building a more complete algebra
-to describe updates to filesystems and other storage protocols.
+These results are often intuitive,
+but providing exact proofs for them is far from trivial.
+They contribute to our understanding of this special type of algebraic model,
+and toward building a more complete algebra
+of filesystems and other storage protocols.
+They also form a theoretical basis for
+specifying
+and guaranteeing the error-free operation
+of applications that implement operation-based approaches to synchronization.
