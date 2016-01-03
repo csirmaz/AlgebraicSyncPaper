@@ -116,11 +116,37 @@ As a specific case, we can regard a simple sequence of commands $S$
 as a set and determine its $\orderset{S}$.
 An important property of simple sequences is that
 all of their valid orderings are equivalent,
-and all equivalent sequences are mere reorderings:
+and all equivalent sequences are mere reorderings.
+To prove this, first we prove the following:
+
+\begin{mylem}\label{equiv_simple_same_commands}
+If two simple sequences $A$ and $B$ are equivalent
+and do not break all filesystems ($A\equiv B\nequiv\cbrk$),
+then they must contain the same commands.
+\end{mylem}
+\begin{proof}
+We use an inverse proof. Let $A$ and $B$ simple sequences
+such that $A\equiv B\nequiv\cbrk$,
+and $\FS$ be a filesystem that they do not break.
+
+We also assume that they do not contain the same sequences.
+Without loss of generality, we can assume
+that $A$
+contains $\cxynv$, and $B$ either contains a different command
+$\czwnv$ on $n$, or no command on $n$ at all.
+As $A$ is simple, we know that $\cxynv$ is not an assertion command,
+and therefore $X\neq Y$ and $\FS(n)\neq\valvy$ as it has type $X$.
+If so, then if $B$ has no command on $n$, then $B\aFS(n)=\FS(n)$ and
+$A$ and $B$ cannot be equivalent.
+Otherwise we know that $Z=X$ as $B$ does not break $\FS$ either,
+and that $\valvw=\valvy$ and therefore $W=Y$ as $B\aFS(n)$ must
+be $\valvy$ and $B$ only has one command on $n$.
+However, then $\czwnv=\cxynv$, which is a contradiction.
+\end{proof}
 
 \begin{mylem}\label{simple_reorder_equiv}
-For any simple sequence $S\nequiv\cbrk$,
-$\forall T: T\equiv S \Leftrightarrow T\in\orderset{S}$.
+For all simple sequences $T$ and $S\nequiv\cbrk$,
+$T\equiv S \Leftrightarrow T\in\orderset{S}$.
 \end{mylem}
 \begin{proof}
 First, as $S$ only has at most one command on each node,
@@ -154,12 +180,15 @@ that the order between any other command pairs is not fixed in the sense
 that if one order works, so will the other.
 
 From these we know that all sequences in $\orderset{S}$
-are equivalent, and that any sequence $T$ outside it
+are equivalent, and that any sequence of the same commands outside it
 necessarily breaks all filesystems.
+We also know $S\in\orderset{S}$ as $S\nequiv\cbrk$
+and therefore $T\in\orderset{S} \Rightarrow T\equiv S$.
 
-Therefore if $S\nequiv\cbrk$ then $S\in\orderset{S}$,
-and $S$ cannot be equivalent to any sequence of the same commands
-not in $\orderset{S}$.
+From \cref{equiv_simple_same_commands} we know that 
+if $T\equiv S$, then $T$ contains the same commands as $S$,
+from which we see
+that $T\equiv S\Rightarrow T\in\orderset{S}$.
 \end{proof}
 
 It follows from this that given a simple set,
