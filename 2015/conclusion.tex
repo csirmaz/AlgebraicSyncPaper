@@ -15,16 +15,19 @@ We think one of the most interesting extensions would be to
 consider reconciling not only two, but more replicas in a single step and
 prove the correctness and maximality of the algorithm proposed.
 A related problem is to model cases where reconciliation cannot
-complete fully (due to a system or network failure, for example)
-or if only a subset of the replicas are reconciled,
+complete fully
+or if only a subset of the replicas are reconciled 
+(e.g. due to network partitioning),
 both of which would result in a state where different replicas
 have different common ancestors, that is,
 the updates specific to the replicas start from different points
 in the update history of the filesystem.
-Identifying the information one needs to keep to perform
-update detection in such cases and devising a suitable algorithm
-would be beneficial for any implementation of a reconciler
-based on the ideas presented here.
+Parker et al. (\cite{PPRS}) and Cox and Josephson (\cite{CJ})
+describe version vectors (update histories) kept as metadata that could solve this problem.
+Extending the algebraic approach to represent individual updates to files
+in their modification histories (as described in \cite{CJ})
+as separate commands could also enable it to reconcile otherwise
+conflicting updates and resolve partial reconciliations.
 
 An extension of these results could also entail relaxing
 the simplifying assumptions we used.
