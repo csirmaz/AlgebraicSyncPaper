@@ -3,7 +3,7 @@ import sys
 
 """
 This script is part of the paper available at
-https://github.com/csirmaz/AlgebraicSyncPaper
+https://github.com/csirmaz/AlgebraicSyncPaper/ii/
 
 It is used to test pairs of commands on filesystems and determine
 (1) if they break all filesystems, 
@@ -49,7 +49,7 @@ Finally, the script prints rules for substituting command pairs with single comm
 whenever the single command is not "break".
 
 
-Copyright (c) 2015 Elod Pal Csirmaz
+Copyright (c) 2016 Elod Pal Csirmaz
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
