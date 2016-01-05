@@ -8,6 +8,7 @@
 \medskip
 
 % Further research
+% TODO Merge with other ideas?
 
 Apart from constructing an algebra,
 there are many other ways in which further work can extend the current results.
@@ -23,7 +24,8 @@ have different common ancestors, that is,
 the updates specific to the replicas start from different points
 in the update history of the filesystem.
 Parker et al. (\cite{PPRS}) and Cox and Josephson (\cite{CJ})
-describe version vectors (update histories) kept as metadata that could solve this problem.
+describe version vectors (update histories) kept as metadata that could solve this problem,
+while Chong and Hamadi present distributed algorithms that allow incremental synchronization (\cite{CH}).
 Extending the algebraic approach to represent individual updates to files
 in their modification histories (as described in \cite{CJ})
 as separate commands could also enable it to reconcile otherwise
