@@ -3,7 +3,7 @@ import sys
 
 """
 This script is part of the paper available at
-https://github.com/csirmaz/AlgebraicSyncPaper/ii/
+https://github.com/csirmaz/AlgebraicSyncPaper/p2/
 
 It is used to test pairs of commands on filesystems and determine
 (1) if they break all filesystems, 
