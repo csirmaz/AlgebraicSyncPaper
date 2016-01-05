@@ -27,7 +27,7 @@ B&=\cbdaa{\nn}{\valdii}
 \end{align*}
 where $\parent(n)=\nn$ (\cite{NREC} did not require all directories to have the same value).
 Clearly $\cbfaa{n}{\valf}$ could be applied to $\FS_B$, but it is not as
-it must be preceded by creating the directory, which conflicts with the same operation in $B$
+it must be preceded by creating the directory, which conflicts with the same command in $B$
 due to the different value.
 (Introducing a third replica which has not changed at all further complicates the picture.)
 The current algorithm no longer needs to specify that there can be no conflicts
@@ -36,12 +36,10 @@ on preceding commands, and, to use the above terminology, implements a fully lib
 
 \subsection{Comparing Definitions of Conflicts}
 
-% TODO Transparency in re-use
-
 As a test of the proposed reconciliation algorithm, 
 we compare our definition of conflicting
 updates to how conflicts are defined by Balasubramaniam and Pierce
-in their state-based approach (\cite{BP}).
+in their state-based approach implemented in the Unison synchronizer (\cite{BP}).
 As we noted in \cite{NREC}, the update detector they describe provides a safe estimate of nodes
 (paths) at which updates occurred.
 It marks some nodes as \emph{dirty} in a way that we know that at non-dirty nodes
@@ -49,12 +47,17 @@ the filesystems (replicas) have not changed between their common original state 
 (see Definition 3.1.1 in \cite{BP}).
 The \emph{dirty} marks are also up-closed, that is, all ancestor nodes of a dirty node
 are also dirty (Fact 3.1.3 in \cite{BP}).
-And finally, a conflict is detected between replicas $\FS_A$ and $\FS_B$ at node $n$
+And finally, in our notation, 
+a conflict is detected between replicas $\FS_A$ and $\FS_B$ at node $n$
 if $n$ is marked as dirty in both $\FS_A$ and $\FS_B$, and
-$\FS_A(n)\neq\FS_B(n)$, and $n$ does not point to a directory in both replicas
-($\FS_A(n)\not\in\setd \vee \FS_B(n)\not\in\setd$; see section 4.1 in \cite{BP}).
+$\FS_A(n)\neq\FS_B(n)$, and $n$ does not point to a directory in both replicas.
+(In other words, 
+$\FS_A(n)\not\in\setd \vee \FS_B(n)\not\in\setd$; see section 4.1 in \cite{BP}.
+Let us not that there is an alternative approach to defining an algorithm for
+the same synchronizer by Pierce and Vouillon in \cite{PV}.)
 
-It can be easily seen that not all conflicts detected based on the above definition
+It can be easily seen that due to an edge case, 
+not all conflicts detected based on the above definition
 entails a conflict based on our system; that is, \cite{BP} describes a more
 conservative policy.
 We use the example we described in \cite{NREC},
