@@ -6,16 +6,16 @@
 \newcommand{\setd}{\setvx{\cchard}} % Set of directory values
 \newcommand{\setb}{\setvx{\ccharb}} % Set of empty values
 \newcommand{\empt}{\bot} % Empty value
-\newcommand{\parent}{\mathtt{parent}} % parent function
-\newcommand{\topnode}{\mathtt{None}} % return value of parent()
-\newcommand{\fsbroken}{\mathtt{Broken}} % broken FS value
+\newcommand{\parent}{\text{\normalfont\scshape{parent}}} % parent function
+\newcommand{\topnode}{\text{\normalfont\scshape{none}}} % return value of parent()
+\newcommand{\fsbroken}{\text{\normalfont\scshape{broken}}} % broken FS value
 \newcommand{\FS}{\Phi} % a filesystem
 \newcommand{\GS}{\Xi} % another filesystem
 \newcommand{\aFS}{\,\FS} % a filesystem preceded by something applied to it
 \newcommand{\aGS}{\,\GS} % a filesystem preceded by something applied to it
 \newcommand{\nn}{n^*} % parent node
 
-\newcommand{\cbrk}{\mathtt{break}} % 'break' command
+\newcommand{\cbrk}{\mathtt{Break}} % 'break' command
 \newcommand{\ccharb}{\empt} % character for empty type in commands
 \newcommand{\ccharf}{\mathtt{F}} % Character for file type in commands
 \newcommand{\cchard}{\mathtt{D}} % Character for dir type in commands
@@ -70,8 +70,8 @@
 \newcommand{\ancestor}{\succ}
 \newcommand{\ancestorEq}{\succeq}
 
-\newcommand{\eqext}{\sqsubseteq} % equivalent to
-\newcommand{\eqnrw}{\sqsupseteq} % extended by
+\newcommand{\eqext}{\sqsubseteq} % extended by
+\newcommand{\eqnrw}{\sqsupseteq} % extends
 \newcommand{\nequiv}{\not\equiv}
 \newcommand{\indep}{\mathrel{\wr\wr}} % Independent commands, sequences
 \newcommand{\unrel}{\indep} % Incomparable (unrelated) nodes
@@ -95,10 +95,10 @@
 \newcommand{\reca}{\recchar{A}{B}{}} % Reconciled from A
 \newcommand{\recb}{\recchar{B}{A}{}} % Reconciled from B
 
+\newcommand{\mynegsp}{\nobreak\hspace{-1pt plus 1pt}\nobreak}
 \newcommand{\acbnp}{A\mynegsp\cap\mynegsp B}
 \newcommand{\acb}{(\acbnp)}
 \newcommand{\acbi}{\acb^{-1}}
-\newcommand{\mynegsp}{\nobreak\hspace{-1pt plus 1pt}\nobreak}
 \newcommand{\ambnp}{A\mynegsp\setminus\mynegsp B}
 \newcommand{\amb}{(\ambnp)}
 \newcommand{\bmanp}{B\mynegsp\setminus\mynegsp A}
