@@ -46,12 +46,16 @@ In fact, an insight in \cite{NREC} is that
 if the ordering changes the effect of two commands (updates),
 then under certain circumstances they are not compatible and will give rise to conflicts.
 Accordingly, in this paper command-pairs and their properties
-play a special role.
+play a special role
+as we aim to find valid orderings on filesystem trees
+(also known as semantic scheduling)
+as opposed to syntactic scheduling that follows the strict temporal order
+of updates and may give rise to otherwise resolvable conflicts (\cite{SSH}).
 Other research also shows the essential nature of ordering:
-in IceCube multiple orders are tested to find an acceptable one \cite{KRSD},
-or in Bayou reconciling updates happens by redoing them in an acceptable order \cite{TTPDSH}.
 Saito and Shapiro offer a survey of so-called optimistic replication algorithms in which
-ordering (scheduling) plays a central role (\cite{SSH}).
+it plays a central role (\cite{SSH});
+in IceCube multiple orders are tested to find an acceptable one (\cite{KRSD}, see also \cite{MPV}),
+or in Bayou reconciling updates happens by redoing them in an acceptable order \cite{TTPDSH}.
 
 In \cref{sec_def} we define a model of filesystems and a set of commands
 that we will use to describe updates and modifications.
