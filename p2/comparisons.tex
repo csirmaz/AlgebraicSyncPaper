@@ -71,6 +71,8 @@ Then, $\nn$ is dirty in both replicas:
 in $\FS_A$ it was modified, and in $\FS_B$ one of its descendants was modified.
 Moreover, $\FS_A(\nn)\neq\FS_B(\nn)$ and $\FS_A(\nn)=\empt\not\in\setd$,
 and therefore a conflict is detected at $\nn$.
+(This behaviour is preserved in the more recent Harmony synchronizer.
+See ``delete/delete conflicts'' in \cite{PSG,FGKPS}.)
 Our reconciliation algorithm detects no conflicts;
 instead, it propagates $\cdba{\nn}$ to $\FS_B$, which we think is as expected
 and desired.

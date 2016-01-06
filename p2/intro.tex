@@ -16,9 +16,9 @@ to make them as similar as possible.
 The synchronization algorithm we describe
 follows the two main steps described by Balasubramaniam and Pierce (\cite{BP}):
 update detection, where we identify modifications that have been applied to the replicas
-since they diverged,
-and reconciliation, where we identify updates that can be propagated to other replicas and do so.
-The remaining updates, which could not be propagated, are conflicting updates;
+since they diverged and represent these as sequences of commands,
+and reconciliation, where we identify commands that can be propagated to other replicas and do so.
+The remaining commands, which could not be propagated, represent conflicting updates;
 resolving these requires a separate system or human intervention.
 
 In this paper we build on previous work done 
@@ -38,27 +38,36 @@ to its new state, then we can easily collect a set of updates,
 but we need to order these in a way that they could be applied
 to the filesystems without causing an error 
 (for example, a directory needs to be created before a file can be created under it).
-Similarly, during reconciliation when we consider all the updates that
+Similarly, during reconciliation when we consider all the commands that
 have been applied to the different replicas, we need to find a way of
 merging these and creating a global ordering that we can apply
 to the filesystems.
 In fact, an insight in \cite{NREC} is that
-if the ordering changes the effect of two commands (updates),
+if the ordering changes the effect of two commands,
 then under certain circumstances they are not compatible and will give rise to conflicts.
 Accordingly, in this paper command-pairs and their properties
 play a special role
-as we aim to find valid orderings on filesystem trees
-(also known as semantic scheduling)
-as opposed to syntactic scheduling that follows the strict temporal order
-of updates and may give rise to otherwise resolvable conflicts (\cite{SSH}).
-Other research also shows the essential nature of ordering:
-Saito and Shapiro offer a survey of so-called optimistic replication algorithms in which
-it plays a central role (\cite{SSH});
-in IceCube multiple orders are tested to find an acceptable one (\cite{KRSD}, see also \cite{MPV}),
-or in Bayou reconciling updates happens by redoing them in an acceptable order \cite{TTPDSH}.
+as we aim to find valid orderings on filesystem trees.
 
-In \cref{sec_def} we define a model of filesystems and a set of commands
-that we will use to describe updates and modifications.
+In terms of the usual classification of synchronizers (\cite{TSR, PV, SSH}),
+our approach to reconciliation is therefore operation-based as we investigate sets of commands,
+while the update detection algorithm makes the full synchronizer 
+similar to state-based synchronizers 
+as its starting point is the states of the replicase themselves.
+Moreover, our ordering algorithms only depend on the properties of commands 
+such as commutativity or idempotence,
+and therefore they can be classified as semantic schedulers.
+This is in opposition to syntactic scheduling, which uses 
+the origin and original temporal order of updates, 
+and which may give rise to otherwise resolvable conflicts (\cite{SSH}).
+Ordering plays a central role in other operation-based synchronizers.
+We refer to a survey by Saito and Shapiro of so-called optimistic replication algorithms (\cite{SSH});
+or, in particular,
+to IceCube, where multiple orders are tested to find an acceptable one (\cite{KRSD}, see also \cite{MPV}),
+or Bayou, where reconciling updates happens by redoing them in a globally determined order \cite{TTPDSH}.
+
+We start by defining a model of filesystems and a set of commands
+that we will use to describe updates and modifications in \cref{sec_def}.
 This is followed by investigating the properties and behaviors
 of command pairs in \cref{section_axioms}.
 \Cref{sec_update} describes update detection, and it is
