@@ -2,7 +2,7 @@
 
 \section{Investigating Command Pairs}\label{section_axioms}
 
-So that we could describe the effects of commands in general,
+So that we can describe the effects of commands in general,
 let us introduce some notation
 and note some observations.
 We already know that
@@ -19,7 +19,7 @@ $\emptyseq$ denotes its unit element, the empty sequence,
 which by definition leaves all filesystems unchanged.
 \end{mydef}
 
-The following concepts 
+The following two relations 
 (which echo the ones defined in \cite{NREC})
 allow us to investigate sequences independently of filesystems.
 In the definitions, $A,B,S,T$ stand for arbitrary sequences of commands.
@@ -46,7 +46,7 @@ $\forall \FS: A\FS\neq\fsbroken\Rightarrow A\aFS=B\aFS$.
 It is a reflexive and transitive relation,
 and we can see that
 % inference rules:
-$ A\eqext B \Rightarrow S\cc A\cc T\eqext S\cc B\cc T$
+$ A\eqext B \Rightarrow S\cc A\cc T\eqext S\cc B\cc T$,
 and
 $ A\equiv B \Rightarrow A\eqext B$.
 \end{mydef}
@@ -65,7 +65,7 @@ program\footnote{The program is accessible on-line at \\
 https://github.com/csirmaz/AlgebraicSyncPaper/blob/master/p2/prove.py.}
 to determine
 which pairs of commands cause errors all the time,
-which can be simplified to one or no commands, and which can be reversed
+which can be simplified to one or no commands, and which commute and can be reversed
 without any change in their overall effect.
 Our basis for this investigation was the model of filesystems introduced in this paper.
 These properties of command pairs are crucial as they determine
@@ -99,7 +99,7 @@ $\cxynv\cc\czwnv \equiv \cbrk$ where $Y\ne Z$.
 
 \begin{myax}\label{ax_same_emptyseq}
 Commands on the same node simplify:
-$\cxynv\cc\czwnv \eqext \emptyseq$ where $Y=Z$ and $X=W=\ccharb$ 
+$\cxynv\cc\czwnv \eqext \emptyseq$ where $Y=Z$, and $X=W=\ccharb$ 
 or $X=W=\cchard$.
 \end{myax}
 

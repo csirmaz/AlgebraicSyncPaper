@@ -16,7 +16,7 @@ to make them as similar as possible.
 The synchronization algorithm we describe
 follows the two main steps described by Balasubramaniam and Pierce \cite{BP}:
 update detection, where we identify modifications that have been applied to the replicas
-since they diverged and represent these as sequences of commands,
+since they diverged and represent them as sequences of commands;
 and reconciliation, where we identify commands that can be propagated to other replicas and do so.
 The remaining commands, which could not be propagated, represent conflicting updates;
 resolving these requires a separate system or human intervention.
@@ -36,7 +36,7 @@ is the ordering (scheduling) of commands.
 If update detection is based on comparing the original state of the filesystem
 to its new state, then we can easily collect a set of updates,
 but we need to order these in a way that they could be applied
-to the filesystems without causing an error 
+to the filesystem without causing an error 
 (for example, a directory needs to be created before a file can be created under it).
 Similarly, during reconciliation when we consider all the commands that
 have been applied to the different replicas, we need to find a way of
@@ -45,9 +45,8 @@ to the filesystems.
 In fact, an insight in \cite{NREC} is that
 if the ordering changes the effect of two commands,
 then under certain circumstances they are not compatible and will give rise to conflicts.
-Accordingly, in this paper command-pairs and their properties
-play a special role
-as we aim to find valid orderings on filesystem trees.
+Accordingly, in this paper the commutativity of command pairs and their other properties
+play a special role.
 
 In terms of the usual classification of synchronizers \cite{TSR, PV, SSH},
 our approach to reconciliation is therefore operation-based as we investigate sets of commands,
@@ -58,11 +57,11 @@ Moreover, our ordering algorithms only depend on properties of commands
 such as commutativity or idempotence,
 and therefore they can be classified as semantic schedulers.
 This is in opposition to syntactic scheduling, which uses 
-the origin and original temporal order of updates, 
+the origin and the original temporal order of updates, 
 and which may give rise to otherwise resolvable conflicts \cite{SSH}.
 In general, ordering plays a central role in operation-based synchronizers.
-We refer to a survey by Saito and Shapiro of so-called optimistic replication algorithms \cite{SSH};
-and, in particular,
+We refer to an excellent survey by Saito and Shapiro of so-called optimistic replication algorithms \cite{SSH};
+and, as examples,
 to IceCube, where multiple orders are tested to find an acceptable one (\cite{KRSD}, see also \cite{MPV}),
 or Bayou, where reconciling updates happens by redoing them in a globally determined order \cite{TTPDSH}.
 

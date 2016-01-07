@@ -80,13 +80,10 @@ We note that a command or a sequence of commands is applied to a filesystem
 by prefixing the command or sequence to it, for example: $\cbrk\aFS$, $\cbdaa{n}{\vald}\aFS$, 
 or simply $S\aFS$ if $S$ is a sequence of commands.
 
-To define the exact effect of the commands we use
-the \emph{replacement operator}  which changes the
-value of the filesystem at a given node only.
-
 \begin{mydef}[Effect of commands]
 We use a \emph{replacement operator} of the form
-$\FS[\valv/n]$ to denote a filesystem derived from $\FS$:
+$\FS[\valv/n]$ to denote a filesystem derived from $\FS$ 
+by replacing its value at $n$ with $\valv$:
 \[ \FS[\valv/n](m) =
    \begin{cases}
    \valv &\mbox{if~} m=n\\
