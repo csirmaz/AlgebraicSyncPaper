@@ -59,7 +59,7 @@ where $\valvy\in\setvx{Y}$.
 We use $\cchard$, $\ccharf$ or $\ccharb$ to represent the different
 types, and omit the final value if it is determined by the output type
 (when it is $\empt$ or $\vald$).
-For example, $\cbdaa{n}{\vald}$ will represent $mkdir(n,\vald)$,
+For example, $\cbfaa{n}{\valf}$ will represent $create(n,\valf)$,
 and $\cdba{n}$ will represent $rmdir(n)$.
 \end{mydef}
 
@@ -82,7 +82,7 @@ or simply $S\aFS$ if $S$ is a sequence of commands.
 
 To define the exact effect of the commands we use
 the \emph{replacement operator}  which changes the
-value of the filesystem at a given point only.
+value of the filesystem at a given node only.
 
 \begin{mydef}[Effect of commands]
 We use a \emph{replacement operator} of the form
