@@ -3,7 +3,7 @@ import sys
 
 """
 This script is part of the paper available at
-https://github.com/csirmaz/AlgebraicSyncPaper/p2/
+https://github.com/csirmaz/AlgebraicSyncPaper/tree/master/p2
 
 It is used to test pairs of commands on filesystems and determine
 (1) if they break all filesystems, 
@@ -11,16 +11,16 @@ It is used to test pairs of commands on filesystems and determine
 (3) or they are equivalent to (or extended by) a single command
 (4) or they are equivalent to (or extended by) the same commands applied in reverse order.
 
-The commands are tested on minimal model of a filesystem that includes information
+The commands are tested on a minimal model of a filesystem that includes information
 about two nodes, their immediate surroundings that determine the tree-property
 the filesystem needs to satisfy, and the relationship between the nodes.
 
-The script considers the following possible relationships between the nodes
+The script considers the following possible relationships between the nodes (paths)
 to which the commands are applied:
 """
 
 # Constants for Filesystem.rel and CommandPair.rel:
-DISTANT_PARENT     = 'DistantParent'     # p2 is an ancestor of p1 but not its parent
+DISTANT_PARENT     = 'DistantParent'     # path p2 is an ancestor of path p1 but not its parent
 DIRECT_PARENT      = 'DirectParent'      # p2 is the parent of p1 and p1 is not the only child
 DIRECT_PARENT_ONLY = 'DirectParentOnly'  # p2 is the parent of p1 and p1 is the only child
 DISTANT_CHILD      = 'DistantChild'      # p2 is the descendant of p1 but not its child
@@ -239,7 +239,7 @@ class Node:
         """Mark the node as broken.
 
         Args:
-            broken (Optional[str]):
+            reason (Optional[str]):
 
         Returns:
             self
