@@ -21,9 +21,9 @@ It contains all possible nodes, including the ones
 where the file system contains no file or directory,
 where in our model $\FS$ has a special value, $\empt\in\setv$.
 
-The nodes form a disjoint union of rooted directed trees,
-which determines the following $\parent$ function,
-and the \emph{ancestor / descendant} and \emph{incomparable} relations.
+There is an ancestor / descendant relation defined over the nodes,
+which arranges them in a (disjoint) union of rooted directed trees,
+and which can be derived from the following $\parent$ function.
 Tao et al. \cite{TSR} describe a similar filesystem model, although
 they also model inodes and restrict the filesystem to just a single tree.
 \begin{mydef}[$\parent$]
@@ -33,9 +33,9 @@ returns $\topnode$ if $n$ is the root of a tree.
 
 \begin{mydef}[$n\descendant m$]
 On $\setn$ the \emph{ancestor / descendant} relation is the
-partial ordering determined by the $\parent$ function.
+strict partial ordering determined by the $\parent$ function.
 We write $n\descendant m$ if $n$ is the ancestor of $m$,
-that is, $n=\parent^n(m)$ for some integer $n\ge 1$.
+that is, $n=\parent^a(m)$ for some integer $a\ge 1$.
 % or the path name of $n$ is an initial segment of that of $m$. 
 We write $n\descendantEq m$ if $n\descendant m$ or $n=m$.
 \end{mydef}
@@ -84,7 +84,7 @@ to empty nodes ($\ccharb$).
 
 \begin{figure}[htb]
 \input{fig-type-transition}
-\caption{Transitions between types of values in a filesystem}\label{fig_transition}
+\caption{Transitions between types of values from the root of a tree in a filesystem}\label{fig_transition}
 \end{figure}
 
 In this paper, $\FS$ and $\GS$ denote filesystems,

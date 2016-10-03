@@ -10,11 +10,15 @@ commands usually do not occur in isolation,
 and are applied to filesystems in time.
 Therefore we will investigate sequences of commands with a well-defined order.
 \begin{mydef}[Sequences of commands: $\cc$ and $\emptyseq$]
-We use ``$\cc$'' to concatenate commands to form a sequence, or concatenate sequences to form a longer sequence:
-$S=\cbdaa{n}{\vald}\cc\cbfaa{m}{\valf}$, or $S'=S\cc\cbba{o}$,
+We use ``$\cc$'' to concatenate commands to form a sequence, or concatenate sequences to form a longer sequence,
 with the meaning that the command on the left is applied first:
 \[ \alpha\cc\beta\aFS = \beta(\alpha\aFS). \]
-Sequences of commands form a free semigroup, and, as usual,
+For example, we will write
+$S=\cbdaa{n}{\vald}\cc\cbfaa{m}{\valf}$, or $S'=S\cc\cbba{o}$.
+% monoid, but not free monoid
+% monoid: semigroup with identity element
+% Sequences of commands form a free semigroup
+Sequences of commands form a monoid, and, as usual,
 $\emptyseq$ denotes its unit element, the empty sequence,
 which by definition leaves all filesystems unchanged.
 \end{mydef}
@@ -24,18 +28,6 @@ The following two relations
 allow us to investigate sequences independently of filesystems.
 In the definitions, $A,B,S,T$ stand for arbitrary sequences of commands.
 
-\begin{mydef}[$\equiv$]
-% Relation in the algebra
-$A\equiv B$ means that $A$ and $B$ are equivalent,
-% intended interpretation:
-that is, they behave in the same way on
-all filesystems: $\forall \FS: A\aFS=B\aFS$.
-It is a reflexive, commutative and transitive relation,
-and clearly
-% inference rule:
-$ A\equiv B \Rightarrow S\cc A\cc T\equiv S\cc B\cc T $.
-\end{mydef}
-
 \begin{mydef}[$\eqext$]
 % Relation in the algebra
 $A\eqext B$ means that $B$ extends $A$,
@@ -43,13 +35,44 @@ $A\eqext B$ means that $B$ extends $A$,
 that is, they behave in the same way
 on any filesystem $A$ does not break:
 $\forall \FS: A\FS\neq\fsbroken\Rightarrow A\aFS=B\aFS$.
-It is a reflexive and transitive relation,
-and we can see that
+% preorder: reflexive and transitive
+It is a preorder,
+and as clearly
 % inference rules:
 $ A\eqext B \Rightarrow S\cc A\cc T\eqext S\cc B\cc T$,
-and
-$ A\equiv B \Rightarrow A\eqext B$.
+it is a precongruence.
+% precongruence: congruence of a preorder -- TODO -- ?
 \end{mydef}
+
+\begin{mydef}[$\equiv$]
+% Relation in the algebra
+$A\equiv B$,
+or $A$ and $B$ are \emph{equivalent,}
+iff $A\eqext B$ and $B\eqext A$;
+that is, $\equiv$ is the intersection of the preorder $\equext$ with its inverse.
+% symmetric: aRb <=> bRa
+% reflexive: aRa
+% transitive: aRb & bRC => aRc
+It is therefore a congruence, and we can see that
+% inference rule:
+$ A\equiv B \Rightarrow S\cc A\cc T\equiv S\cc B\cc T $.
+\end{mydef}
+
+It is easy to see that equivalence holds on the level of filesystems:
+
+\begin{mylem}
+$A\equiv B$
+iff $A$ and $B$ behave in the same way on
+all filesystems, that is, $\forall \FS: A\aFS=B\aFS$.
+\end{mylem}
+\begin{proof}
+If $\forall \FS: A\aFS=B\aFS$ then $A\eqext B$ and $B\eqext A$ and so by definition $A\equiv B$.
+For the reverse statement we assume that $A\equext B$ and $B\equext A$.
+$B\equext A$ implies that it is not possible for both $B\aFS\neq\fsbroken$ and $A\aFS=\fsbroken$ to be true.
+Therefore, for every $\FS$ either $A\aFS\neq\fsbroken$, in which case $A\aFS=B\aFS$ as $A\eqext B$, or $A\aFS=\fsbroken$,
+in which case $B\aFS=\fsbroken$ must be true, and therefore $A\aFS=B\aFS$ still holds.
+\end{proof}
+
 
 Our aim is to derive information about the effects of sequences
 of commands independently of the actual filesystems.

@@ -4,17 +4,21 @@
 % TODO identity command instead of the empty sequence?
 
 Next we define commands on filesystems.
-As described above, we aimed to select a set of commands
+As described above, we aim to select a set of commands
 that captures as much information
 about the operations as possible, and is also symmetric.
 We start by summarizing our reasons for doing so.
 
 Let us consider what kind of information is usually encoded in filesystem operations.
 A minimal set of commands, based on the most frequent tools implemented by filesystems,
-may be $create(n,\valv)$, which creates a file or directory ($\valv$) at the empty node $n$;
-$edit(n,\valv)$, which replaces the earlier value at $n$ with $\valv$;
-and $remove(n)$, which deletes the value at $n$---where 
-$n\in\setn$ and $\valv\in\setv$ (but $\valv\neq\empt$).
+may be the following, where 
+$n\in\setn$ and $\valv\in\setv$ (but $\valv\neq\empt$):
+\begin{itemize}
+\item $create(n,\valv)$, which creates a file or directory ($\valv$) at $n$
+where the file system contains no file or directory ($\empt$);
+\item $edit(n,\valv)$, which replaces the earlier file or directory at $n$ with $\valv$;
+\item $remove(n)$, which removes the file or directory at $n$, and replaces it with $\empt$.
+\end{itemize}
 Regarding their output, that is, the state of the filesystem at $n$
 after applying the command,
 we know that after $create$ or $edit$, $\FS(n)\neq\empt$, whereas after $remove$,
@@ -78,10 +82,10 @@ the command $\cbrk$ that simply breaks every filesystem.
 
 We note that a command or a sequence of commands is applied to a filesystem
 by prefixing the command or sequence to it, for example: $\cbrk\aFS$, $\cbdaa{n}{\vald}\aFS$, 
-or simply $S\aFS$ if $S$ is a sequence of commands.
+or $S\aFS$ if $S$ is a sequence of commands.
 
 \begin{mydef}[Effect of commands]
-We use a \emph{replacement operator} of the form
+We use a replacement operator of the form
 $\FS[\valv/n]$ to denote a filesystem derived from $\FS$ 
 by replacing its value at $n$ with $\valv$:
 \[ \FS[\valv/n](m) =
