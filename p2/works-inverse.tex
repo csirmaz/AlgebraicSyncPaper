@@ -62,18 +62,21 @@ We also prove the following lemmas.
 
 \begin{myax}\label{combine_independent_commands}
 The combination of independent commands works wherever the original commands work:
-\begin{align*}
-\forall\FS:{}&\cxynv\indep \czwmv \\
-&\quad\wedge \cxynv\aFS\neq\fsbroken \\
-&\quad\wedge \czwmv\aFS\neq\fsbroken \\
-&\Rightarrow \cxynv\cc \czwmv\aFS\neq\fsbroken.
-\end{align*}
+\[ \cxynv\indep \czwmv \Rightarrow \worksc{\cxynv\cc \czwmv}{\cxynv, \czwmv}. \]
+% \begin{align*}
+% \forall\FS:{}&\cxynv\indep \czwmv \\
+% &\quad\wedge \cxynv\aFS\neq\fsbroken \\
+% &\quad\wedge \czwmv\aFS\neq\fsbroken \\
+% &\Rightarrow \cxynv\cc \czwmv\aFS\neq\fsbroken.
+% \end{align*}
 \end{myax}
 \begin{proof}
 We name this proposition a \namecref{combine_independent_commands} 
 because to prove it, we must reach back to our filesystem model.
 We proceed in an indirect way and
-assume that $\cxynv\cc \czwmv\aFS=\fsbroken$.
+assume that there is a filesystem $\FS$ for which
+$\cxynv\aFS\neq\fsbroken$ and $\czwmv\aFS\neq\fsbroken$, but
+$\cxynv\cc \czwmv\aFS=\fsbroken$.
 We know $\cxynv\aFS\neq\fsbroken$ so it must be applying 
 $\czwmv$ that breaks it.
 Applying a command can only result in a broken filesystem in three cases.
