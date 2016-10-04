@@ -27,13 +27,13 @@ ancestor of $n$ up to $\nn$.
 
 Furthermore,
 we prove this proposition for sequences, not sets, as if all sequences must contain a command on $\parent(n)$,
-then so must a set because otherwise there would be no order in which it can be
+then so must all sets because otherwise there would be no order in which the commands they contain could be
 applied to any filesystem.
 
 Let $A$ be a sequence that satisfies the conditions;
 we therefore know that it contains a command $\cxynv$ on $n$
 and another command $\czwnnv$ on $\nn$.
-We use an indirect proof and assume that there are no commands on $\parent(n)$ in $A$.
+We use a proof by contradiction and assume that there are no commands on $\parent(n)$ in $A$.
 Next, we create a new sequence $A'\equiv A$ in which $\cxynv$ and $\czwnnv$ are next to each other.
 If they are already next to each other in $A$, there is nothing to do.
 Otherwise, consider the command next to $\cxynv$ in the direction where $\czwnnv$ is.
@@ -57,7 +57,7 @@ We can now define our algorithm to generate orders of sets of commands.
 
 Let $U$ be a simple set of commands
 that we know can be applied to at least one filesystem in some order without breaking it.
-Then we can split $U$ into a maximum number of disjunct subsets
+Then we can split $U$ into a maximum number of disjoint subsets
 (components) so that the nodes of two commands from two different subsets are incomparable.
 These will simply be the components of the subset of the node forest that contains 
 the nodes affected by $U$.
@@ -128,7 +128,7 @@ and do not break all filesystems ($A\equiv B\nequiv\cbrk$),
 then they must contain the same commands.
 \end{mylem}
 \begin{proof}
-We use an inverse proof. Let $A$ and $B$ be simple sequences
+We use a proof by contradiction. Let $A$ and $B$ be simple sequences
 such that $A\equiv B\nequiv\cbrk$,
 and $\FS$ be a filesystem that they do not break.
 

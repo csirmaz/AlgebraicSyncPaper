@@ -35,13 +35,10 @@ $A\eqext B$ means that $B$ extends $A$,
 that is, they behave in the same way
 on any filesystem $A$ does not break:
 $\forall \FS: A\FS\neq\fsbroken\Rightarrow A\aFS=B\aFS$.
+% old inference rule: $ A\eqext B \Rightarrow S\cc A\cc T\eqext S\cc B\cc T$,
+We can also see that $A\eqext B$ and $S\eqext T$ implies $A\cc S\eqext B\eqext T$.
 % preorder: reflexive and transitive
-It is a preorder,
-and as clearly
-% inference rules:
-$ A\eqext B \Rightarrow S\cc A\cc T\eqext S\cc B\cc T$,
-it is a precongruence.
-% precongruence: congruence of a preorder -- TODO -- ?
+In other words, $\eqext$ is a preorder, and also a precongruence.
 \end{mydef}
 
 \begin{mydef}[$\equiv$]
@@ -49,13 +46,12 @@ it is a precongruence.
 $A\equiv B$,
 or $A$ and $B$ are \emph{equivalent,}
 iff $A\eqext B$ and $B\eqext A$;
-that is, $\equiv$ is the intersection of the preorder $\equext$ with its inverse.
+that is, $\equiv$ is the intersection of the preorder $\equext$ with its inverse,
+and so it is a congruence.
 % symmetric: aRb <=> bRa
 % reflexive: aRa
 % transitive: aRb & bRC => aRc
-It is therefore a congruence, and we can see that
-% inference rule:
-$ A\equiv B \Rightarrow S\cc A\cc T\equiv S\cc B\cc T $.
+% old inference rule: $ A\equiv B \Rightarrow S\cc A\cc T\equiv S\cc B\cc T $.
 \end{mydef}
 
 It is easy to see that equivalence holds on the level of filesystems:
@@ -83,13 +79,13 @@ because, as we argued above, we can disregard the exact output values of command
 and we can also abstract the relationship between the nodes in the two commands
 to a finite number of cases.
 
-We methodically investigated of all possibilities using a computer 
+We methodically investigate all possibilities using a computer 
 program\footnote{The program is accessible on-line at \\
 https://github.com/csirmaz/AlgebraicSyncPaper/blob/master/p2/prove.py.}
 to determine
 which pairs of commands cause errors all the time,
-which can be simplified to one or no commands, and which commute and can be reversed
-without any change in their overall effect.
+which can be simplified to one command or $\emptyseq$,
+and which commute and can be reversed without any change in their overall effect.
 Our basis for this investigation was the model of filesystems introduced in this paper.
 These properties of command pairs are crucial as they determine
 how a set of commands can be re-ordered to be applied to a filesystem
@@ -122,8 +118,8 @@ $\cxynv\cc\czwnv \equiv \cbrk$ where $Y\ne Z$.
 
 \begin{myax}\label{ax_same_emptyseq}
 Commands on the same node simplify:
-$\cxynv\cc\czwnv \eqext \emptyseq$ where $Y=Z$, and $X=W=\ccharb$ 
-or $X=W=\cchard$.
+$\cxynv\cc\czwnv \eqext \emptyseq$ where $Y=Z$, and $\cxw=\cbb$ 
+or $\cxw=\cdd$.
 \end{myax}
 
 \begin{myax}\label{ax_same_singlec}
@@ -135,7 +131,11 @@ $\cxynv\cc \czwnv \equiv \cxwnv$ where $Y=Z$ and $\cxw\neq\cbb$ and $\cxw\neq\cd
 Commands on distant relatives break all filesystems:
 $\cxynnv\cc\czwnv \equiv \cbrk$
 and $\czwnv\cc\cxynnv \equiv\cbrk$
-where $\nn\descendant n$ and $\nn\neq\parent(n)$ and $\cxy\neq\cdd$ and $\czw\neq\cbb$.
+where $\nn\descendant n$ and $\nn\neq\parent(n)$, and $\cxy\neq\cdd$ and $\czw\neq\cbb$.
+(More intuitively, if $\czw\neq\cbb$ then either before or after $\czwnv$, the filesystem at
+$n$ is not empty, and therefore there must be a directory at all ancestors of $n$, including at a child of $\nn$.
+Consequently $\cxynnv$ will break the filesystem as either before or after it the filesystem at $\nn$
+does not have a directory.)
 \end{myax}
 
 \begin{mydef}[Construction pair]
@@ -210,7 +210,7 @@ We also define the concept of two commands being independent:
 \begin{mydef}[$A\indep B$: Independent commands, sequences and sets]\label{def_indep}
 Two commands $\cxynv$ and $\czwmv$ 
 are independent, and we write $\cxynv\indep\czwmv$ if 
-they have the same effect in either order and do not break all filesystems:
+they commute and do not break all filesystems:
 \[ \cxynv\cc\czwmv \equiv \czwnv\cc\cxynv \nequiv \cbrk. \]
 For two sequences or unordered sets of commands $A$ and $B$ we write $A\indep B$ if
 for all $\alpha$ in $A$ and all $\beta$ in $B$, $\alpha\indep\beta$.
