@@ -14,6 +14,7 @@
 \newcommand{\aFS}{\,\FS} % a filesystem preceded by something applied to it
 \newcommand{\aGS}{\,\GS} % a filesystem preceded by something applied to it
 \newcommand{\nn}{n'} % parent node
+\newcommand{\T}{{}^t} % type-equivalent class mapping
 
 \newcommand{\cbrk}{\mathtt{Break}} % 'break' command
 \newcommand{\ccharb}{\empt} % character for empty type in commands
@@ -32,6 +33,7 @@
 \newcommand{\caa}[2]{\langle{#1,#2}\rangle} % Command template
 \newcommand{\caaa}[3]{\langle{#1,#2,#3}\rangle}
 \newcommand{\caaaa}[4]{\langle{#1,#2,#3,#4}\rangle}
+\newcommand{\cTaaa}[3]{\langle\langle{#1,#2,#3}\rangle\rangle}
 \newcommand{\cbb}{\caa{\ccharb}{\ccharb}}
 \newcommand{\cbba}[1]{\caaa{\ccharb}{\ccharb}{#1}}
 \newcommand{\cbf}{\caa{\ccharb}{\ccharf}}
@@ -53,6 +55,7 @@
 \newcommand{\cxyaa}[2]{\caaaa{X}{Y}{#1}{#2}}
 \newcommand{\cxynv}{\caaaa{X}{Y}{n}{\valvy}}
 \newcommand{\cxynnv}{\caaaa{X}{Y}{\nn}{\valvy}}
+\newcommand{\cTxyn}{\cTaaa{X}{Y}{n}}
 \newcommand{\cxw}{\caa{X}{W}}
 \newcommand{\cxwnv}{\caaaa{X}{W}{n}{\valvw}}
 \newcommand{\czw}{\caa{Z}{W}}
@@ -81,6 +84,8 @@
 \newcommand{\workssign}{\mathbf{w}}
 \newcommand{\works}[1]{\workssign({#1})} % works
 \newcommand{\worksc}[2]{\workssign({#1}\mathrel{|}{#2})} % works on condition
+\newcommand{\worksT}[1]{\workssign\T({#1})} % works
+\newcommand{\workscT}[2]{\workssign\T({#1}\mathrel{|}{#2})} % works on condition
 
 \newcommand{\typeeq}{\simeq} % Type equality
 \newcommand{\ntypeeq}{\not\typeeq}
