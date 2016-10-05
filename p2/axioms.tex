@@ -46,7 +46,7 @@ In other words, $\eqext$ is a preorder, and also a precongruence.
 $A\equiv B$,
 or $A$ and $B$ are \emph{equivalent,}
 iff $A\eqext B$ and $B\eqext A$;
-that is, $\equiv$ is the intersection of the preorder $\equext$ with its inverse,
+that is, $\equiv$ is the intersection of the preorder $\eqext$ with its inverse,
 and so it is a congruence.
 % symmetric: aRb <=> bRa
 % reflexive: aRa
@@ -63,8 +63,8 @@ all filesystems, that is, $\forall \FS: A\aFS=B\aFS$.
 \end{mylem}
 \begin{proof}
 If $\forall \FS: A\aFS=B\aFS$ then $A\eqext B$ and $B\eqext A$ and so by definition $A\equiv B$.
-For the reverse statement we assume that $A\equext B$ and $B\equext A$.
-$B\equext A$ implies that it is not possible for both $B\aFS\neq\fsbroken$ and $A\aFS=\fsbroken$ to be true.
+For the reverse statement we assume that $A\eqext B$ and $B\eqext A$.
+$B\eqext A$ implies that it is not possible for both $B\aFS\neq\fsbroken$ and $A\aFS=\fsbroken$ to be true.
 Therefore, for every $\FS$ either $A\aFS\neq\fsbroken$, in which case $A\aFS=B\aFS$ as $A\eqext B$, or $A\aFS=\fsbroken$,
 in which case $B\aFS=\fsbroken$ must be true, and therefore $A\aFS=B\aFS$ still holds.
 \end{proof}
