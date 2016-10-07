@@ -150,6 +150,8 @@ and consequently $A$ and $B$ cannot work on the same filesystem.
 
 \bigskip
 
+%% TODO https://en.wikipedia.org/wiki/Equivalence_class
+
 \noindent
 We know that whether commands break a filesystem depends solely on their input and output
 types and the node, but not their actual output value.
@@ -158,90 +160,93 @@ and sequences of commands.
 \begin{mydef}[Equivalence by type: $\typeeq$]
 $ $ % otherwise first list element starts on same line
 \begin{itemize}
-\item For two filesystems we write $\FS\typeeq\GS$ iff they share the same nodes,
-and at all nodes the types of their values are the same, or they are both broken.
-\item For two commands we write $\alpha\typeeq\beta$ iff their input and output values,
+\item For two filesystems we write $\FS\typeeq\GS$ iff they are both broken, or they share the same nodes,
+and at all nodes the types of their values are the same.
+\item For two commands we write $\alpha\typeeq\beta$ iff their input and output types,
 and the node they operate on are the same.
+For example, $\cbfaa{n}{f_1}\typeeq\cbfaa{n}{f_2}$.
 \item For two sequences of commands we write $A\typeeq B$ iff they contain the same number of commands,
 and pairwise the commands $\alpha\in A$ and $\beta\in B$ at the same indices are equivalent by type ($\alpha\typeeq\beta$).
 \end{itemize}
 \end{mydef}
 
-This relation gives rise to equivalence classes of filesystems, commands, and sequences of commands,
-each of which is associated with a new type of filesystem, command or sequence of commands in which
-only types are noted, but not values.
-(This is also equivalent to assuming $|\setf|=1$.)
-We will call these constructs valueless.
+In other words, two type-equivalent objects can only differ in the value they contain,
+but as $|\setb|=|\setd|=1$, this is only possible at values of the type $\ccharf$.
+We select an arbitrary file value $\fil\in\setf$, and choose a representative
+of each $\typeeq$-equivalence class where all (if any) values of the type $\ccharf$ is $\fil$.
+For example, in the case of commands, the representative of $[\cbfaa{n}{f}]_\typeeq$ is $\cbfaa{n}{\fil}$.
 
-\begin{mydef}[Valueless constructs]
-$ $
-\begin{itemize}
-\item For any filesystem $\FS$, we write $\FS\T$ to denote the valueless filesystem assiociated with
-the equivalenve class of $\FS$ by $\typeeq$; that is, where at each node $n$, $\FS\T$ contains the type of
-$\FS(n)$. In general, a valueless filesystem is one where each node
-is associated with a type, but not a value:
-\begin{gather*}
-\FS\T =
-\begin{cases}
-\setn \rightarrow \typeset \\
-\fsbroken
-\end{cases}
-\end{gather*}
-
-\item Similarly, for any command $\cxynv$ we write $\cxynv\T$ to denote the valueless command
-$\cTxyn$, represented by a triple of the input type, output type and node.
-The command $\cbrk$ has a separate valueless version, $\cbrk\T$.
-
-\item Also, for any sequence of commands $S$ we write $S\T$ to denote the sequence of
-valueless commands associated with the commands in $S$ in the same order; and for a set of sequences $\seqset{S}$
-we write $\seqset{S}\T$ for $\{S\T|S\in\seqset{S}\}$.
-
-\end{itemize}
+\begin{mydef}[$\T$]
+We use $\T$ and write $x\T$ to denote the canonical mapping of 
+filesystems, commands and sequences to the
+representatives of their $\typeeq$-equivalence class.
+$\T$ is also extended to sets of sequences,
+where $\seqset{A}\T = \{S\T | S\in\seqset{A}\}$.
 \end{mydef}
 
-A valueless command can be applied to a valueless filesystem with the expected outcome
-that $\cTxyn$ will replace the type at $n$ with $Y$ 
-if the original type was $X$ and the tree property still holds after the replacement.
-This means that
-the mapping $\T$ can be extended further to the 
-the relations $\equiv$, $\eqext$ and $\workssign$, where
-${\equiv}\T$, ${\eqext}\T$ and $\workssign\T$ hold or do not hold for sequences of valueless commands
-depending on their behavior on valueless filesystems.
+For example, $\cbfaa{n}{f}\T = \cbfaa{n}{\fil}$,
+and for the sequence $S=\alpha\cc\beta$, $S\T=\alpha\T\cc\beta\T$.
+In other words, $\T$ maps our system of filesystems and commands
+into a system where $|\setf|$ is also $1$.
 
-It is easy to see that 
-$A\equiv B \Rightarrow A\T{\equiv}\T B\T$ 
-and
-$A\eqext B \Rightarrow A\T{\eqext}\T B\T$,
-but the reverse is not true as 
-$A\T$ and $B\T$ will have the same effect on all $\FS\T$
-if $A$ and $B$ differ only in some of the values in their commands,
-whereas clearly $A\nequiv B$.
+\begin{mycor}
+For any filesystem $\FS$ and command $\alpha$, 
+$\alpha\T(\FS\T) = (\alpha\aFS)\T$.
+\end{mycor}
 
-With $\workssign$, however, the situation is different, as it only
-depends on whether sequences break filesystems or not. Therefore the followings hold:
+% It is easy to see that 
+% $A\equiv B \Rightarrow A\T\equiv B\T$ 
+% and
+% $A\eqext B \Rightarrow A\T\eqext B\T$,
+% but the reverse is not true as 
+% $A\T$ and $B\T$ will have the same effect on all filesystems
+% if $A$ and $B$ differ only in some of the values in their commands,
+% whereas clearly $A\nequiv B$.
+
+As whether a sequence of commands breaks a filesystem does not depend on the output values
+of the commands, only the input and output types, we know that
 \begin{mycor}
 \begin{gather*}
-\works{\seqset{A}} \Leftrightarrow \worksT{\seqset{A}\T} \\
-\worksc{\seqset{A}}{\seqset{B}} \Leftrightarrow \workscT{\seqset{A}\T}{\seqset{B}\T}
+\works{\seqset{A}} \Leftrightarrow \works{\seqset{A}\T} \\
+\worksc{\seqset{A}}{\seqset{B}} \Leftrightarrow \worksc{\seqset{A}\T}{\seqset{B}\T}.
 \end{gather*}
 \end{mycor}
 
-% ==================================================
 
-We continue by defining inverse commands and sequences
-which allow us to move parts of sequences between the
+We are now ready to define the inverse of representative commands $\alpha\T$
+which allows us to move parts of sequences between the
 condition and consequence parts of $\workssign$.
+This is based on the following observation.
+
+\begin{mylem}
+Representative functions $\alpha\T$ are injections over representative filesystems ($\FS\T$)
+except for the cases where they break a filesystem, that is,
+\[ \forall\FS,\GS,\alpha: \FS\T\neq\GS\T \wedge \alpha\T(\FS\T)\neq\fsbroken \Longrightarrow \alpha\T(\FS\T) \neq \alpha\T(\GS\T). \]
+\end{mylem}
+\begin{proof}
+This is trivial if $\GS\T=\fsbroken$, so we assume it is not so.
+If $\FS\T$ and $\GS\T$ have different values at any node apart from $n$, then this difference remains
+even after applying the command to $\FS\T$. The only remaining case therefore is where they have the same values
+at all nodes except $n$.
+We know that a representative filesystem can only have values from the set $\rvalueset$.
+As $\alpha\T(\FS\T)\neq\fsbroken$, $\FS\T(n)$ must be the value that matches the input type of $\alpha\T$.
+We know that $\GS\T(n)\neq\FS\T(n)$, and therefore $\GS\T(n)$ must have a different type,
+which implies $\alpha\T(\GS\T)=\fsbroken$ as it cannot match the input type of $\alpha\T$,
+and again we have $\alpha\T(\FS\T) \neq \alpha\T(\GS\T)$.
+\end{proof}
 
 \begin{mydef}[Inverse commands and sequences]
-The inverse of command $\cxynv$ is $\cxynv^{-1} = \caaaa{Y}{X}{n}{\valvx}$
-where $\valvx$ is an arbitrary value from $\setvx{X}$.
-We write $S^{-1}$ for the inverse of sequence $S$, which consists of the inverses of the commands in $S$
+If we regard the representative command $\alpha\T$ a function whose
+domain is the subset of representative filesystems $\{\FS\T | \alpha\aFS\neq\fsbroken\}$,
+then we can define the inverse of $\alpha\T$
+for which we write $\alpha\T^{-1}$.
+We write ${S\T}^{-1}$ for the inverse of the sequence $S\T$, which consists of the inverses of the commands in $S\T$
 in reverse order.
 \end{mydef}
 
 
 From the definitions we can clearly see that
-\begin{mycor}\label{negneg_is_typeeq}
+\begin{mycor}\label{negneg_is_typeeq} %% TODO Don't use!
 $\forall S, \FS: (S^{-1})^{-1}\aFS\typeeq S\aFS$.
 \end{mycor}
 
@@ -253,6 +258,9 @@ A common initial segment of a set of sequences can be moved to the other side of
 \end{gather*}
 \end{mylem}
 \begin{proof}
+
+%% TODO see lemma above
+
 This is based on the fact that in our model, unless they break a filesystem,
 commands leave the type of the filesystem value unchanged 
 or change one type into another, but never merge types.
