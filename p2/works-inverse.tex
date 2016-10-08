@@ -4,32 +4,6 @@
 
 \subsection{Conditional Operation and Inverse Sequences}
 
-\begin{mydef}[$\works{x}$]
-% Unsure if this relation should be in the algebra.
-For a set of $k$ sequences
-$\works{A_1,A_2,\ldots,A_k}$ means that 
-$A_1,A_2,\ldots,A_k$ work at the same time, that is,
-% intended interpretation:
-\[\exists \FS: A_1\FS\neq\fsbroken \wedge \cdots \wedge A_k\FS\neq\fsbroken.\]
-As the sequences form a set, their order is irrelevant.
-% inference rules:
-We also know that $\works{A} \Leftrightarrow A\nequiv \cbrk$. 
-\end{mydef}
-
-\begin{mydef}[$\worksc{x}{y}$]
-For two sets of sequences, $\worksc{A_1,A_2,\ldots,A_k}{B_1,B_2,\ldots,B_l}$ means that 
-all of $A_1,\ldots,A_k$ work where all of $B_1,\ldots,B_l$ work,
-that is,
-% intended interpretation:
-\begin{align*}
-\forall \FS:{}& 
-B_1\FS\neq\fsbroken \wedge \cdots \wedge B_k\FS\neq\fsbroken\\
-&\Rightarrow\\
-&A_1\FS\neq\fsbroken \wedge \cdots \wedge A_l\FS\neq\fsbroken.
-\end{align*}
-As above, the order of the sequences in the sets is not relevant.
-\end{mydef}
-
 \begin{mydef}[Sets of sequences]
 As we will frequently refer to sets of fequences,
 we will use calligraphic letters (e.g. $\seqset{A, B, C}$ and $\seqset{S}$)
@@ -37,39 +11,45 @@ to denote such sets for brevity.
 We will use $A\cc\seqset{B}$ to denote the set of sequences $\{A\cc B|B\in\seqset{B}\}$.
 \end{mydef}
 
+\begin{mydef}[$\Dom{X}$ and $\Img{X}$]
+$\Dom{X}$ is the domain of $X$.
+For a sequence of commands $A$, $\Dom{A}$ is the set of filesystems $A$ does not break.
+For a set of sequences $\seqset{A}$, $\Dom{\seqset{A}}$ is the set of filesystems no $A\in\seqset{A}$ breaks.
+We write $\Img{X}$ to denote the image of the domain of the sequence $X$.
+\end{mydef}
+
+\begin{mydef}[$\worksmsign$, $\worksmeqsign$]
+For two sets of sequences $\sqs{A}$ and $\sqs{B}$
+we write $\worksm{\sqs{A}}{\sqs{B}}$ iff $\Dom{\sqs{A}} \subseteq \Dom{\sqs{B}}$;
+that is, if all sequences in $\sqs{B}$ work (do not break the filesystem)
+on any filesystem all sequences in $\sqs{A}$ work on.
+We write $\worksmstr{\sqs{A}}{\sqs{B}}$ iff $\Dom{\sqs{A}} \subset \Dom{\sqs{B}}$.
+
+As a special case, we write $\worksmnil{\sqs{A}}$ if we know that there is a filesystem
+all sequences in $\sqs{A}$ work on,
+and we apply these relations to sequences directly:
+$\worksm{A}{B}$ with the meaning $\worksm{\{A\}}{\{B\}}$.
+\end{mydef}
+
 It is easy to see that the following corollaries are true:
-
-% An inference rule in the algebra
-% $\worksc{X}{X}$ is always true for any set of sequences $X$,
-
-% \begin{mycor}
-% % An inference rule in the algebra
-% $B\eqext A \Rightarrow \worksc{A}{B}$.
-% \end{mycor}
 
 \begin{mycor}\label{worksextpostfix}
 % An inference rule in the algebra
-$\forall A,S: \worksc{A}{A\cc S}$, that is, if a sequence works, its initial segment also works.
+$\forall A,S: \worksm{A\cc S}{A}$, that is, if a sequence works, its initial segment also works.
 \end{mycor}
 
 \begin{mycor}\label{workschained}
 % An inference rule in the algebra
-$\workssign$ can be chained:
-if $\seqset{A'}\subset\seqset{A}$, then
-$ \worksc{\seqset{C}}{\seqset{A'}} \wedge \worksc{\seqset{A}}{\seqset{B}} \Rightarrow \worksc{\seqset{A}\cup\seqset{C}}{\seqset{B}}$.
+$\worksmeqsign$ can be chained:
+if $\seqset{B'}\subseteq\seqset{B}$, then
+$\worksm{\sqs{A}}{\sqs{B}} \wedge \worksm{\sqs{B'}}{\sqs{C}} \Rightarrow \worksm{\sqs{A}}{\sqs{B}\cup\sqs{C}}$.
 \end{mycor}
 
 We also prove the following lemmas.
 
 \begin{myax}\label{combine_independent_commands}
 The combination of independent commands works wherever the original commands work:
-\[ \alpha\indep \beta \Rightarrow \worksc{\alpha\cc \beta}{\alpha, \beta}. \]
-% \begin{align*}
-% \forall\FS:{}&\cxynv\indep \czwmv \\
-% &\quad\wedge \cxynv\aFS\neq\fsbroken \\
-% &\quad\wedge \czwmv\aFS\neq\fsbroken \\
-% &\Rightarrow \cxynv\cc \czwmv\aFS\neq\fsbroken.
-% \end{align*}
+\[ \alpha\indep \beta \Rightarrow \worksm{\{\alpha, \beta\}}{\{\alpha\cc \beta\}}. \]
 \end{myax}
 \begin{proof}
 We name this proposition a \namecref{combine_independent_commands} 
@@ -97,7 +77,7 @@ This result can be extended to sequences:
 
 \begin{mylem}\label{combine_independent_sequences}
 The combination of independent sequences works wherever the original sequences work:
-\[ S\indep T \Rightarrow \worksc{S\cc T}{S,T}. \]
+\[ S\indep T \Rightarrow \worksm{\{S,T\}}{\{S\cc T\}}. \]
 \end{mylem}
 \begin{proof}
 Assume that there is a filesystem $\FS$ so that
@@ -138,7 +118,7 @@ $(T_0 \cc S\cc t)\FS\neq\fsbroken$, which is a contradiction.
 We also prove the following:
 
 \begin{mylem}\label{worksinputmatch}
-If $A$ and $B$ are minimal sequences, $\works{A,B}$,
+If $A$ and $B$ are minimal sequences, $\worksmnil{\{A,B\}}$,
 and there are commands on node $n$ in both $A$ ($\cxynv\in A$) and $B$ ($\czwnv\in B$),
 then the input types of these commands must match ($[x]=[z]$).
 \end{mylem}
@@ -248,6 +228,10 @@ This implies $\cTxynv(\GS\T)=\fsbroken$,
 and again we have $\alpha\T(\FS\T) \neq \alpha\T(\GS\T)$.
 \end{proof}
 
+% TODO We introduced BREAK to deal with cases where commands
+% are in effect not defined. Now we need to undo this 
+% to see that repr commands are bijective.
+
 \begin{mydef}[Inverse commands and sequences]
 If based on \cref{repr_comm_inject}
 we regard the representative command $\alpha\T$ a bijective function whose
@@ -278,19 +262,19 @@ For brevity, in the following lemma we use $B$, $B'$, $\seqset{A}$ and $\seqset{
 representative sequences and sets.
 
 \begin{mylem}\label{r_invmove}
-A common initial segment of a set of \emph{representative} sequences can be moved to the other side of $\workssign$ by inverting it:
+A common initial segment of a set of \emph{representative} sequences can be moved to the other side of $\worksmeqsign$ by inverting it:
 \begin{gather*}
-\worksc{B\cc \seqset{A}}{\seqset{C}} \Rightarrow \worksc{\seqset{A}}{B^{-1}\cc \seqset{C}} \\
-\worksc{B}{\seqset{C}} \wedge \worksc{\seqset{A}}{B^{-1}\cc \seqset{C}} \Rightarrow \worksc{B\cc \seqset{A}}{\seqset{C}}
+\worksm{\seqset{C}}{B\cc \seqset{A}}
+\ \Longleftrightarrow \ \worksm{B^{-1}\cc \seqset{C}}{\seqset{A}} 
+\ \wedge \  \worksm{\seqset{C}}{\{B\}}
 \end{gather*}
 \end{mylem}
 \begin{proof}
+% TODO Rewrite for equivalence, and swap A and C.
+% This result is quite expected as we're mapping a subset statement using a bijection,
+% but made more complicated a as B is not defined everywhere.
 
-The proof for both propositions is illustrated by \cref{fig_invmove}, where
-$\Dom{X}$, the domain of $X$, represents the set of filesystems
-the sequence $X$ does not break, or neither of the sequences in the set $X$ breaks.
-We write $\Img{X}$ to denote the image of the domain of the sequence $X$.
-We also note that in general $\worksc{\seqset{X}}{\seqset{Y}} \Leftrightarrow \Dom{\seqset{Y}} \subset \Dom{\seqset{X}}$.
+The proof for both propositions is illustrated by \cref{fig_invmove}.
 
 \begin{figure}[htb]
 \input{fig-inverse-works}
@@ -305,24 +289,24 @@ As the (representative) $B$ is a bijection between its domain and image,
 we can use $B^{-1}$ to map this intersection back
 onto the domain of $B$ and get $\Dom{B\cc\seqset{A}}$.
 As $\worksc{B\cc \seqset{A}}{\seqset{C}}$, 
-we know that $\Dom{\seqset{C}} \subset \Dom{B\cc\seqset{A}}$.
+we know that $\Dom{\seqset{C}} \subseteq \Dom{B\cc\seqset{A}}$.
 We now use $B$ to map both sides of this statement, which yields
-$\Dom{B^{-1}\cc \seqset{C}} \subset \Dom{B^{-1}\cc B\cc\seqset{A}}$,
-but the latter is a subset of $\Dom{\seqset{A}}$,
-and so $\Dom{B^{-1}\cc \seqset{C}} \subset \Dom{\seqset{A}}$,
+$\Dom{B^{-1}\cc \seqset{C}} \subseteq \Dom{B^{-1}\cc B\cc\seqset{A}}$,
+but the latter is a subseteq of $\Dom{\seqset{A}}$,
+and so $\Dom{B^{-1}\cc \seqset{C}} \subseteq \Dom{\seqset{A}}$,
 from which $\worksc{\seqset{A}}{B^{-1}\cc \seqset{C}}$.
 
 For the second proposition, 
-from $\worksc{B}{\seqset{C}}$ we know $\Dom{\seqset{C}} \subset \Dom{B}$.
+from $\worksc{B}{\seqset{C}}$ we know $\Dom{\seqset{C}} \subseteq \Dom{B}$.
 Therefore we can project the whole of $\Dom{\seqset{C}}$ using the bijective representative sequence $B$
 to get $\Dom{B^{-1}\cc\seqset{C}}$, and as $\worksc{\seqset{A}}{B^{-1}\cc \seqset{C}}$
 we know
-$\Dom{B^{-1}\cc\seqset{C}} \subset \Dom{\seqset{A}}$.
+$\Dom{B^{-1}\cc\seqset{C}} \subseteq \Dom{\seqset{A}}$.
 We use $B^{-1}$ to project both sides of this statement to get
-$\Dom{B\cc B^{-1}\cc\seqset{C}} \subset \Dom{B\cc\seqset{A}}$.
+$\Dom{B\cc B^{-1}\cc\seqset{C}} \subseteq \Dom{B\cc\seqset{A}}$.
 But we also know that $\Dom{B\cc B^{-1}\cc\seqset{C}} = \Dom{\seqset{C}}$
-as $\Dom{\seqset{C}} \subset \Dom{B}$,
-and so $\Dom{\seqset{C}} \subset \Dom{B\cc\seqset{A}}$
+as $\Dom{\seqset{C}} \subseteq \Dom{B}$,
+and so $\Dom{\seqset{C}} \subseteq \Dom{B\cc\seqset{A}}$
 from which $\worksc{B\cc \seqset{A}}{\seqset{C}}$.
 \end{proof}
 

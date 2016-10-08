@@ -94,9 +94,14 @@
 \newcommand{\nindep}{\mathrel{\centernot{\wr\wr}}} % not \indep
 \newcommand{\nunrel}{\nindep} % not \unrel
 
-\newcommand{\workssign}{\mathbf{w}}
-\newcommand{\works}[1]{\workssign({#1})} % works
-\newcommand{\worksc}[2]{\workssign({#1}\mathrel{|}{#2})} % works on condition
+\newcommand{\workssign}{\mathbf{w}??} % TODO delete
+\newcommand{\worksmsign}{\triangleleft}
+\newcommand{\worksmeqsign}{\trianglelefteq}
+\newcommand{\works}[1]{\varnothing\worksmsign:{#1}:} % TODO delete works
+\newcommand{\worksc}[2]{:{#2}:\worksmeqsign:{#1}:} % TODO delete works on condition
+\newcommand{\worksmstr}[2]{{#1}\worksmsign{#2}}
+\newcommand{\worksmnil}[1]{{\varnothing}\worksmsign{#1}}
+\newcommand{\worksm}[2]{{#1}\worksmeqsign{#2}}
 
 
 \newcommand{\emptyseq}{\lambda} % empty sequence
@@ -104,6 +109,7 @@
 \newcommand{\ordersetsign}{\vec{\wp}}
 \newcommand{\orderset}[1]{\ordersetsign({#1})}
 \newcommand{\seqset}[1]{\mathcal{#1}} % Set of sequences
+\newcommand{\sqs}[1]{\seqset{#1}}
 
 \newcommand{\recchar}[3]{{#1}^{#3}_{\mathcal{R}|{#2}}}
 \newcommand{\reca}{\recchar{A}{B}{}} % Reconciled from A
