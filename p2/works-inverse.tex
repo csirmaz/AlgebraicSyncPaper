@@ -177,8 +177,9 @@ We select representatives of each $\typeeq$-equivalence class of values:
 for $[\empt]$ and $[\vald]$ this must be $\empt$ and $\vald$; and
 for $[\valf]$ we select an arbitrary file value $\fil\in[\valf]$.
 We then use these representative values to
-select representatives of the equivalence classes of
-other objects in the following way:
+introduce the canonical mapping $\T$ that preserves the types of values,
+but maps all objects into a subsystem where there is a one-to-one
+correspondence between types and values.
 
 \begin{mydef}[$\T$]
 We use $\T$ and write $X\T$ to denote the canonical mapping of 
@@ -186,29 +187,23 @@ values, filesystems, commands and sequences to the
 representatives of their $\typeeq$-equivalence class.
 \begin{itemize}
 \item For values, $\vald\T=\vald$, $\valf\T=\fil$ and $\empt\T=\empt$.
-\item For filesystems, $\FS\T$ is defined by $\FS\T(n) = \FS(n)\T$.
-\item For commands, $\cxynv\T = \cTxynv$.
+\item For filesystems, $\fsbroken\T=\fsbroken$ and in other cases $\FS\T$ is defined by $\FS\T(n) = \FS(n)\T$.
+\item For commands, $\cbrk\T=\cbrk$ and $\cxynv\T = \cTxynv$.
 \item For sequences of commands, $\emptyseq\T=\emptyseq$, and if $S'=\alpha\cc S$, then $S'\T=\alpha\T\cc S\T$.
 \item Finally we extend $\T$ to sets of sequences: $\seqset{A}\T = \{S\T | S\in\seqset{A}\}$.
 \end{itemize}
 \end{mydef}
 
 It is easy to see that for all objects where it is defined, $X\T\typeeq X$.
-
-In other words, $\T$ maps our system of filesystems and commands
-into a \emph{representative} system where there is a one-to-one correspondence between types
-and values.
 % $|\setf|$ is also $1$.
-At the same time, representative filesystems, commands, sequences, etc.
-are subsets of their non-representative counterparts; hence all
+As representatives of filesystems, commands, sequences, etc.
+are subsets of their non-representative counterparts, all
 propositions proven so far apply to them as well.
-
-% TODO <[x],y,n> T = <[x],[y],n>
-% one-to-one corresp btw values and types
 
 \begin{mycor}
 For any filesystem $\FS$ and command $\alpha$, 
 $\alpha\T(\FS\T) = (\alpha\aFS)\T$.
+TODO needed?
 \end{mycor}
 
 % It is easy to see that 
@@ -222,7 +217,7 @@ $\alpha\T(\FS\T) = (\alpha\aFS)\T$.
 
 As whether a sequence of commands breaks a filesystem does not depend on the output values
 of the commands, only the input and output types, we know that
-\begin{mycor}
+\begin{mycor}\label{repr_works_is_same}
 \begin{gather*}
 \works{\seqset{A}} \Leftrightarrow \works{\seqset{A}\T} \\
 \worksc{\seqset{A}}{\seqset{B}} \Leftrightarrow \worksc{\seqset{A}\T}{\seqset{B}\T}.
@@ -259,7 +254,7 @@ we regard the representative command $\alpha\T$ a bijective function whose
 domain is the subset of representative filesystems $\{\FS\T | \alpha\aFS\neq\fsbroken\}$,
 then we can define the inverse of $\alpha\T$
 for which we write $\alpha\T^{-1}$.
-For any $\GS\T$ outside the range of $\alpha\T$ we define $\alpha\T^{-1}(\GS\T)$ to be $\fsbroken$.
+For any $\GS\T$ outside the image of the domain of $\alpha\T$ we define $\alpha\T^{-1}(\GS\T)$ to be $\fsbroken$.
 
 We write ${S\T}^{-1}$ for the inverse of the sequence $S\T$, which consists of the inverses of the commands in $S\T$
 in reverse order.
@@ -270,58 +265,65 @@ in reverse order.
 % Do we need to prove if a filesystem is not in the image, then a-1 will break it?
 \begin{mylem}
 For representative commands
-\[ \cTxynv^{-1} = \cTyxnv \]
+\[ \cTxynv^{-1} = \cTyxnv. \]
 \end{mylem}
-TODO
+TODO needed? -maybe for \cref{negneg_is_typeeq}
 
 From the definitions we can clearly see that
 \begin{mycor}\label{negneg_is_typeeq}
 $\forall S: ({S\T}^{-1})^{-1} = S\T$.
 \end{mycor}
 
+For brevity, in the following lemma we use $B$, $B'$, $\seqset{A}$ and $\seqset{C}$ to denote
+representative sequences and sets.
+
 \begin{mylem}\label{r_invmove}
-A common initial segment of a set of sequences can be moved to the other side of $\workssign$ by inverting it:
+A common initial segment of a set of \emph{representative} sequences can be moved to the other side of $\workssign$ by inverting it:
 \begin{gather*}
 \worksc{B\cc \seqset{A}}{\seqset{C}} \Rightarrow \worksc{\seqset{A}}{B^{-1}\cc \seqset{C}} \\
-\worksc{\seqset{A}}{B\cc \seqset{C}} \Rightarrow \worksc{B^{-1}\cc \seqset{A}}{\seqset{C}}
+\worksc{B}{\seqset{C}} \wedge \worksc{\seqset{A}}{B^{-1}\cc \seqset{C}} \Rightarrow \worksc{B\cc \seqset{A}}{\seqset{C}}
 \end{gather*}
 \end{mylem}
 \begin{proof}
 
-%% TODO see lemma above
-
-This is based on the fact that in our model, unless they break a filesystem,
-commands leave the type of the filesystem value unchanged 
-or change one type into another, but never merge types.
-That is,
-sequences---as functions mapping filesystems to filesystems---are
-essentially bijections over type-equality ($\typeeq$)
-with the only ``sink'' being $\fsbroken$:
-\begin{align*}
-\forall S,\FS,\GS:{}&S\aFS\neq\fsbroken \Rightarrow \\
-&(S\aFS\ntypeeq S\aGS \Longleftrightarrow \FS\ntypeeq \GS).
-\end{align*}
-
-For the proposition
-\[ \worksc{B\cc \seqset{A}}{\seqset{C}} \Rightarrow \worksc{\seqset{A}}{B^{-1}\cc \seqset{C}} \]
-the rest of the proof is illustrated by \cref{fig_invmove}
-where $\textrm{Dom}(x)$, the domain of $x$, represents the set of filesystems
-the sequence $x$ does not break, or neither of the sequences in the set $x$ breaks.
+The proof for both propositions is illustrated by \cref{fig_invmove}, where
+$\Dom{X}$, the domain of $X$, represents the set of filesystems
+the sequence $X$ does not break, or neither of the sequences in the set $X$ breaks.
+We write $\Img{X}$ to denote the image of the domain of the sequence $X$.
+We also note that in general $\worksc{\seqset{X}}{\seqset{Y}} \Leftrightarrow \Dom{\seqset{Y}} \subset \Dom{\seqset{X}}$.
 
 \begin{figure}[htb]
 \input{fig-inverse-works}
 \caption{Proof of \cref{r_invmove}}\label{fig_invmove}
 \end{figure}
 
-We see that the set of filesystems the sequences in $\seqset{A}$ do not break intersect with the range of $B$.
-As $B$ is a bijection between its domain and range, we can use $B^{-1}$ to map this intersection back
-onto the domain of $B$.
-As $\worksc{B\cc \seqset{A}}{\seqset{C}}$ the domain of $\seqset{C}$ must be a subset of this
-projected intersection.
-If so, then we can use $B$ to map the domain of $\seqset{C}$, which yields the domain of $B^{-1}\cc \seqset{C}$.
-As it is also a part of the domain of $A$, we get $\worksc{\seqset{A}}{B^{-1}\cc \seqset{C}}$.
+Unless $\works{\seqset{C}}$, both propositions are trivially true. Otherwise,
+for the first proposition
+we know $\works{B\cc\seqset{A}}$, which implies that $\Dom{\seqset{A}}$ intersects with $\Img{B}$ 
+as otherwise $B\cc\seqset{A}$ would break all filesystems.
+As the (representative) $B$ is a bijection between its domain and image,
+we can use $B^{-1}$ to map this intersection back
+onto the domain of $B$ and get $\Dom{B\cc\seqset{A}}$.
+As $\worksc{B\cc \seqset{A}}{\seqset{C}}$, 
+we know that $\Dom{\seqset{C}} \subset \Dom{B\cc\seqset{A}}$.
+We now use $B$ to map both sides of this statement, which yields
+$\Dom{B^{-1}\cc \seqset{C}} \subset \Dom{B^{-1}\cc B\cc\seqset{A}}$,
+but the latter is a subset of $\Dom{\seqset{A}}$,
+and so $\Dom{B^{-1}\cc \seqset{C}} \subset \Dom{\seqset{A}}$,
+from which $\worksc{\seqset{A}}{B^{-1}\cc \seqset{C}}$.
 
-The second part of the lemma can be proven in a similar way.
+For the second proposition, 
+from $\worksc{B}{\seqset{C}}$ we know $\Dom{\seqset{C}} \subset \Dom{B}$.
+Therefore we can project the whole of $\Dom{\seqset{C}}$ using the bijective representative sequence $B$
+to get $\Dom{B^{-1}\cc\seqset{C}}$, and as $\worksc{\seqset{A}}{B^{-1}\cc \seqset{C}}$
+we know
+$\Dom{B^{-1}\cc\seqset{C}} \subset \Dom{\seqset{A}}$.
+We use $B^{-1}$ to project both sides of this statement to get
+$\Dom{B\cc B^{-1}\cc\seqset{C}} \subset \Dom{B\cc\seqset{A}}$.
+But we also know that $\Dom{B\cc B^{-1}\cc\seqset{C}} = \Dom{\seqset{C}}$
+as $\Dom{\seqset{C}} \subset \Dom{B}$,
+and so $\Dom{\seqset{C}} \subset \Dom{B\cc\seqset{A}}$
+from which $\worksc{B\cc \seqset{A}}{\seqset{C}}$.
 \end{proof}
 
 
@@ -331,14 +333,19 @@ continues to work under the same conditions:
 \[ \worksc{A\cc B}{\seqset{S}} \wedge \worksc{A\cc C}{\seqset{S}} \wedge B\indep C \Rightarrow \worksc{A\cc B\cc C}{\seqset{S}} \]
 \end{mylem}
 \begin{proof}
-Based on \cref{r_invmove} we know
-$\worksc{B}{A^{-1}\cc \seqset{S}}$ and $\worksc{C}{A^{-1}\cc \seqset{S}}$,
-and from \cref{combine_independent_sequences} we know
-$\worksc{B\cc C}{B,C}$.
-Combining these using \cref{workschained}
+Based on \cref{repr_works_is_same} we have
+$\worksc{A\T\cc B\T}{\seqset{S\T}}$ and $\worksc{A\T\cc C\T}{\seqset{S\T}}$,
+and from \cref{r_invmove} we know
+$\worksc{B\T}{{A\T}^{-1}\cc \seqset{S\T}}$ and $\worksc{C\T}{{A\T}^{-1}\cc \seqset{S\T}}$.
+Using \cref{combine_independent_sequences} we get
+$\worksc{B\T\cc C\T}{B\T,C\T}$,
+and combining these using \cref{workschained}
 we get
-$\worksc{B\cc C}{A^{-1}\cc \seqset{S}}$. 
-Finally, applying the second line of \cref{r_invmove} yields
-$\worksc{(A^{-1})^{-1}\cc B\cc C}{\seqset{S}}$, which proves our lemma 
-as $\forall\FS: (A^{-1})^{-1}\aFS\typeeq A\aFS$ (\cref{negneg_is_typeeq}).
+$\worksc{B\T\cc C\T}{{A\T}^{-1}\cc \seqset{S\T}}$.
+
+From $\worksc{A\cc B}{\seqset{S}}$ we also know $\worksc{A}{\seqset{S}}$ and $\worksc{A\T}{\seqset{S\T}}$.
+We can combine this and $\worksc{B\T\cc C\T}{{A\T}^{-1}\cc \seqset{S\T}}$ using
+the second proposition of \cref{r_invmove} to get
+$\worksc{A\T\cc B\T\cc C\T}{\seqset{S\T}}$, and from \cref{repr_works_is_same} we know
+$\worksc{A\cc B\cc C}{\seqset{S}}$.
 \end{proof}

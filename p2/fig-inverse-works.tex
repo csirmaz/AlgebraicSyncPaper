@@ -1,6 +1,6 @@
 \begin{center}\begin{tikzpicture}
 [line width=1pt]
-\node at  (1.6+2, 0.1) [right] {$\textrm{Dom}(\seqset{A})$};
+\node at  (1.6+2, 0.1) [right] {$\Dom{\seqset{A}}$};
 \draw[fill=black!5]     (1.6, 0.1) ellipse (2cm and 0.8cm); %% Dom A
 \draw                   (1.3, 2.4) ellipse (2cm and 0.8cm); %% Img A1
 \draw[line width=0.5pt] (1.9, 2.4) ellipse (2cm and 0.8cm); %% Img A2
@@ -10,8 +10,9 @@
 \draw[-latex,line width=0.5pt] (1.6-2, 0.1)--(1.9-2, 2.4-.2); %% A2 left
 \node at  (1.4-2-.1, 1.4) [left] {$A_i\in\seqset{A}$};
 %%
-\node at (1.1-2-.1, -2.9) [left] {$\textrm{Dom}(B)$};
+\node at (1.1-2-.1, -2.9) [left] {$\Dom{B}$};
 \draw[fill=black!5] (1.1, -2.9) ellipse (2cm and 0.8cm); %% Dom B
+\node at (0-2-.1, 0) [left] {$\Img{B}=\Dom{B^{-1}}$};
 \draw               (0  ,  0)   ellipse (2cm and 0.8cm); %% Img B
 \draw[-latex] (1.1+2, -2.9)--(0+2, 0-.2); %% B right
 \draw[-latex] (1.1-2, -2.9)--(0-2, 0-.2); %% B left
@@ -30,5 +31,5 @@
 \draw[-latex,line width=0.5pt] (2.1-0.6, -2.9+.08)    --(4.2-0.6-.05, -1.1+.05); %% Left S2
 \draw[-latex,line width=0.5pt] (2.1+0.6-.02, -2.9-.08)--(4.2+0.6-.1, -1.1-.2); %% Right S2
 \node at  (3.8,-2.2) [right] {$C_j\in\seqset{C}$};
-\draw[-latex,thin] (3.5, -3.5) node[right]{$\mathrm{Dom}(\seqset{C})$} -- (2.1+0.5, -2.9-0.2);
+\draw[-latex,thin] (3.5, -3.5) node[right]{$\Dom{\seqset{C}}$} -- (2.1+0.5, -2.9-0.2);
 \end{tikzpicture}\end{center}

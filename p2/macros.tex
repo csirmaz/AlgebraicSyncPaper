@@ -43,7 +43,7 @@
 \newcommand{\caa}[2]{\langle{[#1],[#2]}\rangle} % Command template
 \newcommand{\caaa}[3]{\langle{[#1],#2,#3}\rangle}
 \newcommand{\caaaa}[3]{\langle{[#1],#2,#3}\rangle}
-\newcommand{\cTaaa}[3]{\langle{[#1],{#2}\T,#3}\rangle}
+\newcommand{\cTaaa}[3]{\langle{[#1],{#2}\T,#3}\rangle} % Representative of command
 
 \newcommand{\cbb}{\caa{\empt}{\empt}}
 \newcommand{\cbba}[1]{\caaa{\empt}{\empt}{#1}}
@@ -118,7 +118,10 @@
 \newcommand{\bmanp}{B\mynegsp\setminus\mynegsp A}
 \newcommand{\bma}{(\bmanp)}
 
-\newcommand{\rot}[3]{#3#2#1}
+\newcommand{\Dom}[1]{\textrm{Dom}({#1})}
+\newcommand{\Img}[1]{\textrm{Img}({#1})}
+
+\newcommand{\rot}[3]{#3#2#1} % Rotate
 \newcommand{\undersc}{\texttt{\detokenize{_}}}
 
 \theoremstyle{definition}
