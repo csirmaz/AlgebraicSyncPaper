@@ -164,33 +164,44 @@ and sequences of commands.
 \begin{mydef}[Equivalence by type: $\typeeq$]
 $ $ % otherwise first list element starts on same line
 \begin{itemize}
-\item For two filesystems we write $\FS\typeeq\GS$ iff they are both broken, or they share the same nodes $\setn$,
-and for all $n\in\setn$, $[\FS(n)]=[\GS(n)]$.
-\item For two commands we write $\cxynv\typeeq\czwnv$ iff 
-$[x]=[z]$ and $[y]=[w]$ and $n=m$.
-\item For two sequences of commands we write $A\typeeq B$ iff they contain the same number of commands,
-and pairwise the commands $\alpha\in A$ and $\beta\in B$ at the same indices are equivalent by type ($\alpha\typeeq\beta$).
+\item For two filesystems $\FS\typeeq\GS$ iff they are both broken, or they share the same nodes $\setn$,
+and for all $n\in\setn$, $\FS(n) \typeeq \GS(n)$.
+\item For two commands $\cxynv\typeeq\czwnv$ iff 
+$x\typeeq z$ and $y\typeeq w$ and $n=m$.
+\item For two sequences of commands $\emptyseq\typeeq\emptyseq$, and
+if $A'=\alpha\cc A$ and $B'=\beta\cc B$, then $A'\typeeq B'$ iff $\alpha\typeeq\beta$ and $A\typeeq B$.
 \end{itemize}
 \end{mydef}
 
-In other words, two type-equivalent objects can only differ in the value they contain,
-but as $|\setb|=|\setd|=1$, this is only possible at values of the type $[\valf]$.
-We select an arbitrary file value $\fil\in[\valf]$, and choose a representative
-of each $\typeeq$-equivalence class where all (if any) values of the type $[\valf]$ is $\fil$.
-For example, in the case of commands, the representative of $[\cbfaa{n}]_\typeeq$ is $\caaa{\empt}{\fil}{n}$.
+We select representatives of each $\typeeq$-equivalence class of values:
+for $[\empt]$ and $[\vald]$ this must be $\empt$ and $\vald$; and
+for $[\valf]$ we select an arbitrary file value $\fil\in[\valf]$.
+We then use these representative values to
+select representatives of the equivalence classes of
+other objects in the following way:
 
 \begin{mydef}[$\T$]
 We use $\T$ and write $X\T$ to denote the canonical mapping of 
-filesystems, commands and sequences to the
+values, filesystems, commands and sequences to the
 representatives of their $\typeeq$-equivalence class.
-$\T$ is also extended to sets of sequences,
-where $\seqset{A}\T = \{S\T | S\in\seqset{A}\}$.
+\begin{itemize}
+\item For values, $\vald\T=\vald$, $\valf\T=\fil$ and $\empt\T=\empt$.
+\item For filesystems, $\FS\T$ is defined by $\FS\T(n) = \FS(n)\T$.
+\item For commands, $\cxynv\T = \cTxynv$.
+\item For sequences of commands, $\emptyseq\T=\emptyseq$, and if $S'=\alpha\cc S$, then $S'\T=\alpha\T\cc S\T$.
+\item Finally we extend $\T$ to sets of sequences: $\seqset{A}\T = \{S\T | S\in\seqset{A}\}$.
+\end{itemize}
 \end{mydef}
 
-For example, $\cbfaa{n}\T = \caaa{\empt}{\fil}{n}$,
-and for the sequence $S=\alpha\cc\beta$, $S\T=\alpha\T\cc\beta\T$.
+It is easy to see that for all objects where it is defined, $X\T\typeeq X$.
+
 In other words, $\T$ maps our system of filesystems and commands
-into a system where $|\setf|$ is also $1$.
+into a \emph{representative} system where there is a one-to-one correspondence between types
+and values.
+% $|\setf|$ is also $1$.
+At the same time, representative filesystems, commands, sequences, etc.
+are subsets of their non-representative counterparts; hence all
+propositions proven so far apply to them as well.
 
 % TODO <[x],y,n> T = <[x],[y],n>
 % one-to-one corresp btw values and types
@@ -224,28 +235,32 @@ which allows us to move parts of sequences between the
 condition and consequence parts of $\workssign$.
 This is based on the following observation.
 
-\begin{mylem}
+\begin{mylem}\label{repr_comm_inject}
 Representative commands $\alpha\T$ are injections over representative filesystems ($\FS\T$)
 except for the cases where they break a filesystem, that is,
 \[ \forall\FS,\GS,\alpha: \FS\T\neq\GS\T \wedge \alpha\T(\FS\T)\neq\fsbroken \Longrightarrow \alpha\T(\FS\T) \neq \alpha\T(\GS\T). \]
 \end{mylem}
 \begin{proof}
 This is trivial if $\GS\T=\fsbroken$, so we assume it is not so.
+Let $\alpha\T = \cTxynv$.
 If $\FS\T$ and $\GS\T$ have different values at any node apart from $n$, then this difference remains
-even after applying the command to $\FS\T$. The only remaining case therefore is where they have the same values
+even after applying $\cTxynv$ to $\FS\T$. The only remaining case therefore is where they have the same values
 at all nodes except $n$.
-We know that a representative filesystem can only have values from the set $\rvalueset$.
-As $\alpha\T(\FS\T)\neq\fsbroken$, $\FS\T(n)$ must be the value that matches the input type of $\alpha\T$.
-We know that $\GS\T(n)\neq\FS\T(n)$, and therefore $\GS\T(n)$ must have a different type,
-which implies $\alpha\T(\GS\T)=\fsbroken$ as it cannot match the input type of $\alpha\T$,
+As $\cTxynv(\FS\T)\neq\fsbroken$, we know $[\FS\T(n)]=[x]$.
+We also know that $\GS\T(n)\neq\FS\T(n)$, and therefore, as there is a one-to-one correspondence between values and types,
+$[\GS\T(n)]\neq[x]$.
+This implies $\cTxynv(\GS\T)=\fsbroken$,
 and again we have $\alpha\T(\FS\T) \neq \alpha\T(\GS\T)$.
 \end{proof}
 
 \begin{mydef}[Inverse commands and sequences]
-If we regard the representative command $\alpha\T$ a function whose
+If based on \cref{repr_comm_inject}
+we regard the representative command $\alpha\T$ a bijective function whose
 domain is the subset of representative filesystems $\{\FS\T | \alpha\aFS\neq\fsbroken\}$,
 then we can define the inverse of $\alpha\T$
 for which we write $\alpha\T^{-1}$.
+For any $\GS\T$ outside the range of $\alpha\T$ we define $\alpha\T^{-1}(\GS\T)$ to be $\fsbroken$.
+
 We write ${S\T}^{-1}$ for the inverse of the sequence $S\T$, which consists of the inverses of the commands in $S\T$
 in reverse order.
 \end{mydef}
@@ -253,10 +268,15 @@ in reverse order.
 %% TODO
 % Do we need <[x],[y],n>-1 = <[y],[x],n> ?
 % Do we need to prove if a filesystem is not in the image, then a-1 will break it?
+\begin{mylem}
+For representative commands
+\[ \cTxynv^{-1} = \cTyxnv \]
+\end{mylem}
+TODO
 
 From the definitions we can clearly see that
-\begin{mycor}\label{negneg_is_typeeq} %% TODO Don't use!
-$\forall S, \FS: (S^{-1})^{-1}\aFS\typeeq S\aFS$.
+\begin{mycor}\label{negneg_is_typeeq}
+$\forall S: ({S\T}^{-1})^{-1} = S\T$.
 \end{mycor}
 
 \begin{mylem}\label{r_invmove}

@@ -43,39 +43,42 @@
 \newcommand{\caa}[2]{\langle{[#1],[#2]}\rangle} % Command template
 \newcommand{\caaa}[3]{\langle{[#1],#2,#3}\rangle}
 \newcommand{\caaaa}[3]{\langle{[#1],#2,#3}\rangle}
+\newcommand{\cTaaa}[3]{\langle{[#1],{#2}\T,#3}\rangle}
 
 \newcommand{\cbb}{\caa{\empt}{\empt}}
 \newcommand{\cbba}[1]{\caaa{\empt}{\empt}{#1}}
 \newcommand{\cbf}{\caa{\empt}{\valf}}
 \newcommand{\cbfaa}[1]{\caaa{\empt}{\valf}{#1}}
 \newcommand{\cbd}{\caa{\empt}{\vald}}
-\newcommand{\cbdaa}[1]{\caaaa{\empt}{\vald}{#1}}
+\newcommand{\cbdaa}[1]{\caaa{\empt}{\vald}{#1}}
 \newcommand{\cfb}{\caa{\valf}{\empt}}
 \newcommand{\cfba}[1]{\caaa{\valf}{\empt}{#1}}
 \newcommand{\cff}{\caa{\valf}{\valf}}
 \newcommand{\cfd}{\caa{\valf}{\vald}}
-\newcommand{\cfdaa}[1]{\caaaa{\valf}{\vald}{#1}}
+\newcommand{\cfdaa}[1]{\caaa{\valf}{\vald}{#1}}
 \newcommand{\cdb}{\caa{\vald}{\empt}}
 \newcommand{\cdba}[1]{\caaa{\vald}{\empt}{#1}}
 \newcommand{\cdf}{\caa{\vald}{\valf}}
-\newcommand{\cdfaa}[1]{\caaaa{\vald}{\valf}{#1}}
+\newcommand{\cdfaa}[1]{\caaa{\vald}{\valf}{#1}}
 \newcommand{\cdd}{\caa{\vald}{\vald}}
 \newcommand{\cdda}[1]{\caaa{\vald}{\vald}{#1}}
 
 \newcommand{\cxy}{\caa{x}{y}}
-\newcommand{\cxyaa}[1]{\caaaa{x}{y}{#1}}
-\newcommand{\cxynv}{\caaaa{x}{y}{n}}
-\newcommand{\cxynnv}{\caaaa{x}{y}{\nn}}
+\newcommand{\cxyaa}[1]{\caaa{x}{y}{#1}}
+\newcommand{\cxynv}{\caaa{x}{y}{n}}
+\newcommand{\cxynnv}{\caaa{x}{y}{\nn}}
+\newcommand{\cTxynv}{\cTaaa{x}{y}{n}}
+\newcommand{\cTyxnv}{\cTaaa{y}{x}{n}}
 \newcommand{\cxw}{\caa{x}{w}}
-\newcommand{\cxwnv}{\caaaa{x}{w}{n}}
+\newcommand{\cxwnv}{\caaa{x}{w}{n}}
 \newcommand{\czw}{\caa{z}{w}}
-\newcommand{\czwnv}{\caaaa{z}{w}{n}}
-\newcommand{\czwnnv}{\caaaa{z}{w}{\nn}}
-\newcommand{\czwmv}{\caaaa{z}{w}{m}}
+\newcommand{\czwnv}{\caaa{z}{w}{n}}
+\newcommand{\czwnnv}{\caaa{z}{w}{\nn}}
+\newcommand{\czwmv}{\caaa{z}{w}{m}}
 \newcommand{\cqr}{\caa{q}{r}}
-\newcommand{\cqrnv}{\caaaa{q}{r}{n}}
-\newcommand{\cqrmv}{\caaaa{q}{r}{m}}
-\newcommand{\cqrov}{\caaaa{q}{r}{o}}
+\newcommand{\cqrnv}{\caaa{q}{r}{n}}
+\newcommand{\cqrmv}{\caaa{q}{r}{m}}
+\newcommand{\cqrov}{\caaa{q}{r}{o}}
 
 \newcommand{\cc}{\circ} % Command / sequence concatenation
 \newcommand{\descendant}{\prec}
