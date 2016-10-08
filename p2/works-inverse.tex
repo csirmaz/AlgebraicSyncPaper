@@ -63,7 +63,7 @@ We also prove the following lemmas.
 
 \begin{myax}\label{combine_independent_commands}
 The combination of independent commands works wherever the original commands work:
-\[ \cxynv\indep \czwmv \Rightarrow \worksc{\cxynv\cc \czwmv}{\cxynv, \czwmv}. \]
+\[ \alpha\indep \beta \Rightarrow \worksc{\alpha\cc \beta}{\alpha, \beta}. \]
 % \begin{align*}
 % \forall\FS:{}&\cxynv\indep \czwmv \\
 % &\quad\wedge \cxynv\aFS\neq\fsbroken \\
@@ -74,6 +74,8 @@ The combination of independent commands works wherever the original commands wor
 \begin{proof}
 We name this proposition a \namecref{combine_independent_commands} 
 because to prove it, we must reach back to our filesystem model.
+Let $\alpha=\cxynv$ and $\beta=\czwmv$.
+%% TODO by contradiction
 We proceed in an indirect way and
 assume that there is a filesystem $\FS$ for which
 $\cxynv\aFS\neq\fsbroken$ and $\czwmv\aFS\neq\fsbroken$, but
@@ -83,8 +85,8 @@ $\czwmv$ that breaks it.
 Applying a command can only result in a broken filesystem in three cases.
 First, if the filesystem was already broken, which cannot be the case here.
 Second, if the input type does not match the filesystem,
-but we know $\FS(m)\in\setvx{W}$ and so
-$(\cxynv\aFS)(m)\in\setvx{W}$ as based on \cref{incomparable_is_independent}, $n\neq m$.
+but we know $[\FS(m)]=[w]$ and so
+$[(\cxynv\aFS)(m)]=[w]$ as based on \cref{incomparable_is_independent}, $n\neq m$.
 Third, if the new filesystem violates the tree property.
 This again cannot be the case because we also know that $n\unrel m$
 and the tree property only depends on the types of the parent and children of $m$,
@@ -138,11 +140,12 @@ We also prove the following:
 \begin{mylem}\label{worksinputmatch}
 If $A$ and $B$ are minimal sequences, $\works{A,B}$,
 and there are commands on node $n$ in both $A$ ($\cxynv\in A$) and $B$ ($\czwnv\in B$),
-then the input types of these commands must match ($X=Z$).
+then the input types of these commands must match ($[x]=[z]$).
 \end{mylem}
 \begin{proof}
 This result is similar to \cref{equiv_simple_same_commands} and
-is easily shown using an indirect proof: if $X\neq Z$, then there is no filesystem that
+%% TODO by contradiction
+is easily shown using an indirect proof: if $[x]\neq [z]$, then there is no filesystem that
 either $\cxynv$ or $\czwnv$ would not break, 
 and consequently $A$ and $B$ cannot work on the same filesystem.
 \end{proof}
@@ -157,37 +160,40 @@ We know that whether commands break a filesystem depends solely on their input a
 types and the node, but not their actual output value.
 To represent this, we introduce an equivalence relation between filesystems, commands
 and sequences of commands.
+%% TODO extending it!
 \begin{mydef}[Equivalence by type: $\typeeq$]
 $ $ % otherwise first list element starts on same line
 \begin{itemize}
-\item For two filesystems we write $\FS\typeeq\GS$ iff they are both broken, or they share the same nodes,
-and at all nodes the types of their values are the same.
-\item For two commands we write $\alpha\typeeq\beta$ iff their input and output types,
-and the node they operate on are the same.
-For example, $\cbfaa{n}{f_1}\typeeq\cbfaa{n}{f_2}$.
+\item For two filesystems we write $\FS\typeeq\GS$ iff they are both broken, or they share the same nodes $\setn$,
+and for all $n\in\setn$, $[\FS(n)]=[\GS(n)]$.
+\item For two commands we write $\cxynv\typeeq\czwnv$ iff 
+$[x]=[z]$ and $[y]=[w]$ and $n=m$.
 \item For two sequences of commands we write $A\typeeq B$ iff they contain the same number of commands,
 and pairwise the commands $\alpha\in A$ and $\beta\in B$ at the same indices are equivalent by type ($\alpha\typeeq\beta$).
 \end{itemize}
 \end{mydef}
 
 In other words, two type-equivalent objects can only differ in the value they contain,
-but as $|\setb|=|\setd|=1$, this is only possible at values of the type $\ccharf$.
-We select an arbitrary file value $\fil\in\setf$, and choose a representative
-of each $\typeeq$-equivalence class where all (if any) values of the type $\ccharf$ is $\fil$.
-For example, in the case of commands, the representative of $[\cbfaa{n}{f}]_\typeeq$ is $\cbfaa{n}{\fil}$.
+but as $|\setb|=|\setd|=1$, this is only possible at values of the type $[\valf]$.
+We select an arbitrary file value $\fil\in[\valf]$, and choose a representative
+of each $\typeeq$-equivalence class where all (if any) values of the type $[\valf]$ is $\fil$.
+For example, in the case of commands, the representative of $[\cbfaa{n}]_\typeeq$ is $\caaa{\empt}{\fil}{n}$.
 
 \begin{mydef}[$\T$]
-We use $\T$ and write $x\T$ to denote the canonical mapping of 
+We use $\T$ and write $X\T$ to denote the canonical mapping of 
 filesystems, commands and sequences to the
 representatives of their $\typeeq$-equivalence class.
 $\T$ is also extended to sets of sequences,
 where $\seqset{A}\T = \{S\T | S\in\seqset{A}\}$.
 \end{mydef}
 
-For example, $\cbfaa{n}{f}\T = \cbfaa{n}{\fil}$,
+For example, $\cbfaa{n}\T = \caaa{\empt}{\fil}{n}$,
 and for the sequence $S=\alpha\cc\beta$, $S\T=\alpha\T\cc\beta\T$.
 In other words, $\T$ maps our system of filesystems and commands
 into a system where $|\setf|$ is also $1$.
+
+% TODO <[x],y,n> T = <[x],[y],n>
+% one-to-one corresp btw values and types
 
 \begin{mycor}
 For any filesystem $\FS$ and command $\alpha$, 
@@ -219,7 +225,7 @@ condition and consequence parts of $\workssign$.
 This is based on the following observation.
 
 \begin{mylem}
-Representative functions $\alpha\T$ are injections over representative filesystems ($\FS\T$)
+Representative commands $\alpha\T$ are injections over representative filesystems ($\FS\T$)
 except for the cases where they break a filesystem, that is,
 \[ \forall\FS,\GS,\alpha: \FS\T\neq\GS\T \wedge \alpha\T(\FS\T)\neq\fsbroken \Longrightarrow \alpha\T(\FS\T) \neq \alpha\T(\GS\T). \]
 \end{mylem}
@@ -244,6 +250,9 @@ We write ${S\T}^{-1}$ for the inverse of the sequence $S\T$, which consists of t
 in reverse order.
 \end{mydef}
 
+%% TODO
+% Do we need <[x],[y],n>-1 = <[y],[x],n> ?
+% Do we need to prove if a filesystem is not in the image, then a-1 will break it?
 
 From the definitions we can clearly see that
 \begin{mycor}\label{negneg_is_typeeq} %% TODO Don't use!

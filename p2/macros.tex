@@ -1,29 +1,32 @@
 
-\newcommand{\ccharb}{\empt} % character for empty type in commands
-\newcommand{\ccharf}{\mathtt{F}} % Character for file type in commands
-\newcommand{\cchard}{\mathtt{D}} % Character for dir type in commands
+\newcommand{\typeeq}{\simeq} % Type equality
+\newcommand{\ntypeeq}{\not\typeeq}
 
-\newcommand{\typeset}{\{\cchard,\ccharf,\ccharb\}} % Set of types in commands
+\newcommand{\ccharb}{:\empt:} % character for empty type in commands TODO DELETE
+\newcommand{\ccharf}{:\mathtt{F}:} % Character for file type in commands TODO DELETE
+\newcommand{\cchard}{:\mathtt{D}:} % Character for dir type in commands TODO DELETE
+
+\newcommand{\vald}{\mathtt{D}} % Directory value
+\newcommand{\valdi}{\mathtt{D}_1}
+\newcommand{\valdii}{\mathtt{D}_2}
+\newcommand{\valf}{\mathtt{F}_i} % File value
+\newcommand{\fil}{\mathtt{F}_0} % Selected file value for representative objects
+\newcommand{\empt}{\bot} % Empty value
+\newcommand{\valv}{v} % Any value
+\newcommand{\valvx}{:v_X:} % Value of type X TODO DELETE
+\newcommand{\valvy}{:v_Y:} % Value of type Y TODO DELETE
+\newcommand{\valvw}{:v_W:} % TODO DELETE
+\newcommand{\valvr}{:v_R:} % TODO DELETE
+
+\newcommand{\typeset}{\{\cchard,\ccharf,\ccharb\}} % Set of types in commands TODO DELETE
 \newcommand{\rvalueset}{\{\vald,\fil,\empt\}} % Set of representative values
 
 \newcommand{\setv}{\mathbb{V}} % Set of values
 \newcommand{\setn}{\mathbb{N}} % Set of nodes / paths
 \newcommand{\setvx}[1]{\setv_{#1}} % Set of values with custom index
-\newcommand{\setf}{\setvx{\ccharf}} % Set of file values
-\newcommand{\setd}{\setvx{\cchard}} % Set of directory values
-\newcommand{\setb}{\setvx{\ccharb}} % Set of empty values
-
-\newcommand{\vald}{d_0} % Directory value
-\newcommand{\valdi}{d_1}
-\newcommand{\valdii}{d_2}
-\newcommand{\valf}{f} % File value
-\newcommand{\fil}{f_0} % Selected file value for representative objects
-\newcommand{\empt}{\bot} % Empty value
-\newcommand{\valv}{v} % Any value
-\newcommand{\valvx}{v_X} % Value of type X
-\newcommand{\valvy}{v_Y} % Value of type Y
-\newcommand{\valvw}{v_W}
-\newcommand{\valvr}{v_R}
+\newcommand{\setf}{\setvx{\mathtt{F}}} % Set of file values
+\newcommand{\setd}{\setvx{\vald}} % Set of directory values
+\newcommand{\setb}{\setvx{\empt}} % Set of empty values
 
 \newcommand{\parent}{\text{\normalfont\scshape{parent}}} % parent function
 \newcommand{\topnode}{\text{\normalfont\scshape{none}}} % return value of parent()
@@ -36,40 +39,43 @@
 \newcommand{\T}{\tau} % type-equivalent class mapping
 
 \newcommand{\cbrk}{\mathtt{Break}} % 'break' command
-\newcommand{\caa}[2]{\langle{#1,#2}\rangle} % Command template
-\newcommand{\caaa}[3]{\langle{#1,#2,#3}\rangle}
-\newcommand{\caaaa}[4]{\langle{#1,#2,#3,#4}\rangle}
-\newcommand{\cbb}{\caa{\ccharb}{\ccharb}}
-\newcommand{\cbba}[1]{\caaa{\ccharb}{\ccharb}{#1}}
-\newcommand{\cbf}{\caa{\ccharb}{\ccharf}}
-\newcommand{\cbfaa}[2]{\caaaa{\ccharb}{\ccharf}{#1}{#2}}
-\newcommand{\cbd}{\caa{\ccharb}{\cchard}}
-\newcommand{\cbdaa}[2]{\caaaa{\ccharb}{\cchard}{#1}{#2}}
-\newcommand{\cfb}{\caa{\ccharf}{\ccharb}}
-\newcommand{\cfba}[1]{\caaa{\ccharf}{\ccharb}{#1}}
-\newcommand{\cff}{\caa{\ccharf}{\ccharf}}
-\newcommand{\cfd}{\caa{\ccharf}{\cchard}}
-\newcommand{\cfdaa}[2]{\caaaa{\ccharf}{\cchard}{#1}{#2}}
-\newcommand{\cdb}{\caa{\cchard}{\ccharb}}
-\newcommand{\cdba}[1]{\caaa{\cchard}{\ccharb}{#1}}
-\newcommand{\cdf}{\caa{\cchard}{\ccharf}}
-\newcommand{\cdfaa}[2]{\caaaa{\cchard}{\ccharf}{#1}{#2}}
-\newcommand{\cdd}{\caa{\cchard}{\cchard}}
-\newcommand{\cdda}[1]{\caaa{\cchard}{\cchard}{#1}}
-\newcommand{\cxy}{\caa{X}{Y}}
-\newcommand{\cxyaa}[2]{\caaaa{X}{Y}{#1}{#2}}
-\newcommand{\cxynv}{\caaaa{X}{Y}{n}{\valvy}}
-\newcommand{\cxynnv}{\caaaa{X}{Y}{\nn}{\valvy}}
-\newcommand{\cxw}{\caa{X}{W}}
-\newcommand{\cxwnv}{\caaaa{X}{W}{n}{\valvw}}
-\newcommand{\czw}{\caa{Z}{W}}
-\newcommand{\czwnv}{\caaaa{Z}{W}{n}{\valvw}}
-\newcommand{\czwnnv}{\caaaa{Z}{W}{\nn}{\valvw}}
-\newcommand{\czwmv}{\caaaa{Z}{W}{m}{\valvw}}
-\newcommand{\cqr}{\caa{Q}{R}}
-\newcommand{\cqrnv}{\caaaa{Q}{R}{n}{\valvr}}
-\newcommand{\cqrmv}{\caaaa{Q}{R}{m}{\valvr}}
-\newcommand{\cqrov}{\caaaa{Q}{R}{o}{\valvr}}
+
+\newcommand{\caa}[2]{\langle{[#1],[#2]}\rangle} % Command template
+\newcommand{\caaa}[3]{\langle{[#1],#2,#3}\rangle}
+\newcommand{\caaaa}[3]{\langle{[#1],#2,#3}\rangle}
+
+\newcommand{\cbb}{\caa{\empt}{\empt}}
+\newcommand{\cbba}[1]{\caaa{\empt}{\empt}{#1}}
+\newcommand{\cbf}{\caa{\empt}{\valf}}
+\newcommand{\cbfaa}[1]{\caaa{\empt}{\valf}{#1}}
+\newcommand{\cbd}{\caa{\empt}{\vald}}
+\newcommand{\cbdaa}[1]{\caaaa{\empt}{\vald}{#1}}
+\newcommand{\cfb}{\caa{\valf}{\empt}}
+\newcommand{\cfba}[1]{\caaa{\valf}{\empt}{#1}}
+\newcommand{\cff}{\caa{\valf}{\valf}}
+\newcommand{\cfd}{\caa{\valf}{\vald}}
+\newcommand{\cfdaa}[1]{\caaaa{\valf}{\vald}{#1}}
+\newcommand{\cdb}{\caa{\vald}{\empt}}
+\newcommand{\cdba}[1]{\caaa{\vald}{\empt}{#1}}
+\newcommand{\cdf}{\caa{\vald}{\valf}}
+\newcommand{\cdfaa}[1]{\caaaa{\vald}{\valf}{#1}}
+\newcommand{\cdd}{\caa{\vald}{\vald}}
+\newcommand{\cdda}[1]{\caaa{\vald}{\vald}{#1}}
+
+\newcommand{\cxy}{\caa{x}{y}}
+\newcommand{\cxyaa}[1]{\caaaa{x}{y}{#1}}
+\newcommand{\cxynv}{\caaaa{x}{y}{n}}
+\newcommand{\cxynnv}{\caaaa{x}{y}{\nn}}
+\newcommand{\cxw}{\caa{x}{w}}
+\newcommand{\cxwnv}{\caaaa{x}{w}{n}}
+\newcommand{\czw}{\caa{z}{w}}
+\newcommand{\czwnv}{\caaaa{z}{w}{n}}
+\newcommand{\czwnnv}{\caaaa{z}{w}{\nn}}
+\newcommand{\czwmv}{\caaaa{z}{w}{m}}
+\newcommand{\cqr}{\caa{q}{r}}
+\newcommand{\cqrnv}{\caaaa{q}{r}{n}}
+\newcommand{\cqrmv}{\caaaa{q}{r}{m}}
+\newcommand{\cqrov}{\caaaa{q}{r}{o}}
 
 \newcommand{\cc}{\circ} % Command / sequence concatenation
 \newcommand{\descendant}{\prec}
@@ -89,8 +95,6 @@
 \newcommand{\works}[1]{\workssign({#1})} % works
 \newcommand{\worksc}[2]{\workssign({#1}\mathrel{|}{#2})} % works on condition
 
-\newcommand{\typeeq}{\simeq} % Type equality
-\newcommand{\ntypeeq}{\not\typeeq}
 
 \newcommand{\emptyseq}{\lambda} % empty sequence
 

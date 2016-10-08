@@ -33,10 +33,9 @@ demonstrated \cite{BZ}
 that extending this distinction to more commands ultimately simplifies
 the definition of conflicting commands, as our model will then able to predict the behavior of commands
 more precisely.
-In other words, encoding the type of the output ($\cchard$, $\ccharf$ or $\ccharb$) in the commands is definitely useful.
-At the same time, there is never any need to consider the
-exact output \emph{value} of a command,
-as the success or failure of filesystem commands only depends on the types of values in the filesystem.
+In other words, encoding the outputvalue in the commands is definitely useful.
+As the success or failure of filesystem commands only depends on the types of values in the filesystem,
+we expect to use the type of their output when modelling their behavior.
 
 Notice, however, that the commands listed above also encode some information about 
 their input, the state of the filesystem
@@ -48,24 +47,31 @@ As, based on the above, we expect that encoding more information in the commands
 results in a model with greater predictive powers,
 and in order to resolve this asymmetry, 
 we propose a set of commands that encode
-the type of the original state of $\FS(n)$ as well.
+the type of the original value $\FS(n)$ as well.
 (Some real-life filesystem commands like $rmdir$ do this already.)
+Again, as the success of failure of commands depends on types of values,
+it is not necessary to encode the actual input value.
+For example, the behavior of two commands that differ only in what the original file contains
+that they overwrite is never going to be different.
 
 \begin{mydef}[Regular commands]
-Therefore we have four pieces of information related to each command,
-and represent them using quadruples that list
-their input type ($X$), output type ($Y$),
-the node to which they are applied ($n$),
-and the value they store at the node ($\valvy$):
-\[ \cxynv, \]
-where $\valvy\in\setvx{Y}$.
-
-We use $\cchard$, $\ccharf$ or $\ccharb$ to represent the different
-types, and omit the final value if it is determined by the output type
-(when it is $\empt$ or $\vald$).
-For example, $\cbfaa{n}{\valf}$ will represent $create(n,\valf)$,
-and $\cdba{n}$ will represent $rmdir(n)$.
+Therefore we have three pieces of information related to each command,
+and represent them using triples that contain
+their input type ($[v_{in}]$), output value ($v_{out}$),
+and the node to which they are applied ($n$):
+\[ \caaaa{v_{in}}{v_{out}}{n}. \]
 \end{mydef}
+
+For example, $\cbfaa{n}$ will represent $create(n,\valf)$,
+and $\cdba{n}$ will represent $rmdir(n)$.
+When describing unknown commands, we substitute one or both
+of their values with variables, and write e.g. $\cxynv$.
+By $\cxynv=\czwmv$ we mean that the commands are identical
+($[x]=[z]$ and $y=z$ and $n=m$).
+As suggested above, we will frequently only investigate
+the types of the input and output values of a command
+(its input and output types), and write
+$\cxy=\czw$, by which we mean $[x]=[z]$ and $[y]=[w]$.
 
 \bigskip
 
@@ -81,14 +87,14 @@ we introduce, in addition to the regular commands,
 the command $\cbrk$ that simply breaks every filesystem.
 
 We note that a command or a sequence of commands is applied to a filesystem
-by prefixing the command or sequence to it, for example: $\cbrk\aFS$, $\cbdaa{n}{\vald}\aFS$, 
+by prefixing the command or sequence to it, for example: $\cbrk\aFS$, $\cbdaa{n}\aFS$, 
 or $S\aFS$ if $S$ is a sequence of commands.
 
 \begin{mydef}[Effect of commands]
 We use a replacement operator of the form
-$\FS[\valv/n]$ to denote a filesystem derived from a non-broken $\FS$ 
+$\FS_{[\valv/n]}$ to denote a filesystem derived from a non-broken $\FS$ 
 by replacing its value at $n$ with $\valv$:
-\[ \FS[\valv/n](m) =
+\[ \FS_{[\valv/n]}(m) =
    \begin{cases}
    \valv &\mbox{if~} m=n\\
    \FS(m) &\mbox{otherwise.}
@@ -100,20 +106,13 @@ The effect of the commands is then as follows:
 &\cxynv\aFS = 
    \begin{cases}
    \fsbroken &\mbox{if~} \FS=\fsbroken\\
-   \fsbroken &\mbox{if~} \FS(n)\not\in\setvx{X}\\
-   \fsbroken &\mbox{if~} \FS[\valvy/n] \mbox{~violates the tree property}\\
-   \FS[\valvy/n] &\mbox{otherwise.}
+   \fsbroken &\mbox{if~} [\FS(n)]\neq[x]\\
+   \fsbroken &\mbox{if~} \FS_{[y/n]} \mbox{~violates the tree property}\\
+   \FS_{[y/n]} &\mbox{otherwise.}
    \end{cases}
 \end{align*}
 \end{mydef}
 
-In general, when we describe multiple or unknown commands, we may substitute one or both
-of their types with variables, as we did with $\cxynv$. In this context,
-if we write that $\cxy=\czw$, we mean that the input and output types
-of the commands are the same ($X=Z$ and $Y=W$), while a full equality 
-($\cxynv=\czwmv$)
-implies
-that their nodes and output values are also the same.
 
 % Simplification
 % --------------

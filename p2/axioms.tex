@@ -14,7 +14,7 @@ We use ``$\cc$'' to concatenate commands to form a sequence, or concatenate sequ
 with the meaning that the command on the left is applied first:
 \[ \alpha\cc\beta\aFS = \beta(\alpha\aFS). \]
 For example, we will write
-$S=\cbdaa{n}{\vald}\cc\cbfaa{m}{\valf}$, or $S'=S\cc\cbba{o}$.
+$S=\cbdaa{n}\cc\cbfaa{m}$, or $S'=S\cc\cbba{o}$.
 % monoid, but not free monoid
 % monoid: semigroup with identity element
 % Sequences of commands form a free semigroup
@@ -30,7 +30,7 @@ In the definitions, $A,B,S,T$ stand for arbitrary sequences of commands.
 
 \begin{mydef}[$\eqext$]
 % Relation in the algebra
-$A\eqext B$ means that $B$ extends $A$,
+$A\eqext B$ means that $B$ \emph{extends} $A$,
 % intended interpretation:
 that is, they behave in the same way
 on any filesystem $A$ does not break:
@@ -97,9 +97,7 @@ Below we list a number of statements derived using this method.
 \noindent
 Pairs of commands in general have the form
 \[ \cxynv\cc  \czwmv \]
-where $X,Y,Z,W\in\typeset$, $n,m\in\setn$, 
-and values are of the appropriate type: 
-$\valvy\in\setvx{Y}$ and $\valvw\in\setvx{W}$.
+where $x,y,z,w\in\setv$ and $n,m\in\setn$. 
 
 \begin{myax}\label{ax_separate_commute}
 Commands on incomparable nodes commute:
@@ -113,18 +111,18 @@ $\cxynv\cc\czwmv \nequiv \cbrk$ where $n\unrel m$.
 
 \begin{myax}\label{ax_same_breaks}
 Commands on the same node break every filesystem if their types are incompatible:
-$\cxynv\cc\czwnv \equiv \cbrk$ where $Y\ne Z$.
+$\cxynv\cc\czwnv \equiv \cbrk$ where $[y]\ne [z]$.
 \end{myax}
 
 \begin{myax}\label{ax_same_emptyseq}
 Commands on the same node simplify:
-$\cxynv\cc\czwnv \eqext \emptyseq$ where $Y=Z$, and $\cxw=\cbb$ 
+$\cxynv\cc\czwnv \eqext \emptyseq$ where $[y]=[z]$, and $\cxw=\cbb$ 
 or $\cxw=\cdd$.
 \end{myax}
 
 \begin{myax}\label{ax_same_singlec}
 Commands on the same node simplify:
-$\cxynv\cc \czwnv \equiv \cxwnv$ where $Y=Z$ and $\cxw\neq\cbb$ and $\cxw\neq\cdd$.
+$\cxynv\cc \czwnv \equiv \cxwnv$ where $[y]=[z]$ and $\cxw\neq\cbb$ and $\cxw\neq\cdd$.
 \end{myax}
 
 \begin{myax}\label{ax_distantrel_breaks}
@@ -143,10 +141,10 @@ A pair of commands on nodes $\nn$ and $n$ is a construction pair if $\nn=\parent
 and the commands are one
 of the following:
    \begin{gather*}
-            \cbdaa{\nn}{\vald}\cc  \cbfaa{n}{\valf} \\
-            \cbdaa{\nn}{\vald}\cc  \cbdaa{n}{\vald} \\
-            \cfdaa{\nn}{\vald}\cc  \cbfaa{n}{\valf} \\
-            \cfdaa{\nn}{\vald}\cc  \cbdaa{n}{\vald}
+            \cbdaa{\nn}\cc  \cbfaa{n} \\
+            \cbdaa{\nn}\cc  \cbdaa{n} \\
+            \cfdaa{\nn}\cc  \cbfaa{n} \\
+            \cfdaa{\nn}\cc  \cbdaa{n}
    \end{gather*}
 \end{mydef}
 
@@ -161,9 +159,9 @@ A pair of commands on nodes $n$ and $\nn$ is a destruction pair if $\parent(n)=\
 of the following:
    \begin{gather*}
             \cfba{n}\cc  \cdba{\nn} \\
-            \cfba{n}\cc  \cdfaa{\nn}{\valf} \\
+            \cfba{n}\cc  \cdfaa{\nn} \\
             \cdba{n}\cc  \cdba{\nn} \\
-            \cdba{n}\cc  \cdfaa{\nn}{\valf}
+            \cdba{n}\cc  \cdfaa{\nn}
    \end{gather*}
 \end{mydef}
 
@@ -178,7 +176,7 @@ A command is an assertion command if
 for every filesystem it either breaks it or leaves it in the same state.
 In other words, assertion commands have the same input and output type,
 and there must also be only one possible value for their output.
-Accordingly, $\cbba{n}$ and $\cdda{n}$ are the only two assertion commands.
+Accordingly, $\cbba{n}$ and $\cdda{n}$ are the only two types of assertion commands.
 \end{mydef}
 
 \begin{myax}\label{ax_child_assert}
@@ -197,7 +195,8 @@ where $\nn\descendant n$ and $\cxy\neq\cbb$.
 
 \begin{myax}\label{ax_assert}
 Assertion commands can be removed:
-$\cxynv \eqext \emptyseq$ where $\cxy=\cbb$ or $\cxy=\cdd$.
+$\cdda{n}\eqext\emptyseq$ and $\cbba{n}\eqext\emptyseq$.
+% $\cxynv \eqext \emptyseq$ where $\cxy=\cbb$ or $\cxy=\cdd$.
 \end{myax}
 
 
@@ -241,12 +240,12 @@ Next, we prove that
 As $n\nunrel m$
 we know that $n=m$, $n\descendant m$ or $m\descendant n$.
 
-If $n=m$, then from \cref{ax_same_breaks} we know $Y=Z$ and $W=X$
+If $n=m$, then from \cref{ax_same_breaks} we know $[y]=[z]$ and $[w]=[x]$
 as otherwise the commands, in one order or the other, would break all filesystems
 and they could not be independent.
 The commands are not assertion commands, and so from \cref{ax_same_singlec}
-we know that $\cxynv\cc\czwnv\equiv\czwnv\cc\cxynv$ can only happen if $Y=W$ and $\valvy=\valvw$.
-Therefore $X=Y=Z=W$ which is only possible if both commands are $\cff$ and have the same
+we know that $\cxynv\cc\czwnv\equiv\czwnv\cc\cxynv$ can only happen if $y=w$.
+Therefore $[x]=[y]=[z]=[w]$ which is only possible if both commands are $\cff$ and have the same
 output value. This, however, contradicts our assumption that they are different.
 
 If $n\descendant m$ or $m\descendant n$, then

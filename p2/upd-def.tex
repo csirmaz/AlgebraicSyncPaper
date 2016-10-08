@@ -9,8 +9,7 @@ by comparing $\FS_A$ and $\FS_B$ to their common ancestor, $\FS$. This is called
 A sequence that transforms $\FS$ into $\FS_A$ must contain at least one command on each node
 that changes between the two states of the filesystem. Also, it is easy to see that this is also
 sufficient, as there are commands available for any input and output value. 
-Specifically, if at node $n$, $\FS(n)=\valvx$ and $\FS_A(n)=\valvy\neq \valvx$, then we add the command $\cxyaa{n}{\valvy}$ to $A$
-where $\valvx\in\setvx{X}$ and $\valvy\in\setvx{Y}$.
+Specifically, if at node $n$, $\FS(n)=x$ and $\FS_A(n)=y\neq x$, then we add the command $\cxyaa{n}$ to $A$.
 
 To be able to describe such sequences better, let us introduce the following properties:
 
