@@ -54,8 +54,13 @@ it is not necessary to encode the actual input value.
 For example, the behavior of two commands that differ only in what the original file contains
 that they overwrite is never going to be different.
 
-\begin{mydef}[Regular commands]
-Therefore we have three pieces of information related to each command,
+\begin{mydef}[Filesystem commands]
+We model filesystem commands as partial endofunctions on filesystems,
+that is, functions that map filesystems to filesystems, but which
+are not defined everywhere.
+%% TODO Return \bottom where undefined.
+
+TODO. Therefore we have three pieces of information related to each command,
 and represent them using triples that contain
 their input type ($[v_\textrm{in}]$), output value ($v_\textrm{out}$),
 and the node to which they are applied ($n$):
