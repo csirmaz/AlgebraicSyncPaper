@@ -4,22 +4,15 @@
 We model a working filesystem
 using a function $\FS$ with a set of nodes (filesystem paths) $\setn$ as its domain,
 and a set of possible contents or values $\setv$ as its codomain.
-Alternatively, if the filesystem has encountered a problem and is no longer usable, 
-we assign it the special value $\fsbroken$:
-\begin{mydef}[Filesystem]
-\begin{gather*}
-\FS =
-\begin{cases}
-\setn \rightarrow \setv \\
-\fsbroken
-\end{cases}
-\end{gather*}
-\end{mydef}
+\begin{mydef}[Filesystems, $\setn$, $\setv$ and $\setf$]
+\[ \FS: \setn \rightarrow \setv \]
 In our model, $\setn$ 
 serves as a namespace or ``skeleton'' for the filesystem.
 It contains all possible nodes, including the ones 
 where the file system contains no file or directory,
 where in our model $\FS$ has a special value, $\empt\in\setv$.
+We write $\setfs$ for the set of filesystems.
+\end{mydef}
 
 There is an ancestor / descendant relation defined over the nodes,
 which arranges them in a (disjoint) union of rooted directed trees,
@@ -27,8 +20,9 @@ and which can be derived from the following $\parent$ function.
 Tao et al. \cite{TSR} describe a similar filesystem model, although
 they also model inodes and restrict the filesystem to just a single tree.
 \begin{mydef}[$\parent$]
-The function $\parent(n)$ returns the parent node of $n$, or
-returns $\topnode$ if $n$ is the root of a tree.
+The partial function $\parent:\setn\nrightarrow\setn$
+returns the parent node of $n$,
+and is undefined if $n$ is the root of a tree.
 \end{mydef}
 
 \begin{mydef}[$n\descendant m$]
@@ -57,6 +51,7 @@ $\typeeq$.
 \begin{mydef}[Equivalence by type: $\typeeq$]
 We write $v_1\typeeq v_2$ for $v_1,v_2\in\setv$ if $v_1$ and $v_2$ are both files,
 are both directories, or are both $\empt$.
+% TODO needed? v
 In other words, if $\setf$ is the set of file values and $\setd$ is the set of directories, then
 with $\{\empt\}$ they form a partition of $\setv$:
 \[ \setv/{\typeeq} = \{\setd,\setf,\{\empt\}\}. \]
@@ -67,11 +62,8 @@ We also regard all file contents including all metadata to be included in the va
 
 The formal definition of the tree property is therefore
 \begin{mydef}[Tree property]
-\begin{align*}
-\forall n\in\setn:{} &\FS(n) \neq \empt \\
-&\quad\wedge \parent(n) \neq \topnode \\
-&\Rightarrow \FS(\parent(n)) \in \setd. 
-\end{align*}
+\[ \forall n\in\setn: \FS(n) \neq \empt \Rightarrow \FS(\parent(n)) \in \setd \]
+where $\parent(n)$ is defined.
 \end{mydef}
 
 To avoid the proliferation of edge cases, we will furthermore suppose that

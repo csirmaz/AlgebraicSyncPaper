@@ -11,7 +11,7 @@
 \newcommand{\valdii}{\mathtt{D}_2}
 \newcommand{\valf}{\mathtt{F}_i} % File value
 \newcommand{\fil}{\mathtt{F}_0} % Selected file value for representative objects
-\newcommand{\empt}{\bot} % Empty value
+\newcommand{\empt}{\ominus} % Empty value
 \newcommand{\valv}{v} % Any value
 \newcommand{\valvx}{:v_X:} % Value of type X TODO DELETE
 \newcommand{\valvy}{:v_Y:} % Value of type Y TODO DELETE
@@ -21,6 +21,7 @@
 \newcommand{\typeset}{\{\cchard,\ccharf,\ccharb\}} % Set of types in commands TODO DELETE
 \newcommand{\rvalueset}{\{\vald,\fil,\empt\}} % Set of representative values
 
+\newcommand{\setfs}{\mathbb{F}} % Set of filesystems
 \newcommand{\setv}{\mathbb{V}} % Set of values
 \newcommand{\setn}{\mathbb{N}} % Set of nodes / paths
 \newcommand{\setvx}[1]{\setv_{#1}} % Set of values with custom index
@@ -30,7 +31,7 @@
 
 \newcommand{\parent}{\text{\normalfont\scshape{parent}}} % parent function
 \newcommand{\topnode}{\text{\normalfont\scshape{none}}} % return value of parent()
-\newcommand{\fsbroken}{\text{\normalfont\scshape{broken}}} % broken FS value
+\newcommand{\fsbroken}{\bot} % broken FS value
 \newcommand{\FS}{\Phi} % a filesystem
 \newcommand{\GS}{\Theta} % another filesystem
 \newcommand{\aFS}{\,\FS} % a filesystem preceded by something applied to it
@@ -95,7 +96,7 @@
 \newcommand{\nunrel}{\nindep} % not \unrel
 
 \newcommand{\workssign}{\mathbf{w}??} % TODO delete
-\newcommand{\worksmsign}{\triangleleft}
+\newcommand{\worksmsign}{\vartriangleleft}
 \newcommand{\worksmeqsign}{\trianglelefteq}
 \newcommand{\works}[1]{\varnothing\worksmsign:{#1}:} % TODO delete works
 \newcommand{\worksc}[2]{:{#2}:\worksmeqsign:{#1}:} % TODO delete works on condition

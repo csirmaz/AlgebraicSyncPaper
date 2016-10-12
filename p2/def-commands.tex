@@ -9,6 +9,8 @@ that captures as much information
 about the operations as possible, and is also symmetric.
 We start by summarizing our reasons for doing so.
 
+% What is encoded in a command?
+
 Let us consider what kind of information is usually encoded in filesystem operations.
 A minimal set of commands, based on the most frequent tools implemented by filesystems,
 may be the following, where 
@@ -54,17 +56,38 @@ it is not necessary to encode the actual input value.
 For example, the behavior of two commands that differ only in what the original file contains
 that they overwrite is never going to be different.
 
-\begin{mydef}[Filesystem commands]
-We model filesystem commands as partial endofunctions on filesystems,
-that is, functions that map filesystems to filesystems, but which
-are not defined everywhere.
-%% TODO Return \bottom where undefined.
+\bigskip
 
-TODO. Therefore we have three pieces of information related to each command,
-and represent them using triples that contain
-their input type ($[v_\textrm{in}]$), output value ($v_\textrm{out}$),
-and the node to which they are applied ($n$):
-\[ \caaaa{v_\textrm{in}}{v_\textrm{out}}{n}. \]
+% Break / empty command
+
+\noindent
+A command at times will return an error.
+This happens if the encoded type of the original filesystem value does not match
+what is actually in the filesystem, or if the modified filesystem no
+longer has the tree property.
+In these cases we say that the command {\em breaks} the filesystem,
+and the function we use to model the command will be undefined on the filesystem.
+
+So that we could reason about sequences of commands that break every filesystem, 
+we also introduce the command $\cbrk$ which is not defined anywhere,
+that is, which simply breaks every filesystem.
+
+% Definition
+
+\begin{mydef}[Filesystem commands]
+In other words, we model filesystem commands as partial endofunctions on filesystems,
+that is, functions that map filesystems to filesystems, but which
+are not defined everywhere:
+\[ \alpha: \setf \nrightarrow \setf \]
+A command $\alpha$ is not defined on filesystems that it would break.
+At times in these cases we write that the command returns the bottom element, $\fsbroken$.
+We write $\cbrk$ for the empty partial function which is not defined anywhere.
+
+We have three pieces of information defining a non-empty command,
+which we represent using a triple. These are its
+input type ($[v_\textrm{in}]$), output value ($v_\textrm{out}$),
+and the node to which it is applied ($n$):
+\[ \alpha = \caaaa{v_\textrm{in}}{v_\textrm{out}}{n}. \]
 \end{mydef}
 
 For example, $\cbfaa{n}$ will represent $create(n,\valf)$,
@@ -79,26 +102,13 @@ the types of the input and output values of a command
 $\cxy=\czw$, by which we mean $[x]=[z]$ and $[y]=[w]$
 (or equivalently $x\typeeq z$ and $y\typeeq w$).
 
-\bigskip
-
-\noindent
-A command can only succeed if the original value at node $n$ has a type that matches
-the input type of the command. If this is not the case, or if the resulting
-filesystem no longer has the tree property, then we say that the command
-{\em breaks} the filesystem, and assigns $\fsbroken$ to it.
-Broken filesystems are considered equal, but not equal to any working filesystem.
-
-So that we could reason about sequences of commands that break every filesystem, 
-we introduce, in addition to the regular commands,
-the command $\cbrk$ that simply breaks every filesystem.
-
 We note that a command or a sequence of commands is applied to a filesystem
 by prefixing the command or sequence to it, for example: $\cbrk\aFS$, $\cbdaa{n}\aFS$, 
 or $S\aFS$ if $S$ is a sequence of commands.
 
 \begin{mydef}[Effect of commands]
 We use a replacement operator of the form
-$\FS_{[\valv/n]}$ to denote a filesystem derived from a non-broken $\FS$ 
+$\FS_{[\valv/n]}$ to denote a filesystem derived from $\FS$ 
 by replacing its value at $n$ with $\valv$:
 \[ \FS_{[\valv/n]}(m) =
    \begin{cases}
@@ -111,7 +121,7 @@ The effect of the commands is then as follows:
 &\cbrk\aFS = \fsbroken \\
 &\cxynv\aFS = 
    \begin{cases}
-   \fsbroken &\mbox{if~} \FS=\fsbroken\\
+   % \fsbroken &\mbox{if~} \FS=\fsbroken\\
    \fsbroken &\mbox{if~} [\FS(n)]\neq[x]\\
    \fsbroken &\mbox{if~} \FS_{[y/n]} \mbox{~violates the tree property}\\
    \FS_{[y/n]} &\mbox{otherwise.}
