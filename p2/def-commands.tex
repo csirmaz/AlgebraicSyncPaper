@@ -78,7 +78,7 @@ that is, which simply breaks every filesystem.
 In other words, we model filesystem commands as partial endofunctions on filesystems,
 that is, functions that map filesystems to filesystems, but which
 are not defined everywhere:
-\[ \alpha: \setf \nrightarrow \setf \]
+\[ \alpha: \setfs \nrightarrow \setfs \]
 A command $\alpha$ is not defined on filesystems that it would break.
 At times in these cases we write that the command returns the bottom element, $\fsbroken$.
 We write $\cbrk$ for the empty partial function which is not defined anywhere.

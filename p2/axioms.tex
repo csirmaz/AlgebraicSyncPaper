@@ -20,8 +20,16 @@ $S=\cbdaa{n}\cc\cbfaa{m}$, or $S'=S\cc\cbba{o}$.
 % Sequences of commands form a free semigroup
 Sequences of commands form a monoid, and, as usual,
 $\emptyseq$ denotes its unit element, the empty sequence,
-which by definition leaves all filesystems unchanged.
+which is defined on all filesystems and by definition leaves all filesystems unchanged.
 \end{mydef}
+
+\begin{mydef}[$\Dom{S}$ and $\Img{S}$]
+For a sequence of commands $S$, $\Dom{S}$ is the domain of $S$, which is the set of filesystems $S$ is defined on,
+that is, which it does not break.
+
+We write $\Img{S}$ to denote the image of the domain of the sequence $X$.
+\end{mydef}
+
 
 The following two relations 
 (which echo the ones defined in \cite{NREC})
@@ -34,9 +42,9 @@ $A\eqext B$ means that $B$ \emph{extends} $A$,
 % intended interpretation:
 that is, they behave in the same way
 on any filesystem $A$ does not break:
-$\forall \FS: A\FS\neq\fsbroken\Rightarrow A\aFS=B\aFS$.
+$\forall \FS\in\Dom{A}: A\aFS=B\aFS$.
 % old inference rule: $ A\eqext B \Rightarrow S\cc A\cc T\eqext S\cc B\cc T$,
-We can also see that $A\eqext B$ and $S\eqext T$ implies $A\cc S\eqext B\eqext T$.
+We can also see that $A\eqext B$ and $S\eqext T$ implies $A\cc S\eqext B\cc T$.
 % preorder: reflexive and transitive
 In other words, $\eqext$ is a preorder, and also a precongruence.
 \end{mydef}
