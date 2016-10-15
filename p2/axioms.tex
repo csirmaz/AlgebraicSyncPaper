@@ -10,22 +10,24 @@ commands usually do not occur in isolation,
 and are applied to filesystems in time.
 Therefore we will investigate sequences of commands with a well-defined order.
 \begin{mydef}[Sequences of commands: $\cc$ and $\emptyseq$]
-We use ``$\cc$'' to concatenate commands to form a sequence, or concatenate sequences to form a longer sequence,
+We use ``$\cc$'' to combine commands to form a sequence, or combine sequences to form a longer sequence,
 with the meaning that the command on the left is applied first:
 \[ \alpha\cc\beta\aFS = \beta(\alpha\aFS). \]
-For example, we will write
-$S=\cbdaa{n}\cc\cbfaa{m}$, or $S'=S\cc\cbba{o}$.
-% monoid, but not free monoid
-% monoid: semigroup with identity element
-% Sequences of commands form a free semigroup
+% For example, we will write
+% $S=\cbdaa{n}\cc\cbfaa{m}$, or $S'=S\cc\cbba{o}$.
+%% monoid, but not free monoid
+%% monoid: semigroup with identity element
+%% Sequences of commands form a free semigroup
 Sequences of commands form a monoid, and, as usual,
 $\emptyseq$ denotes its unit element, the empty sequence,
 which is defined on all filesystems and by definition leaves all filesystems unchanged.
 \end{mydef}
 
 \begin{mydef}[$\Dom{S}$ and $\Img{S}$]
-For a sequence of commands $S$, $\Dom{S}$ is the domain of $S$, which is the set of filesystems $S$ is defined on,
-that is, which it does not break.
+For a sequence of commands $S$, $\Dom{S}$ is the domain of $S$,
+which is the set of filesystems $S$
+(that is, the commands it contains in the given order)
+does not break.
 
 We write $\Img{S}$ to denote the image of the domain of the sequence $X$.
 \end{mydef}
@@ -33,8 +35,8 @@ We write $\Img{S}$ to denote the image of the domain of the sequence $X$.
 
 The following two relations 
 (which echo the ones defined in \cite{NREC})
-allow us to investigate sequences independently of filesystems.
-In the definitions, $A,B,S,T$ stand for arbitrary sequences of commands.
+allow us to investigate sequences of commands independently of filesystems.
+In the definitions, $A,B,S,T$ stand for arbitrary sequences.
 
 \begin{mydef}[$\eqext$]
 % Relation in the algebra
@@ -62,7 +64,7 @@ and so it is a congruence.
 % old inference rule: $ A\equiv B \Rightarrow S\cc A\cc T\equiv S\cc B\cc T $.
 \end{mydef}
 
-It is easy to see that equivalence holds on the level of filesystems:
+It is easy to see that this equivalence holds on the level of filesystems:
 
 \begin{mylem}
 $A\equiv B$
@@ -71,9 +73,9 @@ all filesystems, that is, $\forall \FS: A\aFS=B\aFS$.
 \end{mylem}
 \begin{proof}
 If $\forall \FS: A\aFS=B\aFS$ then $A\eqext B$ and $B\eqext A$ and so by definition $A\equiv B$.
-For the reverse statement we assume that $A\eqext B$ and $B\eqext A$.
+For the reverse statement we know $A\eqext B$ and $B\eqext A$.
 $B\eqext A$ implies that it is not possible for both $B\aFS\neq\fsbroken$ and $A\aFS=\fsbroken$ to be true.
-Therefore, for every $\FS$ either $A\aFS\neq\fsbroken$, in which case $A\aFS=B\aFS$ as $A\eqext B$, or $A\aFS=\fsbroken$,
+Therefore, for every filesystem $\FS$ either $A\aFS\neq\fsbroken$, in which case $A\aFS=B\aFS$ as $A\eqext B$, or $A\aFS=\fsbroken$,
 in which case $B\aFS=\fsbroken$ must be true, and therefore $A\aFS=B\aFS$ still holds.
 \end{proof}
 
@@ -98,7 +100,8 @@ Our basis for this investigation was the model of filesystems introduced in this
 These properties of command pairs are crucial as they determine
 how a set of commands can be re-ordered to be applied to a filesystem
 during synchronization, and what commands will never be compatible.
-Below we list a number of statements derived using this method.
+Below we list a number of statements derived using this method,
+which are in fact lemmas that can be derived from our definitions of filesystems and of commands.
 
 \bigskip
 
@@ -181,7 +184,8 @@ and the pair is not a destruction pair.
 
 \begin{mydef}[Assertion command]
 A command is an assertion command if
-for every filesystem it either breaks it or leaves it in the same state.
+it leaves every filesystem in the same state
+where it is defined.
 In other words, assertion commands have the same input and output type,
 and there must also be only one possible value for their output.
 Accordingly, $\cbba{n}$ and $\cdda{n}$ are the only two types of assertion commands.
@@ -230,31 +234,30 @@ these two concepts are closely related.
 
 \begin{mylem}\label{incomparable_is_independent}
 Two different commands that are not assertion commands are independent iff the nodes they change are incomparable:
-\[ \cxynv\indep\czwmv \Leftrightarrow n\unrel m \]
+\[ \cxynv\indep\czwmv \Longleftrightarrow n\unrel m \]
 if $\cxynv\neq\czwmv$ and none of $\cxy$ and $\cxw$ is $\cbb$ or $\cdd$.
 \end{mylem}
 \begin{proof}
-This is easy to show based on the output of the software that investigates the behavior of command pairs.
+This is easy to show based on the output of the program that investigates the behavior of command pairs.
 However, this proposition can also be derived from the \namecrefs{ax_separate_commute} already listed
 in the following way.
 
 We proceed in two steps. First, we note that
 from \cref{ax_separate_commute,ax_separate_nobreaks} we know that
-if $n\unrel m$, then $\cxynv$ and $\czwmv$ must necessarily be independent, and therefore
-$ \cxynv\nindep\czwmv \wedge n\unrel m $ cannot be the case.
+if $n\unrel m$, then $\cxynv$ and $\czwmv$ must necessarily be independent.
 
-Next, we prove that
-\[ \cxynv\indep\czwmv \wedge n\nunrel m \] is also impossible as it would lead to contradiction.
+We prove the second step by contradiction.
+We assume that both $\cxynv\indep\czwmv$ and $n\nunrel m$,
+and show that it leads to contradiction.
 As $n\nunrel m$
 we know that $n=m$, $n\descendant m$ or $m\descendant n$.
 
 If $n=m$, then from \cref{ax_same_breaks} we know $[y]=[z]$ and $[w]=[x]$
 as otherwise the commands, in one order or the other, would break all filesystems
 and they could not be independent.
-The commands are not assertion commands, and so from \cref{ax_same_singlec}
+The commands are not assertion commands, so from \cref{ax_same_singlec}
 we know that $\cxynv\cc\czwnv\equiv\czwnv\cc\cxynv$ can only happen if $y=w$.
-Therefore $[x]=[y]=[z]=[w]$ which is only possible if both commands are $\cff$ and have the same
-output value. This, however, contradicts our assumption that they are different.
+Therefore $[x]=[y]=[z]=[w]$ which with $y=w$ contradicts our assumption that the commands are different.
 
 If $n\descendant m$ or $m\descendant n$, then
 from \cref{ax_distantrel_breaks} we know that if they are not directly related,

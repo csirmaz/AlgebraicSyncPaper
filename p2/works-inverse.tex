@@ -6,7 +6,7 @@
 
 \begin{mydef}[Sets of sequences]
 As we will frequently refer to sets of fequences,
-we will use calligraphic letters (e.g. $\seqset{A, B, C}$ and $\seqset{S}$)
+we will use calligraphic letters (e.g. $\sqs{A}$, $\sqs{B}$, $\sqs{C}$ and $\seqset{S}$)
 to denote such sets for brevity.
 We will use $A\cc\seqset{B}$ to denote the set of sequences $\{A\cc B|B\in\seqset{B}\}$,
 and $\Dom{\sqs{A}}$ to denote $\bigcap_{A\in\sqs{A}} \Dom{A}$.
@@ -20,8 +20,8 @@ on any filesystem all sequences in $\sqs{A}$ work on.
 We write $\worksmstr{\sqs{A}}{\sqs{B}}$ iff $\Dom{\sqs{A}} \subset \Dom{\sqs{B}}$.
 
 As a special case, we write $\worksmnil{\sqs{A}}$ if we know that there is a filesystem
-all sequences in $\sqs{A}$ work on,
-and we apply these relations to sequences directly:
+all sequences in $\sqs{A}$ work on.
+We also apply these relations to sequences directly:
 $\worksm{A}{B}$ with the meaning $\worksm{\{A\}}{\{B\}}$.
 \end{mydef}
 
@@ -49,21 +49,19 @@ The combination of independent commands works wherever the original commands wor
 We name this proposition a \namecref{combine_independent_commands} 
 because to prove it, we must reach back to our filesystem model.
 Let $\alpha=\cxynv$ and $\beta=\czwmv$.
-%% TODO by contradiction
-We proceed in an indirect way and
+We prove the proposition by contradiction and
 assume that there is a filesystem $\FS$ for which
 $\cxynv\aFS\neq\fsbroken$ and $\czwmv\aFS\neq\fsbroken$, but
 $\cxynv\cc \czwmv\aFS=\fsbroken$.
 We know $\cxynv\aFS\neq\fsbroken$ so it must be applying 
 $\czwmv$ that breaks it.
-Applying a command can only result in a broken filesystem in three cases.
-First, if the filesystem was already broken, which cannot be the case here.
-Second, if the input type does not match the filesystem,
+Applying a command can only result in a broken filesystem in two cases.
+First, if the input type does not match the filesystem,
 but we know $[\FS(m)]=[w]$ and so
 $[(\cxynv\aFS)(m)]=[w]$ as based on \cref{incomparable_is_independent}, $n\neq m$.
-Third, if the new filesystem violates the tree property.
+Second, if the new filesystem violates the tree property.
 This again cannot be the case because we also know that $n\unrel m$
-and the tree property only depends on the types of the parent and children of $m$,
+and the tree property only depends on the types of values at the parent and children of $m$,
 which therefore cannot be changed by $\cxynv$.
 \end{proof}
 
@@ -78,7 +76,7 @@ Assume that there is a filesystem $\FS$ so that
 $S\aFS\neq\fsbroken$ and $T\aFS\neq\fsbroken$, but
 $(S\cc T)\FS=\fsbroken$.
 
-From \cref{incomparable_is_independent,ax_separate_commute} we know that
+From \cref{def_indep} we know that
 the commands in $S$ and $T$ pairwise commute, and so any sequence
 that contains the commands from $S$ and $T$ and preserve their original partial order
 is equivalent to $S\cc T$ on all filesystems.
@@ -118,16 +116,13 @@ then the input types of these commands must match ($[x]=[z]$).
 \end{mylem}
 \begin{proof}
 This result is similar to \cref{equiv_simple_same_commands} and
-%% TODO by contradiction
-is easily shown using an indirect proof: if $[x]\neq [z]$, then there is no filesystem that
+is easily shown using a proof by contradiction: if $[x]\neq [z]$, then there is no filesystem that
 either $\cxynv$ or $\czwnv$ would not break, 
 and consequently $A$ and $B$ cannot work on the same filesystem.
 \end{proof}
 
 
 \bigskip
-
-%% TODO https://en.wikipedia.org/wiki/Equivalence_class
 
 \noindent
 We know that whether commands break a filesystem depends solely on their input and output
@@ -189,6 +184,7 @@ TODO needed?
 % if $A$ and $B$ differ only in some of the values in their commands,
 % whereas clearly $A\nequiv B$.
 
+% TODO repeated
 As whether a sequence of commands breaks a filesystem does not depend on the output values
 of the commands, only the input and output types, we know that
 \begin{mycor}\label{repr_works_is_same}
@@ -204,6 +200,7 @@ which allows us to move parts of sequences between the
 condition and consequence parts of $\workssign$.
 This is based on the following observation.
 
+% TODO partially bijective (?)
 \begin{mylem}\label{repr_comm_inject}
 Representative commands $\alpha\T$ are injections over representative filesystems ($\FS\T$)
 except for the cases where they break a filesystem, that is,

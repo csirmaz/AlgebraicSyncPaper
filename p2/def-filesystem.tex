@@ -51,19 +51,18 @@ $\typeeq$.
 \begin{mydef}[Equivalence by type: $\typeeq$]
 We write $v_1\typeeq v_2$ for $v_1,v_2\in\setv$ if $v_1$ and $v_2$ are both files,
 are both directories, or are both $\empt$.
-% TODO needed? v
-In other words, if $\setf$ is the set of file values and $\setd$ is the set of directories, then
-with $\{\empt\}$ they form a partition of $\setv$:
-\[ \setv/{\typeeq} = \{\setd,\setf,\{\empt\}\}. \]
+% In other words, if $\setf$ is the set of file values and $\setd$ is the set of directories, then
+% with $\{\empt\}$ they form a partition of $\setv$:
+% \[ \setv/{\typeeq} = \{\setd,\setf,\{\empt\}\}. \]
 \end{mydef}
 
-As usual, we write $[v]$ for the equivalence class of $v$, which is its type.
-We also regard all file contents including all metadata to be included in the values in $\setf$.
+As usual, we write $[v]$ for the equivalence class of $v$, which represents its type.
+We also consider metadata to be part of the values in $\setv$.
 
 The formal definition of the tree property is therefore
 \begin{mydef}[Tree property]
-\[ \forall n\in\setn: \FS(n) \neq \empt \Longrightarrow \FS(\parent(n)) \in \setd \]
-where $\parent(n)$ is defined.
+\[ \forall n\in\setn, \FS\in\setfs: \FS(n) \neq \empt \Longrightarrow \FS(\parent(n)) \in \setd \]
+where $\parent(n)$ is defined, and where $\setd\subset\setv$ is the set of directories.
 \end{mydef}
 
 To avoid the proliferation of edge cases, we will furthermore suppose that
@@ -99,5 +98,5 @@ to extend our results to the $|\setd|>1$ case.
 
 In this paper, $\FS$ and $\GS$ denote filesystems,
 and $n$, $m$ and $o$ are nodes in $\setn$.
-We will write $\valf$ for an arbitrary element in $\setf$.
+We write $\valf$ for an arbitrary file value. % element in $\setf$.
 
