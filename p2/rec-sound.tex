@@ -8,32 +8,21 @@ based on $\FS_B=B\aFS$ and so we aim to prove that
 $B\cc\reca$ works wherever $A$ and $B$ work:
 
 \begin{myth}
-If $A, B$ are simple, then $\worksc{B\cc \reca}{A,B}$,
+If $A, B$ are simple, then $\worksmbb{A,B}{B\cc \reca}$,
 where, to restate \cref{def:reconciliation},
-% { % scope
-% \renewcommand{\themydef}{\ref{def:reconciliation}}
-% \begin{mydef}
-\begin{align*}
-\reca = \{\alpha|{}& \\
-& \alpha\in A\setminus B \\
-& \wedge \\
-& \forall \beta\in B\setminus A: \alpha\indep\beta\\
-\}. &
-\end{align*}
-% \end{mydef}
-% } % scope
+\[ \reca = \{\alpha \whr \alpha\in \ambnp  \ \wedge\   \alpha\indep \bmanp \}. \]
 \end{myth}
 
-This is trivial unless $\works{A,B}$, so we assume that it is true.
+This is trivial unless $\worksmnilb{A,B}$, so we assume that it is true.
 Let us first investigate the part of $A$ and $B$ that is excluded from
 $\reca$: their intersection.
 
 \begin{mylem}\label{can_move_intersection}
-Let $A$ and $B$ be two simple sequences so that $\works{A, B}$.
+Let $A$ and $B$ be two simple sequences so that $\worksmnilb{A, B}$.
 Then their intersection, in some suitable order, also works on any filesystem
 either of them works on:
-$\worksc{\acbnp}{A}$, and, by symmetry,
-$\worksc{\acbnp}{B}$.
+$\worksm{A}{\acbnp}$, and, by symmetry,
+$\worksm{B}{\acbnp}$.
 \end{mylem}
 
 \begin{proof}
@@ -55,7 +44,7 @@ and the preceding unmarked command be $\czwmv$:
 \begin{gather*}
 A = \cdots\cc  \czwmv\cc  \cxynv\cc  \cdots
 \end{gather*}
-As $A$ is simple and $\works{A}$, from 
+As $A$ is simple and $\worksmnilb{A}$, from 
 \cref{ax_distantrel_breaks,ax_directchild_breaks,ax_directparent_breaks}
 we know that these commands can only be on incomparable nodes or form a construction or destruction pair.
 In the first case, swapping the commands results in a sequence equivalent to $A$,
@@ -88,50 +77,51 @@ A = \cdots\cc  \czwmv\cc  \cxynv\cc  \cdots \\
 B' = \cdots\cc  \cqrmv\cc  \cxynv\cc  \cdots
 \end{gather*}
 
-As $\works{A,B}$ and so $\works{A,B'}$, 
+As $\worksmnilb{A,B}$ and so $\worksmnilb{A,B'}$, 
 from \cref{worksinputmatch}
-we know that $Q=Z$. 
+we know that $[q]=[z]$. 
 
-Going back to the construction and destruction pairs we see that the output type of the first command
-is always the same, and it is either $\cchard$ or $\ccharb$ depending on the relationship between $n$ and $m$.
-Therefore $R=W$ and $\cqrmv=\czwmv$
-as $|\setd|=|\setb|=1$. 
+Going back to the construction and destruction pairs we see that the output value of the first command
+is either $\vald$ or $\empt$ and is determined by the relationship between $n$ and $m$.
+Therefore $r=w$ and $\cqrmv=\czwmv$.
 If $B$ originally had a command on $m$,
 this is a contradiction as $\czwmv$ was not marked, but we see it must also be in $B'$ and therefore in $B$.
 If $B$ had no command on $m$,
-this is a contradiction because the command on $m$ in $B'$ is an assertion command, so $Z=Q=R=W$, 
+this is a contradiction because the command on $m$ in $B'$ is an assertion command, so $[z]=[q]=[r]=[w]$, 
 but $A$ contained no assertion commands.
 
 We now know that there is an $A'\equiv A$ in which commands in $\acbnp$
 are at the beginning, and therefore 
 from \cref{worksextpostfix} we know that
-$\worksc{\acbnp}{A}$ and by symmetry $\worksc{\acbnp}{B}$.
+$\worksm{A}{\acbnp}$ and by symmetry $\worksm{B}{\acbnp}$.
 \end{proof}
 
 \bigskip
 
 \noindent
-We would like to prove that $\worksc{B\cc \reca}{A,B}$.
+We would like to prove that $\worksmbb{A,B}{B\cc \reca}$.
 From the above we know that we can move commands in $\acbnp$
 to the beginning of $B$ and so this is equivalent to
-\[ \worksc{\acb\cc \bma\cc \reca}{A,B}. \]
+\[ \worksmbb{A,B}{\acb\cc \bma\cc \reca}. \]
 As we already know that $\reca\indep\bma$
-and that $\worksc{\acb\cc \bma}{A,B}$
-(as $\worksc{B}{A,B}$),
+and that $\worksmbb{A,B}{\acb\cc \bma}$
+(as $\worksmbb{A,B}{B}$),
 we can prove our theorem based on \cref{indep_prefix_combine}
 if we can prove that
-\[ \worksc{\acb\cc \reca}{A,B}. \]
-Using \cref{r_invmove} and \cref{negneg_is_typeeq} we can rephrase this as
-\[ \worksc{\reca}{\acbi\cc A,\acbi\cc B}. \]
+\[ \worksmbb{A,B}{\acb\cc \reca}. \]
+Based on \cref{r_invmove} and \cref{repr_works_is_same}, and because
+we already know that $\worksmbb{A,B}{\acbnp}$,
+this is equivalent to
+\[ \worksmbb{\acbi\cc A\T,\acbi\cc B\T}{\reca\T}. \]
 
 To restate some results above, we therefore already know the following things:
 \begin{itemize}
 \item $\amb$ and $\bma$ are simple as $A$ and $B$ are simple
 \item $\amb \cap \bma = \emptyset$
 \item $\reca$ is the largest subset of $\amb$ for which $\reca\indep\amb$
-\item $\worksc{\amb, \bma}{\acbi\cc A,\acbi\cc B}$ 
+\item $\worksmbb{\acbi\cc A,\acbi\cc B}{\amb, \bma}$ 
 because of \cref{r_invmove}
-as $\worksc{A,B}{A,B}$,
+as $\worksmbb{A,B}{A,B}$,
 and $A\equiv\acb\cc\amb$, and $B\equiv\acb\cc\bma$.
 \end{itemize}
 
@@ -147,24 +137,24 @@ If
    \item[\condSimple] $S$ and $T$ are simple sequences,
    \item[\condDisj] $S\cap T=\emptyset$,
    \item[\condApr] $S^*$ is the largest subset of $S$ where $S^*\indep T$, and
-   \item[\condWork] $\worksc{S,T}{\seqset{C}}$ for some set of sequences $\seqset{C}$,
+   \item[\condWork] $\worksmxb{\sqs{C}}{S,T}$ for some set of sequences $\sqs{C}$,
    \end{itemize}
 then
-\[ \worksc{S^*}{\seqset{C}}. \]
+\[ \worksmxb{\sqs{C}}{S^*}. \]
 \end{mylem}
 
 \begin{proof}
-This is trivial unless $\works{\seqset{C}}$, so we will assume that it is true
-and therefore $\works{S,T}$.
+This is trivial unless $\worksmnil{\sqs{C}}$, so we will assume that it is true
+and therefore $\worksmnilb{S,T}$.
 
 The proof is similar to that of \cref{can_move_intersection}.
 We mark all commands in $S$ that are in its subset $S^*$, and
 we prove that $S$ can be transformed into $S'$ via equivalences
 so that all marked commands would be at its beginning.
 If so, then 
-$\worksc{S^*}{\seqset{C}}$ 
+$\worksmxb{\sqs{C}}{S^*}$ 
 based on \cref{worksextpostfix}
-as $\worksc{S'}{\seqset{C}}$ and $S'=S^*\cc S_0$ 
+as $\worksmxb{\sqs{C}}{S'}$ and $S'=S^*\cc S_0$ 
 where $S_0$ contains the remaining (conflicting) commands.
 
 Again we know that if $S$ does not already have all marked commands at its beginning,
@@ -175,7 +165,7 @@ By repeating this process we can generate a suitable $S'$.
 
 Let therefore the marked command in $S$ be $\cxynv$
 and the preceding unmarked command be $\czwmv$.
-As $S$ is simple and $\works{S}$, from 
+As $S$ is simple and $\worksmnilb{S}$, from 
 \cref{ax_distantrel_breaks,ax_directchild_breaks,ax_directparent_breaks}
 we know that these commands can only be on incomparable nodes or form a construction or destruction pair.
 In the first case, swapping the commands results in a sequence equivalent to $S$,

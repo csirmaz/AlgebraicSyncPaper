@@ -19,10 +19,12 @@
 \newcommand{\setfs}{\mathbb{F}} % Set of filesystems
 \newcommand{\setv}{\mathbb{V}} % Set of values
 \newcommand{\setn}{\mathbb{N}} % Set of nodes / paths
+\newcommand{\sets}{\mathbb{S}} % Set of sequences
+\newcommand{\setsmin}{\sets_{\mathrm{min}}} % Set of minimal sequences
+\newcommand{\setssmp}{\sets_{\mathrm{simple}}} % Set of simple sequences
 \newcommand{\setvx}[1]{\setv_{#1}} % Set of values with custom index
-\newcommand{\setf}{\setvx{\mathtt{F}}} % Set of file values
 \newcommand{\setd}{\setvx{\vald}} % Set of directory values
-\newcommand{\setb}{\setvx{\empt}} % Set of empty values
+\newcommand{\setb}{\setvx{\empt}} % Set of empty values TODO DELETE
 
 \newcommand{\parent}{\text{\normalfont\scshape{parent}}} % parent function
 \newcommand{\topnode}{\text{\normalfont\scshape{none}}} % return value of parent()
@@ -90,14 +92,15 @@
 \newcommand{\nindep}{\mathrel{\centernot{\wr\wr}}} % not \indep
 \newcommand{\nunrel}{\nindep} % not \unrel
 
-\newcommand{\workssign}{\mathbf{w}??} % TODO delete
-\newcommand{\worksmsign}{\vartriangleleft}
-\newcommand{\worksmeqsign}{\trianglelefteq}
-\newcommand{\works}[1]{\varnothing\worksmsign:{#1}:} % TODO delete works
-\newcommand{\worksc}[2]{:{#2}:\worksmeqsign:{#1}:} % TODO delete works on condition
-\newcommand{\worksmstr}[2]{{#1}\worksmsign{#2}}
+\newcommand{\worksmsign}{\vartriangleleft} % works-more sign
+\newcommand{\worksmeqsign}{\trianglelefteq} % works-more-eq sign
+\newcommand{\worksmstr}[2]{{#1}\worksmsign{#2}} % works-more-strict
 \newcommand{\worksmnil}[1]{{\varnothing}\worksmsign{#1}}
-\newcommand{\worksm}[2]{{#1}\worksmeqsign{#2}}
+\newcommand{\worksmnilb}[1]{\worksmnil{\{{#1}\}}}
+\newcommand{\worksm}[2]{{#1}\worksmeqsign{#2}} % works-more-(eq)
+\newcommand{\worksmxb}[2]{\worksm{#1}{\{{#2}\}}}
+\newcommand{\worksmbx}[2]{\worksm{\{{#1}\}}{#2}}
+\newcommand{\worksmbb}[2]{\worksm{\{{#1}\}}{\{{#2}\}}}
 
 \newcommand{\emptyseq}{\lambda} % empty sequence
 
@@ -113,7 +116,7 @@
 \newcommand{\mynegsp}{\nobreak\hspace{-1pt plus 1pt}\nobreak}
 \newcommand{\acbnp}{A\mynegsp\cap\mynegsp B}
 \newcommand{\acb}{(\acbnp)}
-\newcommand{\acbi}{\acb^{-1}}
+\newcommand{\acbi}{{\acb\T}^{-1}}
 \newcommand{\ambnp}{A\mynegsp\setminus\mynegsp B}
 \newcommand{\amb}{(\ambnp)}
 \newcommand{\bmanp}{B\mynegsp\setminus\mynegsp A}
@@ -121,6 +124,8 @@
 
 \newcommand{\Dom}[1]{\textrm{Dom}({#1})}
 \newcommand{\Img}[1]{\textrm{Img}({#1})}
+
+\newcommand{\whr}{\mathrel{|}}
 
 \newcommand{\rot}[3]{#3#2#1} % Rotate
 \newcommand{\undersc}{\texttt{\detokenize{_}}}

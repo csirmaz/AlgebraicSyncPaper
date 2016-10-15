@@ -13,12 +13,14 @@ Specifically, if at node $n$, $\FS(n)=x$ and $\FS_A(n)=y\neq x$, then we add the
 
 To be able to describe such sequences better, let us introduce the following properties:
 
-\begin{mydef}[Minimal set or sequence]
+\begin{mydef}[Minimal sets or sequences, $\setsmin$]
 A sequence or set of commands is minimal if it contains at most one command on each node.
+We write $\setsmin$ for the set of minimal sequences.
 \end{mydef}
 
-\begin{mydef}[Simple set or sequence]
+\begin{mydef}[Simple sets or sequences, $\setssmp$]
 A sequence or set of commands is simple if it is minimal and it does not contain assertion commands.
+We write $\setssmp$ for the set of simple sequences.
 \end{mydef}
 
 This update detector therefore yields a simple set of commands because we only add a single command

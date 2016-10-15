@@ -2,6 +2,9 @@
 
 \section{Investigating Command Pairs}\label{section_axioms}
 
+% Sequences
+% ---------
+
 So that we can describe the effects of commands in general,
 let us introduce some notation
 and note some observations.
@@ -18,7 +21,8 @@ with the meaning that the command on the left is applied first:
 %% monoid, but not free monoid
 %% monoid: semigroup with identity element
 %% Sequences of commands form a free semigroup
-Sequences of commands form a monoid, and, as usual,
+We write $\sets$ for the set of sequences of commands.
+They form a monoid, and, as usual,
 $\emptyseq$ denotes its unit element, the empty sequence,
 which is defined on all filesystems and by definition leaves all filesystems unchanged.
 \end{mydef}
@@ -103,6 +107,8 @@ how a set of commands can be re-ordered to be applied to a filesystem
 during synchronization, and what commands will never be compatible.
 Below we list a number of statements derived using this method,
 which are in fact lemmas that can be derived from our definitions of filesystems and of commands.
+
+% TODO Rewrite script for new notation
 
 \bigskip
 
@@ -226,6 +232,7 @@ they commute and do not break all filesystems:
 \[ \cxynv\cc\czwmv \equiv \czwnv\cc\cxynv \nequiv \cbrk. \]
 For two sequences or unordered sets of commands $A$ and $B$ we write $A\indep B$ if
 for all $\alpha$ in $A$ and all $\beta$ in $B$, $\alpha\indep\beta$.
+We also write $\alpha\indep B$ iff $\forall \beta\in B:\alpha\indep\beta$.
 \end{mydef}
 
 It is intentional that we use the same symbol for independent commands
@@ -258,6 +265,7 @@ as otherwise the commands, in one order or the other, would break all filesystem
 and they could not be independent.
 The commands are not assertion commands, so from \cref{ax_same_singlec}
 we know that $\cxynv\cc\czwnv\equiv\czwnv\cc\cxynv$ can only happen if $y=w$.
+% TODO Does this depend on |Vd|=1?
 Therefore $[x]=[y]=[z]=[w]$ which with $y=w$ contradicts our assumption that the commands are different.
 
 If $n\descendant m$ or $m\descendant n$, then

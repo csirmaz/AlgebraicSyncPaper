@@ -32,13 +32,7 @@ the largest subset of $A\setminus B$
 that is independent of $B\setminus A$,
 where $A$ and $B$ are simple sequences representing
 the updates applied to replicas $\FS_A$ and $\FS_B$:
-\begin{align*}
-\reca = \{\alpha|{}& \\
-& \alpha\in A\setminus B \\
-& \wedge \\
-& \forall \beta\in B\setminus A: \alpha\indep\beta\\
-\}. &
-\end{align*}
+\[ \reca = \{\alpha \whr \alpha\in \ambnp  \ \wedge\   \alpha\indep \bmanp \}. \]
 \end{mydef}
 
 Whether two commands are independent is easy to determine programmatically

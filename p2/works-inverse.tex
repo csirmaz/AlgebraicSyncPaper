@@ -8,7 +8,7 @@
 As we will frequently refer to sets of fequences,
 we will use calligraphic letters (e.g. $\sqs{A}$, $\sqs{B}$, $\sqs{C}$ and $\sqs{S}$)
 to denote such sets for brevity.
-We will use $A\cc\sqs{B}$ to denote the set of sequences $\{A\cc B|B\in\sqs{B}\}$,
+We will use $A\cc\sqs{B}$ to denote the set of sequences $\{A\cc B\whr B\in\sqs{B}\}$,
 and $\Dom{\sqs{A}}$ to denote $\bigcap_{A\in\sqs{A}} \Dom{A}$.
 \end{mydef}
 
@@ -42,7 +42,7 @@ $\forall A,S: \worksm{A\cc S}{A}$, that is, if a sequence works, its initial seg
 % An inference rule in the algebra
 $\worksmeqsign$ can be chained:
 if $\sqs{B'}\subseteq\sqs{B}$, then
-$\worksm{\sqs{A}}{\sqs{B}} \wedge \worksm{\sqs{B'}}{\sqs{C}} \Rightarrow \worksm{\sqs{A}}{\sqs{B}\cup\sqs{C}}$.
+$\worksm{\sqs{A}}{\sqs{B}} \wedge \worksm{\sqs{B'}}{\sqs{C}} \Rightarrow \worksm{\sqs{A}}{\sqs{C}}$.
 \end{mycor}
 
 We also prove the following lemmas.
@@ -172,7 +172,7 @@ representatives of their $\typeeq$-equivalence class.
 \item For filesystems, $\FS\T$ is defined by $\FS\T(n) = \FS(n)\T$.
 \item For commands, $\cbrk\T=\cbrk$ and $\cxynv\T = \cTxynv$.
 \item For sequences of commands, $\emptyseq\T=\emptyseq$, and if $S'=\alpha\cc S$, then $S'\T=\alpha\T\cc S\T$.
-\item Finally we extend $\T$ to sets of sequences: $\sqs{A}\T = \{S\T | S\in\sqs{A}\}$.
+\item Finally we extend $\T$ to sets of sequences: $\sqs{A}\T = \{S\T \whr S\in\sqs{A}\}$.
 \end{itemize}
 \end{mydef}
 
@@ -256,7 +256,7 @@ For representative commands
 TODO needed? -maybe for \cref{negneg_is_typeeq}
 \end{mylem}
 
-From the definitions we can clearly see that
+From the definitions we can clearly see that - TODO not used
 \begin{mycor}\label{negneg_is_typeeq}
 $\forall S: ({S\T}^{-1})^{-1} = S\T$.
 \end{mycor}
@@ -317,26 +317,31 @@ and so $\Dom{\ia} \subseteq \Dom{B\cc\ic}$ which is the same as
 $\worksm{\ia}{B\cc\ic}$.
 \end{proof}
 
+We use this result to prove the following:
 
 \begin{mylem}\label{indep_prefix_combine}
 The combination of sequences with a common head and independent tails 
 continues to work under the same conditions:
-\[ \worksc{A\cc B}{\sqs{S}} \wedge \worksc{A\cc C}{\sqs{S}} \wedge B\indep C \Rightarrow \worksc{A\cc B\cc C}{\sqs{S}} \]
+\begin{gather*}
+ \worksmxb{\sqs{S}}{A\cc B} \,\wedge\, \worksmxb{\sqs{S}}{A\cc C} \,\wedge\, B\indep C \\
+ \Longrightarrow \worksmxb{\sqs{S}}{A\cc B\cc C}
+\end{gather*}
 \end{mylem}
 \begin{proof}
 Based on \cref{repr_works_is_same} we have
-$\worksc{A\T\cc B\T}{\sqs{S\T}}$ and $\worksc{A\T\cc C\T}{\sqs{S\T}}$,
+$\worksmxb{\sqs{S}\T}{A\T\cc B\T}$ and $\worksmxb{\sqs{S}\T}{A\T\cc C\T}$,
 and from \cref{r_invmove} we know
-$\worksc{B\T}{{A\T}^{-1}\cc \sqs{S\T}}$ and $\worksc{C\T}{{A\T}^{-1}\cc \sqs{S\T}}$.
+$\worksmxb{{A\T}^{-1}\cc \sqs{S\T}}{B\T}$ 
+and $\worksmxb{{A\T}^{-1}\cc \sqs{S\T}}{C\T}$.
 Using \cref{combine_independent_sequences} we get
-$\worksc{B\T\cc C\T}{B\T,C\T}$,
-and combining these using \cref{workschained}
+$\worksmbb{B\T,C\T}{B\T\cc C\T}$,
+and chaining these using \cref{workschained}
 we get
-$\worksc{B\T\cc C\T}{{A\T}^{-1}\cc \sqs{S\T}}$.
+$\worksmxb{{A\T}^{-1}\cc \sqs{S}\T}{B\T\cc C\T}$.
 
-From $\worksc{A\cc B}{\sqs{S}}$ we also know $\worksc{A}{\sqs{S}}$ and $\worksc{A\T}{\sqs{S\T}}$.
-We can combine this and $\worksc{B\T\cc C\T}{{A\T}^{-1}\cc \sqs{S\T}}$ using
-the second proposition of \cref{r_invmove} to get
-$\worksc{A\T\cc B\T\cc C\T}{\sqs{S\T}}$, and from \cref{repr_works_is_same} we know
-$\worksc{A\cc B\cc C}{\sqs{S}}$.
+From $\worksmxb{\sqs{S}}{A\cc B}$ we also know $\worksmxb{\sqs{S}}{A}$ and $\worksmxb{\sqs{S}\T}{A\T}$.
+We can combine this and $\worksmxb{{A\T}^{-1}\cc \sqs{S}\T}{B\T\cc C\T}$ using
+\cref{r_invmove} to get
+$\worksmxb{\sqs{S}\T}{A\T\cc B\T\cc C\T}$, and from \cref{repr_works_is_same} we know
+$\worksmxb{\sqs{S}}{A\cc B\cc C}$.
 \end{proof}
