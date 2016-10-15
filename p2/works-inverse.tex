@@ -6,11 +6,14 @@
 
 \begin{mydef}[Sets of sequences]
 As we will frequently refer to sets of fequences,
-we will use calligraphic letters (e.g. $\sqs{A}$, $\sqs{B}$, $\sqs{C}$ and $\seqset{S}$)
+we will use calligraphic letters (e.g. $\sqs{A}$, $\sqs{B}$, $\sqs{C}$ and $\sqs{S}$)
 to denote such sets for brevity.
-We will use $A\cc\seqset{B}$ to denote the set of sequences $\{A\cc B|B\in\seqset{B}\}$,
+We will use $A\cc\sqs{B}$ to denote the set of sequences $\{A\cc B|B\in\sqs{B}\}$,
 and $\Dom{\sqs{A}}$ to denote $\bigcap_{A\in\sqs{A}} \Dom{A}$.
 \end{mydef}
+
+% works operators
+% ---------------
 
 \begin{mydef}[$\worksmsign$, $\worksmeqsign$]
 For two sets of sequences $\sqs{A}$ and $\sqs{B}$
@@ -25,6 +28,9 @@ We also apply these relations to sequences directly:
 $\worksm{A}{B}$ with the meaning $\worksm{\{A\}}{\{B\}}$.
 \end{mydef}
 
+In a sense, $A\worksmeqsign B$ is a weaker counterpart of $A\eqext B$, as the former
+only requires that $B$ works where $A$ works, where the latter also requires
+that their effect is the same.
 It is easy to see that the following corollaries are true:
 
 \begin{mycor}\label{worksextpostfix}
@@ -35,7 +41,7 @@ $\forall A,S: \worksm{A\cc S}{A}$, that is, if a sequence works, its initial seg
 \begin{mycor}\label{workschained}
 % An inference rule in the algebra
 $\worksmeqsign$ can be chained:
-if $\seqset{B'}\subseteq\seqset{B}$, then
+if $\sqs{B'}\subseteq\sqs{B}$, then
 $\worksm{\sqs{A}}{\sqs{B}} \wedge \worksm{\sqs{B'}}{\sqs{C}} \Rightarrow \worksm{\sqs{A}}{\sqs{B}\cup\sqs{C}}$.
 \end{mycor}
 
@@ -124,19 +130,26 @@ and consequently $A$ and $B$ cannot work on the same filesystem.
 
 \bigskip
 
+% Type equivalence classes
+% ------------------------
+
 \noindent
-We know that whether commands break a filesystem depends solely on their input and output
-types and the node, but not their actual output value.
-To represent this, we introduce an equivalence relation between filesystems, commands
-and sequences of commands.
-%% TODO extending it!
-\begin{mydef}[Equivalence by type: $\typeeq$]
+For the proof of the correctness of the reconciliation algorithm,
+we will also need a way of moving parts of sequences between the two
+sides of the $\worksmeqsign$ relation.
+We can do this based on the observation that commands are bijections
+if we only distinguish between types in our objects.
+To formalise this, we extend type equality ($\typeeq$)
+to filesystems, commands and sequences of commands.
+\begin{mydef}[Equivalence by type, extended: $\typeeq$]
 $ $ % otherwise first list element starts on same line
 \begin{itemize}
-\item For two filesystems $\FS\typeeq\GS$ iff they are both broken, or they share the same nodes $\setn$,
+\item For two filesystems $\FS\typeeq\GS$ iff they share the same nodes $\setn$,
 and for all $n\in\setn$, $\FS(n) \typeeq \GS(n)$.
-\item For two commands $\cxynv\typeeq\czwnv$ iff 
-$x\typeeq z$ and $y\typeeq w$ and $n=m$.
+\item For two commands $\cxynv\typeeq\czwmv$ iff 
+$x\typeeq z$ and $y\typeeq w$
+(that is, $[x]=[z]$ and $[y]=[w]$)
+and $n=m$.
 \item For two sequences of commands $\emptyseq\typeeq\emptyseq$, and
 if $A'=\alpha\cc A$ and $B'=\beta\cc B$, then $A'\typeeq B'$ iff $\alpha\typeeq\beta$ and $A\typeeq B$.
 \end{itemize}
@@ -151,19 +164,19 @@ but maps all objects into a subsystem where there is a one-to-one
 correspondence between types and values.
 
 \begin{mydef}[$\T$]
-We use $\T$ and write $X\T$ to denote the canonical mapping of 
+We use $\T$ and write $a\T$ to denote the canonical mapping of 
 values, filesystems, commands and sequences to the
 representatives of their $\typeeq$-equivalence class.
 \begin{itemize}
 \item For values, $\vald\T=\vald$, $\valf\T=\fil$ and $\empt\T=\empt$.
-\item For filesystems, $\fsbroken\T=\fsbroken$ and in other cases $\FS\T$ is defined by $\FS\T(n) = \FS(n)\T$.
+\item For filesystems, $\FS\T$ is defined by $\FS\T(n) = \FS(n)\T$.
 \item For commands, $\cbrk\T=\cbrk$ and $\cxynv\T = \cTxynv$.
 \item For sequences of commands, $\emptyseq\T=\emptyseq$, and if $S'=\alpha\cc S$, then $S'\T=\alpha\T\cc S\T$.
-\item Finally we extend $\T$ to sets of sequences: $\seqset{A}\T = \{S\T | S\in\seqset{A}\}$.
+\item Finally we extend $\T$ to sets of sequences: $\sqs{A}\T = \{S\T | S\in\sqs{A}\}$.
 \end{itemize}
 \end{mydef}
 
-It is easy to see that for all objects where it is defined, $X\T\typeeq X$.
+It is easy to see that for all objects where it is defined, $a\T\typeeq a$.
 % $|\setf|$ is also $1$.
 As representatives of filesystems, commands, sequences, etc.
 are subsets of their non-representative counterparts, all
@@ -184,26 +197,30 @@ TODO needed?
 % if $A$ and $B$ differ only in some of the values in their commands,
 % whereas clearly $A\nequiv B$.
 
-% TODO repeated
-As whether a sequence of commands breaks a filesystem does not depend on the output values
-of the commands, only the input and output types, we know that
+As the types of values determine whether a command breaks a filesystem,
+we know $\Dom{A}=\Dom{A\T}$ and therefore $\Dom{\sqs{A}}=\Dom{\sqs{A}\T}$.
+From this it follows that
+
 \begin{mycor}\label{repr_works_is_same}
 \begin{gather*}
-\works{\seqset{A}} \Leftrightarrow \works{\seqset{A}\T} \\
-\worksc{\seqset{A}}{\seqset{B}} \Leftrightarrow \worksc{\seqset{A}\T}{\seqset{B}\T}.
+\worksmnil{\sqs{A}} \Longleftrightarrow \worksmnil{\sqs{A}\T} \\
+\worksm{\sqs{A}}{\sqs{B}} \Longleftrightarrow \worksm{\sqs{A}\T}{\sqs{B}\T}.
 \end{gather*}
 \end{mycor}
 
+% Inverse commands
+% ----------------
 
 We are now ready to define the inverse of representative commands $\alpha\T$
 which allows us to move parts of sequences between the
-condition and consequence parts of $\workssign$.
+two sides of $\worksmeqsign$.
 This is based on the following observation.
 
-% TODO partially bijective (?)
 \begin{mylem}\label{repr_comm_inject}
-Representative commands $\alpha\T$ are injections over representative filesystems ($\FS\T$)
-except for the cases where they break a filesystem, that is,
+Representative commands $\alpha\T$ are partial bijections over representative filesystems ($\FS\T$).
+Because partial functions are trivially surjective when restricted to their images, this is
+equivalent to saying that representative functions are injective except for cases
+where they break a filesystem (they are not defined):
 \[ \forall\FS,\GS,\alpha: \FS\T\neq\GS\T \wedge \alpha\T(\FS\T)\neq\fsbroken \Longrightarrow \alpha\T(\FS\T) \neq \alpha\T(\GS\T). \]
 \end{mylem}
 \begin{proof}
@@ -219,113 +236,107 @@ This implies $\cTxynv(\GS\T)=\fsbroken$,
 and again we have $\alpha\T(\FS\T) \neq \alpha\T(\GS\T)$.
 \end{proof}
 
-% TODO We introduced BREAK to deal with cases where commands
-% are in effect not defined. Now we need to undo this 
-% to see that repr commands are bijective.
-
-% TODO Commands/sequences are in fact partial (one-to-one) functions, and/or partial bijections. See
+% See
 % https://en.wikipedia.org/wiki/Inverse_semigroup#Origins
 % https://en.wikipedia.org/wiki/Symmetric_inverse_semigroup
 % https://en.wikipedia.org/wiki/Partial_function
 
 \begin{mydef}[Inverse commands and sequences]
-If based on \cref{repr_comm_inject}
-we regard the representative command $\alpha\T$ a bijective function whose
-domain is the subset of representative filesystems $\{\FS\T | \alpha\aFS\neq\fsbroken\}$,
-then we can define the inverse of $\alpha\T$
-for which we write $\alpha\T^{-1}$.
-For any $\GS\T$ outside the image of the domain of $\alpha\T$ we define $\alpha\T^{-1}(\GS\T)$ to be $\fsbroken$.
+We write $\alpha\T^{-1}$ for
+the inverse of the representative command (partial bijection) $\alpha\T$.
 
 We write ${S\T}^{-1}$ for the inverse of the sequence $S\T$, which consists of the inverses of the commands in $S\T$
 in reverse order.
 \end{mydef}
+Per definition, for any filesystem $\FS\T$ outside the image of $\alpha\T$, the inverse $\alpha\T^{-1}$ is undefined.
 
-%% TODO
-% Do we need <[x],[y],n>-1 = <[y],[x],n> ?
-% Do we need to prove if a filesystem is not in the image, then a-1 will break it?
 \begin{mylem}
 For representative commands
 \[ \cTxynv^{-1} = \cTyxnv. \]
-\end{mylem}
 TODO needed? -maybe for \cref{negneg_is_typeeq}
+\end{mylem}
 
 From the definitions we can clearly see that
 \begin{mycor}\label{negneg_is_typeeq}
 $\forall S: ({S\T}^{-1})^{-1} = S\T$.
 \end{mycor}
 
-For brevity, in the following lemma we use $B$, $B'$, $\seqset{A}$ and $\seqset{C}$ to denote
+For brevity, in the following lemma we use $B$, $B'$, $\sqs{A}$ and $\sqs{C}$ to denote
 representative sequences and sets.
 
+\newcommand{\ia}{\sqs{A}}
+\newcommand{\ic}{\sqs{C}}
+\newcommand{\ibi}{B^{-1}}
+
 \begin{mylem}\label{r_invmove}
-A common initial segment of a set of \emph{representative} sequences can be moved to the other side of $\worksmeqsign$ by inverting it:
+A common initial segment of a set of \emph{representative} sequences can be moved 
+to the other side of $\worksmeqsign$ by inverting it:
 \begin{gather*}
-\worksm{\seqset{C}}{B\cc \seqset{A}}
-\ \Longleftrightarrow \ \worksm{B^{-1}\cc \seqset{C}}{\seqset{A}} 
-\ \wedge \  \worksm{\seqset{C}}{\{B\}}
+\worksm{\ia}{B\cc\ic}
+\ \Longleftrightarrow \ \worksm{\ibi\cc\ia}{\ic} 
+\ \wedge \  \worksm{\ia}{\{B\}}
 \end{gather*}
 \end{mylem}
 \begin{proof}
-% TODO Rewrite for equivalence, and swap A and C.
 % This result is quite expected as we're mapping a subset statement using a bijection,
 % but made more complicated a as B is not defined everywhere.
 
-The proof for both propositions is illustrated by \cref{fig_invmove}.
+The proof is illustrated by \cref{fig_invmove}.
 
 \begin{figure}[htb]
 \input{fig-inverse-works}
 \caption{Proof of \cref{r_invmove}}\label{fig_invmove}
 \end{figure}
 
-Unless $\works{\seqset{C}}$, both propositions are trivially true. Otherwise,
-for the first proposition
-we know $\works{B\cc\seqset{A}}$, which implies that $\Dom{\seqset{A}}$ intersects with $\Img{B}$ 
-as otherwise $B\cc\seqset{A}$ would break all filesystems.
+Unless $\worksmnil{\ia}$, the propositions is trivially true. Otherwise,
+for the left-to-right part of the proposition,
+we know $\worksmnil{B\cc\ic}$, which implies that $\Dom{\ic}$ intersects with $\Img{B}$ 
+as otherwise $B\cc\ic$ would break all filesystems.
 As the (representative) $B$ is a bijection between its domain and image,
-we can use $B^{-1}$ to map this intersection back
-onto the domain of $B$ and get $\Dom{B\cc\seqset{A}}$.
-As $\worksc{B\cc \seqset{A}}{\seqset{C}}$, 
-we know that $\Dom{\seqset{C}} \subseteq \Dom{B\cc\seqset{A}}$.
+we can use $\ibi$ to map this intersection back
+onto the domain of $B$ and get $\Dom{B\cc\ic}$.
+As $\worksm{\ia}{B\cc\ic}$, 
+we also know that $\Dom{\ia} \subseteq \Dom{B\cc\ic}$.
 We now use $B$ to map both sides of this statement, which yields
-$\Dom{B^{-1}\cc \seqset{C}} \subseteq \Dom{B^{-1}\cc B\cc\seqset{A}}$,
-but the latter is a subseteq of $\Dom{\seqset{A}}$,
-and so $\Dom{B^{-1}\cc \seqset{C}} \subseteq \Dom{\seqset{A}}$,
-from which $\worksc{\seqset{A}}{B^{-1}\cc \seqset{C}}$.
+$\Dom{B^{-1}\cc\ia} \subseteq \Dom{\ibi\cc B\cc\ic}$,
+but the latter is a subset of $\Dom{\ic}$,
+and so $\Dom{\ibi\cc\ia} \subseteq \Dom{\ic}$,
+which is the same as $\worksm{\ibi\cc\ia}{\ic}$.
 
-For the second proposition, 
-from $\worksc{B}{\seqset{C}}$ we know $\Dom{\seqset{C}} \subseteq \Dom{B}$.
-Therefore we can project the whole of $\Dom{\seqset{C}}$ using the bijective representative sequence $B$
-to get $\Dom{B^{-1}\cc\seqset{C}}$, and as $\worksc{\seqset{A}}{B^{-1}\cc \seqset{C}}$
+For the right-to-left part,
+from $\worksm{\ia}{B}$ we know $\Dom{\ia} \subseteq \Dom{B}$.
+Therefore we can project the whole of $\Dom{\ia}$ using the bijective representative sequence $B$
+to get $\Dom{\ibi\cc\ia}$, and as $\worksm{\ibi\cc\ia}{\ic}$
 we know
-$\Dom{B^{-1}\cc\seqset{C}} \subseteq \Dom{\seqset{A}}$.
-We use $B^{-1}$ to project both sides of this statement to get
-$\Dom{B\cc B^{-1}\cc\seqset{C}} \subseteq \Dom{B\cc\seqset{A}}$.
-But we also know that $\Dom{B\cc B^{-1}\cc\seqset{C}} = \Dom{\seqset{C}}$
-as $\Dom{\seqset{C}} \subseteq \Dom{B}$,
-and so $\Dom{\seqset{C}} \subseteq \Dom{B\cc\seqset{A}}$
-from which $\worksc{B\cc \seqset{A}}{\seqset{C}}$.
+$\Dom{\ibi\cc\ia} \subseteq \Dom{\ic}$.
+We use $\ibi$ to project both sides of this statement to get
+$\Dom{B\cc\ibi\cc\ia} \subseteq \Dom{B\cc\ic}$.
+But we also know that $\Dom{B\cc\ibi\cc\ia} = \Dom{\ia}$
+as $\Dom{\ia} \subseteq \Dom{B}$,
+and so $\Dom{\ia} \subseteq \Dom{B\cc\ic}$ which is the same as
+$\worksm{\ia}{B\cc\ic}$.
 \end{proof}
 
 
 \begin{mylem}\label{indep_prefix_combine}
 The combination of sequences with a common head and independent tails 
 continues to work under the same conditions:
-\[ \worksc{A\cc B}{\seqset{S}} \wedge \worksc{A\cc C}{\seqset{S}} \wedge B\indep C \Rightarrow \worksc{A\cc B\cc C}{\seqset{S}} \]
+\[ \worksc{A\cc B}{\sqs{S}} \wedge \worksc{A\cc C}{\sqs{S}} \wedge B\indep C \Rightarrow \worksc{A\cc B\cc C}{\sqs{S}} \]
 \end{mylem}
 \begin{proof}
 Based on \cref{repr_works_is_same} we have
-$\worksc{A\T\cc B\T}{\seqset{S\T}}$ and $\worksc{A\T\cc C\T}{\seqset{S\T}}$,
+$\worksc{A\T\cc B\T}{\sqs{S\T}}$ and $\worksc{A\T\cc C\T}{\sqs{S\T}}$,
 and from \cref{r_invmove} we know
-$\worksc{B\T}{{A\T}^{-1}\cc \seqset{S\T}}$ and $\worksc{C\T}{{A\T}^{-1}\cc \seqset{S\T}}$.
+$\worksc{B\T}{{A\T}^{-1}\cc \sqs{S\T}}$ and $\worksc{C\T}{{A\T}^{-1}\cc \sqs{S\T}}$.
 Using \cref{combine_independent_sequences} we get
 $\worksc{B\T\cc C\T}{B\T,C\T}$,
 and combining these using \cref{workschained}
 we get
-$\worksc{B\T\cc C\T}{{A\T}^{-1}\cc \seqset{S\T}}$.
+$\worksc{B\T\cc C\T}{{A\T}^{-1}\cc \sqs{S\T}}$.
 
-From $\worksc{A\cc B}{\seqset{S}}$ we also know $\worksc{A}{\seqset{S}}$ and $\worksc{A\T}{\seqset{S\T}}$.
-We can combine this and $\worksc{B\T\cc C\T}{{A\T}^{-1}\cc \seqset{S\T}}$ using
+From $\worksc{A\cc B}{\sqs{S}}$ we also know $\worksc{A}{\sqs{S}}$ and $\worksc{A\T}{\sqs{S\T}}$.
+We can combine this and $\worksc{B\T\cc C\T}{{A\T}^{-1}\cc \sqs{S\T}}$ using
 the second proposition of \cref{r_invmove} to get
-$\worksc{A\T\cc B\T\cc C\T}{\seqset{S\T}}$, and from \cref{repr_works_is_same} we know
-$\worksc{A\cc B\cc C}{\seqset{S}}$.
+$\worksc{A\T\cc B\T\cc C\T}{\sqs{S\T}}$, and from \cref{repr_works_is_same} we know
+$\worksc{A\cc B\cc C}{\sqs{S}}$.
 \end{proof}
