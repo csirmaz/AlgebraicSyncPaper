@@ -30,25 +30,18 @@ $\worksm{A}{B}$ with the meaning $\worksm{\{A\}}{\{B\}}$.
 
 In a sense, $A\worksmeqsign B$ is a weaker counterpart of $A\eqext B$, as the former
 only requires that $B$ works where $A$ works, where the latter also requires
-that their effect is the same.
-It is easy to see that the following corollaries are true:
+that where they work, their effect is the same.
+It is easy to see that the following corollary is true:
 
 \begin{mycor}\label{worksextpostfix}
 % An inference rule in the algebra
 $\forall A,S: \worksm{A\cc S}{A}$, that is, if a sequence works, its initial segment also works.
 \end{mycor}
 
-\begin{mycor}\label{workschained}
-% An inference rule in the algebra
-$\worksmeqsign$ can be chained:
-if $\sqs{B'}\subseteq\sqs{B}$, then
-$\worksm{\sqs{A}}{\sqs{B}} \wedge \worksm{\sqs{B'}}{\sqs{C}} \Rightarrow \worksm{\sqs{A}}{\sqs{C}}$.
-\end{mycor}
-
 We also prove the following lemmas.
 
 \begin{myax}\label{combine_independent_commands}
-The combination of independent commands works wherever the original commands work:
+The combination of independent commands works wherever both of the commands work:
 \[ \alpha\indep \beta \Rightarrow \worksm{\{\alpha, \beta\}}{\{\alpha\cc \beta\}}. \]
 \end{myax}
 \begin{proof}
@@ -74,7 +67,7 @@ which therefore cannot be changed by $\cxynv$.
 This result can be extended to sequences:
 
 \begin{mylem}\label{combine_independent_sequences}
-The combination of independent sequences works wherever the original sequences work:
+The combination of independent sequences works wherever both of the sequences work:
 \[ S\indep T \Rightarrow \worksm{\{S,T\}}{\{S\cc T\}}. \]
 \end{mylem}
 \begin{proof}
@@ -335,7 +328,7 @@ $\worksmxb{{A\T}^{-1}\cc \sqs{S\T}}{B\T}$
 and $\worksmxb{{A\T}^{-1}\cc \sqs{S\T}}{C\T}$.
 Using \cref{combine_independent_sequences} we get
 $\worksmbb{B\T,C\T}{B\T\cc C\T}$,
-and chaining these using \cref{workschained}
+and chaining these (as $\worksmeqsign$ is transitive)
 we get
 $\worksmxb{{A\T}^{-1}\cc \sqs{S}\T}{B\T\cc C\T}$.
 

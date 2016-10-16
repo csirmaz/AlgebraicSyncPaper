@@ -4,7 +4,7 @@
 We model a working filesystem
 using a function $\FS$ with a set of nodes (filesystem paths) $\setn$ as its domain,
 and a set of possible contents or values $\setv$ as its codomain.
-\begin{mydef}[Filesystems, $\setn$, $\setv$ and $\setfs$]
+\begin{mydef}[Filesystems, $\setn$, $\setv$, $\setfs$ and $\empt$]
 \[ \FS: \setn \rightarrow \setv \]
 In our model, $\setn$ 
 serves as a namespace or ``skeleton'' for the filesystem.
@@ -25,8 +25,8 @@ returns the parent node of $n$,
 and is undefined if $n$ is the root of a tree.
 \end{mydef}
 
-\begin{mydef}[$n\descendant m$]
-On $\setn$ the \emph{ancestor / descendant} relation is the
+\begin{mydef}[$\descendant$, $\descendantEq$]
+On $\setn$ the \emph{ancestor / descendant} relation $\descendant$ is the
 strict partial ordering determined by the $\parent$ function.
 We write $n\descendant m$ if $n$ is the ancestor of $m$,
 that is, $n=\parent^i(m)$ for some integer $i\ge 1$.
@@ -49,7 +49,7 @@ empty value in $\setv$, and introduce the equivalence relation
 $\typeeq$.
 
 \begin{mydef}[Equivalence by type: $\typeeq$]
-We write $v_1\typeeq v_2$ for $v_1,v_2\in\setv$ if $v_1$ and $v_2$ are both files,
+We write $v_1\typeeq v_2$ for $v_1,v_2\in\setv$ iff $v_1$ and $v_2$ are both files,
 are both directories, or are both $\empt$.
 % In other words, if $\setf$ is the set of file values and $\setd$ is the set of directories, then
 % with $\{\empt\}$ they form a partition of $\setv$:

@@ -53,8 +53,6 @@ the type of the original value $\FS(n)$ as well.
 (Some real-life filesystem commands like $rmdir$ do this already.)
 Again, as the success of failure of commands depends on types of values,
 it is not necessary to encode the actual input value.
-For example, the behavior of two commands that differ only in what the original file contains
-that they overwrite is never going to be different.
 
 \bigskip
 
@@ -70,7 +68,7 @@ and the function we use to model the command will be undefined on the filesystem
 
 So that we could reason about sequences of commands that break every filesystem, 
 we also introduce the command $\cbrk$ which is not defined anywhere,
-that is, which simply breaks every filesystem.
+that is, which breaks every filesystem.
 
 % Definition
 
