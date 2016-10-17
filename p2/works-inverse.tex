@@ -209,6 +209,7 @@ which allows us to move parts of sequences between the
 two sides of $\worksmeqsign$.
 This is based on the following observation.
 
+% TODO \alpha \neq \cbrk
 \begin{mylem}\label{repr_comm_inject}
 Representative commands $\alpha\T$ are partial bijections over representative filesystems ($\FS\T$).
 Because partial functions are trivially surjective when restricted to their images, this is
@@ -217,7 +218,6 @@ where they break a filesystem (they are not defined):
 \[ \forall\FS,\GS,\alpha: \FS\T\neq\GS\T \wedge \alpha\T(\FS\T)\neq\fsbroken \Longrightarrow \alpha\T(\FS\T) \neq \alpha\T(\GS\T). \]
 \end{mylem}
 \begin{proof}
-This is trivial if $\GS\T=\fsbroken$, so we assume it is not so.
 Let $\alpha\T = \cTxynv$.
 If $\FS\T$ and $\GS\T$ have different values at any node apart from $n$, then this difference remains
 even after applying $\cTxynv$ to $\FS\T$. The only remaining case therefore is where they have the same values

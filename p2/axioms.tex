@@ -172,6 +172,13 @@ of the following:
 All other commands on a child break every filesystem:
 $\cxynnv\cc\czwnv \equiv \cbrk$ where $\nn=\parent(n)$ and $\cxy\neq\cdd$ and $\czw\neq\cbb$
 and the pair is not a construction pair.
+
+We can derive this from our filesystem model in the following way:
+we know if $y\neq\vald$ then the commands will break every filesystem $\FS$
+as either before or after $\czwnv$, $\FS(n)$ is not empty, and therefore
+at its parent $\nn$ there must be a directory.
+We also know if $[z]\neq[\empt]$ then the commands will again break every filesystem
+as either before or after $\cxynnv$, $\FS(\nn)$ is not a directory.
 \end{myax}
 
 \begin{mydef}[Destruction pair]
@@ -189,6 +196,13 @@ of the following:
 All other commands on a parent break every filesystem:
 $\cxynv\cc\czwnnv \equiv \cbrk$ where $\parent(n)=\nn$ and $\cxy\neq\cbb$ and $\czw\neq\cdd$
 and the pair is not a destruction pair.
+
+The derivation of this \namecref{ax_directparent_breaks} is similar to that of \cref{ax_directchild_breaks}.
+We know if $y\neq\empt$ then the commands will break every filesystem $\FS$
+as either before or after $\czwnnv$, $\FS(\nn)$ is not a directory, and therefore
+every child of $\nn$ must be empty.
+We also know if $[z]\neq[\vald]$ then the commands will again break every filesystem
+as either before or after $\cxynv$, $\FS(n)$ is not empty.
 \end{myax}
 
 \begin{mydef}[Assertion command]
