@@ -42,8 +42,61 @@ In \cref{simple_reorder_equiv} we offer a formal proof that $\orderset{U}$ meets
 It is an important property of simple sequences: namely, that
 all of their valid reorderings are equivalent,
 and all equivalent sequences are mere reorderings.
-To prove this, we will need the following results:
+To prove this, we will need the following results.
 
+
+\begin{mylem}\label{simple_distant_pairs}
+For any simple sequence $S\nequiv\cbrk$
+if $\cxynv\cc\czwmv$ is a subsequence of $S$ and $n=\parent(m)$ or $\parent(n)=m$,
+then $\cxynv\cc\czwmv\nequiv\cbrk$.
+\end{mylem}
+\begin{proof}
+As usual, by subsequence we mean a subset of the commands in $S$ in the same order as they are found in $S$.
+
+Informally speaking, the proposition means that
+the two commands must form a construction or destruction pair even
+if they are not next to each other.
+This is true because in simple sequences
+there cannot be another command on $n$ or $m$,
+so if the commands are incompatible, no command between them can change that.
+In fact, this \namecref{simple_distant_pairs} is the general case
+of \cref{ax_directchild_breaks,ax_directparent_breaks}.
+
+% BACK_TO_THE_FS TODO
+% TODO Review any proof depending on "nothing changes FS at n until...".
+Formally, we prove our proposition by contradiction,
+and in this version of the proof we reach back to our filesystem model.
+We assume $S\nequiv\cbrk$ and therefore there is a $\FS$ for which $S\aFS\neq\fsbroken$,
+but it contains commands that do not form a construction or destruction pair.
+Select two such commands, $\cxynv$ and $\czwmv$,
+and split $S$ around them into three parts:
+\[ S = S_0 \cc \cxynv \cc S_1 \cc \czwmv \cc S_2 \]
+As $S$ is simple, there cannot be any commands on $n$ or $m$ in $S_1$,
+and therefore $(S_0\cc\cxynv\cc S_1)\FS(n) = y$,
+and $[(S_0\cc\cxynv\cc S_1)\FS(m)] = [S_0\FS(m)]$.
+If $[z]\neq[S_0\FS(m)]$, then $S\aFS=\fsbroken$, which is a contradiction.
+
+If $n=\parent(m)$, then 
+we know $(S_0\cc\cxynv\cc S_1)\FS(n) = y$, and as $[z]\neq[w]$, either
+$[(S_0\cc\cxynv\cc S_1)\FS(m)]=[z]\neq[\empt]$,
+or $[(S_0\cc\cxynv\cc S_1\cc\czwmv)\FS(m)]=[w]\neq[\empt]$.
+Therefore $y$ must be $\vald$, as otherwise the tree property would be violated
+when applying $\czwmv$,
+and $[x]\neq[\vald]$ as $\cxynv$ is not an assertion command.
+As $[S_0\FS(n)]=[x]\neq[\vald]$, we know
+$S_0\FS(m)=\empt$ as otherwise the tree property would be violated.
+Therefore $[S_0\FS(m)]=[z]=[\empt]$, which, combined with $y=\vald$
+means that $\cxynv\cc\czwmv\nequiv\cbrk$ is a construction pair, which is a contradiction.
+
+If $\parent(n)=m$, then 
+as $(S_0\cc\cxynv\cc S_1)\FS(n) = y$, and either
+$[(S_0\cc\cxynv\cc S_1)\FS(m)]=[z]\neq[\vald]$
+or $[(S_0\cc\cxynv\cc S_1\cc\czwmv)\FS(m)]=[w]\neq[\vald]$,
+$y$ must be $\empt$, and $[x]\neq[\empt]$.
+As $[S_0\FS(n)]=[x]\neq[\empt]$, we know $S_0\FS(m)=\vald$.
+Therefore $[S_0\FS(m)]=[z]=[\vald]$, which, combined with $y=\empt$
+means that $\cxynv\cc\czwmv\nequiv\cbrk$ is a destruction pair, which is a contradiction.
+\end{proof}
 
 
 \begin{mylem}\label{order_is_only_possible}
@@ -51,36 +104,7 @@ For any simple sequence $S$ and its permutation $T$,
 \[ T\not\in\orderset{S} \Longrightarrow T\equiv\cbrk. \]
 \end{mylem}
 \begin{proof}
-$T$ can only be excluded from $\orderset{S}$ if it contains commands on a node and its parent
-which violate the conditions in \cref{def_orderset},
-which, as simple sequences do not contain assertion commands,
-entails that those commands placed next to each other in the same order
-would not form a construction or destruction pair.
-
-Informally speaking,
-our proposition for simple sequences $T\nequiv\cbrk$ is equivalent to the statement that
-two commands on a node and its parent must form
-a construction or destruction pair even if they are not next to each other.
-This is true because in simple sequences
-there cannot be another command between either of the nodes involved,
-so if the commands are incompatible, no command between them can change that.
-
-% BACK_TO_THE_FS TODO
-% TODO Review any proof depending on "nothing changes FS at n until...".
-To prove our proposition formally, we reach back to our filesystem model.
-Select two commands in $T$ that do not conform to \cref{def_orderset}, $\cxynv$ and $\czwmv$,
-and split $T$ around them into three parts:
-\[ T = T_0 \cc \cxynv \cc T_1 \cc \czwmv \cc T_2 \]
-As $T$ is simple, there cannot be any commands on $n$ or $m$ in $T_1$,
-and therefore $(T_0\cc\cxynv\cc T_1)\FS(n) = y$.
-If $n=\parent(m)$, then we know $y\neq\vald$, and
-(similarly to the reasoning in \cref{ax_directchild_breaks})
-as either before or after $\czwmv$ which is not an assertion command,
-$\FS(m)\neq\empt$, the latter command will break the filesystem.
-If $\parent(n)=m$, then we know $y\neq\empt$, and
-(similarly to the reasoning in \cref{ax_directparent_breaks})
-as wither before or after $\czwmv$, $\FS(m)\neq\vald$,
-the latter command will break the filesystem.
+TODO corollary
 \end{proof}
 
 
