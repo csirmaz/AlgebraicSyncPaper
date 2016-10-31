@@ -44,6 +44,19 @@ all of their valid reorderings are equivalent,
 and all equivalent sequences are mere reorderings.
 To prove this, we will need the following results.
 
+\begin{mycor}\label{subseq_in_orderset}
+For simple sequences $S$ and $T$,
+if $T\in\orderset{S}$, then for any subsequence of $S$, $S_0$, which contains
+only part of the commands in $S$ but in the same order as in $S$,
+and for the corresponding subsequence of $T$, $T_0$, which
+contains the same commands but in the order they are found in $T$,
+$T_0\in\orderset{S_0}$ must hold.
+\end{mycor}
+\begin{proof}
+This is because
+if there are no command pairs in $T$ not conforming to \cref{def_orderset},
+then there cannot be any in $T_0$.
+\end{proof}
 
 \begin{mylem}\label{simple_distant_pairs}
 For any simple sequence $S\nequiv\cbrk$
@@ -99,12 +112,21 @@ means that $\cxynv\cc\czwmv\nequiv\cbrk$ is a destruction pair, which is a contr
 \end{proof}
 
 
-\begin{mylem}\label{order_is_only_possible}
-For any simple sequence $S$ and its permutation $T$, 
-\[ T\not\in\orderset{S} \Longrightarrow T\equiv\cbrk. \]
-\end{mylem}
+\begin{mycor}\label{order_is_only_possible}
+For any simple sequence $S$ and its permutation $S'$, 
+\[ S'\not\in\orderset{S} \Longrightarrow S'\equiv\cbrk. \]
+\end{mycor}
 \begin{proof}
-TODO corollary
+This follows directly from \cref{simple_distant_pairs}.
+If $S'\not\in\orderset{S}$ then by \cref{def_orderset}
+it contains two commands on a node $n$ and its parent
+that placed next to each other do not form
+a construction or destruction pair.
+Let them be $\cxynv$ and $\czwmv$.
+By \cref{ax_directchild_breaks,ax_directparent_breaks}
+we know the subsequence of $S'$,
+$\cxynv\cc\czwmv\equiv\cbrk$ and therefore by \cref{simple_distant_pairs}
+$S'\equiv\cbrk$.
 \end{proof}
 
 
@@ -186,7 +208,8 @@ where $[S]_\equiv \cap \setssmp$ is the set of simple sequences equivalent to $S
 \begin{proof}
 First, we prove, by contradiction, that if a simple sequence $T\equiv S$, then $T\in\orderset{S}$.
 We assume $T\equiv S$ and $T\not\in\orderset{S}$.
-Then, from \cref{order_is_only_possible} we know $T\equiv\cbrk$ which
+Then, from \cref{equiv_simple_same_commands} we know $T$ is a permutation of $S$,
+and from \cref{order_is_only_possible} we know $T\equiv\cbrk$ which
 is a contradiction as $T\equiv S\nequiv\cbrk$.
 
 Next, we prove that if $T\in\orderset{S}$, then $T\equiv S$.
@@ -197,15 +220,7 @@ In our induction step we assume that $T^*\in\orderset{S^*}\Rightarrow T^*\equiv 
 for all sequences of length $i\geq 1$ or less.
 
 Let us consider $T\in\orderset{S}$ where $T$ and $S$ are of length $i+1$.
-We note that for any subsequence of $S$, $S_0$, which contains
-only part of the commands in $S$ but in the same order as in $S$,
-and for the corresponding subsequence of $T$, $T_0$, which
-contains the same commands but in the order they are found in $T$,
-$T_0\in\orderset{S_0}$ must hold as
-if there were no command pairs in $T$ not conforming to \cref{def_orderset},
-then there cannot be any in $T_0$.
-
-We also know that due to \cref{ax_separate_commute,incomparable_is_independent}
+We know that due to \cref{ax_separate_commute,incomparable_is_independent}
 $T$ can be rearranged into $T'\equiv T$ where
 $T'=T_1\cc T_2\cc \cdots \cc T_k$ and the segments $T_j$ are pairwise independent,
 and where we have the maximum number of segments possible.
@@ -217,16 +232,16 @@ $S_1$ would correspond to (i.e. contain the same commands as) $T_1$, the second 
 and so on.
 
 The segments contain commands in the same order as the full sequences.
-Therefore, from the observation abvout subsequences
+Therefore, from \cref{subseq_in_orderset}
 we know for all $1\leq j\leq k$, $T_j\in\orderset{S_j}$,
 and if $T'$ has at least two segments and so 
 they are shorter than $i+1$,
 from the induction hypothesis
-we also know $T_j\equiv S_j$, from which we get $T\equiv S$.
+we also know $T_j\equiv S_j$, from which we get $T'\equiv S'$ and $T\equiv S$.
 
-We can assume $T'$ has at least two commands,
-and in the remaining case, when $T'$ has only one segment,
-we know all nodes that the commands in $T'$ apply to
+The remaining case is when $T'$ has at least two commands,
+but only one segment, which means
+that all nodes that the commands in $T'$ apply to
 are related via $\descendant$.
 $T'$ contains the same commands as $S$, and
 from \cref{connected_changes} we see that the nodes the commands apply to therefore form a tree in $\setn$.
