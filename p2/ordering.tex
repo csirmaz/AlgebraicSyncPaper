@@ -199,6 +199,7 @@ However, then $\czwnv=\cxynv$, which is a contradiction.
 \end{proof}
 
 
+% TODO delete unused results
 
 \begin{mylem}\label{simple_reorder_equiv}
 For a simple sequence $S\nequiv\cbrk$,
@@ -213,7 +214,7 @@ and from \cref{order_is_only_possible} we know $T\equiv\cbrk$ which
 is a contradiction as $T\equiv S\nequiv\cbrk$.
 
 Next, we prove that if $T\in\orderset{S}$, then $T\equiv S$.
-We proceed by induction.
+We proceed by induction on the length of $S$.
 Our base cases are $\emptyseq$, where $\orderset{\emptyseq}=\{\emptyseq\}$,
 and one-long sequences, where this is trivially true.
 In our induction step we assume that $T^*\in\orderset{S^*}\Rightarrow T^*\equiv S^*$ holds
@@ -225,8 +226,8 @@ $T$ can be rearranged into $T'\equiv T$ where
 $T'=T_1\cc T_2\cc \cdots \cc T_k$ and the segments $T_j$ are pairwise independent,
 and where we have the maximum number of segments possible.
 $S$ can be converted similarly into $S'$, and
-as because of \cref{equiv_simple_same_commands} $S$ and $T$ contain the same commands,
-the segments of $S'$ will contain the same commands as those of $T$.
+as $S$ and $T$ contain the same commands,
+the segments of $S'$ will contain the same commands as those of $T'$.
 Let us therefore rearrange the segments of $S'$ so that the first segment
 $S_1$ would correspond to (i.e. contain the same commands as) $T_1$, the second segment $S_2$ to $T_2$,
 and so on.
@@ -241,16 +242,15 @@ we also know $T_j\equiv S_j$, from which we get $T'\equiv S'$ and $T\equiv S$.
 
 The remaining case is when $T'$ has at least two commands,
 but only one segment, which means
-that all nodes that the commands in $T'$ apply to
-are related via $\descendant$.
-$T'$ contains the same commands as $S$, and
-from \cref{connected_changes} we see that the nodes the commands apply to therefore form a tree in $\setn$.
+all nodes the commands in $T$ apply to are related via $\descendant$.
+$T$ contains the same commands as $S$, and
+from \cref{connected_changes} we see that the nodes the commands apply to form a tree in $\setn$.
 We can therefore select the command on the topmost node (let it be $\cxynv$),
-and we know $T'$ contains commands on some of its child nodes.
+and we know $T$ contains commands on some of its child nodes.
 Let one of these be $\czwmv$.
-Now mark the command $\czwmv$ and all commands in $T'$ that are applied to nodes that are descendants of $m$.
-From \cref{ax_separate_commute} we know that all remaining commands in $T'$ (except $\cxynv$)
-commute with the marked commands; therefore we can swap them to get $T''\equiv T'$
+Now mark the command $\czwmv$ and all commands in $T$ that are applied to nodes that are descendants of $m$.
+From \cref{ax_separate_commute} we know that all remaining commands in $T$ (except $\cxynv$)
+commute with the marked commands; therefore we can swap them to get $T''\equiv T$
 where marked commands are next to $\cxynv$:
 \[ T'' = T_\mathrm{unmarked\ left} \cc T_\mathrm{marked\ left} \cc \cxynv \cc T_\mathrm{marked\ right} \cc T_\mathrm{unmarked\ right}. \]
 
