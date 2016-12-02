@@ -18,8 +18,8 @@ For a simple set or sequence $U$,
 we use $\orderset{U}$ to denote the set of sequences
 that are all permutations of the commands in $U$
 for which the following holds:
-for any two commands $\cxynv$ and $\czwmv$ in a sequence in $\orderset{U}$
-where $\cxynv$ comes earlier in the sequence than $\czwmv$,
+for any two commands $\cxynv$ and $\czwmv$ in a permutation
+where $\cxynv$ comes earlier,
 \begin{itemize}
 \item if $n=\parent(m)$, then $y=\vald$
 \item if $\parent(n)=m$, then $y=\empt$.
@@ -32,11 +32,11 @@ nodes can be applied in any order, so we only need to focus on the order of comm
 with comparable nodes;
 \cref{connected_changes}, from which we know that if $U$ contains commands on two comparable
 nodes, then it contains commands on all nodes in between, so it is enough to specify
-the order of commands on parent and child nodes;
+the order of commands on directly related nodes;
 and finally, \cref{ax_directchild_breaks,ax_directparent_breaks}, from which we know
 that commands on parent--child pairs must be construction or destruction pairs.
-Investigating the pairs we see that they are identified by the output value of the first command ($y$),
-and that they determine whether the command on the parent or the child must precede the other.
+Investigating these pairs we see that they are identified by the output value of the first command ($y$),
+which in turn determines whether the command on the parent or the child must precede the other.
 
 In \cref{simple_reorder_equiv} we offer a formal proof that 
 $\orderset{U}$ contains all possible permutations.
@@ -81,7 +81,7 @@ of \cref{ax_directchild_breaks,ax_directparent_breaks}.
 Formally, we prove our proposition by contradiction,
 and in this version of the proof we reach back to our filesystem model.
 We assume $S\nequiv\cbrk$ and therefore there is a $\FS$ for which $S\aFS\neq\fsbroken$,
-but it contains commands that do not form a construction or destruction pair.
+but it contains commands on a node and its parent that do not form a construction or destruction pair.
 Select two such commands, $\cxynv$ and $\czwmv$,
 and split $S$ around them into three parts:
 \[ S = S_0 \cc \cxynv \cc S_1 \cc \czwmv \cc S_2 \]
@@ -225,7 +225,7 @@ Let us consider $T\in\orderset{S}$ where $T$ and $S$ are of length $i+1$.
 Let the first command in $S$ be $\cxynv$, that is, $S=\cxynv\cc S_0$.
 We proceed by a nested induction on the number of commands before $\cxynv$ in $T$.
 Our base case is when it is the first command, which means $T=\cxynv\cc T_0$.
-Then from \cref{subseq_in_orderset} we know $T_1\in\orderset{S_0}$
+Then from \cref{subseq_in_orderset} we know $T_0\in\orderset{S_0}$
 and from the induction hypothesis $T_0\equiv S_0$ from which we get $T\equiv S$.
 
 In our nested induction step we assume $T'\equiv S$ for all $T'\in\orderset{S}$
