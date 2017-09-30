@@ -4,6 +4,7 @@
 We model a working filesystem
 using a function $\FS$ with a set of nodes (filesystem paths) $\setn$ as its domain,
 and a set of possible contents or values $\setv$ as its codomain.
+We consider metadata to be part of the values in $\setv$.
 \begin{mydef}[Filesystems, $\setn$, $\setv$, $\setfs$ and $\empt$]
 \[ \FS: \setn \rightarrow \setv \]
 In our model, $\setn$ 
@@ -57,7 +58,6 @@ are both directories, or are both $\empt$.
 \end{mydef}
 
 As usual, we write $[v]$ for the equivalence class of $v$, which represents its type.
-We also consider metadata to be part of the values in $\setv$.
 
 The formal definition of the tree property is therefore
 \begin{mydef}[Tree property]
@@ -98,5 +98,5 @@ to extend our results to the $|\setd|>1$ case.
 
 In this paper, $\FS$ and $\GS$ denote filesystems,
 and $n$, $m$ and $o$ are nodes in $\setn$.
-We write $\valf$ for an arbitrary file value. % element in $\setf$.
+We write $\valf$ for a file value. % element in $\setf$.
 

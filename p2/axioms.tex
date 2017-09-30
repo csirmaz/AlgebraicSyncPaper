@@ -5,13 +5,13 @@
 % Sequences
 % ---------
 
-So that we can describe the effects of commands in general,
+So that we can describe the effects of commands independently of filesystems,
 let us introduce some notation
 and note some observations.
 We already know that
 commands usually do not occur in isolation,
 and are applied to filesystems in time.
-Therefore we will investigate sequences of commands with a well-defined order.
+Therefore we investigate sequences of commands with a well-defined order.
 \begin{mydef}[Sequences of commands: $\cc$ and $\emptyseq$]
 We use ``$\cc$'' to combine commands to form a sequence, or combine sequences to form a longer sequence,
 with the meaning that the command on the left is applied first:
@@ -31,22 +31,21 @@ which is defined on all filesystems and by definition leaves all filesystems unc
 For a sequence of commands $S$, $\Dom{S}$ is the domain of $S$,
 which is the set of filesystems $S$
 (that is, the commands it contains in the given order)
-does not break.
+is defined on, that is, it does not break.
 
 We write $\Img{S}$ to denote the image of the domain of the sequence $S$.
 \end{mydef}
 
 
 The following two relations 
-(which echo the ones defined in \cite{NREC})
-allow us to investigate sequences of commands independently of filesystems.
+echo the ones defined in \cite{NREC}.
 In the definitions, $A,B,S,T$ stand for arbitrary sequences.
 
 \begin{mydef}[$\eqext$]
 % Relation in the algebra
-$A\eqext B$ means that $B$ \emph{extends} $A$,
+We write $A\eqext B$, or $B$ \emph{extends} $A$,
 % intended interpretation:
-that is, they behave in the same way
+to mean that they behave in the same way
 on any filesystem $A$ does not break:
 $\forall \FS\in\Dom{A}: A\aFS=B\aFS$.
 % old inference rule: $ A\eqext B \Rightarrow S\cc A\cc T\eqext S\cc B\cc T$,
@@ -77,11 +76,12 @@ iff $A$ and $B$ behave in the same way on
 all filesystems, that is, $\forall \FS: A\aFS=B\aFS$.
 \end{mylem}
 \begin{proof}
-If $\forall \FS: A\aFS=B\aFS$ then $A\eqext B$ and $B\eqext A$ and so by definition $A\equiv B$.
+% TODO APPENDIX
+If $\forall \FS: A\aFS=B\aFS$, then $A\eqext B$ and $B\eqext A$ and so by definition $A\equiv B$.
 For the reverse statement we know $A\eqext B$ and $B\eqext A$.
 $B\eqext A$ implies that it is not possible for both $B\aFS\neq\fsbroken$ and $A\aFS=\fsbroken$ to be true.
-Therefore, for every filesystem $\FS$ either $A\aFS\neq\fsbroken$, in which case $A\aFS=B\aFS$ as $A\eqext B$, or $A\aFS=\fsbroken$,
-in which case $B\aFS=\fsbroken$ must be true, and therefore $A\aFS=B\aFS$ still holds.
+Therefore, for every filesystem $\FS$, either $A\aFS\neq\fsbroken$, in which case $A\aFS=B\aFS$ as $A\eqext B$, or $A\aFS=\fsbroken$,
+in which case $B\aFS=\fsbroken$ must be true, and therefore $A\aFS=B\aFS$.
 \end{proof}
 
 % Rules
@@ -163,9 +163,15 @@ of the following:
    \begin{gather*}
             \cbdaa{\nn}\cc  \cbfaa{n} \\
             \cbdaa{\nn}\cc  \cbdaa{n} \\
-            \cfdaa{\nn}\cc  \cbfaa{n} \\
+            \cfdaa{\nn}\cc  \caaa{\empt}{\valff}{n} \\
             \cfdaa{\nn}\cc  \cbdaa{n}
    \end{gather*}
+\end{mydef}
+
+\begin{mydef}[Construction command]
+A command $\cxynv$ is a construction command if it can appear in a construction pair,
+that is, if $[x]=[\empt]$ and $[y]=[\valf]$ or $[y]=[\vald]$,
+or if $[x]=[\valf]$ and $[y]=[\vald]$.
 \end{mydef}
 
 \begin{myax}\label{ax_directchild_breaks}
@@ -173,6 +179,7 @@ All other commands on a child break every filesystem:
 $\cxynnv\cc\czwnv \equiv \cbrk$ where $\nn=\parent(n)$ and $\cxy\neq\cdd$ and $\czw\neq\cbb$
 and the pair is not a construction pair.
 As we shall see, this can be extended to \cref{simple_distant_pairs}.
+% TODO
 \end{myax}
 
 \begin{mydef}[Destruction pair]
@@ -180,10 +187,18 @@ A pair of commands on nodes $n$ and $\nn$ is a destruction pair if $\parent(n)=\
 of the following:
    \begin{gather*}
             \cfba{n}\cc  \cdba{\nn} \\
-            \cfba{n}\cc  \cdfaa{\nn} \\
+            \cfba{n}\cc  \caaa{\vald}{\valff}{\nn} \\
             \cdba{n}\cc  \cdba{\nn} \\
             \cdba{n}\cc  \cdfaa{\nn}
    \end{gather*}
+\end{mydef}
+
+\begin{mydef}[Destruction command]
+A command $\cxynv$ is a destruction command if it can appear in a destruction pair,
+that is, 
+if $[x]=[\valf]$ and $[y]=[\empt]$,
+or if $[x]=[\vald]$ and $[y]=[\empt]$ or $[y]=[\valf]$.
+Note that a command cannot be both a construction and a destruction command.
 \end{mydef}
 
 \begin{myax}\label{ax_directparent_breaks}
@@ -191,6 +206,7 @@ All other commands on a parent break every filesystem:
 $\cxynv\cc\czwnnv \equiv \cbrk$ where $\parent(n)=\nn$ and $\cxy\neq\cbb$ and $\czw\neq\cdd$
 and the pair is not a destruction pair.
 This can also be extended to \cref{simple_distant_pairs}.
+% TODO
 \end{myax}
 
 \begin{mydef}[Assertion command]
@@ -232,14 +248,14 @@ $\cdda{n}\eqext\emptyseq$ and $\cbba{n}\eqext\emptyseq$.
 \noindent
 We also define the concept of two commands being independent:
 
-\begin{mydef}[$A\indep B$: Independent commands, sequences and sets]\label{def_indep}
+\begin{mydef}[$A\indep B$: Independent commands, sequences and sets of commands]\label{def_indep}
 Two commands $\cxynv$ and $\czwmv$ 
 are independent, and we write $\cxynv\indep\czwmv$ if 
 they commute and do not break all filesystems:
 \[ \cxynv\cc\czwmv \equiv \czwnv\cc\cxynv \nequiv \cbrk. \]
 For two sequences or unordered sets of commands $A$ and $B$ we write $A\indep B$ if
 for all $\alpha$ in $A$ and all $\beta$ in $B$, $\alpha\indep\beta$.
-We also write $\alpha\indep B$ iff $\forall \beta\in B:\alpha\indep\beta$.
+We also write $\alpha\indep B$ iff $\{\alpha\}\indep B$.
 \end{mydef}
 
 It is intentional that we use the same symbol for independent commands
@@ -248,9 +264,9 @@ and sequences as for incomparable nodes. As we will see in the next
 these two concepts are closely related.
 
 \begin{mylem}\label{incomparable_is_independent}
-Two different commands that are not assertion commands are independent iff the nodes they change are incomparable:
+Two different commands that are not assertion commands are independent iff the nodes they change are incomparable. In other words,
 \[ \cxynv\indep\czwmv \Longleftrightarrow n\unrel m \]
-if $\cxynv\neq\czwmv$ and none of $\cxy$ and $\cxw$ is $\cbb$ or $\cdd$.
+if $\cxy\neq\czw$ and none of $\cxy$ and $\cxw$ is $\cbb$ or $\cdd$.
 \end{mylem}
 \begin{proof}
 This is easy to show based on the output of the program that investigates the behavior of command pairs.

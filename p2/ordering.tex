@@ -8,25 +8,24 @@ it is actually the task of the reconciler to determine whether there is an order
 and if yes, what order,
 in which updates from different replicas can be applied to a filesystem.
 
-Let us therefore define $\ordersetsign$ which gives us all
-possible orders in which a set of commands can be applied
-to filesystems without breaking it
-provided that the commands can be applied to a fileystem in some order.
+Let us therefore define $\ordersetsign$ which gives all
+permutations of a set of commands that do not break all filesystems.
 
 \begin{mydef}[$\ordersetsign$]\label{def_orderset}
-For a simple set or sequence $U$,
+For a simple set or sequence of commands $U$,
 we use $\orderset{U}$ to denote the set of sequences
 that are all permutations of the commands in $U$
 for which the following holds:
-for any two commands $\cxynv$ and $\czwmv$ in a permutation
-where $\cxynv$ comes earlier,
+for all subsequences $\cxynv\cc\czwmv$,
 \begin{itemize}
 \item if $n=\parent(m)$, then $y=\vald$
 \item if $\parent(n)=m$, then $y=\empt$.
 \end{itemize}
 \end{mydef}
 
-The principal ideas behind this algorithm are 
+As usual, by subsequence we mean a subset of the commands in $S$ in the same order as they are found in $S$.
+
+The principal ideas behind these conditions are 
 \cref{ax_separate_commute}, from which we know that commands on incomparable
 nodes can be applied in any order, so we only need to focus on the order of commands
 with comparable nodes;
@@ -65,8 +64,6 @@ if $\cxynv\cc\czwmv$ is a subsequence of $S$ and $n=\parent(m)$ or $\parent(n)=m
 then $\cxynv\cc\czwmv\nequiv\cbrk$.
 \end{mylem}
 \begin{proof}
-As usual, by subsequence we mean a subset of the commands in $S$ in the same order as they are found in $S$.
-
 Informally speaking, the proposition means that
 the two commands must form a construction or destruction pair even
 if they are not next to each other.
@@ -78,13 +75,15 @@ of \cref{ax_directchild_breaks,ax_directparent_breaks}.
 
 % BACK_TO_THE_FS TODO
 % TODO Review any proof depending on "nothing changes FS at n until...".
+% TODO Move to rules
+% TODO APPENDIX
 Formally, we prove our proposition by contradiction,
 and in this version of the proof we reach back to our filesystem model.
 We assume $S\nequiv\cbrk$ and therefore there is a $\FS$ for which $S\aFS\neq\fsbroken$,
-but it contains commands on a node and its parent that do not form a construction or destruction pair.
+but $S$ contains commands on a node and its parent that do not form a construction or destruction pair.
 Select two such commands, $\cxynv$ and $\czwmv$,
 and split $S$ around them into three parts:
-\[ S = S_0 \cc \cxynv \cc S_1 \cc \czwmv \cc S_2 \]
+\[ S = S_0 \cc \cxynv \cc S_1 \cc \czwmv \cc S_2. \]
 As $S$ is simple, there cannot be any commands on $n$ or $m$ in $S_1$,
 and therefore $(S_0\cc\cxynv\cc S_1)\FS(n) = y$,
 and $[(S_0\cc\cxynv\cc S_1)\FS(m)] = [S_0\FS(m)]$.
@@ -125,9 +124,9 @@ that placed next to each other do not form
 a construction or destruction pair.
 Let them be $\cxynv$ and $\czwmv$.
 By \cref{ax_directchild_breaks,ax_directparent_breaks}
-we know the subsequence of $S'$,
-$\cxynv\cc\czwmv\equiv\cbrk$ and therefore by \cref{simple_distant_pairs}
-$S'\equiv\cbrk$.
+we know
+$\cxynv\cc\czwmv\equiv\cbrk$, which is a subsequence of $S'$,
+and therefore by \cref{simple_distant_pairs} $S'\equiv\cbrk$.
 \end{proof}
 
 
@@ -149,7 +148,7 @@ ancestor of $n$ up to $\nn$.
 Furthermore,
 we prove this proposition for sequences, not sets, as if all sequences must contain a command on $\parent(n)$,
 then so must all sets because otherwise there would be no order in which the commands they contain could be
-applied to any filesystem.
+applied to a filesystem.
 
 Let $A$ be a sequence that satisfies the conditions;
 we therefore know that it contains a command $\cxynv$ on $n$
@@ -204,8 +203,8 @@ However, then $\czwnv=\cxynv$, which is a contradiction.
 
 \begin{mylem}\label{simple_reorder_equiv}
 For a simple sequence $S\nequiv\cbrk$,
-\[ \orderset{S} = [S]_\equiv \cap \setssmp, \]
-where $[S]_\equiv \cap \setssmp$ is the set of simple sequences equivalent to $S$.
+$\orderset{S}$ is the set of all simple sequences equivalent to $S$, that is,
+\[ \orderset{S} = [S]_\equiv \cap \setssmp. \]
 \end{mylem}
 \begin{proof}
 First, we prove, by contradiction, that if a simple sequence $T\equiv S$, then $T\in\orderset{S}$.

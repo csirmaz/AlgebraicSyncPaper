@@ -35,7 +35,7 @@ demonstrated \cite{BZ}
 that extending this distinction to more commands ultimately simplifies
 the definition of conflicting commands, as our model will then able to predict the behavior of commands
 more precisely.
-In other words, encoding the outputvalue in the commands is definitely useful.
+In other words, encoding the output value in the commands is definitely useful.
 As the success or failure of filesystem commands only depends on the types of values in the filesystem,
 we expect to use the type of their output when modelling their behavior.
 
@@ -49,36 +49,26 @@ As, based on the above, we expect that encoding more information in the commands
 results in a model with greater predictive powers,
 and in order to resolve this asymmetry, 
 we propose a set of commands that encode
-the type of the original value $\FS(n)$ as well.
+the type of the input value $\FS(n)$ as well.
 (Some real-life filesystem commands like $rmdir$ do this already.)
 Again, as the success of failure of commands depends on types of values,
 it is not necessary to encode the actual input value.
 
-\bigskip
-
+% Definition
 % Break / empty command
 
-\noindent
-A command at times will return an error.
-This happens if the encoded type of the original filesystem value does not match
-what is actually in the filesystem, or if the modified filesystem no
-longer has the tree property.
-In these cases we say that the command {\em breaks} the filesystem,
-and the function we use to model the command will be undefined on the filesystem.
-
-So that we could reason about sequences of commands that break every filesystem, 
-we also introduce the command $\cbrk$ which is not defined anywhere,
-that is, which breaks every filesystem.
-
-% Definition
-
-\begin{mydef}[Filesystem commands]
-In other words, we model filesystem commands as partial endofunctions on filesystems,
+\begin{mydef}[Filesystem commands, $\cbrk$]
+We model filesystem commands as partial endofunctions on filesystems,
 that is, functions that map filesystems to filesystems, but which
 are not defined everywhere:
 \[ \alpha: \setfs \nrightarrow \setfs \]
-A command $\alpha$ is not defined on filesystems that it would break.
-At times in these cases we write that the command returns the bottom element, $\fsbroken$.
+A command $\alpha$ is not defined on filesystems where it returns an error.
+This happens if the input type of the command does not match
+what is actually in the filesystem, or if the modified filesystem no
+longer has the tree property.
+At times in these cases we write that the command {\em breaks} the filesystem,
+or that it returns the bottom element, $\fsbroken$.
+
 We write $\cbrk$ for the empty partial function which is not defined anywhere.
 
 We have three pieces of information defining a non-empty command,
@@ -88,8 +78,8 @@ and the node to which it is applied ($n$):
 \[ \alpha = \caaaa{v_\textrm{in}}{v_\textrm{out}}{n}. \]
 \end{mydef}
 
-For example, $\cbfaa{n}$ will represent $create(n,\valf)$,
-and $\cdba{n}$ will represent $rmdir(n)$.
+For example, $\cbfaa{n}$ represents $create(n,\valf)$,
+and $\cdba{n}$ represents $rmdir(n)$.
 When describing unknown commands, we substitute one or both
 of their values with variables, and write e.g. $\cxynv$.
 By $\cxynv=\czwmv$ we mean that the commands are identical
@@ -97,8 +87,7 @@ By $\cxynv=\czwmv$ we mean that the commands are identical
 As suggested above, we will frequently only investigate
 the types of the input and output values of a command
 (its input and output types), and write
-$\cxy=\czw$, by which we mean $[x]=[z]$ and $[y]=[w]$
-(or equivalently $x\typeeq z$ and $y\typeeq w$).
+$\cxy=\czw$, by which we mean $[x]=[z]$ and $[y]=[w]$.
 
 We note that a command or a sequence of commands is applied to a filesystem
 by prefixing the command or sequence to it, for example: $\cbrk\aFS$, $\cbdaa{n}\aFS$, 
