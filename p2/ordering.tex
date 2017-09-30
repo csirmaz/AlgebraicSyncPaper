@@ -206,6 +206,23 @@ For a simple sequence $S\nequiv\cbrk$,
 $\orderset{S}$ is the set of all simple sequences equivalent to $S$, that is,
 \[ \orderset{S} = [S]_\equiv \cap \setssmp. \]
 \end{mylem}
+
+For the proof we define construction and descruction commands as follows:
+\begin{mydef}[Construction command]
+A command $\cxynv$ is a construction command if it can appear in a construction pair,
+that is, if $[x]=[\empt]$ and $[y]\neq[\empt]$,
+or if $[x]=[\valf]$ and $[y]=[\vald]$.
+\end{mydef}
+\begin{mydef}[Destruction command]
+A command $\cxynv$ is a destruction command if it can appear in a destruction pair,
+that is, 
+if $[x]=[\valf]$ and $[y]=[\empt]$,
+or if $[x]=[\vald]$ and $[y]\neq[\vald]$.
+Note that a command cannot be both a construction and a destruction command.
+\end{mydef}
+
+
+% TODO APPENDIX
 \begin{proof}
 First, we prove, by contradiction, that if a simple sequence $T\equiv S$, then $T\in\orderset{S}$.
 We assume $T\equiv S$ and $T\not\in\orderset{S}$.
@@ -218,7 +235,7 @@ We proceed by induction on the length of $S$.
 Our base cases are $\emptyseq$, where $\orderset{\emptyseq}=\{\emptyseq\}$,
 and one-long sequences, where this is trivially true.
 In our induction step we assume that $T^*\in\orderset{S^*}\Rightarrow T^*\equiv S^*$ holds
-for all sequences of length $i\geq 1$ or less.
+for all sequences of length $i$ or less, where $i\geq 1$.
 
 Let us consider $T\in\orderset{S}$ where $T$ and $S$ are of length $i+1$.
 Let the first command in $S$ be $\cxynv$, that is, $S=\cxynv\cc S_0$.
@@ -235,60 +252,48 @@ command. Then from the induction hypothesis we will know $T\equiv T''\equiv S$,
 which proves our lemma.
 
 Let the command to the left of $\cxynv$ in $T$ be $\czwmv$.
+As $S$ is simple, we know $n\neq m$.
 If $n\unrel m$, then from \cref{ax_separate_commute} we know we can swap the two commands
 and get an equivalent sequence.
-Otherwise we note that necessarily $\cxynv$ and $\czwmv$ occur in the reverse order in $S$.
-We know $n=\parent(m)$ or $m=\parent(n)$ cannot be the case,
 
-TODO against definition
+\newcommand{\indx}{\varphi}
+Otherwise, either $n\descendant m$, or $m\descendant n$, and so from
+\cref{connected_changes} we know that $S$ contains a command on all nodes
+between $n$ and $m$, and therefore so does $T$.
+Let these nodes be $n_0, n_1, \ldots, n_k$ where $n_0=n$ and $n_k=m$,
+and where 
+either $n_\indx=\parentf{n_{\indx+1}}$ for all $\indx$ between $1$ and $k-1$,
+or $n_{\indx+1}=\parentf{n_\indx}$ for all $\indx$.
+We assume that $n_\indx=\parentf{n_{\indx+1}}$ is true.
 
-The only remaining case is when $n$ and $m$ are comparable but not in a parent--child relationship.
+Also, let $I^S_\indx$ be the index of the command on $n_\indx$ in $S$.
+For all $\indx$, both the commands on $n_\indx$ and $n_{\indx+1}$ must be either
+construction commands, or destruction commands, depending on
+whether $I^S_\indx<I^S_{\indx+1}$ or $I^S_{\indx+1}<I^S_\indx$.
+This is because otherwise, \cref{simple_distant_pairs} would not hold for $S$.
 
+As a command cannot be both a construction and a desrtruction command,
+this means that the indices $I^S$ are either monotone increasing, or monotone
+decreasing, but cannot change direction.
+And as $S$ begins with $\cxynv$ and so $I^S_0=1$, we know they are monotone increasing,
+and the commands on $n_\indx$ are construction commands.
+If we denote the command on $n_\indx$ with $\caaa{x_\indx}{y_\indx}{n_\indx}$,
+by definition this means that $[y_\indx]\neq[\empt]$ for all $\indx$.
 
-....................................
+Let us turn to the location of these commands in $T$,
+and denote their indices in $T$ with $I^T_\indx$.
+We know $I^T_k=I^T_0-1$ as $\czwmv$ precedes $\cxynv$.
+This means there must exist a $\indx$ for which $I^T_{\indx+1}<I^T_\indx$.
+We therefore know that
+$\caaa{x_{\indx+1}}{y_{\indx+1}}{n_{\indx+1}} \cc \caaa{x_\indx}{y_\indx}{n_\indx}$
+is a subsequence of $T$, and by assumption $\parentf{n_{\indx+1}}=n_\indx$.
+By definition of $\ordersetsign$, therefore $y_{\indx+1}=\empt$ must be true,
+which is a constradiction.
 
-We know that due to \cref{ax_separate_commute,incomparable_is_independent}
-$T$ can be rearranged into $T'\equiv T$ where
-$T'=T_1\cc T_2\cc \cdots \cc T_k$ and the segments $T_j$ are pairwise independent,
-and where we have the maximum number of segments possible.
-$S$ can be converted similarly into $S'$, and
-as $S$ and $T$ contain the same commands,
-the segments of $S'$ will contain the same commands as those of $T'$.
-Let us therefore rearrange the segments of $S'$ so that the first segment
-$S_1$ would correspond to (i.e. contain the same commands as) $T_1$, the second segment $S_2$ to $T_2$,
-and so on.
-
-The segments contain commands in the same order as the full sequences.
-Therefore, from \cref{subseq_in_orderset}
-we know for all $1\leq j\leq k$, $T_j\in\orderset{S_j}$,
-and if $T'$ has at least two segments and so 
-they are shorter than $i+1$,
-from the induction hypothesis
-we also know $T_j\equiv S_j$, from which we get $T'\equiv S'$ and $T\equiv S$.
-
-The remaining case is when $T'$ has at least two commands,
-but only one segment, which means
-all nodes the commands in $T$ apply to are related via $\descendant$.
-$T$ contains the same commands as $S$, and
-from \cref{connected_changes} we see that the nodes the commands apply to form a tree in $\setn$.
-We can therefore select the command on the topmost node (let it be $\cxynv$),
-and we know $T$ contains commands on some of its child nodes.
-Let one of these be $\czwmv$.
-Now mark the command $\czwmv$ and all commands in $T$ that are applied to nodes that are descendants of $m$.
-From \cref{ax_separate_commute} we know that all remaining commands in $T$ (except $\cxynv$)
-commute with the marked commands; therefore we can swap them to get $T''\equiv T$
-where marked commands are next to $\cxynv$:
-\[ T'' = T_\mathrm{unmarked\ left} \cc T_\mathrm{marked\ left} \cc \cxynv \cc T_\mathrm{marked\ right} \cc T_\mathrm{unmarked\ right}. \]
-
-
-TODO
-
-
-
-
-First, as $S$ only has at most one command on each node,
-any sequence in $\orderset{S}$ either breaks a filesystem,
-or it leaves it in the same state as $S$.
+It can be shown in the same way
+that the case when the $n_\indx$ nodes ascend the tree,
+that is, $n_{\indx+1}=\parentf{n_\indx}$ is true, also leads to a contradiction,
+by using destruction commands instead of construction ones.
 \end{proof}
 
 

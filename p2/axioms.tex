@@ -168,11 +168,6 @@ of the following:
    \end{gather*}
 \end{mydef}
 
-\begin{mydef}[Construction command]
-A command $\cxynv$ is a construction command if it can appear in a construction pair,
-that is, if $[x]=[\empt]$ and $[y]=[\valf]$ or $[y]=[\vald]$,
-or if $[x]=[\valf]$ and $[y]=[\vald]$.
-\end{mydef}
 
 \begin{myax}\label{ax_directchild_breaks}
 All other commands on a child break every filesystem:
@@ -191,14 +186,6 @@ of the following:
             \cdba{n}\cc  \cdba{\nn} \\
             \cdba{n}\cc  \cdfaa{\nn}
    \end{gather*}
-\end{mydef}
-
-\begin{mydef}[Destruction command]
-A command $\cxynv$ is a destruction command if it can appear in a destruction pair,
-that is, 
-if $[x]=[\valf]$ and $[y]=[\empt]$,
-or if $[x]=[\vald]$ and $[y]=[\empt]$ or $[y]=[\valf]$.
-Note that a command cannot be both a construction and a destruction command.
 \end{mydef}
 
 \begin{myax}\label{ax_directparent_breaks}
