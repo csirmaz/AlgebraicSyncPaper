@@ -262,9 +262,11 @@ Let the command to the left of $\cxynv$ in $T$ be $\czwmv$.
 As $S$ is simple, we know $n\neq m$.
 If $n\unrel m$, then from \cref{ax_separate_commute} we know we can swap the two commands
 and get an equivalent sequence.
+We finish the proof by showing that $n\unrel m$ must hold, as
+all other cases lead to contradiction.
 
 \newcommand{\indx}{\varphi}
-Otherwise, either $n\descendant m$, or $m\descendant n$, and so from
+If $n\nunrel m$, then either $n\descendant m$, or $m\descendant n$, and so from
 \cref{connected_changes} we know that $S$ contains a command on all nodes
 between $n$ and $m$, and therefore so does $T$.
 Let these nodes be $n_0, n_1, \ldots, n_k$ where $n_0=n$ and $n_k=m$,
@@ -312,15 +314,15 @@ by using destruction commands instead of construction ones.
 % as a set, and use the above algorithm to generate all possible orderings
 % of the commands it contains.
 
-TODO:
-It follows from the algorithm that:
+TODO TODO TODO -- ONLY USED ONCE WHERE INTERNALS OF OLD PROOF ARE USED
 \begin{mycor}\label{lemma:neighbor}
-If $U$ contains commands on both $n$ and $\parent(n)$, then
-there is a simple $U'\equiv U$ in which they are next to each other.
+If a simple sequence $S$ contains commands on both $n$ and $\parent(n)$, then
+there is a simple $S'\equiv S$ in which they are next to each other.
 \end{mycor}
 
 
-TODO:
+
+TODO TODO TODO:
 It follows from this that given a simple set,
 we can simply assume that it has an order.
 Accordingly, we will at times treat not only sequences as sets,
