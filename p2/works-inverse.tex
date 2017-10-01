@@ -15,7 +15,7 @@ and $\Dom{\sqs{A}}$ to denote $\bigcap_{A\in\sqs{A}} \Dom{A}$.
 % works operators
 % ---------------
 
-\begin{mydef}[$\worksmsign$, $\worksmeqsign$]
+\begin{mydef}[$\worksmsign$, $\worksmeqsign$]\label{def_works}
 For two sets of sequences $\sqs{A}$ and $\sqs{B}$
 we write $\worksm{\sqs{A}}{\sqs{B}}$ iff $\Dom{\sqs{A}} \subseteq \Dom{\sqs{B}}$;
 that is, if all sequences in $\sqs{B}$ work (do not break the filesystem)
@@ -156,7 +156,7 @@ introduce the canonical mapping $\T$ that preserves the types of values,
 but maps all objects into a subsystem where there is a one-to-one
 correspondence between types and values.
 
-\begin{mydef}[$\T$]
+\begin{mydef}[$\T$]\label{def_typemapping}
 We use $\T$ and write $a\T$ to denote the canonical mapping of 
 values, filesystems, commands and sequences to the
 representatives of their $\typeeq$-equivalence class.
@@ -175,7 +175,7 @@ As representatives of filesystems, commands, sequences, etc.
 are subsets of their non-representative counterparts, all
 propositions proven so far apply to them as well.
 
-\begin{mycor}
+\begin{mycor}\label{cor_typemap_transitive}
 For any filesystem $\FS$ and command $\alpha$, 
 $\alpha\T(\FS\T) = (\alpha\aFS)\T$.
 TODO needed?
@@ -241,18 +241,11 @@ the inverse of the representative command (partial bijection) $\alpha\T$.
 We write ${S\T}^{-1}$ for the inverse of the sequence $S\T$, which consists of the inverses of the commands in $S\T$
 in reverse order.
 \end{mydef}
-Per definition, for any filesystem $\FS\T$ outside the image of $\alpha\T$, the inverse $\alpha\T^{-1}$ is undefined.
+Per definition, for any filesystem $\FS\T$ outside the image of $\alpha\T$, the inverse $\alpha\T^{-1}$ is not defined.
 
-\begin{mylem}
-For representative commands
-\[ \cTxynv^{-1} = \cTyxnv. \]
-TODO needed? -maybe for \cref{negneg_is_typeeq}
-\end{mylem}
-
-From the definitions we can clearly see that - TODO not used
-\begin{mycor}\label{negneg_is_typeeq}
-$\forall S: ({S\T}^{-1})^{-1} = S\T$.
-\end{mycor}
+% Some further observations:
+% For representative commands \[ \cTxynv^{-1} = \cTyxnv. \]
+% $\forall S: ({S\T}^{-1})^{-1} = S\T$.
 
 For brevity, in the following lemma we use $B$, $B'$, $\sqs{A}$ and $\sqs{C}$ to denote
 representative sequences and sets.
