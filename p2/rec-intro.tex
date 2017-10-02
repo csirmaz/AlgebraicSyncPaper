@@ -20,8 +20,9 @@ adding any command left out from $\reca$ or $\recb$ will break the filesystems.
 
 We assume that $A$ and $B$ are returned by an update detector,
 and so they are simple sequences.
+% TODO
 (Otherwise, they can be simplified to become simple sequences; see \cref{update_works}.)
-We also assume that $\FS_A$ and $\FS_B$ are not broken.
+We also assume that $\FS$, $\FS_A$ and $\FS_B$ are not broken.
 With these assumptions,
 we can now define our reconciliation algorithm.
 
@@ -41,7 +42,7 @@ or based on \cref{incomparable_is_independent}
 in at most $O(x^2)$ time, where $x$ is the number of commands.
 Then, to generate the sequence $\reca$ from the resulting set, 
 we can order the commands using the algorithm described in
-\cref{ordering} as any subset of $A$ is also simple.
+\cref{ordering} as $\reca$, being a subset of $A$, is also simple.
 
 $\recb$ can be obtained in a similar way by reversing $A$ and $B$
 in the definition.

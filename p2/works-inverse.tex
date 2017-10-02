@@ -18,30 +18,33 @@ and $\Dom{\sqs{A}}$ to denote $\bigcap_{A\in\sqs{A}} \Dom{A}$.
 \begin{mydef}[$\worksmsign$, $\worksmeqsign$]\label{def_works}
 For two sets of sequences $\sqs{A}$ and $\sqs{B}$
 we write $\worksm{\sqs{A}}{\sqs{B}}$ iff $\Dom{\sqs{A}} \subseteq \Dom{\sqs{B}}$;
-that is, if all sequences in $\sqs{B}$ work (do not break the filesystem)
-on any filesystem all sequences in $\sqs{A}$ work on.
+that is, iff all sequences in $\sqs{B}$ are defined on (that is, do not break)
+all filesystems sequences in $\sqs{A}$ are defined on.
 We write $\worksmstr{\sqs{A}}{\sqs{B}}$ iff $\Dom{\sqs{A}} \subset \Dom{\sqs{B}}$.
 
-As a special case, we write $\worksmnil{\sqs{A}}$ if we know that there is a filesystem
-all sequences in $\sqs{A}$ work on.
-We also apply these relations to sequences directly:
+As a special case, we write $\worksmnil{\sqs{A}}$ if we know that there is at least one filesystem
+all sequences in $\sqs{A}$ are defined on.
+We also apply these relations to sequences directly;
+e.g. we write
 $\worksm{A}{B}$ with the meaning $\worksm{\{A\}}{\{B\}}$.
 \end{mydef}
 
 In a sense, $A\worksmeqsign B$ is a weaker counterpart of $A\eqext B$, as the former
-only requires that $B$ works where $A$ works, where the latter also requires
-that where they work, their effect is the same.
+only requires that $B$ is defined where $A$ is defined, where the latter also requires
+that where they are defined, their effect is the same.
 It is easy to see that the following corollary is true:
 
 \begin{mycor}\label{worksextpostfix}
 % An inference rule in the algebra
-$\forall A,S: \worksm{A\cc S}{A}$, that is, if a sequence works, its initial segment also works.
+$\forall A,S: \worksm{A\cc S}{A}$, that is, if a sequence is defined,
+its initial segment is also defined.
 \end{mycor}
 
 We also prove the following lemmas.
 
 \begin{myax}\label{combine_independent_commands}
-The combination of independent commands works wherever both of the commands work:
+The combination of independent commands is defined on all filesystems
+where both of the commands are defined:
 \[ \alpha\indep \beta \Rightarrow \worksm{\{\alpha, \beta\}}{\{\alpha\cc \beta\}}. \]
 \end{myax}
 \begin{proof}
@@ -67,7 +70,8 @@ which therefore cannot be changed by $\cxynv$.
 This result can be extended to sequences:
 
 \begin{mylem}\label{combine_independent_sequences}
-The combination of independent sequences works wherever both of the sequences work:
+The combination of independent sequences is defined on all filesystems
+where both of the sequences are defined:
 \[ S\indep T \Rightarrow \worksm{\{S,T\}}{\{S\cc T\}}. \]
 \end{mylem}
 \begin{proof}
@@ -80,7 +84,7 @@ the commands in $S$ and $T$ pairwise commute, and so any sequence
 that contains the commands from $S$ and $T$ and preserve their original partial order
 is equivalent to $S\cc T$ on all filesystems.
 
-Let the command that breaks $\FS$ in $T$ when applying $S\cc T$ be $t$
+Let the command in $T$ that breaks $\FS$ when applying $S\cc T$ be $t$
 so that $T=T_0\cc t\cc T_1$.
 It is still true that $(T_0 \cc t)\FS\neq\fsbroken$,
 and by definition $(S\cc T_0)\FS\neq\fsbroken$,
@@ -169,7 +173,7 @@ representatives of their $\typeeq$-equivalence class.
 \end{itemize}
 \end{mydef}
 
-It is easy to see that for all objects where it is defined, $a\T\typeeq a$.
+By definiton, for all objects where it is defined, $a\T\typeeq a$.
 % $|\setf|$ is also $1$.
 As representatives of filesystems, commands, sequences, etc.
 are subsets of their non-representative counterparts, all
@@ -218,10 +222,11 @@ where they break a filesystem (they are not defined):
 \[ \forall\FS,\GS,\alpha: \FS\T\neq\GS\T \wedge \alpha\T(\FS\T)\neq\fsbroken \Longrightarrow \alpha\T(\FS\T) \neq \alpha\T(\GS\T). \]
 \end{mylem}
 \begin{proof}
-Let $\alpha\T = \cTxynv$.
+Choose values that satisfy the left side, and let $\alpha\T = \cTxynv$.
 If $\FS\T$ and $\GS\T$ have different values at any node apart from $n$, then this difference remains
-even after applying $\cTxynv$ to $\FS\T$. The only remaining case therefore is where they have the same values
-at all nodes except $n$.
+even after applying $\cTxynv$ to $\FS\T$. 
+The only remaining case therefore is where they have the same values
+at all nodes except at $n$.
 As $\cTxynv(\FS\T)\neq\fsbroken$, we know $[\FS\T(n)]=[x]$.
 We also know that $\GS\T(n)\neq\FS\T(n)$, and therefore, as there is a one-to-one correspondence between values and types,
 $[\GS\T(n)]\neq[x]$.
@@ -274,23 +279,18 @@ The proof is illustrated by \cref{fig_invmove}.
 \caption{Proof of \cref{r_invmove}}\label{fig_invmove}
 \end{figure}
 
-Unless $\worksmnil{\ia}$, the propositions is trivially true. Otherwise,
-for the left-to-right part of the proposition,
-we know $\worksmnil{B\cc\ic}$, which implies that $\Dom{\ic}$ intersects with $\Img{B}$ 
-as otherwise $B\cc\ic$ would break all filesystems.
+For the left-to-right part of the proposition,
+from $\worksm{\ia}{B\cc\ic}$ we know $\Dom{\ia} \subseteq \Dom{B\cc\ic}$.
 As the (representative) $B$ is a bijection between its domain and image,
-we can use $\ibi$ to map this intersection back
-onto the domain of $B$ and get $\Dom{B\cc\ic}$.
-As $\worksm{\ia}{B\cc\ic}$, 
-we also know that $\Dom{\ia} \subseteq \Dom{B\cc\ic}$.
-We now use $B$ to map both sides of this statement, which yields
+we can use $B$ to map both sides of this statement, which yields
 $\Dom{B^{-1}\cc\ia} \subseteq \Dom{\ibi\cc B\cc\ic}$,
 but the latter is a subset of $\Dom{\ic}$,
 and so $\Dom{\ibi\cc\ia} \subseteq \Dom{\ic}$,
-which is the same as $\worksm{\ibi\cc\ia}{\ic}$.
+which means that $\worksm{\ibi\cc\ia}{\ic}$.
+It is easy to see that $\worksm{\ia}{B\cc\ic} \Leftrightarrow \worksm{\ia}{\{B\}}$.
 
 For the right-to-left part,
-from $\worksm{\ia}{B}$ we know $\Dom{\ia} \subseteq \Dom{B}$.
+from $\worksm{\ia}{\{B\}}$ we know $\Dom{\ia} \subseteq \Dom{B}$.
 Therefore we can project the whole of $\Dom{\ia}$ using the bijective representative sequence $B$
 to get $\Dom{\ibi\cc\ia}$, and as $\worksm{\ibi\cc\ia}{\ic}$
 we know
@@ -299,15 +299,15 @@ We use $\ibi$ to project both sides of this statement to get
 $\Dom{B\cc\ibi\cc\ia} \subseteq \Dom{B\cc\ic}$.
 But we also know that $\Dom{B\cc\ibi\cc\ia} = \Dom{\ia}$
 as $\Dom{\ia} \subseteq \Dom{B}$,
-and so $\Dom{\ia} \subseteq \Dom{B\cc\ic}$ which is the same as
+and so $\Dom{\ia} \subseteq \Dom{B\cc\ic}$ which means
 $\worksm{\ia}{B\cc\ic}$.
 \end{proof}
 
 We use this result to prove the following:
 
 \begin{mylem}\label{indep_prefix_combine}
-The combination of sequences with a common head and independent tails 
-continues to work under the same conditions:
+The combination of two sequences with a common head and independent tails 
+is defined wherever the two sequences are defined:
 \begin{gather*}
  \worksmxb{\sqs{S}}{A\cc B} \,\wedge\, \worksmxb{\sqs{S}}{A\cc C} \,\wedge\, B\indep C \\
  \Longrightarrow \worksmxb{\sqs{S}}{A\cc B\cc C}

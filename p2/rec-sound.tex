@@ -5,7 +5,7 @@ We are now ready to prove that the proposed algorithm for reconciliation is corr
 that is, applying its result is not going to break the replicas.
 We reformulate the original proposition, $\reca\aFS_B\neq\fsbroken$,
 based on $\FS_B=B\aFS$ and so we aim to prove that
-$B\cc\reca$ works wherever $A$ and $B$ work:
+$B\cc\reca$ is defined wherever $A$ and $B$ are defined:
 
 \begin{myth}\label{reconciliation_correct}
 If $A, B$ are simple, then $\worksmbb{A,B}{B\cc \reca}$,
@@ -19,10 +19,10 @@ $\reca$: their intersection.
 
 \begin{mylem}\label{can_move_intersection}
 Let $A$ and $B$ be two simple sequences so that $\worksmnilb{A, B}$.
-Then their intersection, in some suitable order, also works on any filesystem
-either of them works on:
-$\worksm{A}{\acbnp}$, and, by symmetry,
-$\worksm{B}{\acbnp}$.
+Then their intersection, in some suitable order, is also defined on any filesystem
+either of them is defined on:
+$\worksm{A}{\orderset{\acbnp}}$, and, by symmetry,
+$\worksm{B}{\orderset{\acbnp}}$.
 \end{mylem}
 
 \begin{proof}
@@ -56,6 +56,7 @@ If $B$ has a command on $m$, then
 from \cref{lemma:neighbor}
 we know that there is a $B'$ in $\orderset{B}$ where it is next to $\cxynv$ (also in $B$),
 and from \cref{simple_reorder_equiv} we know that $B'\equiv B$.
+-- TODO TODO TODO --
 When describing our ordering algorithm in \cref{ordering} we saw
 that the command on the parent path determines whether a pair of commands
 is a construction or destruction pair,
@@ -98,6 +99,8 @@ $\worksm{A}{\acbnp}$ and by symmetry $\worksm{B}{\acbnp}$.
 \end{proof}
 
 \bigskip
+
+% TODO Set or sequence? See also above
 
 \noindent
 We would like to prove that $\worksmbb{A,B}{B\cc \reca}$.
