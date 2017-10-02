@@ -21,7 +21,7 @@ with the meaning that the command on the left is applied first:
 %% monoid, but not free monoid
 %% monoid: semigroup with identity element
 %% Sequences of commands form a free semigroup
-Sequences are also partial endofunctions on filesystems, defined only if all commands succeed.
+Sequences are also partial endofunctions on filesystems, defined only if all commands it contains succeed in the given order.
 We write $\sets$ for the set of sequences of commands.
 They form a monoid, and, as usual,
 $\emptyseq$ denotes its unit element, the empty sequence,
@@ -29,11 +29,7 @@ which is defined on all filesystems and by definition leaves all filesystems unc
 \end{mydef}
 
 \begin{mydef}[$\Dom{S}$ and $\Img{S}$]
-For a sequence of commands $S$, $\Dom{S}$ is the domain of $S$,
-which is the set of filesystems $S$
-(that is, the commands it contains in the given order)
-is defined on, that is, it does not break.
-
+For a sequence of commands $S$, $\Dom{S}$ is the domain of $S$.
 We write $\Img{S}$ to denote the image of the domain of the sequence $S$.
 \end{mydef}
 
@@ -85,6 +81,11 @@ Therefore, for every filesystem $\FS$, either $A\aFS\neq\fsbroken$, in which cas
 in which case $B\aFS=\fsbroken$ must be true, and therefore $A\aFS=B\aFS$.
 \end{proof}
 
+\begin{mydef}[$\strext$]
+We write $A\strext B$ if $A\eqext B$ and $A\nequiv B$.
+In particular, we write $\wrks{A}$ if $A$ is defined on some filesystems.
+\end{mydef}
+
 % Rules
 % -----
 
@@ -126,8 +127,8 @@ $\cxynv\cc\czwmv \equiv \czwmv\cc\cxynv$ where $n\unrel m$.
 \end{myax}
 
 \begin{myax}\label{ax_separate_nobreaks}
-Commands on incomparable nodes do not break every filesystem:
-$\cxynv\cc\czwmv \nequiv \cbrk$ where $n\unrel m$.
+Commands on incomparable nodes do not break all filesystems:
+$\wrksx{\cxynv\cc\czwmv}$ where $n\unrel m$.
 \end{myax}
 
 \begin{myax}\label{ax_same_breaks}
@@ -177,6 +178,8 @@ and the pair is not a construction pair.
 As we shall see, this can be extended to \cref{simple_distant_pairs}.
 % TODO
 \end{myax}
+
+% TODO \nequiv\cbrk -> \wrks
 
 \begin{mydef}[Destruction pair]
 A pair of commands on nodes $n$ and $\nn$ is a destruction pair if $\parent(n)=\nn$ and the commands are one

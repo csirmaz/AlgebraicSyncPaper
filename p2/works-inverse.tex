@@ -10,6 +10,10 @@ we will use calligraphic letters (e.g. $\sqs{A}$, $\sqs{B}$, $\sqs{C}$ and $\sqs
 to denote such sets for brevity.
 We will use $A\cc\sqs{B}$ to denote the set of sequences $\{A\cc B\whr B\in\sqs{B}\}$,
 and $\Dom{\sqs{A}}$ to denote $\bigcap_{A\in\sqs{A}} \Dom{A}$.
+
+We also write $\wrks{\sqs{A}}$ if $\varnothing \subset \Dom{\sqs{A}}$, that is,
+if we know that there is at least one filesystem
+all sequences in $\sqs{A}$ are defined on.
 \end{mydef}
 
 % works operators
@@ -22,15 +26,14 @@ that is, iff all sequences in $\sqs{B}$ are defined on (that is, do not break)
 all filesystems sequences in $\sqs{A}$ are defined on.
 We write $\worksmstr{\sqs{A}}{\sqs{B}}$ iff $\Dom{\sqs{A}} \subset \Dom{\sqs{B}}$.
 
-As a special case, we write $\worksmnil{\sqs{A}}$ if we know that there is at least one filesystem
-all sequences in $\sqs{A}$ are defined on.
 We also apply these relations to sequences directly;
 e.g. we write
-$\worksm{A}{B}$ with the meaning $\worksm{\{A\}}{\{B\}}$.
+$\worksm{A}{B}$ with the meaning $\Dom{A} \subseteq \Dom{B}$.
 \end{mydef}
 
 In a sense, $A\worksmeqsign B$ is a weaker counterpart of $A\eqext B$, as the former
-only requires that $B$ is defined where $A$ is defined, where the latter also requires
+only requires that $B$ is defined where $A$ is defined, 
+while the latter also requires
 that where they are defined, their effect is the same.
 It is easy to see that the following corollary is true:
 
@@ -174,10 +177,9 @@ representatives of their $\typeeq$-equivalence class.
 \end{mydef}
 
 By definiton, for all objects where it is defined, $a\T\typeeq a$.
-% $|\setf|$ is also $1$.
 As representatives of filesystems, commands, sequences, etc.
-are subsets of their non-representative counterparts, all
-propositions proven so far apply to them as well.
+are subsets of their non-representative counterparts, 
+all propositions proven so far apply to them as well.
 
 \begin{mycor}\label{cor_typemap_transitive}
 For any filesystem $\FS$ and command $\alpha$, 
@@ -218,7 +220,7 @@ This is based on the following observation.
 Representative commands $\alpha\T$ are partial bijections over representative filesystems ($\FS\T$).
 Because partial functions are trivially surjective when restricted to their images, this is
 equivalent to saying that representative functions are injective except for cases
-where they break a filesystem (they are not defined):
+where they are not defined:
 \[ \forall\FS,\GS,\alpha: \FS\T\neq\GS\T \wedge \alpha\T(\FS\T)\neq\fsbroken \Longrightarrow \alpha\T(\FS\T) \neq \alpha\T(\GS\T). \]
 \end{mylem}
 \begin{proof}
@@ -287,7 +289,7 @@ $\Dom{B^{-1}\cc\ia} \subseteq \Dom{\ibi\cc B\cc\ic}$,
 but the latter is a subset of $\Dom{\ic}$,
 and so $\Dom{\ibi\cc\ia} \subseteq \Dom{\ic}$,
 which means that $\worksm{\ibi\cc\ia}{\ic}$.
-It is easy to see that $\worksm{\ia}{B\cc\ic} \Leftrightarrow \worksm{\ia}{\{B\}}$.
+It is easy to see that $\worksm{\ia}{B\cc\ic} \Rightarrow \worksm{\ia}{\{B\}}$.
 
 For the right-to-left part,
 from $\worksm{\ia}{\{B\}}$ we know $\Dom{\ia} \subseteq \Dom{B}$.

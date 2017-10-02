@@ -1,6 +1,6 @@
 
-\newcommand{\typeeq}{\simeq} % Type equality
-\newcommand{\ntypeeq}{\not\typeeq}
+\newcommand{\typeeq}{\simeq} % Type equal
+\newcommand{\ntypeeq}{\not\typeeq} % Not type equal
 
 \newcommand{\ccharb}{:\empt:} % character for empty type in commands TODO DELETE
 \newcommand{\ccharf}{:\mathtt{F}:} % Character for file type in commands TODO DELETE
@@ -14,7 +14,7 @@
 \newcommand{\fil}{\mathtt{F}_0} % Selected file value for representative objects
 \newcommand{\empt}{\ominus} % Empty value
 \newcommand{\valv}{v} % Any value
-\newcommand{\valvy}{:v_Y:} % Value of type Y TODO DELETE
+\newcommand{\valvy}{:v_Y:} % TODO DELETE
 \newcommand{\valvw}{:v_W:} % TODO DELETE
 
 \newcommand{\setfs}{\mathbb{F}_\setn} % Set of filesystems
@@ -27,10 +27,9 @@
 \newcommand{\setd}{\setvx{\vald}} % Set of directory values
 \newcommand{\setb}{\setvx{\empt}} % Set of empty values TODO DELETE
 
-\newcommand{\parent}{\text{\normalfont\scshape{parent}}} % parent function
+\newcommand{\parent}{\text{\normalfont\scshape{parent}}} % parent function symbol
 \newcommand{\parentf}[1]{\parent(#1)} % parent function
-\newcommand{\topnode}{\text{\normalfont\scshape{none}}} % return value of parent()
-\newcommand{\fsbroken}{\bot} % broken FS value
+\newcommand{\fsbroken}{\bot} % value when command is not defined / broken FS value
 \newcommand{\FS}{\Phi} % a filesystem
 \newcommand{\GS}{\Theta} % another filesystem
 \newcommand{\aFS}{\,\FS} % a filesystem preceded by something applied to it
@@ -38,7 +37,7 @@
 \newcommand{\nn}{n'} % parent node
 \newcommand{\T}{\tau} % type-equivalent class mapping
 
-\newcommand{\cbrk}{\mathtt{Break}} % 'break' command
+\newcommand{\cbrk}{c_\varnothing} % 'break' / empty command
 
 \newcommand{\caa}[2]{\langle{[#1],[#2]}\rangle} % Command template
 \newcommand{\caaa}[3]{\langle{[#1],#2,#3}\rangle}
@@ -86,23 +85,29 @@
 \newcommand{\ancestor}{\succ}
 \newcommand{\ancestorEq}{\succeq}
 
-\newcommand{\eqext}{\sqsubseteq} % extended by
-\newcommand{\eqnrw}{\sqsupseteq} % extends
+\newcommand{\eqext}{\sqsubseteq} % extended by <=
+\newcommand{\eqnrw}{\sqsupseteq} % extends >=
+\newcommand{\strext}{\sqsubset} % extended by (strict) <
+\newcommand{\strnrw}{\sqsupset} % extends (strict) >
 \newcommand{\nequiv}{\not\equiv}
+
 \newcommand{\indep}{\mathrel{\wr\wr}} % Independent commands, sequences
 \newcommand{\unrel}{\indep} % Incomparable (unrelated) nodes
 \newcommand{\nindep}{\mathrel{\centernot{\wr\wr}}} % not \indep
 \newcommand{\nunrel}{\nindep} % not \unrel
 
-\newcommand{\worksmsign}{\vartriangleleft} % works-more sign
-\newcommand{\worksmeqsign}{\trianglelefteq} % works-more-eq sign
+\newcommand{\worksmsign}{\vartriangleleft} % works-more sign <
+\newcommand{\worksmeqsign}{\trianglelefteq} % works-more-eq sign <=
 \newcommand{\worksmstr}[2]{{#1}\worksmsign{#2}} % works-more-strict
-\newcommand{\worksmnil}[1]{{\cbrk}\worksmsign{#1}}
-\newcommand{\worksmnilb}[1]{\worksmnil{\{{#1}\}}}
 \newcommand{\worksm}[2]{{#1}\worksmeqsign{#2}} % works-more-(eq)
 \newcommand{\worksmxb}[2]{\worksm{#1}{\{{#2}\}}}
 \newcommand{\worksmbx}[2]{\worksm{\{{#1}\}}{#2}}
 \newcommand{\worksmbb}[2]{\worksm{\{{#1}\}}{\{{#2}\}}}
+
+\newcommand{\wrks}[1]{\cbrk\strext{#1}} % works
+\newcommand{\wrksx}[1]{{#1}\strnrw\cbrk} % works (reverse order)
+\newcommand{\worksmnil}[1]{\wrks{#1}} % works
+\newcommand{\worksmnilb}[1]{\worksmnil{\{{#1}\}}}
 
 \newcommand{\emptyseq}{\lambda} % empty sequence
 
