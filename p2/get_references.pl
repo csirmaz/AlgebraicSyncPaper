@@ -96,4 +96,8 @@ while(my($from, $tos) = each %References) {
   }
 }
 
-print Dumper(\%Backreferences);
+foreach my $to (sort keys %Backreferences){
+  my $from = $Backreferences{$to};
+  print "$to From:\n";
+  print join('', map { "  ".$_."\n" } @$from) . "\n";
+}
