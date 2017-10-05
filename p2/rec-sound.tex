@@ -107,22 +107,26 @@ We would like to prove that $\worksmbb{A,B}{B\cc \reca}$.
 From the above we know that we can move commands in $\acbnp$
 to the beginning of $B$ and so this is equivalent to
 \[ \worksmbb{A,B}{\acb\cc \bma\cc \reca}. \]
-As we already know that $\reca\indep\bma$
-and that $\worksmbb{A,B}{\acb\cc \bma}$
-(as $\worksmbb{A,B}{B}$),
-we can prove our theorem based on \cref{indep_prefix_combine}
-if we can prove that
+We can prove this if we can show that
 \[ \worksmbb{A,B}{\acb\cc \reca}. \]
-Based on \cref{r_invmove} and \cref{repr_works_is_same}, and because
-we already know that $\worksmbb{A,B}{\acbnp}$,
-this is equivalent to
-\[ \worksmbb{\acbi\cc A\T,\acbi\cc B\T}{\reca\T}. \]
+This is because we already know
+that $\worksmbb{A,B}{\acb\cc \bma}$ (as $\worksmbb{A,B}{B}$),
+which, combined with the above, yields
+\[ \worksmbb{A,B}{\acb\cc \reca, \acb\cc \bma}. \]
+Also, as $\reca\indep\bma$,
+from \cref{indep_prefix_combine}
+we know
+\[ \worksmbb{\acb\cc \reca, \acb\cc \bma}{\acb\cc \bma\cc \reca}. \]
+As $\worksmeqsign$ is transitive, combining the two results
+gives the statement we intended to prove.
+
 
 To restate some results above, we therefore already know the following things:
 \begin{itemize}
 \item $\amb$ and $\bma$ are simple as $A$ and $B$ are simple
 \item $\amb \cap \bma = \emptyset$
 \item $\reca$ is the largest subset of $\amb$ for which $\reca\indep\amb$
+% TODO Inverse is used here - how/why?
 \item $\worksmbb{\acbi\cc A,\acbi\cc B}{\amb, \bma}$ 
 because of \cref{r_invmove}
 as $\worksmbb{A,B}{A,B}$,

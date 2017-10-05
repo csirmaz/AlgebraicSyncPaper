@@ -199,6 +199,7 @@ TODO needed?
 As the types of values determine whether a command breaks a filesystem,
 we know $\Dom{A}=\Dom{A\T}$ and therefore $\Dom{\sqs{A}}=\Dom{\sqs{A}\T}$.
 From this it follows that
+% TODO what's the set of all filesystems?
 
 \begin{mycor}\label{repr_works_is_same}
 \begin{gather*}
@@ -310,35 +311,21 @@ We use this result to prove the following:
 \begin{mylem}\label{indep_prefix_combine}
 The combination of two sequences with a common head and independent tails 
 is defined wherever the two sequences are defined:
-\begin{gather*}
- \worksmxb{\sqs{S}}{A\cc B} \,\wedge\, \worksmxb{\sqs{S}}{A\cc C} \,\wedge\, B\indep C \\
- \Longrightarrow \worksmxb{\sqs{S}}{A\cc B\cc C}
-\end{gather*}
-
-TODO WHY NOT: See \cref{combine_independent_sequences}
 \[ B\indep C \Rightarrow \worksmbb{A\cc B, A\cc C}{A\cc B\cc C} \]
-
 \end{mylem}
 \begin{proof}
-
-TODO NEW PROOF:
-
-TODO OLD PROOF:
-
-Based on \cref{repr_works_is_same} we have
-$\worksmxb{\sqs{S}\T}{A\T\cc B\T}$ and $\worksmxb{\sqs{S}\T}{A\T\cc C\T}$,
-and from \cref{r_invmove} we know
-$\worksmxb{{A\T}^{-1}\cc \sqs{S\T}}{B\T}$ 
-and $\worksmxb{{A\T}^{-1}\cc \sqs{S\T}}{C\T}$.
-Using \cref{combine_independent_sequences} we get
-$\worksmbb{B\T,C\T}{B\T\cc C\T}$,
-and chaining these (as $\worksmeqsign$ is transitive)
+This is trivial unless $\worksmnil{A}$, so we assume that that is the case.
+From $B\indep C$ and \cref{combine_independent_sequences} we know
+$\worksmbb{B, C}{B\cc C}$.
+Based on \cref{repr_works_is_same} this is equivalent to
+$\worksmbb{B\T, C\T}{B\T\cc C\T}$.
+Since $A\T^{-1}\cc A\T \equiv \emptyseq$, this can also be written as
+\[\worksmxb{A\T^{-1}\cc\{A\T\cc B\T, A\T\cc C\T\}}{B\T\cc C\T}.\]
+From \cref{worksextpostfix} we also know that
+$\worksmbb{A\T\cc B\T, A\T\cc C\T}{A\T}$.
+Combining the last two statements using \cref{r_invmove}
 we get
-$\worksmxb{{A\T}^{-1}\cc \sqs{S}\T}{B\T\cc C\T}$.
-
-From $\worksmxb{\sqs{S}}{A\cc B}$ we also know $\worksmxb{\sqs{S}}{A}$ and $\worksmxb{\sqs{S}\T}{A\T}$.
-We can combine this and $\worksmxb{{A\T}^{-1}\cc \sqs{S}\T}{B\T\cc C\T}$ using
-\cref{r_invmove} to get
-$\worksmxb{\sqs{S}\T}{A\T\cc B\T\cc C\T}$, and from \cref{repr_works_is_same} we know
-$\worksmxb{\sqs{S}}{A\cc B\cc C}$.
+\[ \worksmbb{A\T\cc B\T, A\T\cc C\T}{A\T\cc B\T\cc C\T}, \]
+which with \cref{repr_works_is_same} proves the
+\namecref{indep_prefix_combine}.
 \end{proof}
