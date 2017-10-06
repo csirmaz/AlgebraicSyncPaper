@@ -8,10 +8,12 @@
 As we will frequently refer to sets of fequences,
 we will use calligraphic letters (e.g. $\sqs{A}$, $\sqs{B}$, $\sqs{C}$ and $\sqs{S}$)
 to denote such sets for brevity.
-We will use $A\cc\sqs{B}$ to denote the set of sequences $\{A\cc B\whr B\in\sqs{B}\}$,
-and $\Dom{\sqs{A}}$ to denote $\bigcap_{A\in\sqs{A}} \Dom{A}$.
+We will write $\Dom{\sqs{A}}$ for $\bigcap_{A\in\sqs{A}} \Dom{A}$,
+and $\sqs{A}\cc\sqs{B}$ for $\{A\cc B\whr A\in\sqs{A}, B\in\sqs{B}\}$.
+We will also use $A\cc\sqs{B}$ with the meaning $\{A\}\cc\sqs{B}$.
 
-We also write $\wrks{\sqs{A}}$ if $\varnothing \subset \Dom{\sqs{A}}$, that is,
+% This has only been defined for sequences, not sets.
+Moreover, we write $\wrks{\sqs{A}}$ if $\varnothing \subset \Dom{\sqs{A}}$, that is,
 if we know that there is at least one filesystem
 all sequences in $\sqs{A}$ are defined on.
 \end{mydef}
@@ -19,12 +21,11 @@ all sequences in $\sqs{A}$ are defined on.
 % works operators
 % ---------------
 
-\begin{mydef}[$\worksmsign$, $\worksmeqsign$]\label{def_works}
+\begin{mydef}[$\worksmeqsign$]\label{def_works}
 For two sets of sequences $\sqs{A}$ and $\sqs{B}$
 we write $\worksm{\sqs{A}}{\sqs{B}}$ iff $\Dom{\sqs{A}} \subseteq \Dom{\sqs{B}}$;
-that is, iff all sequences in $\sqs{B}$ are defined on (that is, do not break)
-all filesystems sequences in $\sqs{A}$ are defined on.
-We write $\worksmstr{\sqs{A}}{\sqs{B}}$ iff $\Dom{\sqs{A}} \subset \Dom{\sqs{B}}$.
+that is, iff all sequences in $\sqs{B}$ are defined on (do not break)
+all filesystems on which sequences in $\sqs{A}$ are defined.
 
 We also apply these relations to sequences directly;
 e.g. we write

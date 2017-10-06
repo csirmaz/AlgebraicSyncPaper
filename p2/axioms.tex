@@ -179,8 +179,6 @@ As we shall see, this can be extended to \cref{simple_distant_pairs}.
 % TODO
 \end{myax}
 
-% TODO \nequiv\cbrk -> \wrks
-
 \begin{mydef}[Destruction pair]
 A pair of commands on nodes $n$ and $\nn$ is a destruction pair if $\parent(n)=\nn$ and the commands are one
 of the following:
@@ -243,7 +241,7 @@ We also define the concept of two commands being independent:
 Two commands $\cxynv$ and $\czwmv$ 
 are independent, and we write $\cxynv\indep\czwmv$ if 
 they commute and do not break all filesystems:
-\[ \cxynv\cc\czwmv \equiv \czwnv\cc\cxynv \nequiv \cbrk. \]
+\[ \cxynv\cc\czwmv \equiv \wrksx{\czwnv\cc\cxynv}. \]
 For two sequences or unordered sets of commands $A$ and $B$ we write $A\indep B$ if
 for all $\alpha$ in $A$ and all $\beta$ in $B$, $\alpha\indep\beta$.
 We also write $\alpha\indep B$ iff $\{\alpha\}\indep B$.

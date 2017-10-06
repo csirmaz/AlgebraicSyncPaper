@@ -65,9 +65,9 @@ then there cannot be any in $T_0$.
 \end{proof}
 
 \begin{mylem}\label{simple_distant_pairs}
-For any simple sequence $S\nequiv\cbrk$
+For any simple sequence $\wrksx{S}$,
 if $\cxynv\cc\czwmv$ is a subsequence of $S$ and $n=\parent(m)$ or $\parent(n)=m$,
-then $\cxynv\cc\czwmv\nequiv\cbrk$.
+then $\wrks{\cxynv\cc\czwmv}$.
 \end{mylem}
 \begin{proof}
 Informally speaking, the proposition means that
@@ -85,7 +85,7 @@ of \cref{ax_directchild_breaks,ax_directparent_breaks}.
 % TODO APPENDIX
 Formally, we prove our proposition by contradiction,
 and in this version of the proof we reach back to our filesystem model.
-We assume $S\nequiv\cbrk$ and therefore there is a $\FS$ for which $S\aFS\neq\fsbroken$,
+We assume $\wrks{S}$ and therefore there is a $\FS$ for which $S\aFS\neq\fsbroken$,
 but $S$ contains commands on a node and its parent that do not form a construction or destruction pair.
 Select two such commands, $\cxynv$ and $\czwmv$,
 and split $S$ around them into three parts:
@@ -105,7 +105,7 @@ and $[x]\neq[\vald]$ as $\cxynv$ is not an assertion command.
 As $[S_0\FS(n)]=[x]\neq[\vald]$, we know
 $S_0\FS(m)=\empt$ as otherwise the tree property would be violated.
 Therefore $[S_0\FS(m)]=[z]=[\empt]$, which, combined with $y=\vald$
-means that $\cxynv\cc\czwmv\nequiv\cbrk$ is a construction pair, which is a contradiction.
+means that $\wrksx{\cxynv\cc\czwmv}$ is a construction pair, which is a contradiction.
 
 If $\parent(n)=m$, then 
 as $(S_0\cc\cxynv\cc S_1)\FS(n) = y$, and either
@@ -114,7 +114,7 @@ or $[(S_0\cc\cxynv\cc S_1\cc\czwmv)\FS(m)]=[w]\neq[\vald]$,
 $y$ must be $\empt$, and $[x]\neq[\empt]$.
 As $[S_0\FS(n)]=[x]\neq[\empt]$, we know $S_0\FS(m)=\vald$.
 Therefore $[S_0\FS(m)]=[z]=[\vald]$, which, combined with $y=\empt$
-means that $\cxynv\cc\czwmv\nequiv\cbrk$ is a destruction pair, which is a contradiction.
+means that $\wrksx{\cxynv\cc\czwmv}$ is a destruction pair, which is a contradiction.
 \end{proof}
 
 
@@ -176,19 +176,19 @@ However, then \cref{ax_distantrel_breaks} applies to the sequence and therefore 
 is again a contradiction.
 \end{proof}
 
-
+% TODO breaks --> not defined on
 
 \begin{mylem}\label{equiv_simple_same_commands}
 If two simple sequences $A$ and $B$ are equivalent
-and do not break all filesystems ($A\equiv B\nequiv\cbrk$),
+and do not break all filesystems ($A\equiv \wrksx{B}$),
 then they must contain the same commands.
 \end{mylem}
 \begin{proof}
 % BACK_TO_THE_FS
 % TODO Rule?
 We use a proof by contradiction. Let $A$ and $B$ be simple sequences
-such that $A\equiv B\nequiv\cbrk$,
-and $\FS$ be a filesystem that they do not break.
+such that $A\equiv \wrksx{B}$,
+and $\FS$ be a filesystem that they are defined on.
 
 We also assume that they do not contain the same commands.
 Without loss of generality, we can assume
@@ -209,7 +209,7 @@ However, then $\czwnv=\cxynv$, which is a contradiction.
 % TODO delete unused results
 
 \begin{mylem}\label{simple_reorder_equiv}
-For a simple sequence $S\nequiv\cbrk$,
+For a simple sequence $\wrksx{S}$,
 $\orderset{S}$ is the set of all simple sequences equivalent to $S$, that is,
 \[ \orderset{S} = [S]_\equiv \cap \setssmp. \]
 \end{mylem}
@@ -236,7 +236,7 @@ First, we prove, by contradiction, that if a simple sequence $T\equiv S$, then $
 We assume $T\equiv S$ and $T\not\in\orderset{S}$.
 Then, from \cref{equiv_simple_same_commands} we know $T$ is a permutation of $S$,
 and from \cref{order_is_only_possible} we know $T\equiv\cbrk$ which
-is a contradiction as $T\equiv S\nequiv\cbrk$.
+is a contradiction as $T\equiv \wrksx{S}$.
 
 Next, we prove that if $T\in\orderset{S}$, then $T\equiv S$.
 We proceed by induction on the length of $S$.
@@ -298,7 +298,7 @@ We therefore know that
 $\caaa{x_{\indx+1}}{y_{\indx+1}}{n_{\indx+1}} \cc \caaa{x_\indx}{y_\indx}{n_\indx}$
 is a subsequence of $T$, and by assumption $\parentf{n_{\indx+1}}=n_\indx$.
 By definition of $\ordersetsign$, therefore $y_{\indx+1}=\empt$ must be true,
-which is a constradiction.
+which is a contradiction.
 
 It can be shown in the same way
 that the case when the $n_\indx$ nodes ascend the tree,
