@@ -8,9 +8,9 @@ based on $\FS_B=B\aFS$ and so we aim to prove that
 $B\cc\reca$ is defined wherever $A$ and $B$ are defined:
 
 \begin{myth}\label{reconciliation_correct}
-If $A, B$ are simple, then $\worksmbb{A,B}{B\cc \reca}$,
+If $A$ and $B$ are simple, then $\worksmbb{A,B}{B\cc \reca}$,
 where, to restate \cref{def:reconciliation},
-\[ \reca = \{\alpha \whr \alpha\in \ambnp  \ \wedge\   \alpha\indep \bmanp \}. \]
+\[ \reca = \ords{\alpha \whr \alpha\in \ambnp  \ \wedge\   \alpha\indep \bmanp }. \]
 \end{myth}
 
 This is trivial unless $\worksmnilb{A,B}$, so we assume that it is true.
@@ -19,10 +19,10 @@ $\reca$: their intersection.
 
 \begin{mylem}\label{can_move_intersection}
 Let $A$ and $B$ be two simple sequences so that $\worksmnilb{A, B}$.
-Then their intersection, in some suitable order, is also defined on any filesystem
+Then their intersection is also defined on any filesystem
 either of them is defined on:
-$\worksm{A}{\orderset{\acbnp}}$, and, by symmetry,
-$\worksm{B}{\orderset{\acbnp}}$.
+$\worksm{A}{\ordp{\acbnp}}$, and, by symmetry,
+$\worksm{B}{\ordp{\acbnp}}$.
 \end{mylem}
 
 \begin{proof}
@@ -44,7 +44,7 @@ and the preceding unmarked command be $\czwmv$:
 \begin{gather*}
 A = \cdots\cc  \czwmv\cc  \cxynv\cc  \cdots
 \end{gather*}
-As $A$ is simple and $\worksmnilb{A}$, from 
+As $A$ is simple and $\wrks{A}$, from 
 \cref{ax_distantrel_breaks,ax_directchild_breaks,ax_directparent_breaks}
 we know that these commands can only be on incomparable nodes or form a construction or destruction pair.
 In the first case, swapping the commands results in a sequence equivalent to $A$,
@@ -95,7 +95,7 @@ but $A$ contained no assertion commands.
 We now know that there is an $A'\equiv A$ in which commands in $\acbnp$
 are at the beginning, and therefore 
 from \cref{worksextpostfix} we know that
-$\worksm{A}{\acbnp}$ and by symmetry $\worksm{B}{\acbnp}$.
+$\worksm{A}{\acb}$ and by symmetry $\worksm{B}{\acb}$.
 \end{proof}
 
 \bigskip
@@ -134,7 +134,7 @@ and $A\equiv\acb\cc\amb$, and $B\equiv\acb\cc\bma$.
 \end{itemize}
 
 Our theorem is therefore proven if we prove the following lemma,
-in which we rename $\ambnp$ to $S$ and $\bmanp$ to $T$:
+in which we rename $\amb$ to $S$ and $\bma$ to $T$:
 \newcommand{\condSimple}{(c1)}
 \newcommand{\condDisj}{(c2)}
 \newcommand{\condApr}{(c3)}

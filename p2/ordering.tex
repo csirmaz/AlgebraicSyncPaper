@@ -306,15 +306,17 @@ by using destruction commands instead of construction ones.
 \end{proof}
 
 
-\begin{mydev}[$\orderd{S}$]
+\begin{mydef}[$\ordsign$]
 It follows from \cref{simple_reorder_equiv} that given a simple set of commands $S$,
-which can be applied to a filesystem without breaking it,
-all sequences in $\orderset{S}$
+which can be applied to a filesystem in some order without breaking it,
+this order will be in $\orderset{S}$,
+and all sequences in $\orderset{S}$
 represent the same partial endofunction on filesystems.
 This allows us to treat such a set as a sequence for any purpose
 where the internal order of the commands is irrelevant.
-We write $\orderd{S}$ to represent this endofunction.
-\end{mydev}
+We write $\ordp{S}$ to represent this endofunction.
+Also, let $\ordp{S}=\cbrk$ if such an order does not exist.
+\end{mydef}
 
 
 

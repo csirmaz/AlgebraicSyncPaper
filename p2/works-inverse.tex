@@ -225,7 +225,11 @@ Representative commands $\alpha\T$ are partial bijections over representative fi
 Because partial functions are trivially surjective when restricted to their images, this is
 equivalent to saying that representative functions are injective except for cases
 where they are not defined:
-\[ \forall\FS,\GS,\alpha: \FS\T\neq\GS\T \wedge \alpha\T(\FS\T)\neq\fsbroken \Longrightarrow \alpha\T(\FS\T) \neq \alpha\T(\GS\T). \]
+\begin{align*}
+\forall\FS,\GS,\alpha:& \\
+& \FS\T\neq\GS\T \wedge \alpha\T(\FS\T)\neq\fsbroken \\
+& \Rightarrow \alpha\T(\FS\T) \neq \alpha\T(\GS\T).
+\end{align*}
 \end{mylem}
 \begin{proof}
 Choose values that satisfy the left side, and let $\alpha\T = \cTxynv$.
@@ -266,7 +270,7 @@ representative sequences and sets.
 \newcommand{\ibi}{B^{-1}}
 
 \begin{mylem}\label{r_invmove}
-A common initial segment of a set of \emph{representative} sequences can be moved 
+A common initial segment of a set of representative sequences can be moved 
 to the other side of $\worksmeqsign$ by inverting it:
 \begin{gather*}
 \worksm{\ia}{B\cc\ic}

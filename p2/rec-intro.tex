@@ -7,8 +7,7 @@ so that $\recb\aFS_A$ and $\reca\aFS_B$ would be as close to each other as possi
 We work based on the assumption that to achieve this, we need
 to apply to $\FS_B$ the commands that have been applied to $\FS_A$, and \emph{vice versa}.
 As some commands may have been applied to both filesystems, our first approximation
-is $\reca = A\setminus B$ and $\recb = B\setminus A$
-(in some suitable order).
+is $\reca = \amb$ and $\recb = \bma$.
 This, however, will break both filesystems if there have been incompatible updates
 in $A$ and $B$. 
 Our aim is therefore to provide an algorithm that selects the commands 
@@ -16,7 +15,7 @@ $\reca \subset A\setminus B$
 and $\recb \subset B\setminus A$ 
 so that $\reca\aFS_B\neq\fsbroken$ and $\recb\aFS_A\neq\fsbroken$,
 and show that these are the longest sequences with this property, that is,
-adding any command left out from $\reca$ or $\recb$ will break the filesystems.
+adding any further command from $\reca$ or $\recb$ will break the filesystems.
 
 We assume that $A$ and $B$ are returned by an update detector,
 and so they are simple sequences.
@@ -33,7 +32,7 @@ the largest subset of $A\setminus B$
 that is independent of $B\setminus A$,
 where $A$ and $B$ are simple sequences representing
 the updates applied to replicas $\FS_A$ and $\FS_B$:
-\[ \reca = \{\alpha \whr \alpha\in \ambnp  \ \wedge\   \alpha\indep \bmanp \}. \]
+\[ \reca = \ords{\alpha \whr \alpha\in \ambnp  \ \wedge\   \alpha\indep \bmanp }. \]
 \end{mydef}
 
 Whether two commands are independent is easy to determine programmatically

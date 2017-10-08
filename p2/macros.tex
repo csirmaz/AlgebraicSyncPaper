@@ -102,13 +102,16 @@
 \newcommand{\wrks}[1]{\cbrk\strext{#1}} % works
 \newcommand{\wrksx}[1]{{#1}\strnrw\cbrk} % works (reverse order)
 \newcommand{\worksmnil}[1]{\wrks{#1}} % works
-\newcommand{\worksmnilb}[1]{\worksmnil{\{{#1}\}}}
+\newcommand{\worksmnilb}[1]{\wrks{\{{#1}\}}}
 
 \newcommand{\emptyseq}{\lambda} % empty sequence
 
 \newcommand{\ordersetsign}{\vec{P}}
 \newcommand{\orderset}[1]{\ordersetsign({#1})}
-\newcommand{\orderd}[1]{\vec{#1}} % Set of commands with assumed order
+\newcommand{\ordsign}{\vec{c}} % Set of commands with assumed order
+\newcommand{\ords}[1]{\ordsign\{{#1}\}} % Set of commands with assumed order, {}
+\newcommand{\ordp}[1]{\ordsign\,({#1})} % Set of commands with assumed order, ()
+
 \newcommand{\seqset}[1]{\mathcal{#1}} % Set of sequences
 \newcommand{\sqs}[1]{\seqset{#1}}
 
@@ -117,13 +120,13 @@
 \newcommand{\recb}{\recchar{B}{A}{}} % Reconciled from B
 
 \newcommand{\mynegsp}{\nobreak\hspace{-1pt plus 1pt}\nobreak}
-\newcommand{\acbnp}{A\mynegsp\cap\mynegsp B}
-\newcommand{\acb}{(\acbnp)}
-\newcommand{\acbi}{{\acb\T}^{-1}}
+\newcommand{\acbnp}{A\mynegsp\cap\mynegsp B} % A^B
+\newcommand{\acb}{\ordp{\acbnp}} % c(A^B)
+\newcommand{\acbi}{{\acb\T}^{-1}} % c(A^B)T-1
 \newcommand{\ambnp}{A\mynegsp\setminus\mynegsp B}
-\newcommand{\amb}{(\ambnp)}
+\newcommand{\amb}{\ordp{\ambnp}}
 \newcommand{\bmanp}{B\mynegsp\setminus\mynegsp A}
-\newcommand{\bma}{(\bmanp)}
+\newcommand{\bma}{\ordp{\bmanp}}
 
 \newcommand{\Dom}[1]{\textrm{Dom}({#1})}
 \newcommand{\Img}[1]{\textrm{Img}({#1})}
