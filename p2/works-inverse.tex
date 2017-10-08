@@ -8,6 +8,7 @@
 As we will frequently refer to sets of fequences,
 we will use calligraphic letters (e.g. $\sqs{A}$, $\sqs{B}$, $\sqs{C}$ and $\sqs{S}$)
 to denote such sets for brevity.
+
 We will write $\Dom{\sqs{A}}$ for $\bigcap_{A\in\sqs{A}} \Dom{A}$,
 and $\sqs{A}\cc\sqs{B}$ for $\{A\cc B\whr A\in\sqs{A}, B\in\sqs{B}\}$.
 We will also use $A\cc\sqs{B}$ with the meaning $\{A\}\cc\sqs{B}$.
@@ -117,15 +118,15 @@ $(T_0 \cc S\cc t)\FS\neq\fsbroken$, which is a contradiction.
 We also prove the following:
 
 \begin{mylem}\label{worksinputmatch}
-If $A$ and $B$ are minimal sequences, $\worksmnil{\{A,B\}}$,
-and there are commands on node $n$ in both $A$ ($\cxynv\in A$) and $B$ ($\czwnv\in B$),
+If $S$ and $T$ are minimal sequences, $\worksmnil{\{A,B\}}$,
+and there are commands on node $n$ in both $S$ ($\cxynv\in A$) and $T$ ($\czwnv\in B$),
 then the input types of these commands must match ($[x]=[z]$).
 \end{mylem}
 \begin{proof}
 This result is similar to \cref{equiv_simple_same_commands} and
 is easily shown using a proof by contradiction: if $[x]\neq [z]$, then there is no filesystem that
 either $\cxynv$ or $\czwnv$ would not break, 
-and consequently $A$ and $B$ cannot work on the same filesystem.
+and consequently $S$ and $T$ cannot work on the same filesystem.
 \end{proof}
 
 
@@ -177,16 +178,16 @@ representatives of their $\typeeq$-equivalence class.
 \end{itemize}
 \end{mydef}
 
-By definiton, for all objects where it is defined, $a\T\typeeq a$.
+By definiton,
+for any filesystem $\FS$ and command $\alpha$, 
+$\alpha\T(\FS\T) = (\alpha\aFS)\T$.
+
+
+% TODO ???
+Also, for all objects where it is defined, $a\T\typeeq a$.
 As representatives of filesystems, commands, sequences, etc.
 are subsets of their non-representative counterparts, 
 all propositions proven so far apply to them as well.
-
-\begin{mycor}\label{cor_typemap_transitive}
-For any filesystem $\FS$ and command $\alpha$, 
-$\alpha\T(\FS\T) = (\alpha\aFS)\T$.
-TODO needed?
-\end{mycor}
 
 % It is easy to see that 
 % $A\equiv B \Rightarrow A\T\equiv B\T$ 
@@ -219,7 +220,8 @@ This is based on the following observation.
 
 % TODO \alpha \neq \cbrk
 \begin{mylem}\label{repr_comm_inject}
-Representative commands $\alpha\T$ are partial bijections over representative filesystems ($\FS\T$).
+Representative commands $\alpha\T$ are partial bijections over representative filesystems
+($\FS\T$, $\GS\T$).
 Because partial functions are trivially surjective when restricted to their images, this is
 equivalent to saying that representative functions are injective except for cases
 where they are not defined:
@@ -227,13 +229,13 @@ where they are not defined:
 \end{mylem}
 \begin{proof}
 Choose values that satisfy the left side, and let $\alpha\T = \cTxynv$.
-If $\FS\T$ and $\GS\T$ have different values at any node apart from $n$, then this difference remains
+If $\FS\T$ and $\GS\T$ have different values (types) at any node apart from $n$, then this difference remains
 even after applying $\cTxynv$ to $\FS\T$. 
 The only remaining case therefore is where they have the same values
 at all nodes except at $n$.
-As $\cTxynv(\FS\T)\neq\fsbroken$, we know $[\FS\T(n)]=[x]$.
-We also know that $\GS\T(n)\neq\FS\T(n)$, and therefore, as there is a one-to-one correspondence between values and types,
-$[\GS\T(n)]\neq[x]$.
+As $\cTxynv(\FS\T)\neq\fsbroken$, we know $[\FS(n)]=[x]$.
+We also know that $\GS\T(n)\neq\FS\T(n)$, and therefore
+$[\GS(n)]\neq[x]$.
 This implies $\cTxynv(\GS\T)=\fsbroken$,
 and again we have $\alpha\T(\FS\T) \neq \alpha\T(\GS\T)$.
 \end{proof}
@@ -250,7 +252,7 @@ the inverse of the representative command (partial bijection) $\alpha\T$.
 We write ${S\T}^{-1}$ for the inverse of the sequence $S\T$, which consists of the inverses of the commands in $S\T$
 in reverse order.
 \end{mydef}
-Per definition, for any filesystem $\FS\T$ outside the image of $\alpha\T$, the inverse $\alpha\T^{-1}$ is not defined.
+By definition, for any representative filesystem $\FS\T$ outside the image of $\alpha\T$, the inverse $\alpha\T^{-1}$ is not defined.
 
 % Some further observations:
 % For representative commands \[ \cTxynv^{-1} = \cTyxnv. \]

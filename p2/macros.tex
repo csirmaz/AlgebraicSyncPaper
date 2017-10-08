@@ -1,10 +1,6 @@
 
-\newcommand{\typeeq}{\simeq} % Type equal
+\newcommand{\typeeq}{\simeq} % Type equal ~_
 \newcommand{\ntypeeq}{\not\typeeq} % Not type equal
-
-\newcommand{\ccharb}{:\empt:} % character for empty type in commands TODO DELETE
-\newcommand{\ccharf}{:\mathtt{F}:} % Character for file type in commands TODO DELETE
-\newcommand{\cchard}{:\mathtt{D}:} % Character for dir type in commands TODO DELETE
 
 \newcommand{\vald}{\mathtt{D}} % Directory value
 \newcommand{\valdi}{\mathtt{D}_1}
@@ -14,8 +10,8 @@
 \newcommand{\fil}{\mathtt{F}_0} % Selected file value for representative objects
 \newcommand{\empt}{\ominus} % Empty value
 \newcommand{\valv}{v} % Any value
-\newcommand{\valvy}{:v_Y:} % TODO DELETE
-\newcommand{\valvw}{:v_W:} % TODO DELETE
+\newcommand{\valvy}{::v_Y::} % TODO DELETE
+\newcommand{\valvw}{::v_W::} % TODO DELETE
 
 \newcommand{\setfs}{\mathbb{F}_\setn} % Set of filesystems
 \newcommand{\setv}{\mathbb{V}} % Set of values
@@ -23,9 +19,9 @@
 \newcommand{\sets}{\mathbb{S}} % Set of sequences
 \newcommand{\setsmin}{\sets_{\mathrm{min}}} % Set of minimal sequences
 \newcommand{\setssmp}{\sets_{\mathrm{simple}}} % Set of simple sequences
-\newcommand{\setvx}[1]{\setv_{#1}} % Set of values with custom index
-\newcommand{\setd}{\setvx{\vald}} % Set of directory values
-\newcommand{\setb}{\setvx{\empt}} % Set of empty values TODO DELETE
+\newcommand{\setvx}[1]{::\setv_{#1}::} % Set of values with custom index % TODO DELETE
+\newcommand{\setd}{[\vald]} % Set of directory values
+\newcommand{\setb}{::\setvx{\empt}::} % Set of empty values TODO DELETE
 
 \newcommand{\parent}{\text{\normalfont\scshape{parent}}} % parent function symbol
 \newcommand{\parentf}[1]{\parent(#1)} % parent function
@@ -112,6 +108,7 @@
 
 \newcommand{\ordersetsign}{\vec{P}}
 \newcommand{\orderset}[1]{\ordersetsign({#1})}
+\newcommand{\orderd}[1]{\vec{#1}} % Set of commands with assumed order
 \newcommand{\seqset}[1]{\mathcal{#1}} % Set of sequences
 \newcommand{\sqs}[1]{\seqset{#1}}
 

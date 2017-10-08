@@ -61,8 +61,8 @@ As usual, we write $[v]$ for the equivalence class of $v$, which represents its 
 
 The formal definition of the tree property is therefore
 \begin{mydef}[Tree property]
-\[ \forall n\in\setn, \FS\in\setfs: \FS(n) \neq \empt \Longrightarrow \FS(\parent(n)) \in \setd \]
-where $\parent(n)$ is defined, and where $\setd\subset\setv$ is the set of directories.
+\[ \forall n\in\setn, \FS\in\setfs: \FS(n) \neq \empt \Longrightarrow \FS(\parent(n)) \typeeq \vald \]
+where $\parent(n)$ is defined, and where $\vald\in\setv$ is a directory value.
 \end{mydef}
 
 To avoid the proliferation of edge cases, we will furthermore suppose that
@@ -84,17 +84,6 @@ to extend our results to the $|\setd|>1$ case.
 % % and, if needed, conflict resolution on these settings can be easily automated.
 % % We will also see that this assumption makes it possible
 % % to define a maximal reconciliation algorithm.
-
-
-% This means that as we move down from the root of a tree of nodes,
-% the types of values we encounter in the filesystem can only change according to the
-% transition diagram in \cref{fig_transition}, from directories ($\cchard$) to files ($\ccharf$)
-% to empty nodes ($\ccharb$).
-% 
-% \begin{figure}[htb]
-% \input{fig-type-transition}
-% \caption{Transitions between types of values from the root of a tree in a filesystem}\label{fig_transition}
-% \end{figure}
 
 In this paper, $\FS$ and $\GS$ denote filesystems,
 and $n$, $m$ and $o$ are nodes in $\setn$.
