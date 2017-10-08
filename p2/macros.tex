@@ -31,14 +31,19 @@
 \newcommand{\aFS}{\,\FS} % a filesystem preceded by something applied to it
 \newcommand{\aGS}{\,\GS} % a filesystem preceded by something applied to it
 \newcommand{\nn}{n'} % parent node
-\newcommand{\T}{\tau} % type-equivalent class mapping
+\newcommand{\Tsign}{\tau} % type-equivalent class mapping
+\newcommand{\T}[1]{{#1}_\Tsign} % type-equivalent class mapping
+\newcommand{\TA}{\T{A}}
+\newcommand{\TB}{\T{B}}
+\newcommand{\TC}{\T{C}}
+\newcommand{\TS}{\T{S}}
 
-\newcommand{\cbrk}{c_\varnothing} % 'break' / empty command
+\newcommand{\cbrk}{\square} % 'break' / empty command
 
 \newcommand{\caa}[2]{\langle{[#1],[#2]}\rangle} % Command template
 \newcommand{\caaa}[3]{\langle{[#1],#2,#3}\rangle}
 \newcommand{\caaaa}[3]{\langle{[#1],#2,#3}\rangle}
-\newcommand{\cTaaa}[3]{\langle{[#1],{#2}\T,#3}\rangle} % Representative of command
+\newcommand{\cTaaa}[3]{\langle{[{#1}],\T{#2},{#3}}\rangle} % Representative of command
 
 \newcommand{\cbb}{\caa{\empt}{\empt}}
 \newcommand{\cbba}[1]{\caaa{\empt}{\empt}{#1}}
@@ -122,7 +127,7 @@
 \newcommand{\mynegsp}{\nobreak\hspace{-1pt plus 1pt}\nobreak}
 \newcommand{\acbnp}{A\mynegsp\cap\mynegsp B} % A^B
 \newcommand{\acb}{\ordp{\acbnp}} % c(A^B)
-\newcommand{\acbi}{{\acb\T}^{-1}} % c(A^B)T-1
+\newcommand{\acbi}{{\T{\acb}}^{-1}} % c(A^B)T-1
 \newcommand{\ambnp}{A\mynegsp\setminus\mynegsp B}
 \newcommand{\amb}{\ordp{\ambnp}}
 \newcommand{\bmanp}{B\mynegsp\setminus\mynegsp A}
@@ -155,3 +160,7 @@
 \theoremstyle{plain}
 \newtheorem{mycor}{Corollary}
 \crefname{mycor}{Corollary}{Corollaries}
+
+\theoremstyle{plain}
+\newtheorem{myclm}{Claim}
+\crefname{myclm}{Claim}{Claims}

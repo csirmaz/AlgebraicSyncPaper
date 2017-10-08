@@ -8,7 +8,7 @@ based on $\FS_B=B\aFS$ and so we aim to prove that
 $B\cc\reca$ is defined wherever $A$ and $B$ are defined:
 
 \begin{myth}\label{reconciliation_correct}
-If $A$ and $B$ are simple, then $\worksmbb{A,B}{B\cc \reca}$,
+If $A$ and $B$ are simple, then $\worksmbx{A,B}{B\cc \reca}$,
 where, to restate \cref{def:reconciliation},
 \[ \reca = \ords{\alpha \whr \alpha\in \ambnp  \ \wedge\   \alpha\indep \bmanp }. \]
 \end{myth}
@@ -21,8 +21,8 @@ $\reca$: their intersection.
 Let $A$ and $B$ be two simple sequences so that $\worksmnilb{A, B}$.
 Then their intersection is also defined on any filesystem
 either of them is defined on:
-$\worksm{A}{\ordp{\acbnp}}$, and, by symmetry,
-$\worksm{B}{\ordp{\acbnp}}$.
+$\worksm{A}{\acb}$, and, by symmetry,
+$\worksm{B}{\acb}$.
 \end{mylem}
 
 \begin{proof}
@@ -103,20 +103,20 @@ $\worksm{A}{\acb}$ and by symmetry $\worksm{B}{\acb}$.
 % TODO Set or sequence? See also above
 
 \noindent
-We would like to prove that $\worksmbb{A,B}{B\cc \reca}$.
+We would like to prove that $\worksmbx{A,B}{B\cc \reca}$.
 From the above we know that we can move commands in $\acbnp$
 to the beginning of $B$ and so this is equivalent to
-\[ \worksmbb{A,B}{\acb\cc \bma\cc \reca}. \]
+\[ \worksmbx{A,B}{\acb\cc \bma\cc \reca}. \]
 We can prove this if we can show that
-\[ \worksmbb{A,B}{\acb\cc \reca}. \]
+\[ \worksmbx{A,B}{\acb\cc \reca}. \]
 This is because we already know
-that $\worksmbb{A,B}{\acb\cc \bma}$ (as $\worksmbb{A,B}{B}$),
+that $\worksmbx{A,B}{\acb\cc \bma}$ (as $\worksmbx{A,B}{B}$),
 which, combined with the above, yields
 \[ \worksmbb{A,B}{\acb\cc \reca, \acb\cc \bma}. \]
 Also, as $\reca\indep\bma$,
 from \cref{indep_prefix_combine}
 we know
-\[ \worksmbb{\acb\cc \reca, \acb\cc \bma}{\acb\cc \bma\cc \reca}. \]
+\[ \worksmbx{\acb\cc \reca, \acb\cc \bma}{\acb\cc \bma\cc \reca}. \]
 As $\worksmeqsign$ is transitive, combining the two results
 gives the statement we intended to prove.
 
@@ -148,7 +148,7 @@ If
    \item[\condWork] $\worksmxb{\sqs{C}}{S,T}$ for some set of sequences $\sqs{C}$,
    \end{itemize}
 then
-\[ \worksmxb{\sqs{C}}{S^*}. \]
+\[ \worksm{\sqs{C}}{S^*}. \]
 \end{mylem}
 
 \begin{proof}
@@ -160,9 +160,9 @@ We mark all commands in $S$ that are in its subset $S^*$, and
 we prove that $S$ can be transformed into $S'$ via equivalences
 so that all marked commands would be at its beginning.
 If so, then 
-$\worksmxb{\sqs{C}}{S^*}$ 
+$\worksm{\sqs{C}}{S^*}$ 
 based on \cref{worksextpostfix}
-as $\worksmxb{\sqs{C}}{S'}$ and $S'=S^*\cc S_0$ 
+as $\worksm{\sqs{C}}{S'}$ and $S'=S^*\cc S_0$ 
 where $S_0$ contains the remaining (conflicting) commands.
 
 Again we know that if $S$ does not already have all marked commands at its beginning,
@@ -173,7 +173,7 @@ By repeating this process we can generate a suitable $S'$.
 
 Let therefore the marked command in $S$ be $\cxynv$
 and the preceding unmarked command be $\czwmv$.
-As $S$ is simple and $\worksmnilb{S}$, from 
+As $S$ is simple and $\wrks{S}$, from 
 \cref{ax_distantrel_breaks,ax_directchild_breaks,ax_directparent_breaks}
 we know that these commands can only be on incomparable nodes or form a construction or destruction pair.
 In the first case, swapping the commands results in a sequence equivalent to $S$,
