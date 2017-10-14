@@ -50,13 +50,13 @@ which in turn determines whether the command on the parent or the child must pre
 
 To prove \cref{simple_reorder_equiv}, we need the following results.
 
-\begin{mycor}\label{subseq_in_orderset}
+\begin{myclm}\label{subseq_in_orderset}
 For simple sequences $S$ and $T$,
 if $T\in\orderset{S}$, then for any subsequence of $S$, $S_0$,
 and for the corresponding subsequence of $T$, $T_0$, which
 contains the same commands but in the order they are found in $T$,
 $T_0\in\orderset{S_0}$ must hold.
-\end{mycor}
+\end{myclm}
 \begin{proof}
 This is because
 if there are no command pairs in $T$ not conforming to \cref{def_orderset},
@@ -66,7 +66,7 @@ then there cannot be any in $T_0$.
 \begin{mylem}\label{simple_distant_pairs}
 For any simple sequence $\wrksx{S}$,
 if $\cxynv\cc\czwmv$ is a subsequence of $S$ and $n=\parent(m)$ or $\parent(n)=m$,
-then $\wrksx{\cxynv\cc\czwmv}$.
+then $\cxynv\cc\czwmv$ is either a construction or a destruction pair.
 \end{mylem}
 \begin{proof}
 Informally speaking, the proposition means that
@@ -104,7 +104,7 @@ and $[x]\neq[\vald]$ as $\cxynv$ is not an assertion command.
 As $[S_0\FS(n)]=[x]\neq[\vald]$, we know
 $S_0\FS(m)=\empt$ as otherwise the tree property would be violated.
 Therefore $[S_0\FS(m)]=[z]=[\empt]$, which, combined with $y=\vald$
-means that $\wrksx{\cxynv\cc\czwmv}$ is a construction pair, which is a contradiction.
+means that $\cxynv\cc\czwmv$ is a construction pair, which is a contradiction.
 
 If $\parent(n)=m$, then 
 as $(S_0\cc\cxynv\cc S_1)\FS(n) = y$, and either
@@ -113,7 +113,7 @@ or $[(S_0\cc\cxynv\cc S_1\cc\czwmv)\FS(m)]=[w]\neq[\vald]$,
 $y$ must be $\empt$, and $[x]\neq[\empt]$.
 As $[S_0\FS(n)]=[x]\neq[\empt]$, we know $S_0\FS(m)=\vald$.
 Therefore $[S_0\FS(m)]=[z]=[\vald]$, which, combined with $y=\empt$
-means that $\wrksx{\cxynv\cc\czwmv}$ is a destruction pair, which is a contradiction.
+means that $\cxynv\cc\czwmv$ is a destruction pair, which is a contradiction.
 \end{proof}
 
 
@@ -331,11 +331,4 @@ If a simple sequence $S$ contains commands on both $n$ and $\parent(n)$, then
 there is a simple $S'\equiv S$ in which they are next to each other.
 \end{mycor}
 
-
-
-TODO TODO TODO:
-It follows from this that given a simple set,
-we can simply assume that it has an order.
-Accordingly, we will at times treat not only sequences as sets,
-but simple sets as sequences.
 

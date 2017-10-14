@@ -61,7 +61,10 @@ As usual, we write $[v]$ for the equivalence class of $v$, which represents its 
 
 The formal definition of the tree property is therefore
 \begin{mydef}[Tree property]
-\[ \forall n\in\setn, \FS\in\setfs: \FS(n) \neq \empt \Longrightarrow \FS(\parent(n)) \typeeq \vald \]
+\begin{align*}
+\forall n\in\setn, \FS\in\setfs:& \\
+& \FS(n) \neq \empt \Rightarrow \FS(\parent(n)) \typeeq \vald,
+\end{align*}
 where $\parent(n)$ is defined, and where $\vald\in\setv$ is a directory value.
 \end{mydef}
 

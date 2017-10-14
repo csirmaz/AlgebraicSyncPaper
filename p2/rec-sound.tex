@@ -3,8 +3,8 @@
 
 We are now ready to prove that the proposed algorithm for reconciliation is correct,
 that is, applying its result is not going to break the replicas.
-We reformulate the original proposition, $\reca\aFS_B\neq\fsbroken$,
-based on $\FS_B=B\aFS$ and so we aim to prove that
+We reformulate the original proposition ($\reca\aFS_B\neq\fsbroken$)
+based on $\FS_B=B\aFS$, and so we aim to prove that
 $B\cc\reca$ is defined wherever $A$ and $B$ are defined:
 
 \begin{myth}\label{reconciliation_correct}
@@ -31,11 +31,11 @@ Therefore, first we prove the following:
 if all commands are marked in $A$ that also appear in $B$,
 then there is an $A'$ in $\orderset{A}$ in which all marked commands are at the beginning.
 
-We show that $A$ can be transformed via equivalences into $A'$ for which it is true.
-Our proposition is that if the marked commands are not at the beginning, then
+We show that $A$ can be transformed via equivalences into $A'$ for which this is true.
+We know that if the marked commands are not at the beginning, then
 the sequence contains an unmarked command followed by a marked command.
 We show that these can be swapped resulting in an equivalent sequence.
-Then, by repeating this process similarly to bubble sorting, we can generate 
+Then, by repeating this process similarly to bubble sorting, we arrive at 
 a suitable $A'$.
 
 Let us consider therefore the marked command preceded by an unmarked command in $A$,
@@ -45,25 +45,39 @@ and the preceding unmarked command be $\czwmv$:
 A = \cdots\cc  \czwmv\cc  \cxynv\cc  \cdots
 \end{gather*}
 As $A$ is simple and $\wrks{A}$, from 
-\cref{ax_distantrel_breaks,ax_directchild_breaks,ax_directparent_breaks}
+\cref{ax_distantrel_breaks,simple_distant_pairs}
 we know that these commands can only be on incomparable nodes or form a construction or destruction pair.
 In the first case, swapping the commands results in a sequence equivalent to $A$,
 and we show that the last two cases are impossible as they would lead to contradiction.
 
-In these cases, either $m=\parent(n)$ or $n=\parent(m)$.
-If $B$ has a command on $m$, then
--- TODO TODO TODO --
-from \cref{lemma:neighbor}
-we know that there is a $B'$ in $\orderset{B}$ where it is next to $\cxynv$ (also in $B$),
-and from \cref{simple_reorder_equiv} we know that $B'\equiv B$.
--- TODO TODO TODO --
-When describing our ordering algorithm in \cref{ordering} we saw
-that the command on the parent path determines whether a pair of commands
-is a construction or destruction pair,
-and that this, in turn, determines whether the command on the child path must
-precede or follow the other command as otherwise the sequence would break all filesystems.
-This argument holds for both $A$ and $B$, and so the command on $m$ must be on
-the same side of the command on $n$ in both sequences.
+In the cases then $\czmwv\cc\cxynv$ is either a construction or a destruction pair,
+and, depending on which is the case,
+$m=\parent(n)$ or $n=\parent(m)$, respectively.
+
+If $B$ has a command on $m$, let it be $\cqrmv$.
+As \cref{simple_distant_pairs} applies to $B$, we know that
+$\cxynv$ (which is in $B$), and $\cqrmv$ must also form a construction
+or destruction pair.
+As $\cxynv$ cannot be both a construction and a destruction command,
+this pair must be of the same type as $\czmwv\cc\cxynv$,
+and as the relationship between $n$ and $m$ is given,
+we know $\cqrmv$ must precede $\cxynv$ in $B$.
+
+Because the output value of the first command in construction
+and destruction pairs is determined by the type of the pair,
+$r=w$.
+Also, as $\worksmnilb{A,B}$, 
+from \cref{worksinputmatch}
+we know that $[q]=[z]$.
+Therefore $\cqrmv=\czwmv$,
+which is a contradiction as $\czwmv$ was not marked,
+but we see it must also be in $B$.
+
+The last remaining case is when there is no command on $m$ in $B$.
+TODO
+TODO
+
+OLD:
 
 If $B$ has no command on $m$, then let $B'$ be $B$, 
 but with an extra command added to it just before $\cxynv$
@@ -79,15 +93,9 @@ A = \cdots\cc  \czwmv\cc  \cxynv\cc  \cdots \\
 B' = \cdots\cc  \cqrmv\cc  \cxynv\cc  \cdots
 \end{gather*}
 
-As $\worksmnilb{A,B}$ and so $\worksmnilb{A,B'}$, 
-from \cref{worksinputmatch}
-we know that $[q]=[z]$. 
 
 Going back to the construction and destruction pairs we see that the output value of the first command
 is either $\vald$ or $\empt$ and is determined by the relationship between $n$ and $m$.
-Therefore $r=w$ and $\cqrmv=\czwmv$.
-If $B$ originally had a command on $m$,
-this is a contradiction as $\czwmv$ was not marked, but we see it must also be in $B'$ and therefore in $B$.
 If $B$ had no command on $m$,
 this is a contradiction because the command on $m$ in $B'$ is an assertion command, so $[z]=[q]=[r]=[w]$, 
 but $A$ contained no assertion commands.
@@ -95,7 +103,7 @@ but $A$ contained no assertion commands.
 We now know that there is an $A'\equiv A$ in which commands in $\acbnp$
 are at the beginning, and therefore 
 from \cref{worksextpostfix} we know that
-$\worksm{A}{\acb}$ and by symmetry $\worksm{B}{\acb}$.
+$\worksm{A}{\acb}$ and, by symmetry, $\worksm{B}{\acb}$.
 \end{proof}
 
 \bigskip
