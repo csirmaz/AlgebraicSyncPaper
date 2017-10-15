@@ -89,22 +89,34 @@ as $A$ contains no assertion commands.
 \noindent
 We would like to prove that $\worksmbx{A,B}{B\cc \reca}$.
 From \cref{can_move_intersection} above we know that we can move commands in $\acbnp$
-to the beginning of $B$ and so this is equivalent to
-\[ \worksmbx{A,B}{\acb\cc \bma\cc \reca}. \]
-We can prove this if we can show that
-\[ \worksmbx{A,B}{\acb\cc \reca}. \]
-This is because we already know
-that $\worksmbx{A,B}{\acb\cc \bma}$ (as $\worksmbx{A,B}{B}$),
-which, combined with the above, yields
-\[ \worksmbb{A,B}{\acb\cc \reca, \acb\cc \bma}. \]
-Also, as $\reca\indep\bma$,
-from \cref{indep_prefix_combine}
+to the beginning of $A$ and $B$, and so this is equivalent to
+\[ \worksmbx{\acb\cc\amb, \acb\cc\bma}{\acb\cc \bma\cc \reca}, \]
+which is equivalent to
+\[ \worksmbx{\amb, \bma}{\bma\cc \reca}. \]
+
+For ease of reading, let us rename
+$\amb$ to $S$,
+$\reca$ to $S^*$,
+and $\bma$ to $T$.
+In this notation, we intend to prove that
+\[ \worksmbx{S,T}{T\cc S^*}. \]
+We can do so if we can show that
+\[ \worksmbx{S,T}{S^*}. \]
+
+This is because 
+$\worksmbx{S,T}{T}$ is trivially true, and this, combined with the above,
+yields 
+$ \worksmbb{S,T}{S^*,T}. $
+As $\reca\indep\bma$, that is, $S^*\indep T$,
+from \cref{combine_independent_sequences}
 we know
-\[ \worksmbx{\acb\cc \reca, \acb\cc \bma}{\acb\cc \bma\cc \reca}. \]
-As $\worksmeqsign$ is transitive, combining the two statement above
-gives $\worksmbx{A,B}{B\cc \reca}$, which is what we intend to prove.
+$ \worksmbx{S^*,T}{T\cc S^*}, $
+and as $\worksmeqsign$ is transitive, combining the two statements above
+gives $\worksmbx{S,T}{T\cc S^*}$.
 
 \bigskip
+
+TODO TODO TODO TODO TODO
 
 \noindent
 To restate some results above, we therefore already know the following:
