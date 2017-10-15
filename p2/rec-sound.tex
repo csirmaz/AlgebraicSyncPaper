@@ -18,25 +18,22 @@ Let us first investigate the part of $A$ and $B$ that is excluded from
 $\reca$: their intersection.
 
 \begin{mylem}\label{can_move_intersection}
-Let $A$ and $B$ be two simple sequences so that $\worksmnilb{A, B}$.
-Then their intersection is also defined on any filesystem
-either of them is defined on:
-$\worksm{A}{\acb}$, and, by symmetry,
-$\worksm{B}{\acb}$.
+Let $A$ and $B$ be two simple sequences for which $\worksmnilb{A, B}$.
+Then $A$ can be separated into their intersection and the remaining commands:
+\[ \acb\cc\amb \in \orderset{A}. \]
 \end{mylem}
 
 \begin{proof}
-The difficulty is that commands in $\acbnp$ can occur anywhere in $A$.
-Therefore, first we prove the following:
+We prove that
 if all commands are marked in $A$ that also appear in $B$,
 then there is an $A'$ in $\orderset{A}$ in which all marked commands are at the beginning.
 
-We show that $A$ can be transformed via equivalences into $A'$ for which this is true.
+We show that $A$ can be transformed into $A'$ for which this is true.
 We know that if the marked commands are not at the beginning, then
 the sequence contains an unmarked command followed by a marked command.
 We show that these can be swapped resulting in an equivalent sequence.
 Then, by repeating this process similarly to bubble sorting, we arrive at 
-a suitable $A'$.
+a suitable permutation of $A$, which is also equivalent to $A$, and therefore in $\orderset{A}$.
 
 Let us consider therefore the marked command preceded by an unmarked command in $A$,
 and let the marked command be $\cxynv$, 
@@ -50,7 +47,7 @@ we know that these commands can only be on incomparable nodes or form a construc
 In the first case, swapping the commands results in a sequence equivalent to $A$,
 and we show that the last two cases are impossible as they would lead to contradiction.
 
-In the cases then $\czmwv\cc\cxynv$ is either a construction or a destruction pair,
+In the cases then $\czwmv\cc\cxynv$ is either a construction or a destruction pair,
 and, depending on which is the case,
 $m=\parent(n)$ or $n=\parent(m)$, respectively.
 
@@ -59,7 +56,7 @@ As \cref{simple_distant_pairs} applies to $B$, we know that
 $\cxynv$ (which is in $B$), and $\cqrmv$ must also form a construction
 or destruction pair.
 As $\cxynv$ cannot be both a construction and a destruction command,
-this pair must be of the same type as $\czmwv\cc\cxynv$,
+this pair must be of the same type as $\czwmv\cc\cxynv$,
 and as the relationship between $n$ and $m$ is given,
 we know $\cqrmv$ must precede $\cxynv$ in $B$.
 
@@ -74,45 +71,24 @@ which is a contradiction as $\czwmv$ was not marked,
 but we see it must also be in $B$.
 
 The last remaining case is when there is no command on $m$ in $B$.
-TODO
-TODO
-
-OLD:
-
-If $B$ has no command on $m$, then let $B'$ be $B$, 
-but with an extra command added to it just before $\cxynv$
+Let $B'$ be $B$
+with an extra assertion command added just before $\cxynv$
 according to \cref{ax_child_assert,ax_parent_assert}, 
 from which we know that $B'\equiv B$.
-We also know that $B'$ is still minimal (but no longer simple).
-
-In either case, therefore,
-we have a minimal $B'$ which has a command on $m$ just before $\cxynv$ and $B'\equiv B$.
-Let this command on $m$ be $\cqrmv$.
-\begin{gather*}
-A = \cdots\cc  \czwmv\cc  \cxynv\cc  \cdots \\
-B' = \cdots\cc  \cqrmv\cc  \cxynv\cc  \cdots
-\end{gather*}
-
-
-Going back to the construction and destruction pairs we see that the output value of the first command
-is either $\vald$ or $\empt$ and is determined by the relationship between $n$ and $m$.
-If $B$ had no command on $m$,
-this is a contradiction because the command on $m$ in $B'$ is an assertion command, so $[z]=[q]=[r]=[w]$, 
-but $A$ contained no assertion commands.
-
-We now know that there is an $A'\equiv A$ in which commands in $\acbnp$
-are at the beginning, and therefore 
-from \cref{worksextpostfix} we know that
-$\worksm{A}{\acb}$ and, by symmetry, $\worksm{B}{\acb}$.
+Let the new command be $\cqrmv$.
+As $B'$ is still minimal (but no longer simple),
+the argument above applies, and we again know
+that $[q]=[z]$ and $r=w$.
+As $\cqrmv$ is an assertion command, $[q]=[r]$ also holds,
+from which $[z]=[w]$ (as $[z]=[q]=[r]=[w]$), which is a contradiction
+as $A$ contains no assertion commands.
 \end{proof}
 
 \bigskip
 
-% TODO Set or sequence? See also above
-
 \noindent
 We would like to prove that $\worksmbx{A,B}{B\cc \reca}$.
-From the above we know that we can move commands in $\acbnp$
+From \cref{can_move_intersection} above we know that we can move commands in $\acbnp$
 to the beginning of $B$ and so this is equivalent to
 \[ \worksmbx{A,B}{\acb\cc \bma\cc \reca}. \]
 We can prove this if we can show that
@@ -125,11 +101,13 @@ Also, as $\reca\indep\bma$,
 from \cref{indep_prefix_combine}
 we know
 \[ \worksmbx{\acb\cc \reca, \acb\cc \bma}{\acb\cc \bma\cc \reca}. \]
-As $\worksmeqsign$ is transitive, combining the two results
-gives the statement we intended to prove.
+As $\worksmeqsign$ is transitive, combining the two statement above
+gives $\worksmbx{A,B}{B\cc \reca}$, which is what we intend to prove.
 
+\bigskip
 
-To restate some results above, we therefore already know the following things:
+\noindent
+To restate some results above, we therefore already know the following:
 \begin{itemize}
 \item $\amb$ and $\bma$ are simple as $A$ and $B$ are simple
 \item $\amb \cap \bma = \emptyset$
@@ -139,10 +117,11 @@ To restate some results above, we therefore already know the following things:
 because of \cref{r_invmove}
 as $\worksmbb{A,B}{A,B}$,
 and $A\equiv\acb\cc\amb$, and $B\equiv\acb\cc\bma$.
+TODO HOW IS THIS USED?
 \end{itemize}
 
 Our theorem is therefore proven if we prove the following lemma,
-in which we rename $\amb$ to $S$ and $\bma$ to $T$:
+in which we rename $\amb$ to $S$, $\reca$ to $S^*$, and $\bma$ to $T$:
 \newcommand{\condSimple}{(c1)}
 \newcommand{\condDisj}{(c2)}
 \newcommand{\condApr}{(c3)}
@@ -165,7 +144,7 @@ and therefore $\worksmnilb{S,T}$.
 
 The proof is similar to that of \cref{can_move_intersection}.
 We mark all commands in $S$ that are in its subset $S^*$, and
-we prove that $S$ can be transformed into $S'$ via equivalences
+we prove that $S$ can be transformed into $S'$
 so that all marked commands would be at its beginning.
 If so, then 
 $\worksm{\sqs{C}}{S^*}$ 
@@ -182,7 +161,7 @@ By repeating this process we can generate a suitable $S'$.
 Let therefore the marked command in $S$ be $\cxynv$
 and the preceding unmarked command be $\czwmv$.
 As $S$ is simple and $\wrks{S}$, from 
-\cref{ax_distantrel_breaks,ax_directchild_breaks,ax_directparent_breaks}
+\cref{ax_distantrel_breaks,simple_distant_pairs}
 we know that these commands can only be on incomparable nodes or form a construction or destruction pair.
 In the first case, swapping the commands results in a sequence equivalent to $S$,
 and we show that the other two cases are not possible as they would lead to a contradiction.
