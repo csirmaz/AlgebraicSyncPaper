@@ -90,79 +90,64 @@ as $A$ contains no assertion commands.
 We would like to prove that $\worksmbx{A,B}{B\cc \reca}$.
 From \cref{can_move_intersection} above we know that we can move commands in $\acbnp$
 to the beginning of $A$ and $B$, and so this is equivalent to
-\[ \worksmbx{\acb\cc\amb, \acb\cc\bma}{\acb\cc \bma\cc \reca}, \]
-which is equivalent to
-\[ \worksmbx{\amb, \bma}{\bma\cc \reca}. \]
+\[ \worksmbx{\acb\cc\amb, \acb\cc\bma}{\acb\cc \bma\cc \reca}. \]
 
 For ease of reading, let us rename
-$\amb$ to $S$,
-$\reca$ to $S^*$,
-and $\bma$ to $T$.
+\begin{itemize}
+\item $\amb$ to $S$
+\item $\reca$ to $S^*$
+\item $\bma$ to $T$
+\item and $\acb$ to $U$.
+\end{itemize}
 In this notation, we intend to prove that
-\[ \worksmbx{S,T}{T\cc S^*}. \]
+\[ \worksmbx{U\cc S,U\cc T}{U\cc T\cc S^*}. \]
 We can do so if we can show that
 \[ \worksmbx{S,T}{S^*}. \]
 
-This is because 
-$\worksmbx{S,T}{T}$ is trivially true, and this, combined with the above,
-yields 
-$ \worksmbb{S,T}{S^*,T}. $
-As $\reca\indep\bma$, that is, $S^*\indep T$,
-from \cref{combine_independent_sequences}
-we know
-$ \worksmbx{S^*,T}{T\cc S^*}, $
-and as $\worksmeqsign$ is transitive, combining the two statements above
-gives $\worksmbx{S,T}{T\cc S^*}$.
+This is because from \cref{indep_prefix_combine} we know
+$\worksmbx{U\cc T, U\cc S^*}{U\cc T\cc S^*}$ as $S^* \indep T$.
+From $\worksmbx{S,T}{S^*}$ trivially
+$\worksmbb{S,T}{S^*, T}$,
+and from \cref{works_restricted} we know
+$\worksmbb{U\cc S, U\cc T}{U\cc S^*, U\cc T}$.
+Because $\worksmeqsign$ is transitive, combining these results
+we get $\worksmbx{U\cc S,U\cc T}{U\cc T\cc S^*}$.
 
 \bigskip
-
-TODO TODO TODO TODO TODO
 
 \noindent
 To restate some results above, we therefore already know the following:
 \begin{itemize}
-\item $\amb$ and $\bma$ are simple as $A$ and $B$ are simple
-\item $\amb \cap \bma = \emptyset$
-\item $\reca$ is the largest subset of $\amb$ for which $\reca\indep\amb$
-% TODO Inverse is used here - how/why?
-\item $\worksmbb{\acbi\cc A,\acbi\cc B}{\amb, \bma}$ 
-because of \cref{r_invmove}
-as $\worksmbb{A,B}{A,B}$,
-and $A\equiv\acb\cc\amb$, and $B\equiv\acb\cc\bma$.
-TODO HOW IS THIS USED?
+\item $S=\amb$ and $T=\bma$ are simple as $A$ and $B$ are simple
+\item $S\cap T = \amb \cap \bma = \emptyset$
+\item 
+$S^*$ is the largest subset of $S$ for which $S^*\indep T$, as
+$\reca$ is the largest subset of $\amb$ for which $\reca\indep\bma$
 \end{itemize}
 
-Our theorem is therefore proven if we prove the following lemma,
-in which we rename $\amb$ to $S$, $\reca$ to $S^*$, and $\bma$ to $T$:
+Our theorem is therefore proven if we prove the following lemma.
 \newcommand{\condSimple}{(c1)}
 \newcommand{\condDisj}{(c2)}
 \newcommand{\condApr}{(c3)}
-\newcommand{\condWork}{(c4)}
 \begin{mylem}\label{reconciliation_correct_part}
 If
-   \begin{itemize}
-   \item[\condSimple] $S$ and $T$ are simple sequences,
-   \item[\condDisj] $S\cap T=\emptyset$,
-   \item[\condApr] $S^*$ is the largest subset of $S$ where $S^*\indep T$, and
-   \item[\condWork] $\worksmxb{\sqs{C}}{S,T}$ for some set of sequences $\sqs{C}$,
-   \end{itemize}
+{\condSimple} $S$ and $T$ are simple sequences,
+{\condDisj} $S\cap T=\emptyset$,
+and {\condApr} $S^*$ is the largest subset of $S$ where $S^*\indep T$,
 then
-\[ \worksm{\sqs{C}}{S^*}. \]
+$\worksmbx{S,T}{S^*}$.
 \end{mylem}
 
 \begin{proof}
-This is trivial unless $\worksmnil{\sqs{C}}$, so we will assume that it is true
-and therefore $\worksmnilb{S,T}$.
+This is trivial unless $\worksmnilb{S,T}$, so we assume that it is the case.
 
 The proof is similar to that of \cref{can_move_intersection}.
 We mark all commands in $S$ that are in its subset $S^*$, and
 we prove that $S$ can be transformed into $S'$
-so that all marked commands would be at its beginning.
+where all marked commands are at the beginning.
 If so, then 
-$\worksm{\sqs{C}}{S^*}$ 
-based on \cref{worksextpostfix}
-as $\worksm{\sqs{C}}{S'}$ and $S'=S^*\cc S_0$ 
-where $S_0$ contains the remaining (conflicting) commands.
+$\worksm{S}{S^*}$ based on \cref{worksextpostfix},
+from which trivially $\worksmbx{S,T}{S^*}$.
 
 Again we know that if $S$ does not already have all marked commands at its beginning,
 then there is an unmarked command followed by a marked one.
@@ -186,31 +171,33 @@ as $\czwmv$ is not part of $S^*$.
 S = \cdots\cc  \czwmv\cc  \cxynv\cc  \cdots \\
 T = \cdots\cc  \cqrov\cc \cdots
 \end{gather*}
-We know none of these commands is an assertion command, and 
-from {\condDisj} that $\cqrov\neq\czwmv$.
-Therefore, based on \cref{incomparable_is_independent} we know this means that
+Based on \cref{incomparable_is_independent} we know this means that
 either $m\descendantEq o$ or $o\descendantEq m$.
 From {\condApr} we also know that $\cxynv\indep \cqrov$,
 and so because of \cref{incomparable_is_independent},
 $n\unrel o$.
+We also know none of these commands is an assertion command, and 
+from {\condDisj} that $\cqrov\neq\czwmv$.
 
 We therefore have four cases considering the relationships between $n,m$ and $o$:
 \begin{itemize}
-\item $n=\parent(m) \wedge o\descendantEq m$.
-   This would mean that $o\descendantEq n$ or $n=\parent(o)$, which contradicts $n\unrel o$.
-\item $n=\parent(m) \wedge m\descendantEq o$.
+\item $n=\parent(m)$ and $o\descendantEq m$.
+   This would mean that $o\descendantEq n$ or $n=\parent(o)$ (if $o=m$), which contradicts $n\unrel o$.
+\item $n=\parent(m)$ and $m\descendantEq o$.
    This would mean that $n\descendant o$, which contradicts $n\unrel o$.
-\item $m=\parent(n) \wedge o\descendantEq m$.
+\item $m=\parent(n)$ and $o\descendantEq m$.
    This would mean that $o\descendant n$, which contradicts $n\unrel o$.
-\item $m=\parent(n) \wedge m\descendantEq o$.
+\item $m=\parent(n)$ and $m\descendantEq o$.
    Let us continue with this case.
 \end{itemize}
 
+As $m=\parent(n)$, we know $\czwmv\cc\cxynv$ must be a construction pair.
 We know that $T$ cannot have a command on $m$ as $m=\parent(n)$ and $\cxynv\indep T$,
 and so $m\neq o$ and therefore $m\descendant o$.
 This means we can create a new sequence $T'\equiv T$ by inserting a command on 
 $m$ into $T$ before $\cqrov$
-according to \cref{ax_parent_assert}.
-We now have $\cxynv\indep T\equiv T'$, which is a contradiction as
-$T'$ has a command on $m$ and $m=\parent(n)$.
+according to \cref{ax_parent_assert}, the input type of which is $[\vald]$.
+As $T'$ is still minimal, and $\worksmnilb{S,T}$,
+from \cref{worksinputmatch} we get $[z]=[\vald]$, which is a contradiction,
+as $\czwmv$ is the first command in a construction pair.
 \end{proof}
