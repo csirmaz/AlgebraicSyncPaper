@@ -1,7 +1,7 @@
 
 % TODO Commuting commands important as we need to establish order
 
-\subsection{Ordering commands}\label{ordering}
+\subsection{Ordering commands}\mlabel{ordering}
 
 We often encounter the case where we only have a set of commands without a specified order.
 As we have seen above, this can occur after the first stage of update detection,
@@ -24,7 +24,7 @@ It is an important property of simple sequences: namely, that
 all of their valid reorderings are equivalent,
 and all equivalent sequences are mere reorderings.
 
-\begin{mydef}[$\ordersetsign$]\label{def_orderset}
+\begin{mydef}[$\ordersetsign$]\mlabel{def_orderset}
 For a simple set or sequence of commands $S$,
 we use $\orderset{S}$ to denote the set of sequences
 that are all permutations of the commands in $S$
@@ -52,7 +52,7 @@ which in turn determines whether the command on the parent or the child must pre
 
 To prove \cref{simple_reorder_equiv}, we need the following results.
 
-\begin{myclm}\label{subseq_in_orderset}
+\begin{myclm}\mlabel{subseq_in_orderset}
 For simple sequences $S$ and $T$,
 if $T\in\orderset{S}$, then for any subsequence of $S$, $S_0$,
 and for the corresponding subsequence of $T$, $T_0$, which
@@ -65,7 +65,7 @@ if there are no command pairs in $T$ not conforming to \cref{def_orderset},
 then there cannot be any in $T_0$.
 \end{proof}
 
-\begin{mylem}\label{simple_distant_pairs}
+\begin{mylem}\mlabel{simple_distant_pairs}
 For any simple sequence $\wrksx{S}$,
 if $\cxynv\cc\czwmv$ is a subsequence of $S$ and $n=\parent(m)$ or $\parent(n)=m$,
 then $\cxynv\cc\czwmv$ is either a construction or a destruction pair.
@@ -119,7 +119,7 @@ means that $\cxynv\cc\czwmv$ is a destruction pair, which is a contradiction.
 \end{proof}
 
 
-\begin{mycor}\label{order_is_only_possible}
+\begin{mycor}\mlabel{order_is_only_possible}
 For any simple sequence $S$ and its permutation $S'$, 
 \[ S'\not\in\orderset{S} \Longrightarrow S'\equiv\cbrk. \]
 \end{mycor}
@@ -138,7 +138,7 @@ and therefore by \cref{simple_distant_pairs}, $S'\equiv\cbrk$.
 
 
 
-\begin{mylem}\label{connected_changes}
+\begin{mylem}\mlabel{connected_changes}
 Given a set of commands that
 does not contain assertion commands,
 and which can be applied to a filesystem in some order without breaking it,
@@ -179,7 +179,7 @@ is again a contradiction.
 
 % TODO breaks --> not defined on
 
-\begin{mylem}\label{equiv_simple_same_commands}
+\begin{mylem}\mlabel{equiv_simple_same_commands}
 If two simple sequences $A$ and $B$ are equivalent
 and do not break all filesystems ($A\equiv \wrksx{B}$),
 then they must contain the same commands.
@@ -209,7 +209,7 @@ However, then $\czwnv=\cxynv$, which is a contradiction.
 
 % TODO delete unused results
 
-\begin{mylem}\label{simple_reorder_equiv}
+\begin{mylem}\mlabel{simple_reorder_equiv}
 For a simple sequence $\wrksx{S}$,
 $\orderset{S}$ is the set of all simple sequences equivalent to $S$, that is,
 \[ \orderset{S} = [S]_\equiv \cap \setssmp. \]

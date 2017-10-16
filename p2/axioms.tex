@@ -1,6 +1,6 @@
 
 
-\section{Investigating Command Pairs}\label{section_axioms}
+\section{Investigating Command Pairs}\mlabel{section_axioms}
 
 % Sequences
 % ---------
@@ -65,7 +65,7 @@ and so it is a congruence.
 
 It is easy to see that this equivalence holds on the level of filesystems:
 
-\begin{mylem}\label{equiv_on_fs}
+\begin{mylem}\mlabel{equiv_on_fs}
 $A\equiv B$
 iff $A$ and $B$ behave in the same way on
 all filesystems, that is, $\forall \FS: A\aFS=B\aFS$.
@@ -119,33 +119,33 @@ Pairs of commands in general have the form
 \[ \cxynv\cc  \czwmv \]
 where $x,y,z,w\in\setv$ and $n,m\in\setn$. 
 
-\begin{myax}\label{ax_separate_commute}
+\begin{myax}\mlabel{ax_separate_commute}
 Commands on incomparable nodes commute:
 $\cxynv\cc\czwmv \equiv \czwmv\cc\cxynv$ where $n\unrel m$.
 \end{myax}
 
-\begin{myax}\label{ax_separate_nobreaks}
+\begin{myax}\mlabel{ax_separate_nobreaks}
 Commands on incomparable nodes do not break all filesystems:
 $\wrksx{\cxynv\cc\czwmv}$ where $n\unrel m$.
 \end{myax}
 
-\begin{myax}\label{ax_same_breaks}
+\begin{myax}\mlabel{ax_same_breaks}
 Commands on the same node break every filesystem if their types are incompatible:
 $\cxynv\cc\czwnv \equiv \cbrk$ where $[y]\ne [z]$.
 \end{myax}
 
-\begin{myax}\label{ax_same_emptyseq}
+\begin{myax}\mlabel{ax_same_emptyseq}
 Commands on the same node simplify:
 $\cxynv\cc\czwnv \eqext \emptyseq$ where $[y]=[z]$, and $\cxw=\cbb$ 
 or $\cxw=\cdd$.
 \end{myax}
 
-\begin{myax}\label{ax_same_singlec}
+\begin{myax}\mlabel{ax_same_singlec}
 Commands on the same node simplify:
 $\cxynv\cc \czwnv \equiv \cxwnv$ where $[y]=[z]$ and $\cxw\neq\cbb$ and $\cxw\neq\cdd$.
 \end{myax}
 
-\begin{myax}\label{ax_distantrel_breaks}
+\begin{myax}\mlabel{ax_distantrel_breaks}
 Commands on distant relatives break all filesystems:
 $\cxynnv\cc\czwnv \equiv \cbrk$
 and $\czwnv\cc\cxynnv \equiv\cbrk$
@@ -169,7 +169,7 @@ of the following:
 \end{mydef}
 
 
-\begin{myax}\label{ax_directchild_breaks}
+\begin{myax}\mlabel{ax_directchild_breaks}
 All other commands on a child break every filesystem:
 $\cxynnv\cc\czwnv \equiv \cbrk$ where $\nn=\parent(n)$ and $\cxy\neq\cdd$ and $\czw\neq\cbb$
 and the pair is not a construction pair.
@@ -188,7 +188,7 @@ of the following:
    \end{gather*}
 \end{mydef}
 
-\begin{myax}\label{ax_directparent_breaks}
+\begin{myax}\mlabel{ax_directparent_breaks}
 All other commands on a parent break every filesystem:
 $\cxynv\cc\czwnnv \equiv \cbrk$ where $\parent(n)=\nn$ and $\cxy\neq\cbb$ and $\czw\neq\cdd$
 and the pair is not a destruction pair.
@@ -205,7 +205,7 @@ and there must also be only one possible value for their output.
 Accordingly, $\cbba{n}$ and $\cdda{n}$ are the only two types of assertion commands.
 \end{mydef}
 
-\begin{myax}\label{ax_child_assert}
+\begin{myax}\mlabel{ax_child_assert}
 An assertion command can be added on a descendant node:
 \[ \cbba{n}\cc\cxynnv \equiv \cxynnv \equiv \cxynnv\cc\cbba{n} \] 
 where $\nn\descendant n$ and $\cxy\neq\cdd$.
@@ -213,13 +213,13 @@ where $\nn\descendant n$ and $\cxy\neq\cdd$.
 adjacent to the original command.)
 \end{myax}
 
-\begin{myax}\label{ax_parent_assert}
+\begin{myax}\mlabel{ax_parent_assert}
 An assertion command can be added on an ancestor node:
 \[ \cdda{\nn}\cc\cxynv \equiv \cxynv \equiv \cxynv\cc\cdda{\nn} \]
 where $\nn\descendant n$ and $\cxy\neq\cbb$.
 \end{myax}
 
-\begin{myax}\label{ax_assert}
+\begin{myax}\mlabel{ax_assert}
 Assertion commands can be removed:
 $\cdda{n}\eqext\emptyseq$ and $\cbba{n}\eqext\emptyseq$.
 % $\cxynv \eqext \emptyseq$ where $\cxy=\cbb$ or $\cxy=\cdd$.
@@ -235,7 +235,7 @@ $\cdda{n}\eqext\emptyseq$ and $\cbba{n}\eqext\emptyseq$.
 \noindent
 We also define the concept of two commands being independent:
 
-\begin{mydef}[$A\indep B$: Independent commands, sequences and sets of commands]\label{def_indep}
+\begin{mydef}[$A\indep B$: Independent commands, sequences and sets of commands]\mlabel{def_indep}
 Two commands $\cxynv$ and $\czwmv$ 
 are independent, and we write $\cxynv\indep\czwmv$ if 
 they commute and do not break all filesystems:
@@ -250,7 +250,7 @@ and sequences as for incomparable nodes. As we will see in the next
 \namecref{incomparable_is_independent},
 these two concepts are closely related.
 
-\begin{mylem}\label{incomparable_is_independent}
+\begin{mylem}\mlabel{incomparable_is_independent}
 Two different commands that are not assertion commands are independent iff the nodes they change are incomparable. In other words,
 \[ \cxynv\indep\czwmv \Longleftrightarrow n\unrel m \]
 if $\cxy\neq\czw$ and none of $\cxy$ and $\cxw$ is $\cbb$ or $\cdd$.

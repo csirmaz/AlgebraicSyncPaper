@@ -21,7 +21,7 @@ all sequences in $\sqs{A}$ are defined on.
 % works operators
 % ---------------
 
-\begin{mydef}[$\worksmeqsign$]\label{def_works}
+\begin{mydef}[$\worksmeqsign$]\mlabel{def_works}
 For two sets of sequences $\sqs{A}$ and $\sqs{B}$
 we write $\worksm{\sqs{A}}{\sqs{B}}$ iff $\Dom{\sqs{A}} \subseteq \Dom{\sqs{B}}$;
 that is, iff all sequences in $\sqs{B}$ are defined on (do not break)
@@ -40,21 +40,21 @@ that where they are defined, their effect is the same.
 
 The following claim follows immediately from the definition:
 
-\begin{myclm}\label{worksextpostfix}
+\begin{myclm}\mlabel{worksextpostfix}
 % An inference rule in the algebra
 $\forall A,S: \worksm{A\cc S}{A}$, that is, if a sequence is defined,
 its initial segments are also defined.
 \end{myclm}
 
-\begin{myclm}\label{works_restricted}
-$\forall \sqs{A},\sqs{B},S: \worksm{\sqs{A}}{\sqs{B}} \Leftarrow \worksm{S\cc \sqs{A}}{S\cc \sqs{B}}$, that is,
+\begin{myclm}\mlabel{works_restricted}
+$\forall \sqs{A},\sqs{B},S: \worksm{\sqs{A}}{\sqs{B}} \Rightarrow \worksm{S\cc \sqs{A}}{S\cc \sqs{B}}$, that is,
 the relationship between the domains of the sets $\sqs{A}$ and $\sqs{B}$ continues to hold
 even if they are restricted to the image of $S$.
 \end{myclm}
 
 We also prove the following lemmas.
 
-\begin{myax}\label{combine_independent_commands}
+\begin{myax}\mlabel{combine_independent_commands}
 The combination of independent commands is defined on all filesystems
 where both of the commands are defined:
 \[ \alpha\indep \beta \Rightarrow \worksmbx{\alpha, \beta}{\alpha\cc \beta}. \]
@@ -81,7 +81,7 @@ which therefore cannot be changed by $\cxynv$.
 
 \cref{combine_independent_commands} extends to sequences as well:
 
-\begin{mylem}\label{combine_independent_sequences}
+\begin{mylem}\mlabel{combine_independent_sequences}
 The combination of independent sequences is defined on all filesystems
 where both of the sequences are defined:
 \[ S\indep T \Rightarrow \worksmbx{S,T}{S\cc T}. \]
@@ -124,7 +124,7 @@ $(T_0 \cc S\cc t)\FS\neq\fsbroken$, which is a contradiction.
 
 We also prove the following:
 
-\begin{mylem}\label{worksinputmatch}
+\begin{mylem}\mlabel{worksinputmatch}
 If $S$ and $T$ are minimal sequences, $\worksmnilb{S,T}$,
 and there are commands on node $n$ in both $S$ ($\cxynv\in A$) and $T$ ($\czwnv\in B$),
 then the input types of these commands must match, i.e. $[x]=[z]$.
@@ -172,7 +172,7 @@ introduce the \emph{canonical mapping} $\T{}$ that preserves the types of values
 but maps all objects into a subsystem where there is a one-to-one
 correspondence between types and values.
 
-\begin{mydef}[canonical mapping, $\T{}$]\label{def_typemapping}
+\begin{mydef}[canonical mapping, $\T{}$]\mlabel{def_typemapping}
 We use $\T{}$ and write $\T{a}$ to denote the canonical mapping of 
 values, filesystems, commands and sequences to the
 representatives of their $\typeeq$-equivalence class.
@@ -204,7 +204,7 @@ we know $\Dom{A}=\Dom{\TA}$ and therefore $\Dom{\sqs{A}}=\Dom{\T{\sqs{A}}}$.
 From this it follows that
 % TODO what's the set of all filesystems?
 % TODO:
-\begin{mycor}\label{repr_works_is_same}
+\begin{mycor}\mlabel{repr_works_is_same}
 \begin{gather*}
 \worksmnil{\sqs{A}} \Longleftrightarrow \worksmnil{\T{\sqs{A}}} \\
 \worksm{\sqs{A}}{\sqs{B}} \Longleftrightarrow \worksm{\T{\sqs{A}}}{\T{\sqs{B}}}.
@@ -219,7 +219,7 @@ which allows us to move parts of sequences between the
 two sides of $\worksmeqsign$.
 This is based on the following observation.
 
-\begin{mylem}\label{repr_comm_inject}
+\begin{mylem}\mlabel{repr_comm_inject}
 Canonical commands $\T{\alpha}$ are partial bijections over canonical filesystems
 ($\T{\FS}$, $\T{\GS}$).
 Because partial functions are trivially surjective when restricted to their images, this is
@@ -272,7 +272,7 @@ canonical sequences and sets.
 \newcommand{\ic}{\sqs{C}}
 \newcommand{\ibi}{B^{-1}}
 
-\begin{mylem}\label{r_invmove}
+\begin{mylem}\mlabel{r_invmove}
 A common initial segment of a set of canonical sequences can be moved 
 to the other side of $\worksmeqsign$ by inverting it:
 \begin{gather*}
@@ -318,7 +318,7 @@ $\worksm{\ia}{B\cc\ic}$.
 
 We use this result to prove the following:
 
-\begin{mylem}\label{indep_prefix_combine}
+\begin{mylem}\mlabel{indep_prefix_combine}
 The combination of two sequences with a common head and independent tails 
 is defined wherever the two sequences are defined:
 % Use A\cc\{B,C\}
