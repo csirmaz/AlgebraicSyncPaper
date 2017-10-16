@@ -13,17 +13,17 @@ To show this, we are going to prove the following theorem:
 
 \begin{myth}\mlabel{rec_is_complete}
 If $A$ and $B$ are simple sequences,
-and we select a sequence $S\subset \amb$ so that
-it contains a command $\cxynv$ for which $\cxynv\nindep\bma$,
-then $B\cc S$ either breaks all filesystems $A$ and $B$ do not break
+and we select a sequence $S$ from the commands in $\ambnp$ so that
+it contains a command $\cxynv$ for which $\cxynv\nindep\bmanp$,
+then $B\cc S$ either breaks all filesystems $A$ and $B$ are defined on
 (that is, $S$ breaks all possible $\FS_B$ replicas),
 or it changes a node that $B$ has already changed to a different value,
 that is, it overrides a change in $\FS_B$.
 \end{myth}
 Such an override could occur if a given node was modified differently in
-$A$ and $B$ (to different values but the same type), which is clearly
-a conflict that should be marked for review
-by a human or a different system.
+$A$ and $B$ (to different values but the same type), which 
+our algorithm must treat as a conflict to be resolved by
+by the user or a different system.
 \begin{proof}
 The proof is similar to the ones we have seen above.
 Without loss of generality, we assume that $\cxynv$ is the first command in $S$
