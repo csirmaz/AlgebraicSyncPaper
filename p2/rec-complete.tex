@@ -8,48 +8,59 @@
 %% TODO general properties of commands ==> behavior on specific filesystems
 
 The reconciliation algorithm defined above is also maximal, that is,
-it is not possible to apply any further commands from $A\setminus B$ to $\FS_B$.
-To show this, we are going to prove the following theorem:
+it is not possible to apply any further commands from $\ambnp$ to $\FS_B$.
+To show this, we are going to prove that any sequence $S$ formed from commands
+in $\ambnp$ that is not independent of $\bmanp$ necessarily breaks $B\aFS=\FS_B$
+or introduces a conflicting update.
 
 \begin{myth}\mlabel{rec_is_complete}
 If $A$ and $B$ are simple sequences,
-and we select a sequence $S$ from the commands in $\ambnp$ so that
-it contains a command $\cxynv$ for which $\cxynv\nindep\bmanp$,
+$S'\in\orderset{\ambnp}$,
+and $S$ is a subsequence of $S'$ that
+contains a command $\cxynv$ for which $\cxynv\nindep\bmanp$,
 then $B\cc S$ either breaks all filesystems $A$ and $B$ are defined on
 (that is, $S$ breaks all possible $\FS_B$ replicas),
-or it changes a node that $B$ has already changed to a different value,
+or $S$ changes a node that $B$ has already changed to a different value,
 that is, it overrides a change in $\FS_B$.
 \end{myth}
 Such an override could occur if a given node was modified differently in
-$A$ and $B$ (to different values but the same type), which 
+$A$ and $B$ (to different values but to values of the same type), which 
 our algorithm must treat as a conflict to be resolved by
 by the user or a different system.
 \begin{proof}
 The proof is similar to the ones we have seen above.
+Let $T$ be an arbitrary sequence in $\orderset{\bmanp}$.
 Without loss of generality, we assume that $\cxynv$ is the first command in $S$
-that is not independent of $\bmanp$.
-If so, we can split $S$ into $S_0\cc\cxynv\cc S_1$ where $S_0\indep\bma$.
-Let us also split $\bmanp$ into $T_0\cc\czwmv\cc T_1$ where $T_1\indep\cxynv$.
+that is not independent of $T$.
+If so, we can split $S$ into $S_0\cc\cxynv\cc S_1$ where $S_0\indep T$.
+
+Let $\czwmv$ be the last command in $T$ that is not independent of $\cxynv$,
+and split $T$ into $T_0\cc\czwmv\cc T_1$, where therefore $T_1\indep\cxynv$.
+
 From \cref{can_move_intersection} we know that
-$B\cc S \equiv \acb\cc\bma\cc S$.
-We also know that commands in $S_0$ and $\bmanp$ commute, and so this is equivalent to
-$\acb\cc S_0\cc\bma\cc\cxynv\cc S_1$.
-Expanding $\bmanp$ and swapping $T_1$ and $\cxynv$ we get
+$\acb\cc\bma \in \orderset{B}$, and so
+$B\cc S \equiv \acb\cc\bma\cc S \equiv \acb\cc T\cc S$.
+We also know that commands in $S_0$ and $T$ commute, and so this is equivalent to
+$\acb\cc S_0\cc T\cc\cxynv\cc S_1$.
+Expanding $T$ and swapping $T_1$ and $\cxynv$ we get
 \[ \acb\cc S_0\cc T_0 \cc \czwmv \cc \cxynv\cc T_1\cc S_1. \]
 
 First, we prove that this sequence breaks all filesystems
-unless $n=m$.
+where $A$ and $B$ are defined unless $n=m$.
 Let us therefore suppose $n\neq m$ and, to use an inverse proof,
 that the sequence is defined on $\FS$ where $A\aFS\neq\fsbroken$.
 If so, its initial segment, $\acb\cc S_0\cc T_0 \cc \czwmv \cc \cxynv$ must also be defined.
 
 We know $\cxynv\nindep\czwmv$, and so from \cref{incomparable_is_independent}, $n\nunrel m$.
-As the sequence is defined, $\czwmv\cc\cxynv$ can only be a construction or destruction pair.
-As $\czwmv$ and $T_0$ originate from $\bmanp$ and $B$ is simple, we also know there are
-no commands on $m$ in $\acbnp$ or $T_0$,
-and that there are no commands on $m$ in $S_0$ as $S_0\indep\bma$.
+As the sequence is defined on $\FS$, $\czwmv\cc\cxynv$ can only be a construction or destruction pair.
+Also, because $B$ is simple and contains $\czwmv$,
+we know there are no commands on $m$ 
+in either $\acb$ or $T_0$, which are both formed from other commands in $B$.
+Moreover, we know there are no commands on $m$ in $S_0$ because $S_0\indep T$.
 
-On the one hand we therefore know that $\FS(m)$ must be of type $[z]$,
+TODO TODO TODO
+
+On the one hand, we therefore know that $\FS(m)$ must be of type $[z]$,
 but on the other, from \cref{ax_directchild_breaks,ax_directparent_breaks},
 we also know that $\cxynv$ cannot be applied to $\FS$ without
 changing $\FS(m)$ first.
