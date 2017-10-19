@@ -48,39 +48,53 @@ Expanding $T$ and swapping $T_1$ and $\cxynv$ we get
 First, we prove that this sequence breaks all filesystems
 where $A$ and $B$ are defined unless $n=m$.
 Let us therefore suppose $n\neq m$ and, to use an inverse proof,
-that the sequence is defined on $\FS$ where $A\aFS\neq\fsbroken$.
-If so, its initial segment, $\acb\cc S_0\cc T_0 \cc \czwmv \cc \cxynv$ must also be defined.
+that the sequence is defined on $\FS$ 
+where $A\aFS\neq\fsbroken$ and $B\aFS\neq\fsbroken$.
+If so, its initial segment,
+\[ \acb\cc S_0\cc T_0 \cc \czwmv \cc \cxynv, \]
+must also be defined on $\FS$.
 
 We know $\cxynv\nindep\czwmv$, and so from \cref{incomparable_is_independent}, $n\nunrel m$.
-As the sequence is defined on $\FS$, $\czwmv\cc\cxynv$ can only be a construction or destruction pair.
+As the sequence is defined on $\FS$,
+because of \cref{simple_distant_pairs}
+$\czwmv\cc\cxynv$ can only be a construction or destruction pair.
+
 Also, because $B$ is simple and contains $\czwmv$,
 we know there are no commands on $m$ 
 in either $\acb$ or $T_0$, which are both formed from other commands in $B$.
 Moreover, we know there are no commands on $m$ in $S_0$ because $S_0\indep T$.
+We therefore know that $\FS(m)$ must be of type $[z]$.
 
-TODO TODO TODO
+If $m=\parentf{n}$ then $\czwmv\cc\cxynv$ is a construction pair, and we know
+$[\FS(m)]=[z]\neq[\vald]$ and $y\neq\empt$ as none of these commands is an assertion command.
+If so, $\fsreplacement{\FS}{n}{y}$ 
+(that is, applying $\cxynv$ to $\FS$ without modifying $\FS(m)$ first) would violate the tree property.
+The same is true when $\parentf{m}=n$, where we have a destruction pair,
+and $[z]\neq\empt$ and $[y]\neq[\vald]$.
 
-On the one hand, we therefore know that $\FS(m)$ must be of type $[z]$,
-but on the other, from \cref{ax_directchild_breaks,ax_directparent_breaks},
-we also know that $\cxynv$ cannot be applied to $\FS$ without
-changing $\FS(m)$ first.
-As $A\aFS\neq\fsbroken$, this means that $A$ must contain a command on $m$.
-Let this command be $\cqrmv$.
+Since $\cxynv\in S$ and therefore $\cxynv\in A$, and $A\aFS\neq\fsbroken$,
+the above means that $A$ must also contain a command on $m$ before $\cxynv$.
+From \cref{simple_distant_pairs} we then know that $\cqrmv\cc\cxynv$
+is also a construction or destruction pair, and it is the same type as
+$\czwmv\cc\cxynv$.
 
-Clearly $[q]=[z]$ (from \cref{worksinputmatch}), and from the construction and destruction
-pairs we also see that $r=w$ must hold, where $w=\vald$ or $w=\empt$.
-As $|\setd|=1$ and $|\setb|=1$, this also means that $::v_R=v_W::$ and therefore
-$\cqrmv = \czwmv$.
-This is a contradiction as $\cqrmv\in A$, but $\czwmv\in\bmanp$.
+Because the type of the pair determines the output type of the first command,
+this means that $[r]=[w]$, and they can either be $[\empt]$ or $[\vald]$.
+As we assumed that $|\setd|=1$, we therefore know that $r=w$.
+From \cref{worksinputmatch} we also know that $[q]=[z]$.
+
+Therefore $\cqrmv = \czwmv$, which is a contradiction
+because $\cqrmv$ was selected from $A$, and
+$\czwmv$ was selected from $T$, that is, from $\bmanp$.
 
 The only possibility is therefore $n=m$.
-As $A$ and $B$ are simple, we therefore know that these are the first commands on $n$,
+As $A$ and $B$ are simple, we then know that
+$\cxynv$ and $\czwmv$ are the first commands on $n$,
 and so (again from \cref{worksinputmatch}) $[z]=[x]$.
 We also know $w\neq y$ as otherwise the two commands would be equal and
-would be included in $\acbnp$,
-but this means that $\cxynv$, from $A$, overrides a change introduced 
-by $\czwnv$, from $B$, which should be treated as a conflict.
+would be in $\acbnp$.
+This, however, means that $\cxynv$, from $A$, overrides a change introduced 
+by $\czwnv$, from $B$, which must be treated as a conflict.
 \end{proof}
 
 From the proof it is apparent that this result depends on $|\setd|=1$.
-

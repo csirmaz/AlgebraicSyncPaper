@@ -95,9 +95,9 @@ or $S\aFS$ if $S$ is a sequence of commands.
 
 \begin{mydef}[Effect of commands]
 We use a replacement operator of the form
-$\FS_{[\valv/n]}$ to denote a filesystem derived from $\FS$ 
+$\fsreplacement{\FS}{n}{\valv}$ to denote a filesystem derived from $\FS$ 
 by replacing its value at $n$ with $\valv$:
-\[ \FS_{[\valv/n]}(m) =
+\[ \fsreplacement{\FS}{n}{\valv}(m) =
    \begin{cases}
    \valv &\mbox{if~} m=n\\
    \FS(m) &\mbox{otherwise.}
@@ -110,8 +110,8 @@ The effect of the commands is then as follows:
    \begin{cases}
    % \fsbroken &\mbox{if~} \FS=\fsbroken\\
    \fsbroken &\mbox{if~} [\FS(n)]\neq[x]\\
-   \fsbroken &\mbox{if~} \FS_{[y/n]} \mbox{~violates the tree property}\\
-   \FS_{[y/n]} &\mbox{otherwise.}
+   \fsbroken &\mbox{if~} \fsreplacement{\FS}{n}{y} \mbox{~violates the tree property}\\
+   \fsreplacement{\FS}{n}{y} &\mbox{otherwise.}
    \end{cases}
 \end{align*}
 \end{mydef}
