@@ -31,7 +31,7 @@ that are all permutations of the commands in $S$
 for which the following holds:
 for all subsequences $\cxynv\cc\czwmv$,
 \begin{itemize}
-\item if $n=\parent(m)$, then $y=\vald$
+\item if $n=\parent(m)$, then $[y]=[\vald]$
 \item if $\parent(n)=m$, then $y=\empt$.
 \end{itemize}
 \end{mydef}
@@ -42,7 +42,7 @@ The principal ideas behind these conditions are
 \cref{ax_separate_commute}, from which we know that commands on incomparable
 nodes can be applied in any order, so we only need to focus on the order of commands
 with comparable nodes;
-\cref{connected_changes}, from which we know that if $U$ contains commands on two comparable
+\cref{connected_changes}, from which we know that if a simple sequence contains commands on two comparable
 nodes, then it contains commands on all nodes in between, so it is enough to specify
 the order of commands on directly related nodes;
 and finally, \cref{simple_distant_pairs}, from which we know
@@ -127,15 +127,13 @@ For any simple sequence $S$ and its permutation $S'$,
 \end{mycor}
 \begin{proof}
 This follows directly from \cref{simple_distant_pairs}.
+We use an inverse proof and assume $\wrks{S'}$.
 If $S'\not\in\orderset{S}$ then by \cref{def_orderset}
 it contains two commands on a node $n$ and its parent
-that placed next to each other do not form
-a construction or destruction pair.
-Let them be $\cxynv$ and $\czwmv$.
-By \cref{ax_directchild_breaks,ax_directparent_breaks}
-we know
-$\cxynv\cc\czwmv\equiv\cbrk$, which is a subsequence of $S'$,
-and therefore by \cref{simple_distant_pairs}, $S'\equiv\cbrk$.
+that, as a subsequence,
+do not form a construction or destruction pair.
+However, this contradicts \cref{simple_distant_pairs}
+which means that no such subsequence exists.
 \end{proof}
 
 
@@ -214,7 +212,8 @@ However, then $\czwnv=\cxynv$, which is a contradiction.
 \begin{mylem}\mlabel{simple_reorder_equiv}
 For a simple sequence $\wrksx{S}$,
 $\orderset{S}$ is the set of all simple sequences equivalent to $S$, that is,
-\[ \orderset{S} = [S]_\equiv \cap \setssmp. \]
+\[ \orderset{S} = [S]_\equiv \cap \setssmp, \]
+where $\setssmp$ is the set of all simple sequences.
 \end{mylem}
 
 % TODO APPENDIX
@@ -235,8 +234,8 @@ Note that a command cannot be both a construction and a destruction command.
 
 % TODO APPENDIX
 \begin{proof}
-First, we prove, by contradiction, that if a simple sequence $T\equiv S$, then $T\in\orderset{S}$.
-We assume $T\equiv S$ and $T\not\in\orderset{S}$.
+First, we prove, by contradiction, that if a simple sequence $T$, $T\equiv S$, then $T\in\orderset{S}$.
+We use an inverse proof and assume $T\equiv S$ and $T\not\in\orderset{S}$.
 Then, from \cref{equiv_simple_same_commands} we know $T$ is a permutation of $S$,
 and from \cref{order_is_only_possible} we know $T\equiv\cbrk$ which
 is a contradiction as $T\equiv \wrksx{S}$.
@@ -259,7 +258,7 @@ In our nested induction step we assume $T'\equiv S$ for all $T'\in\orderset{S}$
 where there are at most $j$ commands in $T'$ to the left of $\cxynv$.
 Let us then consider $T$ where there are $j+1$ such commands.
 We aim to transform $T$ into $T''\equiv T$ by swapping $\cxynv$ with the preceding
-command. Then from the induction hypothesis we will know $T\equiv T''\equiv S$,
+command. Then from the induction hypothesis we know $T\equiv T''\equiv S$,
 which proves our lemma.
 
 Let the command to the left of $\cxynv$ in $T$ be $\czwmv$.
@@ -305,8 +304,10 @@ which is a contradiction.
 
 It can be shown in the same way
 that the case when the $n_\indx$ nodes ascend the tree,
-that is, $n_{\indx+1}=\parentf{n_\indx}$ is true, also leads to a contradiction,
-by using destruction commands instead of construction ones.
+that is, $n_{\indx+1}=\parentf{n_\indx}$ is true, also leads to a contradiction.
+In this case we find that all commands are destruction commands,
+and so $[y_\indx]\neq[\vald]$, while in a subsequence of $T$ for a given $\indx$,
+$[y_\indx]=[\vald]$ must be true by the definition of $\ordersetsign$.
 \end{proof}
 
 
@@ -319,5 +320,5 @@ represent the same partial endofunction on filesystems.
 This allows us to treat such a set as a sequence for any purpose
 where the internal order of the commands is irrelevant.
 We write $\ordp{S}$ to represent this endofunction.
-Also, let $\ordp{S}=\cbrk$ if such an order does not exist.
+We leave $\ordp{S}$ undefined if such an order does not exist.
 \end{mydef}

@@ -4,13 +4,16 @@
 Based on \cref{connected_changes} we can also show that
 the update detector does function as intended as:
 
+% TODO
+TODO ENSURE UPDATE DETECTOR IS DEFINED.
+
 \begin{myth}\mlabel{update_works}
 A sequence of commands returned by the update detector
 when comparing the non-broken $\FS^*$ to the original $\FS$
 will not break $\FS$ if it is applied to it.
 \end{myth}
 \begin{proof}
-Let $\FS\neq\fsbroken$ be the original filesystem, and $\FS^*\neq\fsbroken$
+Let $\FS$ be the original filesystem, and $\FS^*$
 be the filesystem after the changes we intend to detect.
 Let us assume that some mechanism recorded all changes that occurred
 to $\FS$ until it reached the state $\FS^*$.
@@ -26,6 +29,8 @@ if it contains commands on $\nn$ and $n$ where $\nn\descendant n$,
 then it also contains commands on nodes in between;
 which is equivalent to saying that if $\FS$ changed
 at node $\nn$ and $n$, then it had to change on the nodes in between.
+
+TODO TODO TODO
 
 If so, then, similarly to what happens in the ordering algorithm,
 we can separate $S$ into components of commands on related nodes,
