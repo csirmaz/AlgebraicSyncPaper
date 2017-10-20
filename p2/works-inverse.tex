@@ -190,33 +190,45 @@ representatives of their $\typeeq$-equivalence class.
 
 We refer to any object in the image of $\T{}$ as \emph{canonical}.
 
-By definiton,
-for any filesystem $\FS$ and command $\alpha$, 
+By definiton, for any filesystem $\FS$ and command $\alpha$, 
 $\T{\alpha}(\T{\FS}) = \T{(\alpha\aFS)}$.
+This implies $\T{\FS}\in\Dom{\T{\alpha}} \Leftrightarrow \FS\in\Dom{\alpha}$,
+where we interpret $\Dom{\T{\alpha}}$ as the subset of canonical filesystems $\T{\alpha}$ is defined on.
+This can be extended to sequences and sets of sequences, that is,
+\[ \T{\FS}\in\Dom{\T{\sqs{A}}} \Longleftrightarrow \FS\in\Dom{\sqs{A}}. \]
 
+To illuminate this more, we observe
+that $\typeeq$-equivalence classes of filesystems are a \emph{partition} of $\setfs$,
+and as whether a command is defined on a filesystem is determined solely by its input type,
+domains of commands, sequences and sets are unions of these classes:
+they either contain a full equivalence class, or none of the filesystems in it.
+In other words, $\FS\in\Dom{\sqs{A}} \Leftrightarrow [\FS] \subset \Dom{\sqs{A}}$.
+A domain therefore can be fully desribed by the canonical filesystems it contains.
 
-Also, for all objects where it is defined, $\T{a}\typeeq a$.
-As canonical filesystems, commands, sequences, etc.
-are subsets of their non-canonical counterparts, 
-all propositions proven so far apply to them as well.
--- TODO NEEDED? % TODO
+In particular, the above means:
 
-As the types of values determine whether a command breaks a filesystem,
-we know $\Dom{A}=\Dom{\TA}$ and therefore $\Dom{\sqs{A}}=\Dom{\T{\sqs{A}}}$.
-TODO FIND A BETTER WAY OF SAYING THIS -- $\Dom{}$ PRESUPPOSES A SET OF % TODO
-ALL FILESYSTEMS THAT IS DIFFERENT FOR CANONICAL OBJECTS.
-From this it follows that
-\begin{mycor}\mlabel{repr_works_is_same}
+\begin{myclm}\mlabel{repr_works_is_same}
 \begin{gather*}
 \worksmnil{\sqs{A}} \Longleftrightarrow \worksmnil{\T{\sqs{A}}} \\
 \worksm{\sqs{A}}{\sqs{B}} \Longleftrightarrow \worksm{\T{\sqs{A}}}{\T{\sqs{B}}}.
 \end{gather*}
-\end{mycor}
+\end{myclm}
+
+
+
+Also, as canonical filesystems, commands, sequences, etc.
+are subsets of their non-canonical counterparts, 
+all propositions proven so far apply to them as well.
+
+
+
 
 % Inverse commands
 % ----------------
 
-We are now ready to define the inverse of canonical commands $\T{\alpha}$
+\bigskip
+
+\noindent We are now ready to define the inverse of canonical commands $\T{\alpha}$
 which allows us to move parts of sequences between the
 two sides of $\worksmeqsign$.
 This is based on the following observation.
