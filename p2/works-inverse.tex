@@ -32,6 +32,9 @@ When $\sqs{A}$ or $\sqs{B}$ contains a single sequence,
 we leave out the curly brackets and write,
 e.g. $A\cc\sqs{B}$ to mean $\{A\}\cc\sqs{B}$,
 or $\worksm{A}{B}$ to mean $\worksmbb{A}{B}$.
+In particular, we write $\worksmnil{\sqs{A}}$ to mean that
+there are filesystems on which all sequences in $\sqs{A}$ are defined.
+If $\sqs{A}$ contains a single sequence only, $A$, this is equivalent to $\wrks{A}$.
 
 We can see that $A\eqext B$ implies $\worksm{A}{B}$, as the latter
 only requires that $B$ is defined where $A$ is defined, 
@@ -324,7 +327,7 @@ is defined wherever the two sequences are defined:
 \[ B\indep C \Rightarrow \worksmbx{A\cc B, A\cc C}{A\cc B\cc C} \]
 \end{mylem}
 \begin{proof}
-This is trivial unless $\worksmnil{A}$, so we assume that that is the case.
+This is trivial unless $\wrks{A}$, so we assume that that is the case.
 From $B\indep C$ and \cref{combine_independent_sequences} we know
 $\worksmbx{B, C}{B\cc C}$.
 Based on \cref{repr_works_is_same} this is equivalent to
