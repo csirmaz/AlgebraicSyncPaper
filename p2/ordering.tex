@@ -177,7 +177,6 @@ However, then \cref{ax_distantrel_breaks} applies to the sequence and therefore 
 is again a contradiction.
 \end{proof}
 
-% TODO breaks --> not defined on
 
 \begin{mylem}\mlabel{equiv_simple_same_commands}
 If two simple sequences $A$ and $B$ are equivalent
@@ -187,11 +186,11 @@ then they must contain the same commands.
 \begin{proof}
 % BACK_TO_THE_FS
 % TODO Rule?
-We use a proof by contradiction. Let $A$ and $B$ be simple sequences
+Let $A$ and $B$ be simple sequences
 such that $A\equiv \wrksx{B}$,
 and $\FS$ be a filesystem that they are defined on.
 
-We also assume that they do not contain the same commands.
+We use a proof by contradiction, and assume that they do not contain the same commands.
 Without loss of generality, we can assume
 that $A$
 contains $\cxynv$, and $B$ either contains a different command
@@ -205,7 +204,6 @@ and that $w=y$ as $B\aFS(n)$ must
 be $y$ and $B$ only has one command on $n$.
 However, then $\czwnv=\cxynv$, which is a contradiction.
 \end{proof}
-
 
 % TODO delete unused results
 

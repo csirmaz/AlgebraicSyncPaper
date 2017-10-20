@@ -8,55 +8,81 @@ the update detector does function as intended as:
 TODO ENSURE UPDATE DETECTOR IS DEFINED.
 
 \begin{myth}\mlabel{update_works}
-A sequence of commands returned by the update detector
-when comparing the non-broken $\FS^*$ to the original $\FS$
-will not break $\FS$ if it is applied to it.
+For a sequence of commands $U$ returned by the update detector
+when comparing the non-broken $\FS^*$ to the original $\FS$,
+$U\aFS = \FS^*$.
 \end{myth}
 \begin{proof}
 Let $\FS$ be the original filesystem, and $\FS^*$
 be the filesystem after the changes we intend to detect.
 Let us assume that some mechanism recorded all changes that occurred
 to $\FS$ until it reached the state $\FS^*$.
-Our set if commands is sufficient to record any change, as
+Our set of commands is sufficient to record any change, as
 there are commands for every input and output type pair, therefore
 we know that the changes can be recorded as a sequence of commands $S$
 where $S\aFS=\FS^*$.
 Note that $S$ will not contain assertion commands, as they do not
 represent an actual change in the filesystem.
 
-Therefore, \cref{connected_changes} applies to $S$ and we know
-if it contains commands on $\nn$ and $n$ where $\nn\descendant n$,
-then it also contains commands on nodes in between;
-which is equivalent to saying that if $\FS$ changed
-at node $\nn$ and $n$, then it had to change on the nodes in between.
+\newcommand{\ucx}{\alpha}
+\newcommand{\ucy}{\beta}
+\newcommand{\ucz}{\gamma}
 
-TODO TODO TODO
+We aim to find a simple sequence that is equivalent to $S$.
+If $S$ is already simple, there is nothing to do.
+If it is not simple, let $\ucx$ be the first command
+on a node $n$ that is already present in $S$,
+and let $\ucy$ be the previous command on $n$.
+Splitting $S$ around these commands we get
+\[ S = S_0 \cc \ucy \cc S_1 \cc \ucx \cc S_2. \]
 
-If so, then, similarly to what happens in the ordering algorithm,
-we can separate $S$ into components of commands on related nodes,
-as commands from separate components freely commute yielding equivalent sequences.
-From the arguments above we also know that each component
-must be made up of only destruction or only construction pairs,
-but not a mixture of the two.
-This means that in each component, commands on parents 
-either strictly precede or succeed child nodes
-(as otherwise $S\equiv\cbrk$ would hold),
-from which it follows that once the components are separated
-in a new sequence $S'\equiv S$,
-commands on the same nodes are next to each other in $S'$.
+We now show that $S_1\indep\ucx$,
+which is equivalent to $S_1\indep\ucy$ as both commands are on $n$.
+We use an inverse proof and assume that there is a command on $m$ in $S_1$
+where $m\descendant n$ or $m\ancestor n$.
+We know both $\ucy\cc S_1$ and $S_1\cc\ucx$ are simple,
+and both are defined on a filesystem
+(on $S_0\aFS$ and $(S_0\cc\beta)\FS$, respectively).
+Therefore from \cref{connected_changes} we know that
+$S_1$ must also contain a command on $m'$ where
+$m'=\parentf{n}$ or $n=\parentf{m'}$.
+Let this command be $\ucz$.
 
-Applying \cref{ax_same_emptyseq,ax_same_singlec} we can
-convert $S'$ into
-an $S''\eqnrw S'$ in which multiple commands on the same nodes
-are simplified into a single command or an empty sequence,
-and therefore $S''$ is simple and $S\equiv S'\eqext S''$.
-It is easy to see that $S''$ must contain the same commands
-as the output of the update detector, $U$, as both are simple
-but reflect all changes between $\FS$ and $\FS^*$.
-If so, then $S''\in\orderset{U}$ and based on \cref{simple_reorder_equiv}
-we have
-$S\equiv S'\eqext S''\equiv U$, and as $S\aFS = \FS^* \neq \fsbroken$,
-therefore $U\aFS\neq\fsbroken$.
+If $n=\parentf{m'}$,
+from \cref{simple_distant_pairs} 
+and the relationship of nodes in construction and destruction pairs
+we know that the subsequence
+$\ucy\cc\ucz$ must be a construction pair,
+and both $\ucy$ and $\ucz$ must be construction commands.
+But we also know that $\ucz\cc\ucx$ must be a destruction pair,
+and both $\ucz$ and $\ucx$ must be destruction commands.
+This is a contradiction as a command cannot be both.
+We arrive at the same contradiction if $m'=\parentf{n}$.
+
+We therefore know that $S_1\indep\ucx$ and so
+from \cref{ax_separate_commute}
+\[ S \equiv S_0\cc\ucy\cc\ucx\cc S_1 \cc S_2. \]
+We can apply \cref{ax_same_emptyseq,ax_same_singlec} to
+$\ucy\cc\ucx$ and get a $S'\equiv S$ that contains one or two less commands on $n$.
+Repeating the swap and the simplification we
+can convert $S$ into an equivalent simple sequence.
+Let this sequence be $S^*$.
+
+As $S^*\equiv S$, we know $S^*\aFS=\FS^*$, and that
+$\FS^*$ and $\FS$ differ at exactly those nodes that $S^*$ has commands on.
+If $U$ is the simple sequence returned by the update detector
+when comparing $\FS^*$ to $\FS$, it must also contain commands on the same set of nodes,
+and it must contain the same commands,
+as for the command $\cxynv$, $[x]$ must be $[\FS(n)]$, and $y$ must be $\FS^*(n)$.
+From this we know that $U$ is a permutation of $S^*$ and so $\orderset{U}=\orderset{S^*}$.
+
+As the update detector uses $\ordersetsign$ to order the commands in $U$,
+trivially $U\in\orderset{U}$,
+and as $S^*$ is defined on $\FS$,
+from \cref{order_is_only_possible} we know $S^* \in \orderset{S^*}$.
+This means $U\in\orderset{S^*}$,
+and so from \cref{simple_reorder_equiv} we know that $U\equiv S^*$,
+from which $U\aFS=\FS^*$.
 \end{proof}
 
 An important consequence of this proof is that any sequence
