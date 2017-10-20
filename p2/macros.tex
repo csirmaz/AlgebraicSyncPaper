@@ -27,8 +27,8 @@
 
 \newcommand{\fsreplacement}[3]{{#1}_{[{#2}\rightarrow{#3}]}} % {FS}{node}{newvalue}
 
-\newcommand{\parent}{\text{\normalfont\scshape{parent}}} % parent function symbol
-\newcommand{\parentf}[1]{\parent(#1)} % parent function
+\newcommand{\parent}{\mathord{\shortuparrow}} % parent function symbol
+\newcommand{\parentf}[1]{\parent({#1})} % parent function
 \newcommand{\fsbroken}{\bot} % value when command is not defined / broken FS value
 \newcommand{\FS}{\Phi} % a filesystem
 \newcommand{\GS}{\Theta} % another filesystem
@@ -84,7 +84,7 @@
 \newcommand{\cqrmv}{\caaa{q}{r}{m}}
 \newcommand{\cqrov}{\caaa{q}{r}{o}}
 
-\newcommand{\cc}{\circ} % Command / sequence concatenation
+\newcommand{\cc}{\mathbin{\circ}} % Command / sequence concatenation
 \newcommand{\descendant}{\prec}
 \newcommand{\descendantEq}{\preceq}
 \newcommand{\ancestor}{\succ}
