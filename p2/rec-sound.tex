@@ -104,14 +104,12 @@ In this notation, we intend to prove that
 We can do so if we can show that
 \[ \worksmbx{S,T}{S^*}. \]
 
-This is because from \cref{indep_prefix_combine} we know
-$\worksmbx{U\cc T, U\cc S^*}{U\cc T\cc S^*}$ as $S^* \indep T$.
-From $\worksmbx{S,T}{S^*}$ trivially
-$\worksmbb{S,T}{S^*, T}$,
-and from \cref{works_restricted} we know
-$\worksmbb{U\cc S, U\cc T}{U\cc S^*, U\cc T}$.
-Because $\worksmeqsign$ is transitive, combining these results
-we get $\worksmbx{U\cc S,U\cc T}{U\cc T\cc S^*}$.
+This is because from $\worksmbx{S,T}{S^*}$ trivially $\worksmbb{S,T}{S^*, T}$,
+and from $S^* \indep T$ and \cref{combine_independent_sequences} we know $\worksmbx{S^*,T}{T\cc S^*}$.
+Combining the two we get $\worksmbx{S,T}{T\cc S^*}$,
+which using \cref{works_restricted} yields
+$\worksm{U\cc\{S,T\}}{U\cc T\cc S^*}$, that is,
+$\worksmbx{U\cc S,U\cc T}{U\cc T\cc S^*}$.
 
 \bigskip
 
