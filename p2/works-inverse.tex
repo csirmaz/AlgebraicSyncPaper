@@ -2,7 +2,7 @@
 % Works
 % -----
 
-\subsection{Domains of Sets and Inverses}
+\subsection{Domains of Sets}
 
 \begin{mydef}[Sets of sequences]
 As we will frequently refer to sets of fequences,
@@ -11,11 +11,6 @@ to denote such sets for brevity.
 
 We will write $\Dom{\sqs{A}}$ for $\bigcap_{A\in\sqs{A}} \Dom{A}$,
 and $\sqs{A}\cc\sqs{B}$ for $\{A\cc B\whr A\in\sqs{A}, B\in\sqs{B}\}$.
-
-% This has only been defined for sequences, not sets.
-Moreover, we write $\wrks{\sqs{A}}$ if $\varnothing \subset \Dom{\sqs{A}}$, that is,
-if we know that there is at least one filesystem
-all sequences in $\sqs{A}$ are defined on.
 \end{mydef}
 
 % works operators
@@ -32,7 +27,8 @@ When $\sqs{A}$ or $\sqs{B}$ contains a single sequence,
 we leave out the curly brackets and write,
 e.g. $A\cc\sqs{B}$ to mean $\{A\}\cc\sqs{B}$,
 or $\worksm{A}{B}$ to mean $\worksmbb{A}{B}$.
-In particular, we write $\worksmnil{\sqs{A}}$ to mean that
+
+Also, we write $\worksmnil{\sqs{A}}$ to mean that
 there are filesystems on which all sequences in $\sqs{A}$ are defined.
 If $\sqs{A}$ contains a single sequence only, $A$, this is equivalent to $\wrks{A}$.
 
@@ -41,7 +37,7 @@ only requires that $B$ is defined where $A$ is defined,
 while the former also requires
 that where they are defined, their effect is the same.
 
-The following claim follows immediately from the definition:
+The following claims follow from the definition:
 
 \begin{myclm}\mlabel{worksextpostfix}
 % An inference rule in the algebra
