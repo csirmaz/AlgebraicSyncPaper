@@ -19,8 +19,6 @@
 \newcommand{\setfs}{\mathbb{F}_\setn} % Set of filesystems
 \newcommand{\setv}{\mathbb{V}} % Set of values
 \newcommand{\setn}{\mathbb{N}} % Set of nodes / paths
-\newcommand{\sets}{\mathbb{S}} % Set of sequences
-\newcommand{\setssmp}{\sets_{\mathrm{simple}}} % Set of simple sequences
 \newcommand{\setvx}[1]{::\setv_{#1}::} % Set of values with custom index % TODO DELETE
 \newcommand{\setd}{[\vald]} % Set of directory values
 \newcommand{\setb}{::\setvx{\empt}::} % Set of empty values TODO DELETE
@@ -90,10 +88,10 @@
 \newcommand{\ancestor}{\succ}
 \newcommand{\ancestorEq}{\succeq}
 
-\newcommand{\eqext}{\sqsubseteq} % extended by <=
-\newcommand{\eqnrw}{\sqsupseteq} % extends >=
-\newcommand{\strext}{\sqsubset} % extended by (strict) <
-\newcommand{\strnrw}{\sqsupset} % extends (strict) >
+\newcommand{\eqext}{\sqsubseteq} % extended by "[="
+\newcommand{\eqnrw}{\sqsupseteq} % extends "]="
+\newcommand{\strext}{\sqsubset} % extended by (strict) "["
+\newcommand{\strnrw}{\sqsupset} % extends (strict) "]"
 \newcommand{\nequiv}{\not\equiv}
 
 \newcommand{\indep}{\mathrel{\wr\wr}} % Independent commands, sequences
@@ -101,17 +99,17 @@
 \newcommand{\nindep}{\mathrel{\centernot{\wr\wr}}} % not \indep
 \newcommand{\nunrel}{\nindep} % not \unrel
 
-% \newcommand{\worksmsign}{\vartriangleleft} % works-more sign <
-\newcommand{\worksmeqsign}{\trianglelefteq} % works-more-eq sign <=
-\newcommand{\worksm}[2]{{#1}\worksmeqsign{#2}} % works-more-(eq)
+\newcommand{\worksmsign}{\vartriangleleft} % works-more sign "<"
+\newcommand{\worksmeqsign}{\trianglelefteq} % works-more-eq sign "<="
+\newcommand{\worksm}[2]{{#1}\worksmeqsign{#2}} % works-more-eq "<="
 \newcommand{\worksmxb}[2]{\worksm{#1}{\{{#2}\}}}
 \newcommand{\worksmbx}[2]{\worksm{\{{#1}\}}{#2}}
 \newcommand{\worksmbb}[2]{\worksm{\{{#1}\}}{\{{#2}\}}}
 
-\newcommand{\wrks}[1]{\cbrk\strext{#1}} % works
-\newcommand{\wrksx}[1]{{#1}\strnrw\cbrk} % works (reverse order)
-\newcommand{\worksmnil}[1]{\worksm{\cbrk}{#1}} % works
-\newcommand{\worksmnilb}[1]{\worksm{\cbrk}{\{{#1}\}}}
+\newcommand{\wrks}[1]{\cbrk\strext{#1}} % sequence works "["
+\newcommand{\wrksx}[1]{{#1}\strnrw\cbrk} % sequence works (reverse order) "]"
+\newcommand{\worksmnil}[1]{{\cbrk}\worksmsign{#1}} % set works "<"
+\newcommand{\worksmnilb}[1]{{\cbrk}\worksmsign{\{{#1}\}}} % set works "<"
 
 \newcommand{\emptyseq}{\lambda} % empty sequence
 
