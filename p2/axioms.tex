@@ -161,12 +161,12 @@ does not have a directory.)
 A pair of commands on nodes $\nn$ and $n$ is a construction pair if $\nn=\parent(n)$ 
 and the commands are one
 of the following:
-   \begin{gather*}
-            \cbdaa{\nn}\cc  \cbfaa{n} \\
-            \cbdaa{\nn}\cc  \cbdaa{n} \\
-            \cfdaa{\nn}\cc  \caaa{\empt}{\valff}{n} \\
-            \cfdaa{\nn}\cc  \cbdaa{n}
-   \end{gather*}
+   \begin{align*}
+            \cbdaa{\nn}&\cc  \cbfaa{n} \\
+            \cbdaa{\nn}&\cc  \cbdaa{n} \\
+            \cfdaa{\nn}&\cc  \caaa{\empt}{\valff}{n} \\
+            \cfdaa{\nn}&\cc  \cbdaa{n}
+   \end{align*}
 \end{mydef}
 
 
@@ -181,12 +181,12 @@ TODO TO BE DELETED -- WE ONLY WANT TO USE \cref{simple_distant_pairs}
 \begin{mydef}[Destruction pair]
 A pair of commands on nodes $n$ and $\nn$ is a destruction pair if $\parent(n)=\nn$ and the commands are one
 of the following:
-   \begin{gather*}
-            \cfba{n}\cc  \cdba{\nn} \\
-            \cfba{n}\cc  \caaa{\vald}{\valff}{\nn} \\
-            \cdba{n}\cc  \cdba{\nn} \\
-            \cdba{n}\cc  \cdfaa{\nn}
-   \end{gather*}
+   \begin{align*}
+            \cfba{n}&\cc  \cdba{\nn} \\
+            \cfba{n}&\cc  \caaa{\vald}{\valff}{\nn} \\
+            \cdba{n}&\cc  \cdba{\nn} \\
+            \cdba{n}&\cc  \cdfaa{\nn}
+   \end{align*}
 \end{mydef}
 
 \begin{myax}\mlabel{ax_directparent_breaks}
@@ -254,7 +254,7 @@ these two concepts are closely related.
 \begin{mylem}\mlabel{incomparable_is_independent}
 Two different commands that are not assertion commands are independent iff the nodes they change are incomparable. In other words,
 \[ \cxynv\indep\czwmv \Longleftrightarrow n\unrel m \]
-if $\cxy\neq\czw$ and none of $\cxy$ and $\cxw$ is $\cbb$ or $\cdd$.
+if $\cxynv\neq\czwmw$ and none of $\cxy$ and $\cxw$ is $\cbb$ or $\cdd$.
 \end{mylem}
 \begin{proof}
 This is easy to show based on the output of the program that investigates the behavior of command pairs.
