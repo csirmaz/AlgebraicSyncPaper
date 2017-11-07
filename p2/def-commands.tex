@@ -16,19 +16,19 @@ A minimal set of commands, based on the most frequent tools implemented by files
 may be the following, where 
 $n\in\setn$ and $\valv\in\setv$ (but $\valv\neq\empt$):
 \begin{itemize}
-\item $create(n,\valv)$, which creates a file or directory ($\valv$) at $n$
+\item \textit{create}$(n,\valv$), which creates a file or directory ($\valv$) at $n$
 where the file system contains no file or directory ($\empt$);
-\item $edit(n,\valv)$, which replaces the earlier file or directory at $n$ with $\valv$;
-\item $remove(n)$, which removes the file or directory at $n$, and replaces it with $\empt$.
+\item \textit{edit}$(n,\valv)$, which replaces the earlier file or directory at $n$ with $\valv$;
+\item \textit{remove}$(n)$, which removes the file or directory at $n$, and replaces it with $\empt$.
 \end{itemize}
 Regarding their output, that is, the state of the filesystem at $n$
 after applying the command,
-we know that after $create$ or $edit$, $\FS(n)\neq\empt$, whereas after $remove$,
+we know that after \textit{create} or \textit{edit,} $\FS(n)\neq\empt$, whereas after \textit{remove,}
 $\FS(n)$ will be $\empt$. 
 However, from \cite{NREC} and \cite{CBNR} we know that a useful set of axioms
 will in some cases need to distinguish between, for example,
-$edit$s that result in directories ($edit(n,\vald)$) and
-ones that result in files ($edit(n,\valf)$), and treat them as separate commands,
+\textit{edit}s that result in directories (\textit{edit}$(n,\vald)$) and
+ones that result in files (\textit{edit}$(n,\valf)$), and treat them as separate commands,
 as their behaviors are quite different when combined with other commands.
 Indeed, Bill Zissimopoulos' work
 demonstrated \cite{BZ}
@@ -41,8 +41,8 @@ we expect to use the type of their output when modelling their behavior.
 
 Notice, however, that the commands listed above also encode some information about 
 their input, the state of the filesystem
-before the command is applied. In particular, $create(n,\valv)$ requires that there are no files
-or directories at $n$, while $edit(n,\valv)$ and $remove(n)$ require the opposite.
+before the command is applied. In particular, \textit{create}$(n,\valv)$ requires that there are no files
+or directories at $n$, while \textit{edit}$(n,\valv)$ and \textit{remove}$(n)$ require the opposite.
 This creates an arbitrary asymmetry where
 there is now more information available about their output than about their input.
 As, based on the above, we expect that encoding more information in the commands
@@ -50,7 +50,7 @@ results in a model with greater predictive powers,
 and in order to resolve this asymmetry, 
 we propose a set of commands that encode
 the type of the input value $\FS(n)$ as well.
-(Some real-life filesystem commands like $rmdir$ do this already.)
+(Some real-life filesystem commands like \textit{rmdir} do this already.)
 Again, as the success of failure of commands depends on types of values,
 it is not necessary to encode the actual input value.
 
