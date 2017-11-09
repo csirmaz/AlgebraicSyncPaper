@@ -1,65 +1,76 @@
 
 \subsection{The Filesystem}
 
-We model a working filesystem
-using a function $\FS$ with a set of nodes (filesystem paths) $\setn$ as its domain,
-and a set of possible contents or values $\setv$ as its codomain.
+\begin{mydef}[Filesystems]
+We model a filesystem
+using a function $\FS$ with a set of nodes (potential filesystem paths) $\setn$ as its domain,
+and a set of possible contents or values $\setv$ as its codomain:
+\[ \FS: \setn \rightarrow \setv. \]
 We consider metadata to be part of the values in $\setv$.
-\begin{mydef}[Filesystems, $\setn$, $\setv$, $\setfs$ and $\empt$]
-\[ \FS: \setn \rightarrow \setv \]
-In our model, $\setn$ 
-serves as a namespace or ``skeleton'' for the filesystem.
-It contains all possible nodes, including the ones 
-where the file system contains no file or directory,
-where in our model $\FS$ has a special value, $\empt\in\setv$.
-We write $\setfs$ for the set of filesystems over $\setn$.
+In this model, $\setn$ 
+serves as a namespace for the filesystem:
+it contains all possible nodes, including the ones 
+where the file system contains no file or directory.
 \end{mydef}
 
-There is an ancestor / descendant relation defined over the nodes,
-which arranges them in a (disjoint) union of rooted directed trees,
-and which can be derived from the following $\parent$ function.
+There is an ancestor / descendant relation defined over the nodes in $\setn$
+which arranges them in a disjoint union of rooted directed trees,
+and which can be derived from the partial function $\parent$ yielding
+the parent of a node in $\setn$ provided it exists.
+
 Tao et al. \cite{TSR} describe a similar filesystem model, although
 they also model inodes and restrict the filesystem to just a single tree.
-\begin{mydef}[$\parent$]
+
+
+\begin{mydef}[Ordering on $\setn$: $\parent$, $\descendant$, $\descendantEq$, $\unrel$]
 The partial function $\parent:\setn\nrightarrow\setn$
 returns the parent node of $n$,
 and is undefined if $n$ is the root of a tree.
-\end{mydef}
 
-\begin{mydef}[$\descendant$, $\descendantEq$]
-On $\setn$ the \emph{ancestor / descendant} relation $\descendant$ is the
+The \emph{ancestor} / \emph{descendant} relation $\descendant$ is the
 strict partial ordering determined by the $\parent$ function.
 We write $n\descendant m$ if $n$ is the ancestor of $m$,
 that is, $n=\parent^i(m)$ for some integer $i\ge 1$.
 % or the path name of $n$ is an initial segment of that of $m$. 
 We write $n\descendantEq m$ if $n\descendant m$ or $n=m$.
-\end{mydef}
 
-\begin{mydef}[$n\unrel m$]
-We write $n\unrel m$, or $n$ and $m$ are \emph{incomparable}
+We write $n\unrel m$, or $n$ and $m$ are \emph{incomparable},
 iff $n\not\descendantEq m$ and $n\not\ancestorEq m$;
 that is, incomparable nodes are on different branches or on different trees.
 % none of the path names describing their location is an initial segment of the other.
 \end{mydef}
 
-Every working filesystem has a so-called \emph{tree property}, which means that
+We assume that the $\parent$ function does not induce loops, and so
+$\descendant$ is indeed a strict partial ordering.
+
+The set of nodes $\setn$, combined with $\parent$ form a \emph{skeleton}
+which the filesytems populates with values from $\setv$.
+As we require the filesystem functions to be total,
+we use a special value, $\empt\in\setv$, to indicates that the filesystem
+has no file or directory at a particular node.
+
+\begin{mydef}[Filesystem values: $\vald$, $\valf$, $\empt$, $\typeeq$, $[v]$]
+The set of values $\setv$ is partitioned into files, directories, and the empty value $\empt$.
+For $v_1,v_2\in\FV$ we write $v_1\typeeq v_2$ iff
+$v_1$ and $v_2$ are both files, are both directories, or are both $\empt$.
+As usual, we write $[v]$ for the the equivalence class of $v\in\FV$ which represents its type.
+Files and directories are also denoted by $\valf$ and $\vald$, respectively,
+with or without indices.
+\end{mydef}
+
+
+Every filesystem has a so-called \emph{tree property}, which means that
 if the filesystem is not empty at a node, and the node has a parent,
 then there must be a directory at the parent node.
 To model this, we differentiate between files, directories, and the
 empty value in $\setv$, and introduce the equivalence relation
 $\typeeq$.
 
-\begin{mydef}[Equivalence by type: $\typeeq$]
-We write $v_1\typeeq v_2$ for $v_1,v_2\in\setv$ iff $v_1$ and $v_2$ are both files,
-are both directories, or are both $\empt$.
-% In other words, if $\setf$ is the set of file values and $\setd$ is the set of directories, then
-% with $\{\empt\}$ they form a partition of $\setv$:
-% \[ \setv/{\typeeq} = \{\setd,\setf,\{\empt\}\}. \]
-\end{mydef}
 
 As usual, we write $[v]$ for the equivalence class of $v$, which represents its type.
 The formal definition of the tree property is therefore
 \begin{mydef}[Tree property]
+% TODO \setf no longer defined
 \begin{align*}
 \forall n\in\setn, \FS\in\setfs:& \\
 & \FS(n) \neq \empt \Rightarrow \FS(\parent(n)) \typeeq \vald,
