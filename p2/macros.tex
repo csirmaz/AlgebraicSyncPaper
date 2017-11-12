@@ -4,10 +4,12 @@
 
 \newcommand{\typeeq}{\simeq} % Type equal ~_
 \newcommand{\ntypeeq}{\not\typeeq} % Not type equal
+\newcommand{\eqclass}[1]{[{#1}]} % only used to be able to write $[]$ inside [...]
 
 \newcommand{\vald}{\mathsf{D}} % Directory value
 \newcommand{\valdi}{\mathsf{D}_1}
 \newcommand{\valdii}{\mathsf{D}_2}
+\newcommand{\valfx}{\mathsf{F}} % File value
 \newcommand{\valf}{\mathsf{F}_i} % File value
 \newcommand{\valff}{\mathsf{F}_j} % File value
 \newcommand{\empt}{\ominus} % Empty value
@@ -26,9 +28,7 @@
 \newcommand{\parentf}[1]{\parent({#1})} % parent function
 \newcommand{\fsbroken}{\bot} % value when command is not defined / broken FS value
 \newcommand{\FS}{\Phi} % a filesystem
-% TODO DELETE \newcommand{\GS}{\Theta} % another filesystem
 \newcommand{\aFS}{\,\FS} % a filesystem preceded by something applied to it
-% TODO DELETE \newcommand{\aGS}{\,\GS} % a filesystem preceded by something applied to it
 \newcommand{\nn}{n'} % parent node
 \newcommand{\Tsign}{\tau} % type-equivalent class mapping
 \newcommand{\T}[1]{{#1}_\Tsign} % type-equivalent class mapping
