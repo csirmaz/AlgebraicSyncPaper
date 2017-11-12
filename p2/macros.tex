@@ -146,8 +146,9 @@
 \newcommand{\undersc}{\texttt{\detokenize{_}}}
 
 \theoremstyle{definition}
-\newtheorem{mydef}{Definition}
-\crefname{mydef}{Definition}{Definitions}
+\newtheorem{mydefaux}{Definition}
+\crefname{mydefaux}{Definition}{Definitions}
+\newenvironment{mydef}{\renewcommand\qedsymbol{$\blacktriangleright$}\pushQED{\qed}\mydefaux}{\popQED\endmydefaux}
 
 \theoremstyle{definition}
 \newtheorem{myax}{Rule}
