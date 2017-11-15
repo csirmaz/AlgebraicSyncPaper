@@ -52,67 +52,66 @@ it is not necessary to encode the actual input value.
 % Definition
 % Break / empty command
 
-We model filesystem commands as partial endofunctions on filesystems,
-that is, functions that map filesystems to filesystems, but which
-are only defined 
+We model filesystem commands as partial functions 
+that map filesystems to filesystems, but which
+are only defined where the commands succeed.
+As usual, if the function is not defined, we say that that it returns the bottom element, $\fsbroken$,
+or that it \emph{breaks} the filesystem.
+We describe a filesystem commands using its input, output, and
+the node it is applied to.
 
-
-\begin{mydef}[Filesystem commands, $\cbrk$]
+\begin{mydef}[Filesystem commands]
+Filesystem commands are partial endofunctions on filesystems:
 \[ \alpha: \setfs \nrightarrow \setfs \]
 A command $\alpha$ is not defined on filesystems where it returns an error.
-This happens if the input type of the command does not match
-what is actually in the filesystem, or if the modified filesystem no
-longer has the tree property.
-At times in these cases we write that the command {\em breaks} the filesystem,
-or that it returns the bottom element, $\fsbroken$.
+The commands are represented using triplets of the form
+\[ \alpha = \caaaa{x}{y}{n}, \]
+where $x,y\in\setv$ and $n\in\setn$.
+The equivalence class $[x]$ is the \emph{input type} of the function;
+$y$ is its \emph{output value} implicitly specifying the \emph{output type} $[y]$,
+and $n$ is the node the command is applied to.
+\end{mydef}
+For example, $\cbfaa{n}$ represents \texit{create}$(n,\valf)$,
+and $\cdba{n}$ represents \textit{rmdir}$(n)$.
 
 We write $\cbrk$ for the empty partial function which is not defined anywhere.
+This does not naturally occur in sequences of commands we will investigate,
+but is useful when reasoning about the combined effects of commands.
 
-We have three pieces of information defining a non-empty command,
-which we represent using a triple. These are its
-input type ($[v_\textrm{in}]$), output value ($v_\textrm{out}$),
-and the node to which it is applied ($n$):
-\[ \alpha = \caaaa{v_\textrm{in}}{v_\textrm{out}}{n}. \]
-\end{mydef}
 
-For example, $\cbfaa{n}$ represents $create(n,\valf)$,
-and $\cdba{n}$ represents $rmdir(n)$.
-When describing unknown commands, we substitute one or both
-of their values with variables, and write e.g. $\cxynv$.
-By $\cxynv=\czwmv$ we mean that the commands are identical
-($[x]=[z]$ and $y=z$ and $n=m$).
+TODO DELETE:
 As suggested above, we will frequently only investigate
 the types of the input and output values of a command
 (its input and output types), and write
-$\cxy=\czw$, by which we mean $[x]=[z]$ and $[y]=[w]$. % TODO delete
+$\cxy=\czw$, by which we mean $[x]=[z]$ and $[y]=[w]$.
 
 We note that a command or a sequence of commands is applied to a filesystem
 by prefixing the command or sequence to it, for example: $\cbrk\aFS$, $\cbdaa{n}\aFS$, 
 or $S\aFS$ if $S$ is a sequence of commands.
 
-\begin{mydef}[Effect of commands]
-We use a replacement operator of the form
+To define the effect of a command on a filesystem, we use
+the replacement operator of the form
 $\fsreplacement{\FS}{n}{\valv}$ to denote a filesystem derived from $\FS$ 
 by replacing its value at $n$ with $\valv$:
 \[ \fsreplacement{\FS}{n}{\valv}(m) =
    \begin{cases}
-   \valv &\mbox{if~} m=n\\
-   \FS(m) &\mbox{otherwise.}
+   \valv &\textrm{if~} m=n\\
+   \FS(m) &\textrm{otherwise.}
    \end{cases}
 \]
-The effect of the commands is then as follows:
-\begin{align*}
-&\cbrk\aFS = \fsbroken \\
-&\cxynv\aFS = 
-   \begin{cases}
-   % \fsbroken &\mbox{if~} \FS=\fsbroken\\
-   \fsbroken &\mbox{if~} [\FS(n)]\neq[x]\\
-   \fsbroken &\mbox{if~} \fsreplacement{\FS}{n}{y} \mbox{~violates the tree property}\\
-   \fsreplacement{\FS}{n}{y} &\mbox{otherwise.}
-   \end{cases}
-\end{align*}
-\end{mydef}
 
+\begin{mydef}[Effect of commands]
+The effect of the command $\cxynv$ is defined as follows:
+\cxynv\aFS = 
+   \begin{cases}
+   \fsbroken &\textrm{if $\FS(n)]\neq[x]$,}\\
+   \fsbroken &\textrm{if $\fsreplacement{\FS}{n}{y}$ violates the tree property,}\\
+   \fsreplacement{\FS}{n}{y} &\textrm{otherwise.}
+   \end{cases}
+\end{mydef}
+In other words, the command $\cxynv$ breaks a filesystem if the input type $[x]$
+does not match the type of the value in the filesystem at $n$, or if after replacing
+the value at $n$ with $y$, the resulting filesystem ceases to satisfy the tree property.
 
 % Simplification
 % --------------
@@ -121,10 +120,10 @@ The effect of the commands is then as follows:
 
 \noindent
 For reasons also listed in \cite{NREC}, in this paper we will not consider
-a $move$ or $rename$ command.
+a \textit{move} or \textit{rename} command.
 This turns out to be useful because this would be the only command that affects
 filesystems at two nodes at once, therefore describing 
-the dependencies for $move$ would call for a more complicated model.
+the dependencies for \textit{move} would call for a more complicated model.
 From a pragmatic perspective, this restriction does not mean that in an application
 implementing conflict resolution using the algorithm described here would not be
 able to handle renames by pre- and post-processing changes in the filesystem to
