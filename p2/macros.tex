@@ -44,22 +44,23 @@
 \newcommand{\caaaa}[3]{\langle{[#1],#2,#3}\rangle}
 \newcommand{\cTaaa}[3]{\langle{[{#1}],\T{#2},{#3}}\rangle} % Representative of command
 
-\newcommand{\cbb}{\caa{\empt}{\empt}}
+\newcommand{\cbb}{\caa{::\empt}{\empt}} % TODO delete
+\newcommand{\cbf}{\caa{::\empt}{\valf}} % TODO delete
+\newcommand{\cbd}{\caa{::\empt}{\vald}} % TODO delete
+\newcommand{\cfb}{\caa{::\valf}{\empt}} % TODO delete
+\newcommand{\cff}{\caa{::\valf}{\valf}} % TODO delete
+\newcommand{\cfd}{\caa{::\valf}{\vald}} % TODO delete
+\newcommand{\cdb}{\caa{::\vald}{\empt}} % TODO delete
+\newcommand{\cdf}{\caa{\vald}{\valfx}} % TODO delete
+\newcommand{\cdd}{\caa{::\vald}{\vald}} % TODO delete
+
 \newcommand{\cbba}[1]{\caaa{\empt}{\empt}{#1}}
-\newcommand{\cbf}{\caa{\empt}{\valf}}
-\newcommand{\cbfaa}[1]{\caaa{\empt}{\valf}{#1}}
-\newcommand{\cbd}{\caa{\empt}{\vald}}
-\newcommand{\cbdaa}[1]{\caaa{\empt}{\vald}{#1}}
-\newcommand{\cfb}{\caa{\valf}{\empt}}
-\newcommand{\cfba}[1]{\caaa{\valf}{\empt}{#1}}
-\newcommand{\cff}{\caa{\valf}{\valf}}
-\newcommand{\cfd}{\caa{\valf}{\vald}}
-\newcommand{\cfdaa}[1]{\caaa{\valf}{\vald}{#1}}
-\newcommand{\cdb}{\caa{\vald}{\empt}}
+\newcommand{\cbfa}[1]{\caaa{\empt}{\valfx}{#1}}
+\newcommand{\cbda}[1]{\caaa{\empt}{\vald}{#1}}
+\newcommand{\cfba}[1]{\caaa{\valfx}{\empt}{#1}}
+\newcommand{\cfda}[1]{\caaa{\valfx}{\vald}{#1}}
 \newcommand{\cdba}[1]{\caaa{\vald}{\empt}{#1}}
-\newcommand{\cdf}{\caa{\vald}{\valf}}
-\newcommand{\cdfaa}[1]{\caaa{\vald}{\valf}{#1}}
-\newcommand{\cdd}{\caa{\vald}{\vald}}
+\newcommand{\cdfa}[1]{\caaa{\vald}{\valfx}{#1}}
 \newcommand{\cdda}[1]{\caaa{\vald}{\vald}{#1}}
 
 \newcommand{\cxy}{\caa{x}{y}} % TODO delete

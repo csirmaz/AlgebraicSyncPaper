@@ -71,7 +71,7 @@ The equivalence class $[x]$ is the \emph{input type} of the function;
 $y$ is its \emph{output value} implicitly specifying the \emph{output type} $[y]$,
 and $n$ is the node the command is applied to.
 \end{mydef}
-For example, $\cbfaa{n}$ represents \texit{create}$(n,\valf)$,
+For example, $\cbfa{n}$ represents \textit{create}$(n,\valf)$,
 and $\cdba{n}$ represents \textit{rmdir}$(n)$.
 
 We write $\cbrk$ for the empty partial function which is not defined anywhere.
@@ -86,7 +86,7 @@ the types of the input and output values of a command
 $\cxy=\czw$, by which we mean $[x]=[z]$ and $[y]=[w]$.
 
 We note that a command or a sequence of commands is applied to a filesystem
-by prefixing the command or sequence to it, for example: $\cbrk\aFS$, $\cbdaa{n}\aFS$, 
+by prefixing the command or sequence to it, for example: $\cbrk\aFS$, $\cbda{n}\aFS$, 
 or $S\aFS$ if $S$ is a sequence of commands.
 
 To define the effect of a command on a filesystem, we use
@@ -102,16 +102,43 @@ by replacing its value at $n$ with $\valv$:
 
 \begin{mydef}[Effect of commands]
 The effect of the command $\cxynv$ is defined as follows:
+\[
 \cxynv\aFS = 
    \begin{cases}
-   \fsbroken &\textrm{if $\FS(n)]\neq[x]$,}\\
+   \fsbroken &\textrm{if $[\FS(n)]\neq[x]$,}\\
    \fsbroken &\textrm{if $\fsreplacement{\FS}{n}{y}$ violates the tree property,}\\
    \fsreplacement{\FS}{n}{y} &\textrm{otherwise.}
    \end{cases}
+\]
 \end{mydef}
 In other words, the command $\cxynv$ breaks a filesystem if the input type $[x]$
 does not match the type of the value in the filesystem at $n$, or if after replacing
 the value at $n$ with $y$, the resulting filesystem ceases to satisfy the tree property.
+
+\bigskip
+\noindent
+Depending on their input and output types, there are nine types of commands,
+which we separate into four categories depending on the overall effect of the command.
+Constructions commands extend the filesystem,
+while destruction commands shrink it;
+the replacement command replaces a file value with a (presumably different) file value,
+and assertion commands either break the filesystem, or assert the type of the value at a node.
+\begin{mydef}[Command categories]
+Depending on their input and output types, filesystem commands
+belong to exactly one of the following four categories:
+\begin{itemize}
+\item[]\emph{Construction commands:}
+    $\cbfa{n}$, $\cbda{n}$ and $\cfda{n}$;
+\item[]\emph{Destruction commands:}
+    $\cdfa{n}$, $\cdba{n}$ and $\cfba{n}$;
+\item[]\emph{Assertion commands:}
+    $\cbba{n}$ and $\cdda{n}$;
+\item[]\emph{Replacement command:}
+    $\caaa{\valfx}{\valff}{n}$.
+\qedhere
+\end{itemize}
+\end{mydef}
+
 
 % Simplification
 % --------------

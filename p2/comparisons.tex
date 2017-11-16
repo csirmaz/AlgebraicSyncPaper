@@ -22,11 +22,11 @@ where an update could clearly be propagated, but it is excluded.
 To rephrase the example in \cite{CBNR}, consider the following two
 update sequences that have been applied to replicas $\FS_A$ and $\FS_B$:
 \begin{align*}
-A&=\cbdaa{\nn}{\valdi}\cc\cbfaa{n}{\valf} \\
-B&=\cbdaa{\nn}{\valdii}
+A&=\caaa{\empt}{\valdi}{\nn}\cc\caaa{\empt}{\valf}{n} \\
+B&=\caaa{\empt}{\valdii}{\nn}
 \end{align*}
 where $\parent(n)=\nn$ (\cite{NREC} did not require all directories to have the same value).
-Clearly $\cbfaa{n}{\valf}$ could be applied to $\FS_B$, but it is not as
+Clearly $\caaa{\empt}{\valf}{n}$ could be applied to $\FS_B$, but it is not as
 it must be preceded by creating the directory, which conflicts with the same command in $B$
 due to the different value.
 (Introducing a third replica which has not changed at all further complicates the picture.)
