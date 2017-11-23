@@ -69,25 +69,21 @@ In particular, we write $\wrks{A}$
 to mean that $\Dom{A}$ is not empty, that is, if $A$ is defined on some filesystems.
 \end{mydef}
 
-It is easy to see that this equivalence holds on the level of filesystems:
-
+It is easy to see that the equivalence $\equiv$ holds on the level of filesystems:
 \begin{mylem}\mlabel{equiv_on_fs}
 $A\equiv B$
 iff $A$ and $B$ behave in the same way on
 all filesystems, that is, $\forall \FS: A\aFS=B\aFS$.
 \end{mylem}
 \begin{proof}
-% TODO APPENDIX
-If $\forall \FS: A\aFS=B\aFS$, then $A\eqext B$ and $B\eqext A$ and so by definition $A\equiv B$.
-For the reverse statement we know $A\eqext B$ and $B\eqext A$.
-$B\eqext A$ implies that it is not possible for both $B\aFS\neq\fsbroken$ and $A\aFS=\fsbroken$ to be true.
-Therefore, for every filesystem $\FS$, either $A\aFS\neq\fsbroken$, in which case $A\aFS=B\aFS$ as $A\eqext B$, or $A\aFS=\fsbroken$,
-in which case $B\aFS=\fsbroken$ must be true, and therefore $A\aFS=B\aFS$.
+As $A\equiv B$ means that both $A$ extends $B$ and $B$ extends $A$, it necessarily
+follows that $A$ and $B$, as partial functions, are identical.
 \end{proof}
 
 % Rules
 % -----
 
+\myskip
 Our aim is to derive information about the effects of sequences
 of commands independently of the actual filesystems.
 In order to make this possible, we investigate the smallest building
@@ -96,27 +92,17 @@ This approach is useful as there are a limited number of command pairs,
 because, as we argued above, we can disregard the exact output values of commands apart from their type,
 and we can also abstract the relationship between the nodes in the two commands
 to a finite number of cases.
-
-We methodically investigate all possibilities using a computer 
-program\footnote{The program is accessible on-line at \\
-https://github.com/csirmaz/AlgebraicSyncPaper/blob/master/p2/prove.py.}
-to determine
-which pairs of commands cause errors all the time,
-which can be simplified to one command or $\emptyseq$,
-and which commute and can be reversed without any change in their overall effect.
-Our basis for this investigation was the model of filesystems introduced in this paper.
 These properties of command pairs are crucial as they determine
 how a set of commands can be re-ordered to be applied to a filesystem
-during synchronization, and what commands will never be compatible.
-Below we list a number of statements derived using this method,
-which are in fact lemmas that can be derived from our definitions of filesystems and of commands.
+during synchronization, and what command pairs will never be compatible.
+
+% TODO \footnote{The program is accessible on-line at \\
+% https://github.com/csirmaz/AlgebraicSyncPaper/blob/master/p2/prove.py.}
 
 % TODO Rewrite script for new notation
 
-\bigskip
-
-\noindent
-Pairs of commands in general have the form
+\myskip
+Command pairs in genral have the form
 \[ \cxynv\cc  \czwmv \]
 where $x,y,z,w\in\setv$ and $n,m\in\setn$. 
 
@@ -228,12 +214,10 @@ $\cdda{n}\eqext\emptyseq$ and $\cbba{n}\eqext\emptyseq$.
 
 
 
-\bigskip
-
 % Independent commands
 % --------------------
 
-\noindent
+\myskip
 We also define the concept of two commands being independent:
 
 \begin{mydef}[$A\indep B$: Independent commands, sequences and sets of commands]\mlabel{def_indep}
