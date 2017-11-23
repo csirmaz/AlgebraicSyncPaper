@@ -14,53 +14,59 @@ and are applied to filesystems in time.
 Therefore we investigate sequences of commands with a well-defined order.
 \begin{mydef}[Sequences of commands: $\cc$ and $\emptyseq$]
 We use ``$\cc$'' to combine commands to form a sequence, or combine sequences to form a longer sequence,
-with the meaning that the command on the left is applied first:
+with the meaning that the sequence is executed from left to right:
 \[ \alpha\cc\beta\aFS = \beta(\alpha\aFS). \]
 %% monoid, but not free monoid
 %% monoid: semigroup with identity element
 %% Sequences of commands form a free semigroup
 Sequences are also partial endofunctions on filesystems,
 defined only if all commands they contain succeed in the given order.
-The sequences of commands form a monoid, and, as usual,
-we write $\emptyseq$ for the unit element, the empty sequence,
-which is defined on all filesystems and by definition leaves all filesystems unchanged.
+Sequences form a monoid, and, as usual,
+we write $\emptyseq$ to denote the unit element, the empty sequence,
+which is defined on all filesystems and, by definition, leaves all filesystems unchanged.
 \end{mydef}
 
-\begin{mydef}[$\Dom{S}$ and $\Img{S}$]
-For a sequence of commands $S$, $\Dom{S}$ is the domain of $S$.
-We write $\Img{S}$ to denote the image of the domain of the sequence $S$.
+\begin{mydef}[$\Dom{S}$]
+For a sequence of commands $S$, $\Dom{S}$ is the domain of $S$, that is,
+the set of filesystems $S$ does not break.
 \end{mydef}
 
 
 The following two relations 
 echo the ones defined in \cite{NREC}.
-In the definitions, $A,B,S,T$ stand for arbitrary sequences.
+In the definitions, $A,B,S$ and $T$ stand for arbitrary sequences.
 
-\begin{mydef}[$\eqext$]
+\begin{mydef}[$\eqext$, $\strext$ and $\equiv$]
 % Relation in the algebra
-We write $A\eqext B$, or $B$ \emph{extends} $A$,
+We write $A\eqext B$, or say that $B$ \emph{extends} $A$,
 % intended interpretation:
 to mean that they behave in the same way
 on any filesystem $A$ does not break:
-$\forall \FS\in\Dom{A}: A\aFS=B\aFS$.
+$\forall \FS\in\Dom{A}:\,A\aFS=B\aFS$.
 % old inference rule: $ A\eqext B \Rightarrow S\cc A\cc T\eqext S\cc B\cc T$,
 We can also see that $A\eqext B$ and $S\eqext T$ implies $A\cc S\eqext B\cc T$.
-% preorder: reflexive and transitive
-% patial order: reflexive, transitive and antisymmetric (aRb & bRa => a=b) TODO
-In other words, $\eqext$ is a preorder, and also a precongruence.
-\end{mydef}
+% symmetric:     aRb <=> bRa
+% antisymmetric: aRb & bRa => a=b
+% reflexive:     aRa
+% transitive:    aRb & bRC => aRc
+% preorder:      reflexive, transitive
+% partial order: reflexive, transitive, antisymmetric
+% equivalence:   reflexive, transitive, symmetric
+% congruence:    https://en.wikipedia.org/wiki/Congruence_relation
+% precongruence: congruence of a preorder
+In other words, $\eqext$ is a preorder, and also a precongruence. % TODO
 
-\begin{mydef}[$\equiv$]
 % Relation in the algebra
-$A\equiv B$,
-or $A$ and $B$ are \emph{equivalent,}
+We write $A\equiv B$,
+or say that $A$ and $B$ are \emph{equivalent,}
 iff $A\eqext B$ and $B\eqext A$;
 that is, $\equiv$ is the intersection of the preorder $\eqext$ with its inverse,
-and so it is a congruence.
-% symmetric: aRb <=> bRa
-% reflexive: aRa
-% transitive: aRb & bRC => aRc
+and so it is a congruence. % TODO
 % old inference rule: $ A\equiv B \Rightarrow S\cc A\cc T\equiv S\cc B\cc T $.
+
+Finally, we write $A\strext B$ to mean $A\eqext B$ and $A\nequiv B$.
+In particular, we write $\wrks{A}$
+to mean that $\Dom{A}$ is not empty, that is, if $A$ is defined on some filesystems.
 \end{mydef}
 
 It is easy to see that this equivalence holds on the level of filesystems:
@@ -78,11 +84,6 @@ $B\eqext A$ implies that it is not possible for both $B\aFS\neq\fsbroken$ and $A
 Therefore, for every filesystem $\FS$, either $A\aFS\neq\fsbroken$, in which case $A\aFS=B\aFS$ as $A\eqext B$, or $A\aFS=\fsbroken$,
 in which case $B\aFS=\fsbroken$ must be true, and therefore $A\aFS=B\aFS$.
 \end{proof}
-
-\begin{mydef}[$\strext$]
-We write $A\strext B$ if $A\eqext B$ and $A\nequiv B$.
-In particular, we write $\wrks{A}$ if $A$ is defined on some filesystems.
-\end{mydef}
 
 % Rules
 % -----
