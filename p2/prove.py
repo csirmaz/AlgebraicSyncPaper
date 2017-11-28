@@ -291,7 +291,7 @@ class Node:
             self
 
         """
-        # print "assert child on " + self.info()
+        # print("assert child on " + self.info())
         if not self.has_child or not self.content.isDir():
             self.broken = 'assert-child'
         return self
@@ -303,7 +303,7 @@ class Node:
             self
 
         """
-        # print "assert no child on " + self.info()
+        # print("assert no child on " + self.info())
         if self.has_child:
             self.broken = 'assert-no-child'
         return self
@@ -315,7 +315,7 @@ class Node:
             self
 
         """
-        # print "assert parent on " + self.info()
+        # print("assert parent on " + self.info())
         if not self.has_parent:
             self.broken = 'assert-parent'
         return self
@@ -327,7 +327,7 @@ class Node:
             self
 
         """
-        # print "assert no parent on " + self.info()
+        # print("assert no parent on " + self.info())
         if self.has_parent:
             self.broken = 'assert-no-parent'
         return self
@@ -403,7 +403,7 @@ def getFilesystemRelationship(rel):
             fs_rel.append(DIRECT_PARENT_ONLY)
         if rel == DIRECT_PARENT:
             fs_rel.append(DIRECT_PARENT_ONLY)
-    if DEBUG > 1: print "FSRel : " + ",".join(fs_rel)
+    if DEBUG > 1: print("FSRel : " + ",".join(fs_rel))
     return fs_rel
 
 
@@ -487,19 +487,19 @@ class Filesystem:
             child = self.p1
 
         if not child.getContent().isEmpty():
-            # print "child not empty"
+            # print("child not empty")
             parent.assertDir().assertDescendant()
 
         if isDirectRel(self.rel) and parent.getContent().isDir():
-            # print "parent not empty"
+            # print("parent not empty")
             child.assertParent()
             
         if not parent.getContent().isDir():
-            # print "parent empty"
+            # print("parent empty")
             child.assertNoParent()
 
         if isOnlyRel(self.rel) and child.getContent().isEmpty():
-            # print "only child and child empty"
+            # print("only child and child empty")
             parent.assertNoDescendants()
             
             
@@ -621,10 +621,7 @@ class Command:
         
     def info(self):
         """Returns a human-readable string describing the object."""
-        r = "<" + self.inp.info(False) + "," + self.outp.info(False) + "," + self.path
-        if self.outp.isEmpty() or (self.outp.isDir() and ONE_DIRECTORY_VALUE):
-            return r + ">"
-        return r + "," + self.outp.getValue() + ">"
+        return "<" + self.inp.info(False) + "," + self.outp.info(True) + "," + self.path + ">"
         
     def label(self):
         """Returns a short string describing some parts of the object."""
@@ -755,14 +752,14 @@ class CommandPair(Sequence):
     def label(self):
         """Returns a short string describing some of the object"""
         Dsep = {
-            SEPARATE: '-x-',
-            DISTANT_CHILD: '>->',
-            DIRECT_CHILD: '-<>',
-            DIRECT_CHILD_ONLY: '->>',
-            DISTANT_PARENT: '<-<',
-            DIRECT_PARENT: '<>-',
+            SEPARATE:           '-x-',
+            DISTANT_CHILD:      '>->',
+            DIRECT_CHILD:       '-<>',
+            DIRECT_CHILD_ONLY:  '->>',
+            DISTANT_PARENT:     '<-<',
+            DIRECT_PARENT:      '<>-',
             DIRECT_PARENT_ONLY: '<<-',
-            SAME: '---'
+            SAME:               '---'
         }
         return self.commands[0].label() + Dsep[self.rel] + self.commands[1].label();
     
@@ -821,15 +818,15 @@ def pr_s(s):
 def checkBreaksAll(sq):
     """Returns if the command pair sq breaks all filesystems"""
     for fs in FilesystemFactory(fs_rel):
-        if DEBUG > 1: print ". 0 " + fs.info()
+        if DEBUG > 1: print(". 0 " + fs.info())
         fs.applySequence(sq)
-        if DEBUG > 1: print ". 1 " + fs.info()
+        if DEBUG > 1: print(". 1 " + fs.info())
         if not fs.isBroken():
             return False
     return True
 
 
-print "Please see the documentation in the script";
+print("Please see the documentation in the script");
 
 for rel in [SEPARATE, SAME, DISTANT_CHILD, DIRECT_CHILD, DIRECT_CHILD_ONLY, DISTANT_PARENT, DIRECT_PARENT, DIRECT_PARENT_ONLY]:
     pr_s('\n===== Relationship between nodes: ' + rel + ' =====\n')
@@ -839,9 +836,9 @@ for rel in [SEPARATE, SAME, DISTANT_CHILD, DIRECT_CHILD, DIRECT_CHILD_ONLY, DIST
     for sq in CommandPairFactory(rel):
 
         # Does the pair break all filesystems?
-        if DEBUG > 1: print ". breaksAll?"
+        if DEBUG > 1: print(". breaksAll?")
         if checkBreaksAll(sq):
-            if DEBUG > 0: print "* breaksAll"
+            if DEBUG > 0: print("* breaksAll")
             pr('BR ')
         else:
             pr('.. ')
@@ -852,7 +849,7 @@ for rel in [SEPARATE, SAME, DISTANT_CHILD, DIRECT_CHILD, DIRECT_CHILD_ONLY, DIST
         # Is the pair the same as no command at all?
         nothingEq = True  # Whether sq is equivalent to no commands on all filesystems
         nothingExt = True # Whether no commands is an extenstion of sq
-        if DEBUG > 1: print ". nothing?"
+        if DEBUG > 1: print(". nothing?")
         for fs in FilesystemFactory(fs_rel):
             fs_res = fs.clone()
             fs_res.applySequence(sq)
@@ -860,8 +857,8 @@ for rel in [SEPARATE, SAME, DISTANT_CHILD, DIRECT_CHILD, DIRECT_CHILD_ONLY, DIST
             if not fs_res.isExtendedBy(fs): nothingExt = False
             
         if DEBUG > 0:
-            if nothingEq: print "* equals empty sequence"
-            elif nothingExt: print "* extended by empty sequence"
+            if nothingEq: print("* equals empty sequence")
+            elif nothingExt: print("* extended by empty sequence")
         else:
             if nothingEq: pr('== ')
             elif nothingExt: pr('[[ ')
@@ -880,37 +877,37 @@ for rel in [SEPARATE, SAME, DISTANT_CHILD, DIRECT_CHILD, DIRECT_CHILD_ONLY, DIST
         # a simple deduplication attempt is coded below.
         simplifiedByEq = None
         simplifiedByExt = None
-        if DEBUG > 1: print ". simplified?"
+        if DEBUG > 1: print(". simplified?")
         for command in chain(CommandFactory(sq.getFirst().getPath(), sq.getFirst().getOutput().getValue()), CommandFactory(sq.getLast().getPath(), sq.getLast().getOutput().getValue())):
-            if DEBUG > 1: print ". . " + command.info()
+            if DEBUG > 1: print(". . " + command.info())
             simplifiesEq = True  # Whether command is equivalent to sq on all filesystems
             simplifiesExt = True # Whether command extends sq
             for fs in FilesystemFactory(fs_rel):
-                if DEBUG > 2: print ". . o " + fs.info()
+                if DEBUG > 2: print(". . o " + fs.info())
                 # Apply the original sequence
                 fs_res = fs.clone()
                 fs_res.applySequence(sq)
-                if DEBUG > 2: print ". . s " + fs_res.info()
+                if DEBUG > 2: print(". . s " + fs_res.info())
                 # Apply the single command
                 fs_single = fs.clone()
                 fs_single.applyCommand(command)
-                if DEBUG > 2: print ". . c " + fs_single.info()
+                if DEBUG > 2: print(". . c " + fs_single.info())
                 if not fs_res.isSame(fs_single): simplifiesEq = False
                 if not fs_res.isExtendedBy(fs_single): simplifiesExt = False
             if simplifiesEq:
                 SingleCommandRules += sq.info() + " == " + command.info() + "\n"
                 if simplifiedByEq is None or not simplifiedByEq.isSame(command):
                     simplifiedByEq = command
-                    if DEBUG > 1: print ". * equals " + command.info()
+                    if DEBUG > 1: print(". * equals " + command.info())
             elif simplifiesExt:
                 SingleCommandRules += sq.info() + " [[ " + command.info() + "\n"
                 if simplifiedByExt is None or not simplifiedByExt.isSame(command):
                     simplifiedByExt = command
-                    if DEBUG > 1: print ". * extended by " + command.info()
+                    if DEBUG > 1: print(". * extended by " + command.info())
         
         if DEBUG > 0:
-            if not simplifiedByEq is None: print "* equals command " + simplifiedByEq.info()
-            elif not simplifiedByExt is None: print "* extended by command " + simplifiedByExt.info()
+            if not simplifiedByEq is None: print("* equals command " + simplifiedByEq.info())
+            elif not simplifiedByExt is None: print("* extended by command " + simplifiedByExt.info())
         else:
             if not simplifiedByEq is None: pr('== ')
             elif not simplifiedByExt is None: pr('[[ ')
@@ -921,29 +918,29 @@ for rel in [SEPARATE, SAME, DISTANT_CHILD, DIRECT_CHILD, DIRECT_CHILD_ONLY, DIST
 
         # Reverse sequence
         sq_rev = sq.getReverse()
-        if DEBUG > 1: print ". reverse? " + sq_rev.info()
+        if DEBUG > 1: print(". reverse? " + sq_rev.info())
         
         reverseEq = True  # Whether the reversed pair is equivalent to sq on all filesystems
         reverseExt = True # Whether the reversed pair extends sq
         for fs in FilesystemFactory(fs_rel):
-            if DEBUG > 1: print ". . o " + fs.info()
+            if DEBUG > 1: print(". . o " + fs.info())
             # Apply the original sequence
             fs_res = fs.clone()
             fs_res.applySequence(sq)
-            if DEBUG > 1: print ". . s " + fs_res.info()
+            if DEBUG > 1: print(". . s " + fs_res.info())
             # Apply the reverse sequence
             fs_rev_res = fs.clone()
             fs_rev_res.applySequence(sq_rev)
-            if DEBUG > 1: print ". . r " + fs_rev_res.info()
+            if DEBUG > 1: print(". . r " + fs_rev_res.info())
             if not fs_res.isSame(fs_rev_res): reverseEq = False
             if not fs_res.isExtendedBy(fs_rev_res): reverseExt = False
 
         if DEBUG > 0:
-            if reverseEq: print "* equals reverse " + sq_rev.info()
-            elif reverseExt: print "* extended by reverse " + sq_rev.info()
+            if reverseEq: print("* equals reverse " + sq_rev.info())
+            elif reverseExt: print("* extended by reverse " + sq_rev.info())
         else:
             if reverseEq: pr('== ')
             elif reverseExt: pr('[[ ')
             else: pr('.. ')
 
-print "\n\n===== Substitutions for single commands =====\n\n" + SingleCommandRules
+print("\n\n===== Substitutions for single commands =====\n\n" + SingleCommandRules)
