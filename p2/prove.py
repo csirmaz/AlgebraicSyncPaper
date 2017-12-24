@@ -85,10 +85,7 @@ ONE_DIRECTORY_VALUE = True
 RULE_RELATIONSHIPS_INCLUSIVE = False
 
 # Increase the debug level to have results of internal calculations printed
-DEBUG = 2
-
-# Whether to use Unicode characters in the output
-UNICODE = 1
+DEBUG = 0
 
 # Style of info() methods: 'normal or 'debug'
 STYLE = 'normal' # TODO
@@ -101,48 +98,41 @@ FILE  = 'File'
 EMPTY = 'Empty'
 
 # Display strings
-if UNICODE:
-    DISPLAY = {
-        'ContentValue': {
-            EMPTY: '⊖', # 'b'
-            FILE:  'F',
-            DIR:   'D'
-        },
-        'Node_has_parent': '⁌', # 'o--',
-        'Node_has_child': '⁍', #  '--o',
-        'Node_has_no_parent': '‧',
-        'Node_has_no_child': '‧',
-        'FileSystemRel': { # arrow is always pointing to right as we swap nodes if needed
-            SEPARATE:           '≀≀', # '=x=',
-            DISTANT_CHILD:      '>=>',
-            DIRECT_CHILD:       '=<>',
-            DIRECT_CHILD_ONLY:  '⇾', # '=>>',
-            DISTANT_PARENT:     '>~>',
-            DIRECT_PARENT:      '~<>',
-            DIRECT_PARENT_ONLY: '~>>',
-            SAME:               '≅' # '-=-'
-        },
-        'CommandPairRel': {
-            SEPARATE:           '≀≀', # '-x-'
-            DISTANT_CHILD:      '>->',
-            DIRECT_CHILD:       '-<>',
-            DIRECT_CHILD_ONLY:  '->>',
-            DISTANT_PARENT:     '<-<',
-            DIRECT_PARENT:      '<>-',
-            DIRECT_PARENT_ONLY: '<<-',
-            SAME:               '≅', # '---'
-        },
-        'FS_broken':    '⊥', # '[Broken]'
-        'Res_broken':   '⊥  ', # 'BR ',
-        'Res_equiv':    '≡  ', # '== ',
-        'Res_equiv_s':  '≡',   # '==',
-        'Res_extend':   '⊑  ', # '[[ ',
-        'Res_extend_s': '⊑',   # '[[',
-        'Res_nothing':  '.  ', # '.. '
-    }
-else:
-    DISPLAY = {
-    }
+DISPLAY = {
+    'ContentValue': {
+        EMPTY: '⊖', # 'b'
+        FILE:  'F',
+        DIR:   'D'
+    },
+    'Node_has_parent': '⁌', # 'o--',
+    'Node_has_child': '⁍', #  '--o',
+    'Node_has_no_parent': '.',
+    'Node_has_no_child': '.',
+    'FileSystemRel': { # arrow is always pointing to right as we swap nodes if needed
+        SEPARATE:           '≀≀', # '=x=',
+        DISTANT_CHILD:      '>=>',
+        DIRECT_CHILD:       '=<>',
+        DIRECT_CHILD_ONLY:  '⇾', # '=>>',
+        SAME:               '≅' # '-=-'
+    },
+    'CommandPairRel': {
+        SEPARATE:           '≀≀', # '-x-'
+        DISTANT_CHILD:      '>->',
+        DIRECT_CHILD:       '-<>',
+        DIRECT_CHILD_ONLY:  '->>',
+        DISTANT_PARENT:     '<-<',
+        DIRECT_PARENT:      '<>-',
+        DIRECT_PARENT_ONLY: '<<-',
+        SAME:               '≅', # '---'
+    },
+    'FS_broken':    '⊥', # '[Broken]'
+    'Res_broken':   '⊥  ', # 'BR ',
+    'Res_equiv':    '≡  ', # '== ',
+    'Res_equiv_s':  '≡',   # '==',
+    'Res_extend':   '⊑  ', # '[[ ',
+    'Res_extend_s': '⊑',   # '[[',
+    'Res_nothing':  '.  ', # '.. '
+}
 
 
 class Content:
@@ -150,11 +140,11 @@ class Content:
     
     Private properties:
         type (enum): DIR or FILE or EMPTY
-        value (str): an arbitrary string representing contents and metadata
+        invalue (str): an arbitrary string representing contents and metadata
 
     """
 
-    def __init__(self, type=EMPTY, value='Unknown'):
+    def __init__(self, type=EMPTY, invalue='Unknown'):
         """Constructor
         
         Args:
@@ -163,22 +153,22 @@ class Content:
         
         """
         self.type = type
-        self.value = value
+        self.invalue = invalue
  
     def clone(self):
         """Returns a deep clone of the object."""
-        return self.__class__(self.type, self.value)
+        return self.__class__(self.type, self.invalue)
 
     def info(self, addvalue=True):
         """Returns human-readable information about the object.
         
         Args:
-            addvalue (bool): whether to add a description of the value
+            addvalue (bool): whether to add a description of the invalue
         
         """
         r = DISPLAY['ContentValue'][self.type]
         if STYLE == 'debug' or (addvalue and not self.isEmpty() and not(ONE_DIRECTORY_VALUE and self.isDir())):
-            r += '(' + self.value + ')'
+            r += '(' + self.invalue + ')'
         return r
     
     def label(self):
@@ -190,14 +180,14 @@ class Content:
         if self.type != content.type: return False
         if self.isEmpty(): return True
         if ONE_DIRECTORY_VALUE and self.isDir(): return True
-        return (self.value == content.value)
+        return (self.invalue == content.invalue)
         
     def getType(self):
         return self.type
     
     def getValue(self):
         if self.isEmpty(): return 'EmptyValue'
-        return self.value
+        return self.invalue
         
     def isDir(self):
         """Returns whether the type of the object is 'diretory'."""
@@ -212,19 +202,19 @@ class Content:
         return (self.type == EMPTY)
 
 
-def ContentFactory(value='Unknown'):
+def ContentFactory(invalue='Unknown'):
     """Generates all possible contents.
     
     Args:
-        value (Optional[str]): the value of the content objects
+        invalue (Optional[str]): the invalue of the content objects (where relevant)
         
     Yields:
         All possible content objects
         
     """
     yield Content(EMPTY)
-    yield Content(FILE, value)
-    yield Content(DIR, value)
+    yield Content(FILE, invalue)
+    yield Content(DIR, invalue)
 
 
 class Node:
@@ -263,10 +253,7 @@ class Node:
         """Returns a human-readable string describing the object."""
         r = []
         if self.isBroken():
-            if STYLE == 'debug':
-                r.append("Broken(" + self.broken + "):")
-            else:
-                return "(Broken)"
+            return "(" + DISPLAY['FS_broken'] + ":" + self.broken + ")"
         r.append(DISPLAY['Node_has_parent' if self.has_parent else 'Node_has_no_parent'])
         r.append(self.content.info())
         r.append(DISPLAY['Node_has_child' if self.has_child else 'Node_has_no_child'])
@@ -292,6 +279,7 @@ class Node:
             self
 
         """
+        if self.isBroken(): return self
         self.broken = reason
         return self
 
@@ -302,7 +290,13 @@ class Node:
         self.content = content
         self.checkTreeProperty()
         return self
-        
+
+    def getHasChild(self):
+        return self.has_child
+    
+    def getHasParent(self):
+        return self.has_parent
+
     def setHasChild(self, v):
         self.has_child = v
         self.checkTreeProperty()
@@ -320,14 +314,16 @@ class Node:
             self
 
         """
+        
+        if self.isBroken(): return self
 
         # The node has content but the parent is not a directory
         if not self.content.isEmpty() and not self.has_parent:
-            self.broken = 'tree-nonempty-noparent'
+            self.broken = 'Tree prop nonempty has no parent'
 
         # The node has child(ren) but is not a directoy
         if self.has_child and not self.content.isDir():
-            self.broken = 'tree-notdir-haschild'
+            self.broken = 'Tree prop non-dir has child'
 
         return self
         
@@ -338,9 +334,11 @@ class Node:
             self
 
         """
+        if self.isBroken(): return self
+
         # print("assert child on " + self.info())
         if not self.has_child or not self.content.isDir():
-            self.broken = 'assert-child'
+            self.broken = 'Assert has child failed'
         return self
         
     def assertNoDescendants(self):
@@ -350,9 +348,11 @@ class Node:
             self
 
         """
+        if self.isBroken(): return self
+
         # print("assert no child on " + self.info())
         if self.has_child:
-            self.broken = 'assert-no-child'
+            self.broken = 'Assert no child failed'
         return self
         
     def assertParent(self):
@@ -362,9 +362,11 @@ class Node:
             self
 
         """
+        if self.isBroken(): return self
+
         # print("assert parent on " + self.info())
         if not self.has_parent:
-            self.broken = 'assert-parent'
+            self.broken = 'Assert has parent failed'
         return self
         
     def assertNoParent(self):
@@ -374,28 +376,19 @@ class Node:
             self
 
         """
+        if self.isBroken(): return self
+
         # print("assert no parent on " + self.info())
         if self.has_parent:
-            self.broken = 'assert-no-parent'
-        return self
-
-    def assertDir(self):
-        """ Mark the node as broken if it is not a directory.
-
-        Returns:
-            self
-
-        """
-        if not self.content.isDir():
-            self.broken = 'assert-dir'
+            self.broken = 'Assert no parent failed'
         return self
 
 
-def NodeFactory(contents='Unknown'):
+def NodeFactory(invalue='Unknown'):
     """Generates all possible nodes.
 
     Args:
-        contents (Optional[str]): the content of the value of the node
+        invalue (Optional[str]): the invalue of the content of the node
 
     Yields:
         All possible node objects
@@ -403,7 +396,7 @@ def NodeFactory(contents='Unknown'):
     """
     yield Node(broken=True)
     for has_parent in [False, True]:
-        for content in ContentFactory(contents):
+        for content in ContentFactory(invalue):
             for has_child in [False, True]:
                 node = Node(has_parent, content, has_child)
                 if not node.isBroken():
@@ -450,7 +443,6 @@ def getFilesystemRelationship(rel):
             fs_rel.append(DIRECT_PARENT_ONLY)
         if rel == DIRECT_PARENT:
             fs_rel.append(DIRECT_PARENT_ONLY)
-    if DEBUG > 1: print("FSRel : " + ",".join(fs_rel))
     return fs_rel
 
 
@@ -481,12 +473,13 @@ class Filesystem:
         
     def info(self):
         """Returns a human-readable string describing the object."""
-        if self.isBroken() and not STYLE == 'debug':
-            return DISPLAY['FS_broken']
-        # TODO Add broken info
-        if self.rel == SEPARATE or isChildRel(self.rel):
-            return self.p1.info() + DISPLAY['FileSystemRel'][self.rel] + self.p2.info()
-        return self.p2.info() + DISPLAY['FileSystemRel'][self.rel] + self.p1.info()
+        brokenprefix = ""
+        if self.isBroken():
+            brokenprefix = DISPLAY['FS_broken'] + "  Details: " 
+        if not isChildRel(self.rel):
+            return brokenprefix + self.p2.info() + DISPLAY['FileSystemRel'][getReverseRel(self.rel)] + self.p1.info()
+        else:
+            return brokenprefix + self.p1.info() + DISPLAY['FileSystemRel'][self.rel] + self.p2.info()
     
     def clone(self):
         """Returns a deep clone of the object."""
@@ -511,11 +504,19 @@ class Filesystem:
         return (self.p1.isBroken() or self.p2.isBroken())
         
     def checkTreeProperty(self):
-        """Mark the filesystem as broken if there is a contradiction
-            between the environments noted in the nodes an their relationship.
+        """ Ensure that the environments stored in the nodes
+            reflect their contents and their relationship.
+            Mark the filesystem as broken if there is a contradiction.
+            This is called from the constructor.
+            checkTreeProperty on the nodes has already been called.
         """
+        
+        # If the nodes are separate, all properties are independent,
+        # and there is nothing to check
         if self.rel == SEPARATE:
             return self
+
+        # SAME is not possible here, so we have comparable but different paths.
 
         if isChildRel(self.rel):
             parent = self.p1
@@ -524,22 +525,33 @@ class Filesystem:
             parent = self.p2
             child = self.p1
 
-        if not child.getContent().isEmpty():
-            # print("child not empty")
-            parent.assertDir().assertDescendant()
-
-        if isDirectRel(self.rel) and parent.getContent().isDir():
-            # print("parent not empty")
-            child.assertParent()
-            
-        if not parent.getContent().isDir():
-            # print("parent empty")
-            child.assertNoParent()
-
+        # The parent of the parent: we have no extra constraints.
+        # The descendant of the parent:
+        # (a) If direct and only relationship, and if child is empty, parent has no descendants.
+        # (b) If child is not empty, parent has descendants.
+        # The parent of the child:
+        # (c) If direct, and the parent is not empty, child has a parent.
+        # (d) If parent is empty, child has no parent.
+        # The descendant of the child: we have no extra constraints.
+        #
+        # These are mirrored by updates in applyCommand.
+        
+        # (a)
         if isOnlyRel(self.rel) and child.getContent().isEmpty():
-            # print("only child and child empty")
             parent.assertNoDescendants()
             
+        # (b)
+        if not child.getContent().isEmpty():
+            parent.assertDescendant()
+            
+        # (c)
+        if isDirectRel(self.rel) and not parent.getContent().isEmpty():
+            child.assertParent()
+            
+        # (d)
+        if parent.getContent().isEmpty():
+            child.assertNoParent()
+
             
     def applyCommand(self, command):
         """Apply a command to the filesystem.
@@ -579,25 +591,37 @@ class Filesystem:
                 parentpath = PATH2
                 parent = self.p2                
 
+            # The parent of the parent: we have no extra constraints.
+            # The descendant of the parent:
+            # (a) If direct and only relationship, and if child is empty, parent has no descendants.
+            # (b) If child is not empty, parent has descendants.
+            # The parent of the child:
+            # (c) If direct, and the parent is not empty, child has a parent.
+            # (d) If parent is empty, child has no parent.
+            # The descendant of the child: we have no extra constraints.
+            #
+            # These are mirrored by the checks in checkTreeProperty
+
             if command_path == childpath:
                 
-                # If the child gets content, the parent gets a child
-                if isDirectRel(self.rel) and not new_content.isEmpty():
-                    parent.setHasChild(True)
-                
-                # If the only child gets deleted, the parent loses all children
+                # (a) If the only child gets deleted, the parent loses all children
                 if isOnlyRel(self.rel) and new_content.isEmpty():
                     parent.setHasChild(False)
+
+                # (b) If the child gets content, the parent gets a child
+                if isDirectRel(self.rel) and not new_content.isEmpty():
+                    parent.setHasChild(True)
                     
             if command_path == parentpath:
                                 
-                # If the parent becomes a file or empty, the child loses parent
-                if not new_content.isDir():
+                # (c) If the parent becomes a directory, the child gets a parent
+                if isDirectRel(self.rel) and not new_content.isEmpty():
+                    child.setHasParent(True)
+
+                # (d) If the parent becomes empty, the child loses parent
+                if isDirectRel(self.rel) and new_content.isEmpty():
                     child.setHasParent(False)
                     
-                # If the parent becomes a directory, the child gets a parent
-                if isDirectRel(self.rel) and new_content.isDir():
-                    child.setHasParent(True)
   
         # Here the command is always applied to a different path than the one we changed above
         command.applyToNode(self.p1 if command_path == PATH1 else self.p2)
@@ -640,10 +664,10 @@ class Command:
 
     Private properties:
         path (enum): PATH1 or PATH2
-        inp (Content): a content object. Its value is disregarded; only the type is used
+        inp (Content): a content object. Its invalue is disregarded; only the type is used
             to note the type of content the command expects in the filesystem
             before it runs
-        outp (Content): a content object the command turns the path into
+        outp (Content): a content object the command stores at the path
     """
     
     def __init__(self, path, inp, outp):
@@ -698,25 +722,25 @@ class Command:
 
         """
         if node.getContent().getType() != self.inp.getType():
-            node.setBroken('command-input')
+            node.setBroken('Command in type mismatch')
             return self
         node.setContent(self.outp)
         return self
 
 
-def CommandFactory(path, value):
+def CommandFactory(path, invalue):
     """Generates all possible commands that uses the given path and value in its output content (if applicable).
 
     Args:
         path (enum): the path
-        value (str): an arbitrary string representing the value (e.g. file contents and metadata)
+        invalue (str): an arbitrary string representing the invalue (all possible types are generated)
 
     Yields:
         all possible command objects
 
     """
     for c1 in ContentFactory('N/A'):
-        for c2 in ContentFactory(value):
+        for c2 in ContentFactory(invalue):
             yield Command(path, c1, c2)
 
 
@@ -805,21 +829,21 @@ class CommandPair(Sequence):
         return self.commands[1]
     
 
-def CommandPairFactory(rel):
+def CommandPairFactory(rel, printtable=False):
     """Generates all possible command pairs. The file content values used will always be different."""
     
     # Print a header line:
-    if DEBUG == 0:
+    if DEBUG == 0 and printtable:
         pr('    ')
         for c2 in CommandFactory(PATH2, 'New2'):
-            pr(c2.label() + ' ')
+           pr(c2.label() + ' ')
         pr('\n')
     
     for c1 in CommandFactory(PATH1, 'New1'):
-        pr_ex(c1.label() + ': ') # Table row header
+        if printtable: pr_ex(c1.label() + ': ') # Table row header
         for c2 in CommandFactory(PATH1 if (rel == SAME) else PATH2, 'New2'):
             yield CommandPair(c1, c2, rel)
-        pr_ex('\n') # Table row ends
+        if printtable: pr_ex('\n') # Table row ends
 
 
 def pr(s):
@@ -836,6 +860,85 @@ def dbg(level, msg):
     """Print debug message"""
     if level <= DEBUG:
         pr("  " * level + msg + "\n")
+
+def ruletitle(s):
+    """Print the rule name being tested"""
+    pr(s + ": ")
+
+def fail():
+    pr("FAIL\n")
+    # TODO Abort
+    
+def ok():
+    pr("Ok\n")
+
+
+
+ruletitle('Rule 1')
+# Commands on incomparable nodes commute
+for sq in CommandPairFactory(SEPARATE):
+    sq_rev = sq.getReverse()
+    for fs in FilesystemFactory(SEPARATE):
+        fs_res = fs.clone()
+        fs_res.applySequence(sq)
+        fs_rev_res = fs.clone()
+        fs_rev_res.applySequence(sq_rev)
+        if not fs_res.isSame(fs_rev_res):
+            fail()
+ok()
+
+
+ruletitle('Rule 2')
+# Commands on incomparble nodes do not break all filesystems
+for sq in CommandPairFactory(SEPARATE):
+    for fs in FilesystemFactory(SEPARATE):
+        fs.applySequence(sq)
+        if not fs.isBroken():
+            break
+    else:
+        continue # trick to achieve break(2)
+    ok()
+    break
+else:
+    fail()
+
+
+ruletitle('Rule 3')
+# Commands on the same node break every filesystem if their types are incompatible
+for sq in CommandPairFactory(SAME):
+    if sq.getFirst().getOutput().getType() == sq.getLast().getInput().getType():
+        continue
+    for fs in FilesystemFactory(SEPARATE):
+        fs.applySequence(sq)
+        if not fs.isBroken():
+            break
+    else:
+        continue # trick to achieve break(2)
+    fail()
+    break
+else:
+    ok()
+
+
+ruletitle('Rule 4')
+# Commands on the same node simplify into an empty sequence
+for sq in CommandPairFactory(SAME):
+    if sq.getFirst().getOutput().getType() != sq.getLast().getInput().getType():
+        continue
+    if not(
+        (sq.getFirst().getInput().getType() == EMPTY and sq.getLast().getOutput().getType() == EMPTY)
+        or
+        (sq.getFirst().getInput().getType() == DIR and sq.getLast().getOutput().getType() == DIR)
+    ):
+        continue
+
+
+exit(0)
+
+
+
+
+
         
 
 SingleCommandRules = ""
@@ -894,6 +997,7 @@ for rel in [SEPARATE, SAME, DISTANT_CHILD, DIRECT_CHILD, DIRECT_CHILD_ONLY, DIST
             if not fs_res.isExtendedBy(fs):
                 dbg(3, "Not extending")
                 nothingExt = False
+                break
             
         if nothingEq: 
             dbg(1, "Equals empty sequence")
@@ -910,82 +1014,89 @@ for rel in [SEPARATE, SAME, DISTANT_CHILD, DIRECT_CHILD, DIRECT_CHILD_ONLY, DIST
 
         # Equal to the empty (break) function
         if checkBreaksAll(sq):
+            dbg(1, "Equal to the break command")
             pr_ex(DISPLAY['Res_broken'])
             continue
 
         # Try to find a single command with the same effect
         # We try to find a command based on both commands in the pair.
-        # However, this can lead to finding the same command twice;
-        # a simple deduplication attempt is coded below.
-        simplifiedByEq = None
-        simplifiedByExt = None
+        # NB this can lead to finding the same command multiple times
+        singleIsEq = False
+        singleIsExt = False
         dbg(1, "Can " + sq.info() + " be simplified?")
         for command in chain(
                 CommandFactory(sq.getFirst().getPath(), sq.getFirst().getOutput().getValue()), 
                 CommandFactory(sq.getLast().getPath(), sq.getLast().getOutput().getValue())
         ):
-            if DEBUG > 1: print(". . " + command.info())
+            dbg(2, "Try if " + command.info() + " works")
             simplifiesEq = True  # Whether command is equivalent to sq on all filesystems
             simplifiesExt = True # Whether command extends sq
             for fs in FilesystemFactory(fs_rel):
-                if DEBUG > 2: print(". . o " + fs.info())
+                dbg(3, "Before: " + fs.info())
                 # Apply the original sequence
                 fs_res = fs.clone()
                 fs_res.applySequence(sq)
-                if DEBUG > 2: print(". . s " + fs_res.info())
+                dbg(3, "After original: " + fs_res.info())
                 # Apply the single command
                 fs_single = fs.clone()
                 fs_single.applyCommand(command)
-                if DEBUG > 2: print(". . c " + fs_single.info())
-                if not fs_res.isSame(fs_single): simplifiesEq = False
-                if not fs_res.isExtendedBy(fs_single): simplifiesExt = False
+                dbg(3, "After single c: " + fs_single.info())
+                if not fs_res.isSame(fs_single):
+                    simplifiesEq = False
+                if not fs_res.isExtendedBy(fs_single):
+                    simplifiesExt = False
+                    break
             if simplifiesEq:
                 SingleCommandRules += sq.info() + " " + DISPLAY['Res_equiv_s'] + " " + command.info() + "\n"
-                if simplifiedByEq is None or not simplifiedByEq.isSame(command):
-                    simplifiedByEq = command
-                    if DEBUG > 1: print(". * equals " + command.info())
+                singleIsEq = True
+                dbg(2, "It is equal")
             elif simplifiesExt:
                 SingleCommandRules += sq.info() + " " + DISPLAY['Res_extend_s'] + " " + command.info() + "\n"
-                if simplifiedByExt is None or not simplifiedByExt.isSame(command):
-                    simplifiedByExt = command
-                    if DEBUG > 1: print(". * extended by " + command.info())
-        
-        if DEBUG > 0:
-            if not simplifiedByEq is None: print("* equals command " + simplifiedByEq.info())
-            elif not simplifiedByExt is None: print("* extended by command " + simplifiedByExt.info())
+                singleIsExt = True
+                dbg(2, "It extends")
+
+        if singleIsEq:
+            pr_ex(DISPLAY['Res_equiv'])
+            dbg(1, "Yes via equivalence")
+        elif singleIsExt:
+            pr_ex(DISPLAY['Res_extend'])
+            dbg(1, "Yes via extending")
         else:
-            if not simplifiedByEq is None: pr(DISPLAY['Res_equiv'])
-            elif not simplifiedByExt is None: pr(DISPLAY['Res_extend'])
-            else: pr(DISPLAY['Res_nothing'])
+            pr_ex(DISPLAY['Res_nothing'])
+            dbg(1, "No")
         
     pr('\nRelationship to the reverse sequence:\n')
     for sq in CommandPairFactory(rel):
 
         # Reverse sequence
         sq_rev = sq.getReverse()
-        if DEBUG > 1: print(". reverse? " + sq_rev.info())
+        dbg(1, "How does " + sq.info() + " relate to " + sq_rev.info() + " ?")
         
         reverseEq = True  # Whether the reversed pair is equivalent to sq on all filesystems
         reverseExt = True # Whether the reversed pair extends sq
         for fs in FilesystemFactory(fs_rel):
-            if DEBUG > 1: print(". . org " + fs.info())
+            dbg(2, "Before: " + fs.info())
             # Apply the original sequence
             fs_res = fs.clone()
             fs_res.applySequence(sq)
-            if DEBUG > 1: print(". . seq " + fs_res.info())
+            dbg(2, "After original: " + fs_res.info())
             # Apply the reverse sequence
             fs_rev_res = fs.clone()
             fs_rev_res.applySequence(sq_rev)
-            if DEBUG > 1: print(". . rev " + fs_rev_res.info())
-            if not fs_res.isSame(fs_rev_res): reverseEq = False
-            if not fs_res.isExtendedBy(fs_rev_res): reverseExt = False
+            dbg(2, "After reverse: " + fs_rev_res.info())
+            if not fs_res.isSame(fs_rev_res):
+                reverseEq = False
+            if not fs_res.isExtendedBy(fs_rev_res):
+                reverseExt = False
 
-        if DEBUG > 0:
-            if reverseEq: print("* equals reverse " + sq_rev.info())
-            elif reverseExt: print("* extended by reverse " + sq_rev.info())
+        if reverseEq:
+            pr_ex(DISPLAY['Res_equiv'])
+            dbg(1, "Equivalent")
+        elif reverseExt: 
+            pr_ex(DISPLAY['Res_extend'])
+            dbg(1, "Extends")
         else:
-            if reverseEq: pr(DISPLAY['Res_equiv'])
-            elif reverseExt: pr(DISPLAY['Res_extend'])
-            else: pr('.. ')
+            pr_ex(DISPLAY['Res_nothing'])
+            dbg(1, "No relationship")
 
 print("\n\n===== Substitutions for single commands =====\n\n" + SingleCommandRules)
