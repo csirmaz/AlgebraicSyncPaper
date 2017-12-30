@@ -646,6 +646,9 @@ def FilesystemFactory(rel_list):
 
     """
     for rel in rel_list:
+        # Check if the relationship exists
+        getReverseRel(rel)
+        
         yield Filesystem(Node(broken=True), Node(broken=True), rel)
         for p1_source in NodeFactory('Old1'):
             for p2 in NodeFactory('Old2'):
@@ -861,66 +864,103 @@ def dbg(level, msg):
     if level <= DEBUG:
         pr("  " * level + msg + "\n")
 
-def ruletitle(s):
-    """Print the rule name being tested"""
-    pr(s + ": ")
+count_tests = 0
+count_ok = 0
+count_fail = 0
+count_errors = 0
+testname_current = None
 
-def fail():
+def begintest(testname, label):
+    """Print the rule name being tested"""
+    global count_tests, testname_current, count_errors
+    count_tests += 1
+    if not testname_current is None:
+        pr("ERROR: {} did not conclude\n".format(testname_current))
+        count_errors += 1
+    testname_current = testname
+    pr(label + ": ")
+
+def fail(testname):
+    global count_fail, testname_current, count_errors
+    count_fail += 1
+    if testname_current != testname:
+        pr("ERROR while failing test {} vs {}\n".format(testname, testname_current))
+        count_errors += 1
+    testname_current = None    
     pr("FAIL\n")
-    # TODO Abort
     
-def ok():
+def ok(testname):
+    global count_ok, testname_current, count_errors
+    count_ok += 1
+    if testname_current != testname:
+        pr("ERROR while OKing test {} vs {}\n".format(testname, testname_current))
+        count_errors += 1
+    testname_current = None    
     pr("Ok\n")
 
+def conclude():
+    global count_tests, count_fail, count_ok
+    if count_ok + count_fail != count_tests:
+        pr("ERROR: fail() and ok() calls do not match the number of tests\n")
+    if count_errors > 0:
+        pr("ERROR: some errors occurred\n")
+    if count_fail > 0:
+        pr("ERROR: some tests failed\n")
+    pr("Done.\n")
 
 
-ruletitle('Rule 1')
+begintest('R1', 'Rule 1')
 # Commands on incomparable nodes commute
 for sq in CommandPairFactory(SEPARATE):
     sq_rev = sq.getReverse()
-    for fs in FilesystemFactory(SEPARATE):
+    for fs in FilesystemFactory((SEPARATE,)):
         fs_res = fs.clone()
         fs_res.applySequence(sq)
         fs_rev_res = fs.clone()
         fs_rev_res.applySequence(sq_rev)
         if not fs_res.isSame(fs_rev_res):
-            fail()
-ok()
-
-
-ruletitle('Rule 2')
-# Commands on incomparble nodes do not break all filesystems
-for sq in CommandPairFactory(SEPARATE):
-    for fs in FilesystemFactory(SEPARATE):
-        fs.applySequence(sq)
-        if not fs.isBroken():
-            break
+            break # fail
     else:
         continue # trick to achieve break(2)
-    ok()
+    fail('R1')
     break
 else:
-    fail()
+    ok('R1')
 
 
-ruletitle('Rule 3')
+begintest('R2', 'Rule 2')
+# Commands on incomparble nodes do not break all filesystems
+for sq in CommandPairFactory(SEPARATE):
+    for fs in FilesystemFactory((SEPARATE,)):
+        fs.applySequence(sq)
+        if not fs.isBroken():
+            break # OK
+    else:
+        continue # trick to achieve break(2)
+    ok('R2')
+    break
+else:
+    fail('R2')
+
+
+begintest('R3', 'Rule 3')
 # Commands on the same node break every filesystem if their types are incompatible
 for sq in CommandPairFactory(SAME):
     if sq.getFirst().getOutput().getType() == sq.getLast().getInput().getType():
         continue
-    for fs in FilesystemFactory(SEPARATE):
+    for fs in FilesystemFactory((SAME,)):
         fs.applySequence(sq)
         if not fs.isBroken():
-            break
+            break # fail
     else:
         continue # trick to achieve break(2)
-    fail()
+    fail('R3')
     break
 else:
-    ok()
+    ok('R3')
 
 
-ruletitle('Rule 4')
+begintest('R4', 'Rule 4')
 # Commands on the same node simplify into an empty sequence
 for sq in CommandPairFactory(SAME):
     if sq.getFirst().getOutput().getType() != sq.getLast().getInput().getType():
@@ -931,7 +971,52 @@ for sq in CommandPairFactory(SAME):
         (sq.getFirst().getInput().getType() == DIR and sq.getLast().getOutput().getType() == DIR)
     ):
         continue
+    for fs in FilesystemFactory((SAME,)):
+        fs_res = fs.clone()
+        fs_res.applySequence(sq)
+        if not fs_res.isExtendedBy(fs):
+            break # fail
+    else:
+        continue # trick to achieve break(2)
+    fail('R4')
+    break
+else:
+    ok('R4')
 
+
+begintest('R5', 'Rule 5')
+# Commands on the same node simplify into one command
+for sq in CommandPairFactory(SAME):
+    if sq.getFirst().getOutput().getType() != sq.getLast().getInput().getType():
+        continue
+    if (
+        (sq.getFirst().getInput().getType() == EMPTY and sq.getLast().getOutput().getType() == EMPTY)
+        or
+        (sq.getFirst().getInput().getType() == DIR and sq.getLast().getOutput().getType() == DIR)
+    ):
+        continue
+    for fs in FilesystemFactory((SAME,)):
+        fs_res = fs.clone()
+        fs_res.applySequence(sq)
+        
+        singlecommand = Command(
+            sq.getFirst().getPath(),
+            sq.getFirst().getInput(),
+            sq.getLast().getOutput()
+        )
+        fs_single = fs.clone()
+        fs_single.applyCommand(singlecommand)
+        if not fs_res.isSame(fs_single):
+            break # fail
+    else:
+        continue # trick to achieve break(2)
+    fail('R5')
+    break
+else:
+    ok('R5')
+
+
+conclude()
 
 exit(0)
 
