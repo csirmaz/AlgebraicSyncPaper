@@ -3,6 +3,132 @@
 from itertools import chain
 import sys
 
+# Types
+EMPTY = 'Empty'
+FILE = 'File'
+DIR = 'Dir'
+
+# Relationships
+SAME = 'Same'
+DIRECT = 'Direct'
+DISTANT = 'Distant'
+SEPARATE = 'Separate'
+
+# Paths
+PATH1 = 'Path1' # If they are comparable, this is the ancestor
+PATH2 = 'Path2' # If they are comparable, this is the descendant
+
+class Node:
+    
+    def __init__(self, type=EMPTY, invalue='Unknown', has_children=False, is_parent_dir=False):
+        self.type = type
+        self.invalue = invalue
+        self._has_children = has_children
+        self._is_parent_dir = is_parent_dir
+
+
+def NodeFactory(invalue='Unknown'):
+    for type in (EMPTY, FILE, DIR):
+        for has_children in (False, True):
+            for is_parent_dir in (False, True):
+                yield Node(type, invalue, has_children, is_parent_dir)
+
+
+class Filesystem:
+
+    def __init__(self, node1, node2, relationship):
+        self.node1 = node1 # If they are comparable, this is the ancestor
+        self.node2 = node2 # If they are comparable, this is the descendant
+        self.relationship = relationship
+        
+    def node_info(self, path):
+        node = self.get_node(path)
+        c = self.has_children(path)
+        return ("d-" if self.is_parent_dir(path) else "") + node.type + "(" + node.invalue + ")" + ("-o" if c == 1 else ("-oo" if c == 2 else ""))
+
+    def info(self):
+        return self.node_info(PATH1) + " >" + self.relationship + "> " + self.node_info(PATH2)
+
+    def get_node(self, path):
+        return (self.node1 if path == PATH1 else self.node2)
+    
+    def has_children(self, path):
+        """ Returns 0, 1 or 2 """
+        if self.relationship == SAME:
+            return self.node1._has_children + 0
+        
+        if self.relationship == SEPARATE:
+            if path == PATH1:
+                return self.node1._has_children + 0
+            else:
+                return self.node2._has_children + 0
+
+        if self.relationship == DIRECT:
+            if path == PATH1: # the parent
+                # The parent's _has_children flag is used in addition to the child (node2)
+                # to note if the parent has more non-empty children
+                return ((self.node2.type != EMPTY) + self.node1._has_children)
+            else: # the child
+                return self.node2._has_children + 0
+            
+        if self.relationship == DISTANT:
+            if path == PATH1: # the ancestor
+                # The ancestor's _has_children flag is used in addition to its child that is the ancestor of node2
+                # to note if the parent has more non-empty children
+                return ((self.node2.type != EMPTY) + self.node1._has_children)
+            else: # the descendant
+                return self.node2._has_children + 0
+
+    def is_parent_dir(self, path):
+        """ Returns True or False """
+        if self.relationship == SAME:
+            return self.node1._is_parent_dir
+        
+        if self.relationship == SEPARATE:
+            if path == PATH1:
+                return self.node1._is_parent_dir
+            else:
+                return self.node2._is_parent_dir
+            
+        if self.relationship == DIRECT:
+            if path == PATH1: # the parent
+                return self.node1._is_parent_dir
+            else: # the child
+                return (self.node1.type == DIR)
+            
+        if self.relationship == DISTANT:
+            if path == PATH1: # the ancestor
+                return self.node1._is_parent_dir
+            else: # the descendant
+                # The _is_parent_dir flag is subordinate to the actual values in the nodes
+                return (self.node1.type == DIR and self.node2._is_parent_dir)
+
+    def has_tree_property(self):
+        for path in (PATH1, PATH2):
+            node = self.get_node(path)
+            if node.type != EMPTY:
+                if not self.is_parent_dir(path): return False
+            if self.has_children(path):
+                if node.type != DIR: return False
+        return True
+
+
+def FilesystemFactory(relationship):
+    for node1 in NodeFactory('Old1'):
+        for node2 in NodeFactory('Old2'):
+            fs = Filesystem(node1, node2, relationship)
+            if fs.has_tree_property():
+                yield fs
+
+for fs in FilesystemFactory(DISTANT):
+    print(fs.info())
+    
+
+exit(1)
+
+
+#############################################################################
+
 """
 This script is part of the paper available at
 https://github.com/csirmaz/AlgebraicSyncPaper/tree/master/p2
@@ -100,38 +226,41 @@ EMPTY = 'Empty'
 # Display strings
 DISPLAY = {
     'ContentValue': {
-        EMPTY: '⊖', # 'b'
+        EMPTY: '⊖',
         FILE:  'F',
         DIR:   'D'
     },
-    'Node_has_parent': '⁌', # 'o--',
-    'Node_has_child': '⁍', #  '--o',
-    'Node_has_no_parent': '.',
-    'Node_has_no_child': '.',
+    'Node_has_parent': '"',
+    'Node_has_child': '"',
+    'Node_has_no_parent': '',
+    'Node_has_no_child': '',
     'FileSystemRel': { # arrow is always pointing to right as we swap nodes if needed
-        SEPARATE:           '≀≀', # '=x=',
-        DISTANT_CHILD:      '>=>',
-        DIRECT_CHILD:       '=<>',
-        DIRECT_CHILD_ONLY:  '⇾', # '=>>',
-        SAME:               '≅' # '-=-'
+        SEPARATE:           '≀≀',
+        DISTANT_CHILD:      '//',
+        DIRECT_CHILD:       '/',
+        DIRECT_CHILD_ONLY:  '/-',
+        DISTANT_PARENT:     '<<',
+        DIRECT_PARENT:      '<',
+        DIRECT_PARENT_ONLY: '<-',
+        SAME:               '≅'
     },
     'CommandPairRel': {
-        SEPARATE:           '≀≀', # '-x-'
-        DISTANT_CHILD:      '>->',
-        DIRECT_CHILD:       '-<>',
-        DIRECT_CHILD_ONLY:  '->>',
-        DISTANT_PARENT:     '<-<',
-        DIRECT_PARENT:      '<>-',
-        DIRECT_PARENT_ONLY: '<<-',
-        SAME:               '≅', # '---'
+        SEPARATE:           '≀≀',
+        DISTANT_CHILD:      '//',
+        DIRECT_CHILD:       '/',
+        DIRECT_CHILD_ONLY:  '/-',
+        DISTANT_PARENT:     '<<',
+        DIRECT_PARENT:      '<',
+        DIRECT_PARENT_ONLY: '<-',
+        SAME:               '≅',
     },
-    'FS_broken':    '⊥', # '[Broken]'
-    'Res_broken':   '⊥  ', # 'BR ',
-    'Res_equiv':    '≡  ', # '== ',
-    'Res_equiv_s':  '≡',   # '==',
-    'Res_extend':   '⊑  ', # '[[ ',
-    'Res_extend_s': '⊑',   # '[[',
-    'Res_nothing':  '.  ', # '.. '
+    'FS_broken':    '⊥',
+    'Res_broken':   '⊥  ',
+    'Res_equiv':    '≡  ',
+    'Res_equiv_s':  '≡',
+    'Res_extend':   '⊑  ',
+    'Res_extend_s': '⊑',
+    'Res_nothing':  '.  ',
 }
 
 
@@ -217,7 +346,7 @@ def ContentFactory(invalue='Unknown'):
     yield Content(DIR, invalue)
 
 
-class Node:
+class _Node:
     """Represents a node (path) in the filesystem and information about its environment
 
     Private properties:    
@@ -384,7 +513,7 @@ class Node:
         return self
 
 
-def NodeFactory(invalue='Unknown'):
+def _NodeFactory(invalue='Unknown'):
     """Generates all possible nodes.
 
     Args:
@@ -446,7 +575,7 @@ def getFilesystemRelationship(rel):
     return fs_rel
 
 
-class Filesystem:
+class _Filesystem:
     """Models two paths in a filesystem to simulate the effects of a pair of commands.
 
     Private properties:    
@@ -476,10 +605,7 @@ class Filesystem:
         brokenprefix = ""
         if self.isBroken():
             brokenprefix = DISPLAY['FS_broken'] + "  Details: " 
-        if not isChildRel(self.rel):
-            return brokenprefix + self.p2.info() + DISPLAY['FileSystemRel'][getReverseRel(self.rel)] + self.p1.info()
-        else:
-            return brokenprefix + self.p1.info() + DISPLAY['FileSystemRel'][self.rel] + self.p2.info()
+        return brokenprefix + self.p1.info() + " " + DISPLAY['FileSystemRel'][self.rel] + " " + self.p2.info()
     
     def clone(self):
         """Returns a deep clone of the object."""
@@ -524,6 +650,20 @@ class Filesystem:
         else:
             parent = self.p2
             child = self.p1
+            
+        if not child.getContent.isEmpty():
+            parent.assertDescendant()
+
+        if not isDirectRel(self.rel):
+            if not parent.getHasChild():
+                child.assertNoParent()
+                
+        if isDirectRel(self.rel):
+            if parent.getContent().isEmpty():
+                child.assertNoParent()
+            else:
+                child.assertParent()
+                
 
         # The parent of the parent: we have no extra constraints.
         # The descendant of the parent:
@@ -539,10 +679,6 @@ class Filesystem:
         # (a)
         if isOnlyRel(self.rel) and child.getContent().isEmpty():
             parent.assertNoDescendants()
-            
-        # (b)
-        if not child.getContent().isEmpty():
-            parent.assertDescendant()
             
         # (c)
         if isDirectRel(self.rel) and not parent.getContent().isEmpty():
@@ -634,7 +770,7 @@ class Filesystem:
         return self
 
 
-def FilesystemFactory(rel_list):
+def _FilesystemFactory(rel_list):
     """Generates all possible filesystems with the given relationship between p1 and p2.
 
     Args:
@@ -704,6 +840,10 @@ class Command:
     def isDirToDir(self):
         """Returns if the command is a Dir->Dir."""
         return self.getInput().isDir() and self.getOutput().isDir()
+    
+    def isEmptyToEmpty(self):
+        """Returns if the command is Empty->Empty."""
+        return self.getInput().isEmpty() and self.getOutput().isEmpty()
     
     def getPath(self):        
         return self.path
@@ -963,14 +1103,18 @@ else:
 begintest('R4', 'Rule 4')
 # Commands on the same node simplify into an empty sequence
 for sq in CommandPairFactory(SAME):
-    if sq.getFirst().getOutput().getType() != sq.getLast().getInput().getType():
+    if not(sq.getFirst().getOutput().getType() == sq.getLast().getInput().getType()):
         continue
-    if not(
-        (sq.getFirst().getInput().getType() == EMPTY and sq.getLast().getOutput().getType() == EMPTY)
-        or
-        (sq.getFirst().getInput().getType() == DIR and sq.getLast().getOutput().getType() == DIR)
-    ):
+
+    singlecommand = Command(
+        sq.getFirst().getPath(),
+        sq.getFirst().getInput(),
+        sq.getLast().getOutput()
+    )
+    
+    if not(singlecommand.isEmptyToEmpty() or singlecommand.isDirToDir()):
         continue
+
     for fs in FilesystemFactory((SAME,)):
         fs_res = fs.clone()
         fs_res.applySequence(sq)
@@ -987,23 +1131,22 @@ else:
 begintest('R5', 'Rule 5')
 # Commands on the same node simplify into one command
 for sq in CommandPairFactory(SAME):
-    if sq.getFirst().getOutput().getType() != sq.getLast().getInput().getType():
+    if not(sq.getFirst().getOutput().getType() == sq.getLast().getInput().getType()):
         continue
-    if (
-        (sq.getFirst().getInput().getType() == EMPTY and sq.getLast().getOutput().getType() == EMPTY)
-        or
-        (sq.getFirst().getInput().getType() == DIR and sq.getLast().getOutput().getType() == DIR)
-    ):
+    
+    singlecommand = Command(
+        sq.getFirst().getPath(),
+        sq.getFirst().getInput(),
+        sq.getLast().getOutput()
+    )
+    
+    if singlecommand.isEmptyToEmpty() or singlecommand.isDirToDir():
         continue
+
     for fs in FilesystemFactory((SAME,)):
         fs_res = fs.clone()
         fs_res.applySequence(sq)
         
-        singlecommand = Command(
-            sq.getFirst().getPath(),
-            sq.getFirst().getInput(),
-            sq.getLast().getOutput()
-        )
         fs_single = fs.clone()
         fs_single.applyCommand(singlecommand)
         if not fs_res.isSame(fs_single):
@@ -1014,6 +1157,32 @@ for sq in CommandPairFactory(SAME):
     break
 else:
     ok('R5')
+
+
+begintest('R6', 'Rule 6')
+# Commands on distant relatives break all filesystems
+for sq in CommandPairFactory(DISTANT_CHILD):
+    if sq.getFirst().isDirToDir() or sq.getLast().isEmptyToEmpty(): continue
+
+    sq_rev = sq.getReverse()
+
+    for fs in FilesystemFactory((DISTANT_CHILD,)):
+        fs_res = fs.clone()
+        fs_res.applySequence(sq)
+        fs_rev_res = fs.clone()
+        fs_rev_res.applySequence(sq_rev)
+        
+        if not fs_res.isBroken():
+            print(sq.info() + " === " + fs.info() + " >>> " + fs_res.info())
+            break # fail
+        if not fs_rev_res.isBroken():
+            break # fail
+    else:
+        continue # trick to achieve break(2)
+    fail('R6')
+    break
+else:
+    ok('R6')
 
 
 conclude()
