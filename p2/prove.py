@@ -20,18 +20,21 @@ PATH2 = 'Path2' # If they are comparable, this is the descendant
 
 class Node:
     
-    def __init__(self, type=EMPTY, invalue='Unknown', has_children=False, is_parent_dir=False):
+    def __init__(self, type=EMPTY, value='Unknown', has_children=False, is_parent_dir=False):
         self.type = type
-        self.invalue = invalue
+        self.value = value
+        
+        # Do not query the following flags. These are initial values only that are
+        # used subject to the actual values of the nodes. Query the filesystem instead.
         self._has_children = has_children
         self._is_parent_dir = is_parent_dir
 
 
-def NodeFactory(invalue='Unknown'):
+def NodeFactory(value='Unknown'):
     for type in (EMPTY, FILE, DIR):
         for has_children in (False, True):
             for is_parent_dir in (False, True):
-                yield Node(type, invalue, has_children, is_parent_dir)
+                yield Node(type, value, has_children, is_parent_dir)
 
 
 class Filesystem:
@@ -40,11 +43,12 @@ class Filesystem:
         self.node1 = node1 # If they are comparable, this is the ancestor
         self.node2 = node2 # If they are comparable, this is the descendant
         self.relationship = relationship
+        self.broken = False
         
     def node_info(self, path):
         node = self.get_node(path)
         c = self.has_children(path)
-        return ("d-" if self.is_parent_dir(path) else "") + node.type + "(" + node.invalue + ")" + ("-o" if c == 1 else ("-oo" if c == 2 else ""))
+        return ("d-" if self.is_parent_dir(path) else "") + node.type + "(" + node.value + ")" + ("-o" if c == 1 else ("-oo" if c == 2 else ""))
 
     def info(self):
         return self.node_info(PATH1) + " >" + self.relationship + "> " + self.node_info(PATH2)
@@ -112,6 +116,19 @@ class Filesystem:
                 if node.type != DIR: return False
         return True
 
+    def apply_command(self, command):
+        node = self.get_node(command.path)
+        if node.type != command.intype:
+            self.broken = True
+            return False
+        node.type = command.outtype
+        node.value = command.outvalue
+        if not self.has_tree_property():
+            self.broken = True
+            return False
+        return True
+
+
 
 def FilesystemFactory(relationship):
     for node1 in NodeFactory('Old1'):
@@ -120,8 +137,16 @@ def FilesystemFactory(relationship):
             if fs.has_tree_property():
                 yield fs
 
-for fs in FilesystemFactory(DISTANT):
-    print(fs.info())
+
+class Command:
+    
+    def __init__(self, intype, outtype, outvalue, path):
+        self.intype = intype
+        self.outtype = outtype
+        self.outvalue = outvalue
+        self.path = path
+        
+    
     
 
 exit(1)
