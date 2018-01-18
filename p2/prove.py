@@ -221,13 +221,10 @@ class Filesystem:
             return fs
         if DEBUG: print("  Result: " + fs.info())
         return fs
-
-    def apply_commands(self, commands):
-        """ Clones and applies a list of commands """
-        fs = self
-        for command in commands:
-            fs = fs.apply_command(command)
-        return fs
+    
+    def apply_commandpair(self, commandpair):
+        """ Clones and applies a pair of commands """
+        return self.apply_command(commandpair.first).apply_command(commandpair.last)
 
 
 def FilesystemFactory(relationship):
@@ -266,15 +263,51 @@ def CommandFactory(path, outvalue):
         for outtype in (EMPTY, FILE, DIR):
             yield Command(intype, outtype, outvalue, path)
 
+
+class CommandPair:
+    
+    def __init__(self, first, last):
+        self.first = first
+        self.last = last
+        
+    def info(self):
+        return self.first.info() + self.last.info()
+    
+    def get_reverse(self):
+        return self.__class__(self.last, self.first)
+    
+    def can_get_singlecommand(self):
+        """ Returns whether the output type of the first command
+        matches the input type of the second. Only meaningful
+        if the relationship between the paths is SAME."""
+        return (self.first.outtype == self.last.intype)
+    
+    def get_singlecommand(self):
+        """ Returns a single command that could replace the two
+        commands. Only meaningful if the relationship between
+        the paths is SAME. """
+        return Command(
+            self.first.intype,
+            self.last.outtype,
+            self.last.outvalue,
+            self.first.path
+        )
+    
+    def get_commands_on_ancestor_descendant(self):
+        """ Returns the command on the ancestor and the command on
+        the descendant node in this order. """
+        if self.first.path == PATH1:
+            return (self.first, self.last)
+        else:
+            return (self.last, self.first)
+
+
 def CommandPairFactory():
     for (firstpath, secondpath) in ((PATH1, PATH2), (PATH2, PATH1)):
         for firstcommand in CommandFactory(firstpath, 'New1'):
             for secondcommand in CommandFactory(secondpath, 'New2'):
-                yield (firstcommand, secondcommand)
+                yield CommandPair(firstcommand, secondcommand)
 
-
-def command_sq_info(sq):
-    return "".join(map(lambda x: x.info(), sq))
 
 def pr(s):
     """Print to STDOUT (without newline) and flush"""
@@ -330,16 +363,16 @@ def conclude():
 begintest('R1', 'Rule 1')
 # Commands on incomparable nodes commute
 for sq in CommandPairFactory():
-    sq_rev = sq[::-1]
+    sq_rev = sq.get_reverse()
     for fs in FilesystemFactory(SEPARATE):
         if DEBUG: print("---")
-        fs_res = fs.apply_commands(sq)
-        fs_rev_res = fs.apply_commands(sq_rev)
+        fs_res = fs.apply_commandpair(sq)
+        fs_rev_res = fs.apply_commandpair(sq_rev)
         if not fs_res.is_same(fs_rev_res):
             if DEBUG: print("Filesystem: " + fs.info())
-            if DEBUG: print("Sequence: " + command_sq_info(sq))
+            if DEBUG: print("Sequence: " + sq.info())
             if DEBUG: print("Result: " + fs_res.info())
-            if DEBUG: print("Reverse: " + command_sq_info(sq_rev))
+            if DEBUG: print("Reverse: " + sq_rev.info())
             if DEBUG: print("Result: " + fs_rev_res.info())
             break # fail
     else:
@@ -354,7 +387,7 @@ begintest('R2', 'Rule 2')
 # Commands on incomparble nodes do not break all filesystems
 for sq in CommandPairFactory():
     for fs in FilesystemFactory(SEPARATE):
-        fs_res = fs.apply_commands(sq)
+        fs_res = fs.apply_commandpair(sq)
         if not fs_res.broken:
             break # OK
     else:
@@ -368,14 +401,14 @@ else:
 begintest('R3', 'Rule 3')
 # Commands on the same node break every filesystem if their types are incompatible
 for sq in CommandPairFactory():
-    if not (sq[0].outtype != sq[1].intype):
-        continue
+    if sq.can_get_singlecommand():
+        continue # skip
     for fs in FilesystemFactory(SAME):
         if DEBUG: print("---")
-        fs_res = fs.apply_commands(sq)
+        fs_res = fs.apply_commandpair(sq)
         if not fs_res.broken:
             if DEBUG: print("Filesystem: " + fs.info())
-            if DEBUG: print("Sequence: " + command_sq_info(sq))
+            if DEBUG: print("Sequence: " + sq.info())
             if DEBUG: print("Result: " + fs_res.info())
             break # fail
     else:
@@ -389,22 +422,17 @@ else:
 begintest('R4', 'Rule 4')
 # Commands on the same node simplify into an empty sequence
 for sq in CommandPairFactory():
-    if not (sq[0].outtype == sq[1].intype):
+    if not sq.can_get_singlecommand():
         continue # skip
 
-    singlecommand = Command(
-        sq[0].intype,
-        sq[1].outtype,
-        sq[1].outvalue,
-        sq[0].path
-    )
+    singlecommand = sq.get_singlecommand()
     
     if not(singlecommand.is_assertion()):
         continue # skip
 
     for fs in FilesystemFactory(SAME):
         if DEBUG: print("---")
-        fs_res = fs.apply_commands(sq)
+        fs_res = fs.apply_commandpair(sq)
         if not fs_res.is_extended_by(fs):
             if DEBUG: print("Filesystem: " + fs.info())
             if DEBUG: print("Sequence: " + command_sq_info(sq))
@@ -422,26 +450,21 @@ else:
 begintest('R5', 'Rule 5')
 # Commands on the same node simplify into one command
 for sq in CommandPairFactory():
-    if not(sq[0].outtype == sq[1].intype):
+    if not sq.can_get_singlecommand():
         continue # skip
     
-    singlecommand = Command(
-        sq[0].intype,
-        sq[1].outtype,
-        sq[1].outvalue,
-        sq[0].path
-    )
+    singlecommand = sq.get_singlecommand()
     
     if singlecommand.is_assertion():
         continue # skip
 
     for fs in FilesystemFactory(SAME):
         if DEBUG: print("---")
-        fs_res = fs.apply_commands(sq)
+        fs_res = fs.apply_commandpair(sq)
         fs_single = fs.apply_command(singlecommand)
         if not fs_res.is_same(fs_single):
             if DEBUG: print("Filesystem: " + fs.info())
-            if DEBUG: print("Sequence: " + command_sq_info(sq))
+            if DEBUG: print("Sequence: " + sq.info())
             if DEBUG: print("Result: " + fs_res.info())
             if DEBUG: print("SingleCommand: " + singlecommand.info())
             if DEBUG: print("Result: " + fs_single.info())
@@ -457,20 +480,15 @@ else:
 begintest('R6', 'Rule 6')
 # Commands on distant relatives break all filesystems
 for sq in CommandPairFactory():
-    if sq[0].path == PATH1:
-        command_on_ancestor = sq[0]
-        command_on_descendant = sq[1]
-    else:
-        command_on_ancestor = sq[1]
-        command_on_descendant = sq[0]
+    (command_on_ancestor, command_on_descendant) = sq.get_commands_on_ancestor_descendant()
     if command_on_ancestor.is_dir_dir() or command_on_descendant.is_empty_empty(): continue # skip
 
     for fs in FilesystemFactory(DISTANT):
         if DEBUG: print("---")
-        fs_res = fs.apply_commands(sq)
+        fs_res = fs.apply_commandpair(sq)
         if not fs_res.broken:
             if DEBUG: print("Filesystem: " + fs.info())
-            if DEBUG: print("Sequence: " + command_sq_info(sq))
+            if DEBUG: print("Sequence: " + sq.info())
             if DEBUG: print("Result: " + fs_res.info())
             break # fail
     else:
@@ -479,6 +497,9 @@ for sq in CommandPairFactory():
     break
 else:
     ok('R6')
+
+
+
 
 
 conclude()
