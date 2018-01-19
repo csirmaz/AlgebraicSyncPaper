@@ -293,6 +293,38 @@ class CommandPair:
             self.first.path
         )
     
+    def is_assertion_pair(self):
+        """ Returns if the command on the ancestor/parent is dir_to_dir, or the command
+        on the descendant/child is empty_to_empty. """
+        (command_on_ancestor, command_on_descendant) = self.get_commands_on_ancestor_descendant()
+        return (command_on_ancestor.is_dir_dir() or command_on_descendant.is_empty_empty())
+    
+    def is_down(self):
+        """ Returns if the first command is on the parent/ancestor. """
+        return (self.first.path == PATH1)
+    
+    def is_up(self):
+        """ Returns if the first command is on the child/descendant. """
+        return (not self.is_down())
+    
+    def is_construction_pair(self):
+        return (
+            self.is_down()
+            and self.first.intype != DIR
+            and self.first.outtype == DIR
+            and self.last.intype == EMPTY
+            and self.last.outtype != EMPTY
+        )
+    
+    def is_destruction_pair(self):
+        return (
+            self.is_up()
+            and self.first.intype != EMPTY
+            and self.first.outtype == EMPTY
+            and self.last.intype == DIR
+            and self.last.outtype != DIR
+        )
+    
     def get_commands_on_ancestor_descendant(self):
         """ Returns the command on the ancestor and the command on
         the descendant node in this order. """
@@ -480,8 +512,7 @@ else:
 begintest('R6', 'Rule 6')
 # Commands on distant relatives break all filesystems
 for sq in CommandPairFactory():
-    (command_on_ancestor, command_on_descendant) = sq.get_commands_on_ancestor_descendant()
-    if command_on_ancestor.is_dir_dir() or command_on_descendant.is_empty_empty(): continue # skip
+    if sq.is_assertion_pair(): continue # skip
 
     for fs in FilesystemFactory(DISTANT):
         if DEBUG: print("---")
@@ -498,6 +529,51 @@ for sq in CommandPairFactory():
 else:
     ok('R6')
 
+
+begintest('R7', 'Rule 7')
+# Non-construction pairs break all filesystems
+for sq in CommandPairFactory():
+    if not sq.is_down(): continue # skip
+    if sq.is_assertion_pair(): continue # skip
+    if sq.is_construction_pair(): continue # skip
+
+    for fs in FilesystemFactory(DIRECT):
+        if DEBUG: print("---")
+        fs_res = fs.apply_commandpair(sq)
+        if not fs_res.broken:
+            if DEBUG: print("Filesystem: " + fs.info())
+            if DEBUG: print("Sequence: " + sq.info())
+            if DEBUG: print("Result: " + fs_res.info())
+            break # fail
+    else:
+        continue # trick to achieve break(2)
+    fail('R7')
+    break
+else:
+    ok('R7')
+    
+
+begintest('R8', 'Rule 8')
+# Non-destruction pairs break all filesystems
+for sq in CommandPairFactory():
+    if not sq.is_up(): continue # skip
+    if sq.is_assertion_pair(): continue # skip
+    if sq.is_destruction_pair(): continue # skip
+
+    for fs in FilesystemFactory(DIRECT):
+        if DEBUG: print("---")
+        fs_res = fs.apply_commandpair(sq)
+        if not fs_res.broken:
+            if DEBUG: print("Filesystem: " + fs.info())
+            if DEBUG: print("Sequence: " + sq.info())
+            if DEBUG: print("Result: " + fs_res.info())
+            break # fail
+    else:
+        continue # trick to achieve break(2)
+    fail('R8')
+    break
+else:
+    ok('R8')
 
 
 
