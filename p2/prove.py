@@ -29,6 +29,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 """
 
+# TODO When ONE_DIRECTORY_VALUE is False, check if is_assertion is really checking
+# whether the command changes types. C.f. the definitions in the paper.
+
 from itertools import chain
 import sys
 
@@ -371,6 +374,7 @@ def fail(testname):
         count_errors += 1
     testname_current = None    
     pr("FAIL\n")
+    if DEBUG: exit(1)
     
 def ok(testname):
     global count_ok, testname_current, count_errors
@@ -433,8 +437,8 @@ else:
 begintest('R3', 'Rule 3')
 # Commands on the same node break every filesystem if their types are incompatible
 for sq in CommandPairFactory():
-    if sq.can_get_singlecommand():
-        continue # skip
+    if sq.can_get_singlecommand(): continue # skip
+
     for fs in FilesystemFactory(SAME):
         if DEBUG: print("---")
         fs_res = fs.apply_commandpair(sq)
@@ -454,13 +458,11 @@ else:
 begintest('R4', 'Rule 4')
 # Commands on the same node simplify into an empty sequence
 for sq in CommandPairFactory():
-    if not sq.can_get_singlecommand():
-        continue # skip
+    if not sq.can_get_singlecommand(): continue # skip
 
     singlecommand = sq.get_singlecommand()
     
-    if not(singlecommand.is_assertion()):
-        continue # skip
+    if not(singlecommand.is_assertion()): continue # skip
 
     for fs in FilesystemFactory(SAME):
         if DEBUG: print("---")
@@ -479,22 +481,26 @@ else:
     ok('R4')
 
 
-begintest('R5', 'Rule 5')
+begintest('R5', 'Rule 5' if ONE_DIRECTORY_VALUE else 'Rule 5 - extension')
 # Commands on the same node simplify into one command
+# Note: if we have different directory values, this rule must use the extend relationship, not equivalence.
+# An example can be that <[D],Empty> <[Empty],D2> can be simplified into <[D],D2>, which is not
+# an assertion command, yet it may not break filesystems the original sequence breaks.
+# This is because this is the only command that does not change the type of a node and is not an assertion command
+# (if |[D]|>1).
 for sq in CommandPairFactory():
-    if not sq.can_get_singlecommand():
-        continue # skip
+    if not sq.can_get_singlecommand(): continue # skip
     
     singlecommand = sq.get_singlecommand()
     
-    if singlecommand.is_assertion():
-        continue # skip
+    if singlecommand.is_assertion(): continue # skip
 
     for fs in FilesystemFactory(SAME):
         if DEBUG: print("---")
         fs_res = fs.apply_commandpair(sq)
         fs_single = fs.apply_command(singlecommand)
-        if not fs_res.is_same(fs_single):
+        if ((ONE_DIRECTORY_VALUE and not fs_res.is_same(fs_single))
+            or (not ONE_DIRECTORY_VALUE and not fs_res.is_extended_by(fs_single))):
             if DEBUG: print("Filesystem: " + fs.info())
             if DEBUG: print("Sequence: " + sq.info())
             if DEBUG: print("Result: " + fs_res.info())
@@ -576,6 +582,89 @@ else:
     ok('R8')
 
 
+begintest('R9', 'Rule 9')
+# Add assertion command on a descendant node
+for sq in CommandPairFactory():
+    if not sq.is_up(): continue # skip
+    (command_on_ancestor, command_on_descendant) = sq.get_commands_on_ancestor_descendant()
+    if command_on_ancestor.is_dir_dir(): continue # skip
+    if not command_on_descendant.is_empty_empty(): continue # skip
+
+    sq_rev = sq.get_reverse()
+
+    for fs in chain(FilesystemFactory(DIRECT), FilesystemFactory(DISTANT)):
+        if DEBUG: print("---")
+        fs_res = fs.apply_commandpair(sq)
+        fs_rev_res = fs.apply_commandpair(sq_rev)
+        fs_single = fs.apply_command(command_on_ancestor)
+        if not fs_res.is_same(fs_rev_res) and fs_res.is_same(fs_single):
+            if DEBUG: print("Filesystem: " + fs.info())
+            if DEBUG: print("Sequence: " + sq.info())
+            if DEBUG: print("Result: " + fs_res.info())
+            if DEBUG: print("Reverse: " + sq_rev.info())
+            if DEBUG: print("Result: " + fs_rev_res.info())
+            if DEBUG: print("SingleCommand: " + singlecommand.info())
+            if DEBUG: print("Result: " + fs_single.info())
+            break # fail
+    else:
+        continue # trick to achieve break(2)
+    fail('R9')
+    break
+else:
+    ok('R9')
+
+
+begintest('R10', 'Rule 10')
+# Add assertion command on an ancestor node
+for sq in CommandPairFactory():
+    if not sq.is_down(): continue # skip
+    (command_on_ancestor, command_on_descendant) = sq.get_commands_on_ancestor_descendant()
+    if command_on_descendant.is_empty_empty(): continue # skip
+    if not command_on_ancestor.is_dir_dir(): continue # skip
+
+    sq_rev = sq.get_reverse()
+
+    for fs in chain(FilesystemFactory(DIRECT), FilesystemFactory(DISTANT)):
+        if DEBUG: print("---")
+        fs_res = fs.apply_commandpair(sq)
+        fs_rev_res = fs.apply_commandpair(sq_rev)
+        fs_single = fs.apply_command(command_on_descendant)
+        if not fs_res.is_same(fs_rev_res) and fs_res.is_same(fs_single):
+            if DEBUG: print("Filesystem: " + fs.info())
+            if DEBUG: print("Sequence: " + sq.info())
+            if DEBUG: print("Result: " + fs_res.info())
+            if DEBUG: print("Reverse: " + sq_rev.info())
+            if DEBUG: print("Result: " + fs_rev_res.info())
+            if DEBUG: print("SingleCommand: " + singlecommand.info())
+            if DEBUG: print("Result: " + fs_single.info())
+            break # fail
+    else:
+        continue # trick to achieve break(2)
+    fail('R10')
+    break
+else:
+    ok('R10')
+
+
+begintest('R11', 'Rule 11')
+# Assertion commands can be removed
+for command in CommandFactory(PATH1, 'New1'):
+    if not command.is_assertion(): continue # skip
+
+    for fs in FilesystemFactory(SAME):
+        if DEBUG: print("---")
+        fs_res = fs.apply_command(command)
+        if not fs_res.is_extended_by(fs):
+            if DEBUG: print("Filesystem: " + fs.info())
+            if DEBUG: print("Command: " + command.info())
+            if DEBUG: print("Result: " + fs_res.info())
+            break # fail
+    else:
+        continue # trick to achieve break(2)
+    fail('R11')
+    break
+else:
+    ok('R11')
 
 
 conclude()
