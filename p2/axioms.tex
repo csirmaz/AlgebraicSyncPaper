@@ -99,12 +99,37 @@ during synchronization, and what command pairs will never be compatible.
 % TODO \footnote{The program is accessible on-line at \\
 % https://github.com/csirmaz/AlgebraicSyncPaper/blob/master/p2/prove.py.}
 
-% TODO Rewrite script for new notation
-
 \myskip
 Command pairs in genral have the form
 \[ \cxynv\cc  \czwmv \]
 where $x,y,z,w\in\setv$ and $n,m\in\setn$. 
+Extending \cref{def:command_categories}, we call certain pairs
+\emph{construction} or \emph{destruction pairs}.
+
+\begin{mydef}[Construction and destruction pairs]
+A pair of commands on nodes $\nn$ and $n$ is a construction pair if $\nn=\parentf{n}$ 
+and the commands are one
+of the following:
+   \begin{align*}
+            \cbda{\nn}&\cc  \cbfa{n} \\
+            \cbda{\nn}&\cc  \cbda{n} \\
+            \cfda{\nn}&\cc  \caaa{\empt}{\valff}{n} \\
+            \cfda{\nn}&\cc  \cbda{n}
+   \end{align*}
+\end{mydef}
+
+\begin{mydef}[Destruction pair]
+A pair of commands on nodes $n$ and $\nn$ is a destruction pair if $\parentf{n}=\nn$ and the commands are one
+of the following:
+   \begin{align*}
+            \cfba{n}&\cc  \cdba{\nn} \\
+            \cfba{n}&\cc  \caaa{\vald}{\valff}{\nn} \\
+            \cdba{n}&\cc  \cdba{\nn} \\
+            \cdba{n}&\cc  \cdfa{\nn}
+   \end{align*}
+\end{mydef}
+
+
 
 \begin{myax}\mlabel{ax_separate_commute}
 Commands on incomparable nodes commute:
@@ -143,17 +168,6 @@ Consequently $\cxynnv$ will break the filesystem as either before or after it th
 does not have a directory.)
 \end{myax}
 
-\begin{mydef}[Construction pair]
-A pair of commands on nodes $\nn$ and $n$ is a construction pair if $\nn=\parent(n)$ 
-and the commands are one
-of the following:
-   \begin{align*}
-            \cbda{\nn}&\cc  \cbfa{n} \\
-            \cbda{\nn}&\cc  \cbda{n} \\
-            \cfda{\nn}&\cc  \caaa{\empt}{\valff}{n} \\
-            \cfda{\nn}&\cc  \cbda{n}
-   \end{align*}
-\end{mydef}
 
 
 \begin{myax}\mlabel{ax_directchild_breaks}
@@ -164,16 +178,6 @@ As we shall see, this can be extended to \cref{simple_distant_pairs}.
 TODO TO BE DELETED -- WE ONLY WANT TO USE \cref{simple_distant_pairs}
 \end{myax}
 
-\begin{mydef}[Destruction pair]
-A pair of commands on nodes $n$ and $\nn$ is a destruction pair if $\parent(n)=\nn$ and the commands are one
-of the following:
-   \begin{align*}
-            \cfba{n}&\cc  \cdba{\nn} \\
-            \cfba{n}&\cc  \caaa{\vald}{\valff}{\nn} \\
-            \cdba{n}&\cc  \cdba{\nn} \\
-            \cdba{n}&\cc  \cdfa{\nn}
-   \end{align*}
-\end{mydef}
 
 \begin{myax}\mlabel{ax_directparent_breaks}
 All other commands on a parent break every filesystem:
