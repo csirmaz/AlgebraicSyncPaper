@@ -236,42 +236,36 @@ of command sequences without any assertion commands.
 
 
 
-
-
 % Independent commands
 % --------------------
 
 \myskip
-We also define the concept of two commands being independent:
+We also define the concept of two commands being independent.
 
 \begin{mydef}[$A\indep B$: Independent commands, sequences and sets of commands]\mlabel{def_indep}
-Two commands $\cxynv$ and $\czwmv$ 
-are independent, and we write $\cxynv\indep\czwmv$ if 
+Two commands $\alpha$ and $\beta$ 
+are independent, and we write $\alpha\indep\beta$ if 
 they commute and do not break all filesystems:
-\[ \cxynv\cc\czwmv \equiv \wrksx{\czwnv\cc\cxynv}. \]
+\[ \alpha\cc\beta \equiv \wrksx{\beta\cc\alpha}. \]
 For two sequences or unordered sets of commands $A$ and $B$ we write $A\indep B$ if
 for all $\alpha$ in $A$ and all $\beta$ in $B$, $\alpha\indep\beta$.
-We also write $\alpha\indep B$ iff $\{\alpha\}\indep B$.
+We also write $\alpha\indep B$ for $\{\alpha\}\indep B$.
 \end{mydef}
 
 It is intentional that we use the same symbol for independent commands
-and sequences as for incomparable nodes. As we will see in the next
+and sequences as for incomparable nodes. As the next
 \namecref{incomparable_is_independent},
-these two concepts are closely related.
+shows, these concepts are closely related.
 
 \begin{mylem}\mlabel{incomparable_is_independent}
-Two different commands that are not assertion commands are independent iff the nodes they change are incomparable. In other words,
+Two different commands that are not assertion commands are independent 
+iff the nodes they change are incomparable. In other words,
 \[ \cxynv\indep\czwmv \Longleftrightarrow n\unrel m \]
 if $\cxynv\neq\czwmv$ and none of $\cxy$ and $\cxw$ is $\cbb$ or $\cdd$.
 \end{mylem}
 \begin{proof}
-This is easy to show based on the output of the program that investigates the behavior of command pairs.
-However, this proposition can also be derived from the \namecrefs{ax_separate_commute} already listed
-in the following way.
-
-For the right-to-left part, we note that
-from \cref{ax_separate_commute,ax_separate_nobreaks} we know that
-if $n\unrel m$, then $\cxynv$ and $\czwmv$ must necessarily be independent.
+The right-to-left part is a restatement of
+\cref{ax_separate_commute,ax_separate_nobreaks}.
 
 We prove the left-to-right part by contradiction.
 We assume that both $\cxynv\indep\czwmv$ and $n\nunrel m$,
