@@ -96,9 +96,6 @@ These properties of command pairs are crucial as they determine
 how a set of commands can be re-ordered to be applied to a filesystem
 during synchronization, and what command pairs will never be compatible.
 
-% TODO \footnote{The program is accessible on-line at \\
-% https://github.com/csirmaz/AlgebraicSyncPaper/blob/master/p2/prove.py.}
-
 \myskip
 Command pairs in genral have the form
 \[ \cxynv\cc  \czwmv \]
@@ -107,20 +104,16 @@ Extending \cref{def:command_categories}, we call certain pairs
 \emph{construction} or \emph{destruction pairs}.
 
 \begin{mydef}[Construction and destruction pairs]
-A pair of commands on nodes $\nn$ and $n$ is a construction pair if $\nn=\parentf{n}$ 
-and the commands are one
-of the following:
+A pair of commands on nodes $\nn$ and $n$ where $\nn=\parentf{n}$
+is a \emph{construction pair} if the input and output types match
+one of the following patterns:
    \begin{align*}
             \cbda{\nn}&\cc  \cbfa{n} \\
             \cbda{\nn}&\cc  \cbda{n} \\
             \cfda{\nn}&\cc  \caaa{\empt}{\valff}{n} \\
             \cfda{\nn}&\cc  \cbda{n}
    \end{align*}
-\end{mydef}
-
-\begin{mydef}[Destruction pair]
-A pair of commands on nodes $n$ and $\nn$ is a destruction pair if $\parentf{n}=\nn$ and the commands are one
-of the following:
+The pair is a \emph{destruction pair} if the types match one of the following:
    \begin{align*}
             \cfba{n}&\cc  \cdba{\nn} \\
             \cfba{n}&\cc  \caaa{\vald}{\valff}{\nn} \\
@@ -129,92 +122,119 @@ of the following:
    \end{align*}
 \end{mydef}
 
+We can see that construction pairs consist of construction comands,
+while destruction pairs consist of destruction commands.
 
 
-\begin{myax}\mlabel{ax_separate_commute}
+
+
+\Cref{rules_lemma} summarizes the basic properties of command pairs.
+The claims listed are named \emph{\namecref{ax_separate_commute}}
+as they can also be interpreted as inference rules in a pure
+algebraic treatment of filesystem synchronization.
+TODO elaborates this approach.
+
+\begin{mylem}\mlabel{rules_lemma}
+\newcounter{rulecounter}
+\begin{list}{\bf Rule~\arabic{rulecounter}.}{\usecounter{rulecounter}}
+
+\item[] % line break after the lemma label
+
+\item\mlabel{ax_separate_commute}
 Commands on incomparable nodes commute:
 $\cxynv\cc\czwmv \equiv \czwmv\cc\cxynv$ where $n\unrel m$.
-\end{myax}
 
-\begin{myax}\mlabel{ax_separate_nobreaks}
-Commands on incomparable nodes do not break all filesystems:
+\item\mlabel{ax_separate_nobreaks}
+Commands on incomparable nodes also do not break all filesystems:
 $\wrksx{\cxynv\cc\czwmv}$ where $n\unrel m$.
-\end{myax}
 
-\begin{myax}\mlabel{ax_same_breaks}
+\item\mlabel{ax_same_breaks}
 Commands on the same node break every filesystem if their types are incompatible:
 $\cxynv\cc\czwnv \equiv \cbrk$ where $[y]\ne [z]$.
-\end{myax}
 
-\begin{myax}\mlabel{ax_same_emptyseq}
-Commands on the same node simplify:
+\item\mlabel{ax_same_emptyseq}
+Otherwise commands on the same node are extended by an empty sequence if their outer types represent
+an assertion command:
 $\cxynv\cc\czwnv \eqext \emptyseq$ where $[y]=[z]$, and $\cxw=\cbb$ 
 or $\cxw=\cdd$.
-\end{myax}
 
-\begin{myax}\mlabel{ax_same_singlec}
-Commands on the same node simplify:
+\item\mlabel{ax_same_singlec}
+All other command pairs on the same node are equivalent to a single command:
 $\cxynv\cc \czwnv \equiv \cxwnv$ where $[y]=[z]$ and $\cxw\neq\cbb$ and $\cxw\neq\cdd$.
-\end{myax}
 
-\begin{myax}\mlabel{ax_distantrel_breaks}
-Commands on distant relatives break all filesystems:
+% TODO Renumber rules in script
+
+\item\mlabel{ax_directchild_breaks}
+Commands on a parent and a child node break every filesystem
+if the pair is not a construction pair
+and the commands do not simply assert a directory at the parent
+or an empty node at the child:
+$\cxynnv\cc\czwnv \equiv \cbrk$ where $\nn=\parent(n)$ and $\cxy\neq\cdd$ and $\czw\neq\cbb$.
+
+\item\mlabel{ax_directparent_breaks}
+Commands on a child and parent node break every filesystem
+if the pair is not a destruction pair
+and the commands do not simply assert an empty node at the child
+or a directory at the parent:
+$\cxynv\cc\czwnnv \equiv \cbrk$ where $\parent(n)=\nn$ and $\cxy\neq\cbb$ and $\czw\neq\cdd$.
+
+\item\mlabel{ax_distantrel_breaks}
+Commands on distant relatives break all filesystems
+if the commands do not simply assert a directory at the ancestor
+or an empty node at the descendant:
 $\cxynnv\cc\czwnv \equiv \cbrk$
 and $\czwnv\cc\cxynnv \equiv\cbrk$
 where $\nn\descendant n$ and $\nn\neq\parent(n)$, and $\cxy\neq\cdd$ and $\czw\neq\cbb$.
-(More intuitively, if $\czw\neq\cbb$ then either before or after $\czwnv$, the filesystem at
-$n$ is not empty, and therefore there must be a directory at all ancestors of $n$, including at a child of $\nn$.
-Consequently $\cxynnv$ will break the filesystem as either before or after it the filesystem at $\nn$
-does not have a directory.)
-\end{myax}
 
-
-
-\begin{myax}\mlabel{ax_directchild_breaks}
-All other commands on a child break every filesystem:
-$\cxynnv\cc\czwnv \equiv \cbrk$ where $\nn=\parent(n)$ and $\cxy\neq\cdd$ and $\czw\neq\cbb$
-and the pair is not a construction pair.
-As we shall see, this can be extended to \cref{simple_distant_pairs}.
-TODO TO BE DELETED -- WE ONLY WANT TO USE \cref{simple_distant_pairs}
-\end{myax}
-
-
-\begin{myax}\mlabel{ax_directparent_breaks}
-All other commands on a parent break every filesystem:
-$\cxynv\cc\czwnnv \equiv \cbrk$ where $\parent(n)=\nn$ and $\cxy\neq\cbb$ and $\czw\neq\cdd$
-and the pair is not a destruction pair.
-This can also be extended to \cref{simple_distant_pairs}.
-TODO TO BE DELETED -- WE ONLY WANT TO USE \cref{simple_distant_pairs}
-\end{myax}
-
-\begin{mydef}[Assertion command]
-A command is an assertion command if
-it leaves every filesystem in the same state
-where it is defined.
-In other words, assertion commands have the same input and output type,
-and there must also be only one possible value for their output.
-Accordingly, $\cbba{n}$ and $\cdda{n}$ are the only two types of assertion commands.
-\end{mydef}
-
-\begin{myax}\mlabel{ax_child_assert}
-An assertion command can be added on a descendant node:
+\item\mlabel{ax_child_assert}
+An assertion command can be freely added on a descendant node
+next to a command that does not simply assert a directory:
 \[ \cbba{n}\cc\cxynnv \equiv \cxynnv \equiv \cxynnv\cc\cbba{n} \] 
 where $\nn\descendant n$ and $\cxy\neq\cdd$.
-(Note that this and next rule is true because the assertion command is
-adjacent to the original command.)
-\end{myax}
 
-\begin{myax}\mlabel{ax_parent_assert}
-An assertion command can be added on an ancestor node:
+\item\mlabel{ax_parent_assert}
+An assertion command can be freely added on an ancestor node
+next to a command that does not simply assert an empty node:
 \[ \cdda{\nn}\cc\cxynv \equiv \cxynv \equiv \cxynv\cc\cdda{\nn} \]
 where $\nn\descendant n$ and $\cxy\neq\cbb$.
-\end{myax}
 
-\begin{myax}\mlabel{ax_assert}
-Assertion commands can be removed:
+\item\mlabel{ax_assert}
+All assertion commands can be removed as the empty sequence extends them:
 $\cdda{n}\eqext\emptyseq$ and $\cbba{n}\eqext\emptyseq$.
-% $\cxynv \eqext \emptyseq$ where $\cxy=\cbb$ or $\cxy=\cdd$.
-\end{myax}
+
+\end{list}
+\end{mylem}
+
+These claims are easy but tedious to check.
+To ensure that all cases were considered when verifying these claims,
+a computer program was prepared that models the relevant parts of
+a filesystem and checks the results of applying all different command pairs
+against the above claims.\footnote{The program is accessible at \\ 
+https://github.com/csirmaz/AlgebraicSyncPaper/blob/master/p2/prove.py.}
+
+For \cref{ax_distantrel_breaks}, we also provide a simple proof.
+Suppose $\cxynnv$ and $\czwnv$ satisfy the conditions in the \namecref{ax_distantrel_breaks},
+and there if an $\FS$ for which $(\cxynnv\cc\czwnv)\aFS\neq\fsbroken$.
+If $\czw\neq\cbb$, then either $\FS(n)\neq\empty$ or $\czwnv\aFS(n)\neq\empty$,
+and therefore $\FS(\parentf{n})$ must be a directory for the filesystem to satisfy
+the tree property at all times.
+However, from $\cxy\neq\cdd$ we also know that either $\FS(\nn)$ 
+(before applying $\cxynv$) or $\cxynv\aFS(\nn)$ (after applying $\cxynv$)
+is not a directory. Depending on which is true, we have a point in the sequence
+of applying the commands where the filesystem cannot satify the tree property
+and therefore becomes broken as $\parentf{n}$, a descendant of $\nn$, contains
+a directory and so must all its ancestors.
+
+For \cref{ax_child_assert,ax_parent_assert}, we note that these claims
+easily follow from the fact that the commands are adjacent to each other.
+
+Finally, we have included \cref{ax_directchild_breaks,ax_directparent_breaks}
+for completeness, but we will use the more generic \cref{simple_distant_pairs},
+which extends these rules to non-adjacent commands, although only in the case
+of command sequences without any assertion commands.
+
+
+
 
 
 
