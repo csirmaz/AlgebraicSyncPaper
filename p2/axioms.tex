@@ -267,26 +267,26 @@ if $\cxynv\neq\czwmv$ and none of $\cxy$ and $\cxw$ is $\cbb$ or $\cdd$.
 The right-to-left part is a restatement of
 \cref{ax_separate_commute,ax_separate_nobreaks}.
 
-We prove the left-to-right part by contradiction.
-We assume that both $\cxynv\indep\czwmv$ and $n\nunrel m$,
-and show that it leads to contradiction.
-As $n\nunrel m$
+We prove the left-to-right part by contradiction,
+assuming that both $\cxynv\indep\czwmv$ and $n\nunrel m$.
+From $n\nunrel m$
 we know that $n=m$, $n\descendant m$ or $m\descendant n$.
 
-If $n=m$, then from \cref{ax_same_breaks} we know $[y]=[z]$ and $[w]=[x]$
-as otherwise the commands, in one order or the other, would break all filesystems
-and they could not be independent.
+If $n=m$, then from \cref{ax_same_breaks} we must have $[y]=[z]$ and $[w]=[x]$
+as otherwise the commands, in one order or the other, would break all filesystems.
 The commands are not assertion commands, so from \cref{ax_same_singlec}
 we know that $\cxynv\cc\czwnv\equiv\czwnv\cc\cxynv$ can only happen if $y=w$.
 % TODO Does this depend on |[D]|=1?
 Therefore $[x]=[y]=[z]=[w]$ which with $y=w$ contradicts our assumption that the commands are different.
 
-If $n\descendant m$ or $m\descendant n$, then
-from \cref{ax_distantrel_breaks} we know that if they are not directly related,
-then $\cxynv\cc\czwmv$ breaks all filesystems, and they cannot be independent.
+The remaining case is that $n\descendant m$ or $m\descendant n$.
+If they are not directly related,
+then from \cref{ax_distantrel_breaks} we know that
+$\cxynv\cc\czwmv$ breaks all filesystems,
+which contradicts the assumption that the commands are independent.
 From the construction and destruction pairs and 
 \cref{ax_directchild_breaks,ax_directparent_breaks} we also see that
-even if they are directly related, either
+even if the nodes are directly related, either
 $\cxynv\cc\czwmv$ or $\czwmv\cc\cxynv$ 
 breaks all filesystems, so they again cannot be independent.
 \end{proof}
