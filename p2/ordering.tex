@@ -10,26 +10,26 @@ it is actually the task of the reconciler to determine whether there is an order
 and if yes, what order,
 in which updates from different replicas can be applied to a filesystem.
 
-We recognize that mulitple orders may be possible;
-let us therefore describe our ordering algorithm by
+As we recognize that mulitple orders may be possible,
+let us describe our ordering algorithm by
 defining a subset of the permutations, $\ordersetsign$.
 The simplicity of the definition means that enumerating
 all sequences in $\ordersetsign$ can be implemented by a straightforward
 algorithm.
 
-As we will see, $\ordersetsign$ generates all possible
+As we will see, $\ordersetsign$ contains all possible
 sequences of commands that do not break all filesystems.
 In \cref{simple_reorder_equiv}, we offer a formal proof of this.
-It is an important property of simple sequences: namely, that
-all of their valid reorderings are equivalent,
-and all equivalent sequences are mere reorderings.
+The facts that all valid reorderings of simple sequences are equivalent,
+and all equivalent sequences are reorderings are important 
+properties of simple sequences.
 
 \begin{mydef}[$\ordersetsign$]\mlabel{def_orderset}
 For a simple set or sequence of commands $S$,
-we use $\orderset{S}$ to denote the set of sequences
-that are all permutations of the commands in $S$
+we use $\orderset{S}$ to denote the set of 
+permutations of the commands in $S$
 for which the following holds:
-for all subsequences $\cxynv\cc\czwmv$,
+for any subsequence $\cxynv\cc\czwmv$,
 \begin{itemize}
 \item if $n=\parentf{m}$, then $[y]=[\vald]$
 \item if $\parentf{n}=m$, then $y=\empt$.
@@ -50,7 +50,7 @@ that commands on parent--child pairs must be construction or destruction pairs.
 Investigating these pairs we see that they are identified by the output value of the first command ($y$),
 which in turn determines whether the command on the parent or the child must precede the other.
 
-To prove \cref{simple_reorder_equiv}, we need the following results.
+To prove \cref{simple_reorder_equiv}, we need the following simple results.
 
 \begin{myclm}\mlabel{subseq_in_orderset}
 For simple sequences $S$ and $T$,
@@ -64,6 +64,8 @@ This is because
 if there are no command pairs in $T$ not conforming to \cref{def_orderset},
 then there cannot be any in $T_0$.
 \end{proof}
+
+
 
 \begin{mylem}\mlabel{simple_distant_pairs}
 For any simple sequence $\wrksx{S}$,
@@ -82,7 +84,6 @@ of \cref{ax_directchild_breaks,ax_directparent_breaks}.
 
 \begin{proof}
 % BACK_TO_THE_FS TODO
-% TODO APPENDIX
 Formally, we prove our proposition by contradiction,
 and in this version of the proof we reach back to our filesystem model.
 We assume $\wrks{S}$ and therefore there is a $\FS$ for which $S\aFS\neq\fsbroken$,
