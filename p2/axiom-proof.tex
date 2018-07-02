@@ -1,23 +1,27 @@
+TODO From filesystem definition
+
 
 In this section we offer proofs for the \namecrefs{ax_separate_commute} listed in
 \cref{rules_lemma}.
 For the purposes of the proofs we extend the notion of filesystems 
 to the full set of functions mapping $\setn$ to $\setv$, even if they
 do not have the tree property.
-In this case we continue to say that the filsystem is broken,
-but we also describe the filesystem values at certain nodes.
+In such cases we continue to say that the filsystem is broken,
+but we also continue to describe the filesystem values at nodes in $\setn$.
 Also, in order to pinpoint the region that violates the tree property,
 we say that the filesystem is \emph{broken at $n$} if 
 $n$ is not a dictionary, but has at least one non-empty child.
 
-Accordingly, we also extend filsystem commands from partial to full functions,
-and assume that they return a filesystem we can describe in all cases.
+Accordingly, where needed, we also implicitly extend filesystem commands
+so that they would return a filesystem even if it violates the tree property.
+They continue to be undefined in cases where their input types are incompatible
+with the input filesystem.
 We note that once a filesystem is broken, it stays broken, even if
-after a subsequent command it no longer violates the tree property.
+after a subsequent command it would no longer violate the tree property.
 
 It follows from the definition of the tree property that
 whether a filesystem is \emph{broken at a node $n$} is determined only
-by the values at $n$, $\parentf{n}$, and the children of $n$.
+by the values at $n$ and the children of $n$.
 In other words,
 
 \begin{myclm}[Locality of tree property violations]\mlabel{broken_local}
@@ -48,7 +52,7 @@ but applying it to $\cxynv\aFS$ (from the left side) does not.
 
 Therefore $\czwmv\aFS$ must be broken at $\parentf{m}$.
 By definition this means that its value at $\parentf{m}$ cannot be a directory.
-Also, reasoning similar to the above shows that it is only possible if $\cxynv$ changes
+Also, reasoning similar to the above shows that this is only possible if $\cxynv$ changes
 the environment of $\parentf{m}$, which, since $n\indep m$, is only possible
 if $n$ and $m$ are siblings.
 
@@ -66,4 +70,50 @@ $(\czwmv\cc\cxynv)\aFS$ is.
 \cref{ax_separate_nobreaks}
 
 \begin{proof}
+It is easy to see that over any $\setn$ one can construct a filesystem that neither command breaks.
+Since $n\indep m$, it is always possible to set all descendants of both $n$ and $m$ empty,
+and have a directory at all ancestors of both $n$ and $m$. In such positions any values are permissible,
+so neither command will break the filesystem.
 \end{proof}
+
+\cref{ax_same_breaks}
+
+\begin{proof}
+This is trivial, as either $\cxynv$ breaks the filesystem, or, if it does not, then
+we know $[\cxynv\aFS(n)]=[y]\neq [z]$, and therefore $\czwnv$ will break the filesystem.
+\end{proof}
+
+\cref{ax_same_emptyseq}
+
+\begin{proof}
+From the conditions we see that for every $\FS$,
+$\FS$ and $(\cxynv\cc\czwnv)\aFS$ have the same values at every node,
+while the latter can still be broken if $\cxynv\aFS$ is broken.
+This is equivalent to saying that where the $\cxynv\cc\czwnv$ function is defined,
+it is the identity function, that is, it is extended by $\emptyseq$.
+\end{proof}
+
+\cref{ax_same_singlec}
+
+\begin{proof}
+It is easy to see that where both $\cxynv\cc \czwnv$ and $\cxwnv$ are defined
+(they do not break the filesystem), they are equivalent.
+What remains to show is that they break the same set of filesystems.
+If $(\cxynv\cc \czwnv)\aFS$ is not broken, then we know that neither of
+$\FS$, $\fsreplacement{\FS}{n}{y}$ or $\fsreplacement{\FS}{n}{w}$ is broken,
+and therefore $\cxwnv$ does not break $\FS$.
+Conversely, if $\cxwnv$ does not break $\FS$, then 
+we know that $\FS$ and $\fsreplacement{\FS}{n}{w}$ are not broken.
+Also, as
+either $[x]\neq[\empt]$ or $[w]\neq[\empt]$,
+there must be a directory at $\FS(\parentf{n})$,
+and so $\fsreplacement{\FS}{n}{y}$ cannot be broken, either,
+as any value is permissible at $n$.
+This is equivalent to saying that $\cxynv\cc \czwnv$ does not break the filesystem.
+\end{proof}
+
+\cref{ax_directchild_breaks}
+
+\begin{proof}
+\end{proof}
+
