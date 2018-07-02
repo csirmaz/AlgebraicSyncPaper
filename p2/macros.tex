@@ -32,6 +32,7 @@
 \newcommand{\FS}{\Phi} % a filesystem
 \newcommand{\aFS}{\,\FS} % a filesystem preceded by something applied to it
 \newcommand{\nn}{n'} % parent node
+\newcommand{\pn}{\parentf{n}} % parent node
 \newcommand{\Tsign}{\tau} % type-equivalent class mapping
 \newcommand{\T}[1]{{#1}_\Tsign} % type-equivalent class mapping
 \newcommand{\TA}{\T{A}}
@@ -39,12 +40,11 @@
 \newcommand{\TC}{\T{C}}
 \newcommand{\TS}{\T{S}}
 
-\newcommand{\cbrk}{c_\varnothing} % 'break' / empty command
+\newcommand{\cbrk}{\epsilon_\varnothing} % 'break' / empty command
 
-\newcommand{\caa}[2]{\langle{[#1],[#2]}\rangle} % Command template
+\newcommand{\caa}[2]{::\langle{[#1],[#2]}\rangle::} % Command template
 \newcommand{\caaa}[3]{\langle{[#1],#2,#3}\rangle}
 \newcommand{\caaaa}[3]{\langle{[#1],#2,#3}\rangle}
-\newcommand{\cTaaa}[3]{\langle{[{#1}],\T{#2},{#3}}\rangle} % Representative of command
 
 \newcommand{\cbb}{\caa{::\empt}{\empt}} % TODO delete
 \newcommand{\cbf}{\caa{::\empt}{\valf}} % TODO delete
@@ -69,8 +69,6 @@
 \newcommand{\cxyaa}[1]{\caaa{x}{y}{#1}}
 \newcommand{\cxynv}{\caaa{x}{y}{n}}
 \newcommand{\cxynnv}{\caaa{x}{y}{\nn}}
-\newcommand{\cTxynv}{\cTaaa{x}{y}{n}}
-\newcommand{\cTyxnv}{\cTaaa{y}{x}{n}}
 \newcommand{\cxw}{\caa{x}{w}} % TODO delete
 \newcommand{\cxwnv}{\caaa{x}{w}{n}}
 \newcommand{\czw}{\caa{z}{w}} % TODO delete
