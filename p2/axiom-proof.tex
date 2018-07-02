@@ -22,12 +22,13 @@ In other words,
 
 \begin{myclm}[Locality of tree property violations]\mlabel{broken_local}
 If two filesystems over $\setn$ have the same values at a node $n$,
-$\parentf{n}$ (if exists), and at all children of $n$ (if they exist),
+and at all children of $n$ (if they exist),
 then either both filesystems are broken at $n$, or none of them are.
 \end{myclm}
 
 \cref{ax_separate_commute}
 
+\begin{proof}
 We use an inverse proof and assume $\cxynv\cc\czwmv \nequiv \czwmv\cc\cxynv$.
 Since the values in the resulting filesystems are the same,
 this is only possible if, for an initial non-broken filesystem $\FS$,
@@ -37,12 +38,32 @@ $(\cxynv\cc\czwmv)\aFS$ is not broken, but $(\czwmv\cc\cxynv)\aFS$ is.
 This means that either $\czwmv\aFS$ is already broken, or it is not, and applying $\cxynv$
 breaks the filesystem.
 
-In the former case, the filesystem must be broken at $m$ or $\parentf{m}$.
-Since the set of $n$ with its granparent, parent and children; and $m$ with its grandparent, parent and children
-are disjunct, we know $\cxynv\aFS$ contains the same values around $m$ as $\aFS$.
-This leads to contradiction as from \cref{broken_local} we know
-that being broken at $m$ or $\parentf{m}$
-... WHAT ABOUT SIBLINGS? ...
-while applying $\czwmv$ to $\cxynv\aFS$ on the left-hand side resulted in a working filesystem,
-it resulted in a broken filesystem when applied to $\FS$ on the right-hand side.
-The proof is similar in the case when applying $\cxynv$ breaks the filesystem on the right-hand side.
+In the former case, based on \cref{broken_local}, 
+$\czwmv\aFS$ must be broken at $m$ or $\parentf{m}$, since it only changed at $m$.
+Let us look at the first case.
+Since $n\indep m$, we know that the parent and children of $m$ have the same value
+in $\FS$ as they do in $\cxynv\aFS$. However, this is a contradiction,
+as applying $\czwmv$ to $\FS$ leads to a broken filesystem,
+but applying it to $\cxynv\aFS$ (from the left side) does not.
+
+Therefore $\czwmv\aFS$ must be broken at $\parentf{m}$.
+By definition this means that its value at $\parentf{m}$ cannot be a directory.
+Also, reasoning similar to the above shows that it is only possible if $\cxynv$ changes
+the environment of $\parentf{m}$, which, since $n\indep m$, is only possible
+if $n$ and $m$ are siblings.
+
+Since then the value at $\parentf{n}=\parentf{m}$ is not changed by either command,
+we know it cannot be a directory in $\FS$, either, and that therefore
+$\FS$ is empty at all children of the parent node.
+Since by assumption $\czwmv\aFS$ is broken, $[w]\neq[\empt]$ must hold.
+However, this is a contradiction, as this would necessarily mean that
+the left side, $\czwmv(\cxynv\aFS)$ must also be broken.
+
+We can proceed in the same fashion if $\czwmv\aFS$ is not broken, but
+$(\czwmv\cc\cxynv)\aFS$ is.
+\end{proof}
+
+\cref{ax_separate_nobreaks}
+
+\begin{proof}
+\end{proof}
