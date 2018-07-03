@@ -80,7 +80,7 @@ This is true because in simple sequences
 there cannot be another command on $n$ or $m$,
 so if the commands are incompatible, no command between them can change that.
 In fact, this \namecref{simple_distant_pairs} is the general case
-of \cref{ax_directchild_breaks,ax_directparent_breaks}.
+of \cref{ax_directchild_breaks,ax_directparent_breaks} when there are no assertion commands.
 
 \begin{proof}
 % BACK_TO_THE_FS TODO
@@ -125,7 +125,7 @@ For any simple sequence $S$ and its permutation $S'$,
 \end{mycor}
 \begin{proof}
 This follows directly from \cref{simple_distant_pairs}.
-We use an inverse proof and assume $\wrks{S'}$.
+We use an inverse proof and assume $\wrksx{S'}$.
 If $S'\not\in\orderset{S}$ then by \cref{def_orderset}
 it contains two commands on a node $n$ and its parent
 that, as a subsequence,
@@ -210,10 +210,9 @@ However, then $\czwnv=\cxynv$, which is a contradiction.
 \begin{mylem}\mlabel{simple_reorder_equiv}
 For a simple sequence $\wrksx{S}$,
 $\orderset{S}$ is the set of all simple sequences equivalent to $S$, that is,
-\[ \orderset{S} = \{T \whr T\equiv S \wedge T \mbox{~is simple} \}. \]
+\[ \orderset{S} = \{T \whr T\equiv S \:\wedge\: T \mbox{~is simple} \}. \]
 \end{mylem}
 
-% TODO APPENDIX
 \begin{proof}
 First, we prove, by contradiction, that if a simple sequence $T$, $T\equiv S$, then $T\in\orderset{S}$.
 We use an inverse proof and assume $T\equiv S$ and $T\not\in\orderset{S}$.
@@ -288,7 +287,7 @@ that the case when the $n_\indx$ nodes ascend the tree,
 that is, $n_{\indx+1}=\parentf{n_\indx}$ is true, also leads to a contradiction.
 In this case we find that all commands are destruction commands,
 and so $[y_\indx]\neq[\vald]$, while in a subsequence of $T$ for a given $\indx$,
-$[y_\indx]=[\vald]$ must be true by the definition of $\ordersetsign$.
+$[y_\indx]=[\vald]$ must be true by definition of $\ordersetsign$.
 \end{proof}
 
 
