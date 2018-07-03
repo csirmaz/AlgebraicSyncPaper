@@ -15,7 +15,7 @@ $\reca \subset A\setminus B$
 and $\recb \subset B\setminus A$ 
 so that $\reca\aFS_B\neq\fsbroken$ and $\recb\aFS_A\neq\fsbroken$,
 and show that these are the longest sequences with this property, that is,
-adding any further command from $\reca$ or $\recb$ will break the filesystems.
+adding any further command to $\reca$ or $\recb$ will break the filesystems.
 
 We assume that $A$ and $B$ are returned by an update detector,
 and so they are simple sequences.
@@ -32,7 +32,9 @@ the largest subset of $A\setminus B$
 that is independent of $B\setminus A$,
 where $A$ and $B$ are simple sequences representing
 the updates applied to $\FS$ to arrive at replicas $\FS_A$ and $\FS_B$:
-\[ \reca = \ords{\alpha \whr \alpha\in \ambnp  \ \wedge\   \alpha\indep \bmanp }. \]
+\[ \reca = \ords{\alpha \whr \alpha\in \ambnp  \mbox{~and~}  \alpha\indep \bmanp }. \]
+$\recb$ can be obtained in a similar way by reversing $A$ and $B$
+in the definition.
 \end{mydef}
 
 Whether two commands are independent is easy to determine programmatically
@@ -43,8 +45,6 @@ Then, to generate the sequence $\reca$ from the resulting set,
 we can order the commands using the algorithm described in
 \cref{ordering} as $\reca$, being a subset of $A$, is also simple.
 
-$\recb$ can be obtained in a similar way by reversing $A$ and $B$
-in the definition.
 
 \myskip
 Next, we would now like to prove that $\reca$ and $\recb$ can be applied to the replicas,

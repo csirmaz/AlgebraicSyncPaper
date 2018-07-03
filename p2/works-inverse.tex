@@ -2,13 +2,12 @@
 % Works
 % -----
 
-\subsection{Domains of Sets}
+\subsection{Domains of Sets of Command Sequences}
 
-\begin{mydef}[Sets of sequences]
+\begin{mydef}[Sets of sequences, their domains]
 As we will frequently refer to sets of fequences,
 we will use calligraphic letters (e.g. $\sqs{A}$, $\sqs{B}$, $\sqs{C}$ and $\sqs{S}$)
 to denote such sets for brevity.
-
 We will write $\Dom{\sqs{A}}$ for $\bigcap_{A\in\sqs{A}} \Dom{A}$,
 and $\sqs{A}\cc\sqs{B}$ for $\{A\cc B\whr A\in\sqs{A}, B\in\sqs{B}\}$.
 \end{mydef}
@@ -27,7 +26,6 @@ When $\sqs{A}$ or $\sqs{B}$ contains a single sequence,
 we leave out the curly brackets and write,
 e.g. $A\cc\sqs{B}$ to mean $\{A\}\cc\sqs{B}$,
 or $\worksm{A}{B}$ to mean $\worksmbb{A}{B}$.
-
 Also, we write $\worksmnil{\sqs{A}}$ to mean that
 there are filesystems on which all sequences in $\sqs{A}$ are defined.
 If $\sqs{A}$ contains a single sequence only, $A$, this is equivalent to $\wrks{A}$.
@@ -135,7 +133,7 @@ We also prove the following:
 
 \begin{mylem}\mlabel{worksinputmatch}
 If $S$ and $T$ are minimal sequences, $\worksmnilb{S,T}$,
-and there are commands on node $n$ in both $S$ ($\cxynv\in A$) and $T$ ($\czwnv\in B$),
+and there are commands $\cxynv\in S$ and $\czwnv\in T$ on the same node $n$,
 then the input types of these commands must match, i.e. $[x]=[z]$.
 \end{mylem}
 \begin{proof}
