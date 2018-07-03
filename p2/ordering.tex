@@ -189,32 +189,41 @@ then they must contain the same commands.
 Let $A$ and $B$ be simple sequences
 such that $A\equiv \wrksx{B}$,
 and $\FS$ be a filesystem that they are defined on.
-
 We use a proof by contradiction, and assume that they do not contain the same commands.
 Without loss of generality, we can assume
 that $A$
 contains $\cxynv$, and $B$ either contains a different command
 $\czwnv$ on $n$, or no command on $n$ at all.
 As $A$ is simple, we know that $\cxynv$ is not an assertion command,
-and therefore $[x]\neq [y]$ and $\FS(n)\neq y$ as $[\FS(n)]=[x]$.
-If so, then if $B$ has no command on $n$, then $B\aFS(n)=\FS(n)$ and
+and therefore either $[x]\neq [y]$, or it is a replacement command.
+
+If $[x]\neq [y]$, then $\FS(n)\neq y$ as $[\FS(n)]=[x]$.
+Therefore, if $B$ has no command on $n$, then $B\aFS(n)=\FS(n)\neq y=A\aFS(n)$ and
 $A$ and $B$ cannot be equivalent.
-Otherwise we know that $[z]=[x]$ as $B$ does not break $\FS$ either,
+If $B$ includes $\czwnv$, then we know that $[z]=[x]$ as $B$ does not break $\FS$ either,
 and that $w=y$ as $B\aFS(n)$ must
 be $y$ and $B$ only has one command on $n$.
-However, then $\czwnv=\cxynv$, which is a contradiction.
+This means that $\czwnv=\cxynv$, which is a contradiction.
+
+If $\cxynv$ is a replacement command, then we know $[x]=[y]=[\valfx]$, and
+$[\FS(n)]=[\valfx]$. If $\FS(n)=y$, then instead of this filesystem,
+consider $\fsreplacement{\FS}{n}{\valf}$ where $\valf$ is any file value
+other than $y$.
+(We assume that there are more than one file values; if this is not so,
+$\cffa{n}$ becomes an assertion command.)
+From here the proof concludes in the same way as above.
 \end{proof}
 
 % TODO delete unused results
 
 \begin{mylem}\mlabel{simple_reorder_equiv}
 For a simple sequence $\wrksx{S}$,
-$\orderset{S}$ is the set of all simple sequences equivalent to $S$, that is,
-\[ \orderset{S} = \{T \whr T\equiv S \:\wedge\: T \mbox{~is simple} \}. \]
+$\orderset{S}$ is the set of all simple sequences equivalent to $S$.
+% that is, \[ \orderset{S} = \{T \whr T\equiv S \:\wedge\: T \mbox{~is simple} \}. \]
 \end{mylem}
 
 \begin{proof}
-First, we prove, by contradiction, that if a simple sequence $T$, $T\equiv S$, then $T\in\orderset{S}$.
+First, we prove, by contradiction, that if $T$ is a simple sequence and $T\equiv S$, then $T\in\orderset{S}$.
 We use an inverse proof and assume $T\equiv S$ and $T\not\in\orderset{S}$.
 Then, from \cref{equiv_simple_same_commands} we know $T$ is a permutation of $S$,
 and from \cref{order_is_only_possible} we know $T\equiv\cbrk$ which
@@ -291,7 +300,6 @@ $[y_\indx]=[\vald]$ must be true by definition of $\ordersetsign$.
 \end{proof}
 
 
-\begin{mydef}[$\ordsign$]
 It follows from \cref{simple_reorder_equiv} that given a simple set of commands $S$,
 which can be applied to a filesystem in some order without breaking it,
 this order will be in $\orderset{S}$,
@@ -299,6 +307,9 @@ and all sequences in $\orderset{S}$
 represent the same partial endofunction on filesystems.
 This allows us to treat such a set as a sequence for any purpose
 where the internal order of the commands is irrelevant.
-We write $\ordp{S}$ to represent this endofunction.
+\begin{mydef}[$\ordp{S}$]
+For a simple set or sequence of commands $S$,
+$\ordp{S}$ is the unique partial endofunction on filesystems
+defined by any order in $\orderset{S}$.
 We leave $\ordp{S}$ undefined if such an order does not exist.
 \end{mydef}
