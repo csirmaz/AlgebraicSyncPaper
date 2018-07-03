@@ -146,14 +146,15 @@
 \newcommand{\rot}[3]{#3#2#1} % Rotate
 \newcommand{\undersc}{\texttt{\detokenize{_}}}
 
+
 \theoremstyle{definition}
 \newtheorem{mydefaux}{Definition}
 \crefname{mydefaux}{Definition}{Definitions}
 \newenvironment{mydef}{\renewcommand\qedsymbol{$\blacktriangleright$}\pushQED{\qed}\mydefaux}{\popQED\endmydefaux}
 
-\theoremstyle{definition}
+\theoremstyle{plain}
 \newtheorem{myax}{Rule}
-\crefname{myax}{Rule*}{Rules*}
+\crefname{myax}{Rule**}{Rules**} % TODO delete
 
 \crefname{rulecounter}{Rule}{Rules}
 
@@ -172,3 +173,7 @@
 \theoremstyle{plain}
 \newtheorem{myclm}{Claim}
 \crefname{myclm}{Claim}{Claims}
+
+\theoremstyle{plain}
+\newtheorem{myaxproof}{Rule}
+\crefname{myaxproof}{Rule}{Rules}

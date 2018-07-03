@@ -30,7 +30,13 @@ and at all children of $n$ (if they exist),
 then either both filesystems are broken at $n$, or none of them are.
 \end{myclm}
 
-\cref{ax_separate_commute}
+Below we restate the \namecrefs{ax_separate_commute} defined in
+\cref{rules_lemma}.
+
+\begin{myaxproof}
+% ax_separate_commute
+\axaxseparatecommute
+\end{myaxproof}
 
 \begin{proof}
 We use an inverse proof and assume $\cxynv\cc\czwmv \nequiv \czwmv\cc\cxynv$.
@@ -67,7 +73,10 @@ We can proceed in the same fashion if $\czwmv\aFS$ is not broken, but
 $(\czwmv\cc\cxynv)\aFS$ is.
 \end{proof}
 
-\cref{ax_separate_nobreaks}
+\begin{myaxproof}
+% \cref{ax_separate_nobreaks}
+\axaxseparatenobreaks
+\end{myaxproof}
 
 \begin{proof}
 It is easy to see that over any $\setn$ one can construct a filesystem that neither command breaks.
@@ -76,14 +85,20 @@ and have a directory at all ancestors of both $n$ and $m$. In such positions any
 so neither command will break the filesystem.
 \end{proof}
 
-\cref{ax_same_breaks}
+\begin{myaxproof}
+% \cref{ax_same_breaks}
+\axaxsamebreaks
+\end{myaxproof}
 
 \begin{proof}
 This is trivial, as either $\cxynv$ breaks the filesystem, or, if it does not, then
 we know $[\cxynv\aFS(n)]=[y]\neq [z]$, and therefore $\czwnv$ will break the filesystem.
 \end{proof}
 
-\cref{ax_same_emptyseq}
+\begin{myaxproof}
+% \cref{ax_same_emptyseq}
+\axaxsameemptyseq
+\end{myaxproof}
 
 \begin{proof}
 From the conditions we see that for every $\FS$,
@@ -93,7 +108,10 @@ This is equivalent to saying that where the $\cxynv\cc\czwnv$ function is define
 it is the identity function, that is, it is extended by $\emptyseq$.
 \end{proof}
 
-\cref{ax_same_singlec}
+\begin{myaxproof}
+% \cref{ax_same_singlec}
+\axaxsamesinglec
+\end{myaxproof}
 
 \begin{proof}
 It is easy to see that where both $\cxynv\cc \czwnv$ and $\cxwnv$ are defined
@@ -112,7 +130,10 @@ as any value is permissible at $n$.
 This is equivalent to saying that $\cxynv\cc \czwnv$ does not break the filesystem.
 \end{proof}
 
-\cref{ax_directchild_breaks}
+\begin{myaxproof}
+% \cref{ax_directchild_breaks}
+\axaxdirectchildbreaks
+\end{myaxproof}
 
 \begin{proof}
 If neither of the commands is an assertion command, then the claim follows from
@@ -136,14 +157,20 @@ Finally, if $\czwnv=\cdda{n}$, we can proceed in a similar way,
 as since $\cxypnv\neq\cdda{n}$, we know at one point the value at $\pn$ is not a directory.
 \end{proof}
 
-\cref{ax_directparent_breaks}
+\begin{myaxproof}
+% \cref{ax_directparent_breaks}
+\axaxdirectparentbreaks
+\end{myaxproof}
 
 \begin{proof}
 This proof follows the same logic as that of \cref{ax_directchild_breaks},
 using destruction pairs instead of construction pairs.
 \end{proof}
 
-\cref{ax_distantrel_breaks}
+\begin{myaxproof}
+% \cref{ax_distantrel_breaks}
+\axaxdistantrelbreaks
+\end{myaxproof}
 
 \begin{proof}
 Suppose $\cxynnv$ and $\czwnv$ satisfy the conditions,
@@ -159,7 +186,10 @@ and therefore becomes broken as $\parentf{n}$, a descendant of $\nn$, contains
 a directory and so must all its ancestors.
 \end{proof}
 
-\cref{ax_child_assert}
+\begin{myaxproof}
+% \cref{ax_child_assert}
+\axaxchildassert
+\end{myaxproof}
 
 \begin{proof}
 Since $\cxynnv\neq\cdda{\nn}$, we know that
@@ -170,13 +200,19 @@ for it to satisfy the tree property.
 The assertion command $\cbba{n}$ will therefore not break $\FS$.
 \end{proof}
 
-\cref{ax_parent_assert}
+\begin{myaxproof}
+% \cref{ax_parent_assert}
+\axaxparentassert
+\end{myaxproof}
 
 \begin{proof}
 This proof follows the same logic as that of \cref{ax_child_assert}.
 \end{proof}
 
-\cref{ax_assert}
+\begin{myaxproof}
+% \cref{ax_assert}
+\axaxassert
+\end{myaxproof}
 
 \begin{proof}
 As for an assertion command $\cxynv$, $x=y$, we see that it either
