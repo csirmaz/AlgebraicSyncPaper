@@ -10,7 +10,7 @@ $B\cc\reca$ is defined wherever $A$ and $B$ are defined:
 \begin{myth}\mlabel{reconciliation_correct}
 If $A$ and $B$ are simple, then $\worksmbx{A,B}{B\cc \reca}$,
 where, to restate \cref{def:reconciliation},
-\[ \reca = \ords{\alpha \whr \alpha\in \ambnp  \ \wedge\   \alpha\indep \bmanp }. \]
+\[ \reca = \ords{\alpha \whr \alpha\in \ambnp  \mbox{~and~}  \alpha\indep \bmanp }. \]
 \end{myth}
 
 This is trivial unless $\worksmnilb{A,B}$, so we assume that it is true.
@@ -24,9 +24,9 @@ Then $A$ can be separated into their intersection and the remaining commands:
 \end{mylem}
 
 \begin{proof}
-We prove that
-if all commands are marked in $A$ that also appear in $B$,
-then there is an $A'$ in $\orderset{A}$ in which all marked commands are at the beginning.
+Mark those commands in $A$ that are also in $B$.
+We show that
+there is an $A'$ in $\orderset{A}$ in which all marked commands are at the beginning.
 
 We show that $A$ can be transformed into $A'$ for which this is true.
 We know that if the marked commands are not at the beginning, then
@@ -45,7 +45,7 @@ As $A$ is simple and $\wrks{A}$, from
 \cref{ax_distantrel_breaks,simple_distant_pairs}
 we know that these commands can only be on incomparable nodes or form a construction or destruction pair.
 In the first case, swapping the commands results in a sequence equivalent to $A$,
-and we show that the last two cases are impossible as they would lead to contradiction.
+and we show that the last two cases are impossible.
 
 In the cases then $\czwmv\cc\cxynv$ is either a construction or a destruction pair,
 and, depending on which is the case,
@@ -84,11 +84,10 @@ from which $[z]=[w]$ (as $[z]=[q]=[r]=[w]$), which is a contradiction
 as $A$ contains no assertion commands.
 \end{proof}
 
-\myskip
 We would like to prove that $\worksmbx{A,B}{B\cc \reca}$.
 From \cref{can_move_intersection} above we know that we can move commands in $\acbnp$
 to the beginning of $A$ and $B$, and so this is equivalent to
-\[ \worksmbx{\acb\cc\amb, \acb\cc\bma}{\acb\cc \bma\cc \reca}. \]
+\[ \worksm{\big\{\acb\cc\amb,~ \acb\cc\bma\big\}}{\acb\cc \bma\cc \reca}. \]
 
 For ease of reading, let us rename
 \begin{itemize}
@@ -103,22 +102,20 @@ We can do so if we can show that
 \[ \worksmbx{S,T}{S^*}. \]
 
 This is because from $\worksmbx{S,T}{S^*}$ trivially $\worksmbb{S,T}{S^*, T}$,
-and from $S^* \indep T$ and \cref{combine_independent_sequences} we know $\worksmbx{S^*,T}{T\cc S^*}$.
+and from $S^* \indep T$ and \cref{combine_independent_sequences} we know 
+$\worksmbx{S^*,T}{T\cc S^*}$.
 Combining the two we get $\worksmbx{S,T}{T\cc S^*}$,
 which using \cref{works_restricted} yields
 $\worksm{U\cc\{S,T\}}{U\cc T\cc S^*}$, that is,
 $\worksmbx{U\cc S,U\cc T}{U\cc T\cc S^*}$.
 
-\myskip
 To restate some results above, we therefore already know the following:
 \begin{itemize}
 \item $S=\amb$ and $T=\bma$ are simple as $A$ and $B$ are simple
 \item $S\cap T = \amb \cap \bma = \emptyset$
-\item 
-$S^*$ is the largest subset of $S$ for which $S^*\indep T$, as
-$\reca$ is the largest subset of $\amb$ for which $\reca\indep\bma$
+\item $S^*$ is the largest subset of $S$ for which $S^*\indep T$, as
+$\reca$ is the largest subset of $\amb$ for which $\reca\indep\bma$.
 \end{itemize}
-
 Our theorem is therefore proven if we prove the following lemma.
 \newcommand{\condSimple}{(c1)}
 \newcommand{\condDisj}{(c2)}
