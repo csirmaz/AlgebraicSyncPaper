@@ -113,7 +113,8 @@ Depending on their input and output types, there are nine types of commands,
 which we separate into four categories depending on the overall effect of the command.
 Constructions commands extend the filesystem,
 while destruction commands shrink it;
-the replacement command replaces a file value with a (presumably different) file value,
+the replacement command replaces a file value with a file value
+(which may or may not be different from the original value),
 and assertion commands either break the filesystem, or assert the type of the value at a node.
 \begin{mydef}[Command categories]\mlabel{def:command_categories}
 Depending on their input and output types, filesystem commands
