@@ -73,13 +73,13 @@ Let $\alpha=\cxynv$ and $\beta=\czwmv$.
 The proof is by contradiction;
 assume that there is a filesystem $\FS$ for which
 $\cxynv\aFS\neq\fsbroken$ and $\czwmv\aFS\neq\fsbroken$, but
-$\cxynv\cc \czwmv\aFS=\fsbroken$.
+$(\cxynv\cc \czwmv)\aFS=\fsbroken$.
 We know $\cxynv\aFS\neq\fsbroken$ so it must be applying 
 $\czwmv$ that breaks it.
 Applying a command can only result in a broken filesystem in two cases.
 First, if the input type does not match the filesystem,
 but we know $[\FS(m)]=[w]$ and so
-$[(\cxynv\aFS)(m)]=[w]$ as based on \cref{incomparable_is_independent}, $n\neq m$.
+$[\cxynv\aFS(m)]=[w]$ as based on \cref{incomparable_is_independent}, $n\neq m$.
 Second, if the new filesystem violates the tree property.
 This again cannot be the case because we also know that $n\unrel m$
 and the tree property only depends on the types of values at the parent and children of $m$,

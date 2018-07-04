@@ -12,10 +12,11 @@ We already know that
 commands usually do not occur in isolation,
 and are applied to filesystems in time.
 Therefore we investigate sequences of commands with a well-defined order.
-\begin{mydef}[Sequences of commands: $\cc$ and $\emptyseq$]
-We use ``$\cc$'' to combine commands to form a sequence, or combine sequences to form a longer sequence,
-with the meaning that the sequence is executed from left to right:
-\[ \alpha\cc\beta\aFS = \beta(\alpha\aFS). \]
+\begin{mydef}[Sequences of commands and $\emptyseq$]
+We concatenate commands in writing to note that they form a sequence,
+and concatenate sequences of commands to form a longer sequence,
+with the meaning that the resulting sequence is executed from left to right:
+\[ (\alpha\cc\beta)\aFS = \beta(\alpha\aFS). \]
 %% monoid, but not free monoid
 %% monoid: semigroup with identity element
 %% Sequences of commands form a free semigroup
