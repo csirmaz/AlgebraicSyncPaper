@@ -22,10 +22,10 @@ where an update could clearly be propagated, but it is excluded.
 To rephrase the example in \cite{CBNR}, consider the following two
 update sequences that have been applied to replicas $\FS_A$ and $\FS_B$:
 \begin{align*}
-A&=\caaa{\empt}{\valdi}{\nn}\cc\caaa{\empt}{\valf}{n} \\
-B&=\caaa{\empt}{\valdii}{\nn}
+A&=\caaa{\empt}{\valdi}{\pn}\cc\caaa{\empt}{\valf}{n} \\
+B&=\caaa{\empt}{\valdii}{\pn}
 \end{align*}
-where $\parent(n)=\nn$ (\cite{NREC} did not require all directories to have the same value).
+(\cite{NREC} did not require all directories to have the same value).
 Clearly $\caaa{\empt}{\valf}{n}$ could be applied to $\FS_B$, but it is not as
 it must be preceded by creating the directory, which conflicts with the same command in $B$
 due to the different value.
@@ -52,7 +52,7 @@ a conflict is detected between replicas $\FS_A$ and $\FS_B$ at node $n$
 if $n$ is marked as dirty in both $\FS_A$ and $\FS_B$, and
 $\FS_A(n)\neq\FS_B(n)$, and $n$ does not point to a directory in both replicas.
 (In other words, 
-$\FS_A(n)\not\in\setd \vee \FS_B(n)\not\in\setd$; see section 4.1 in \cite{BP}.
+$[\FS_A(n)]\neq[\vald]$ or $[\FS_B(n)]\neq[\vald]$; see section 4.1 in \cite{BP}.
 Let us note that there is an alternative approach to defining an algorithm for
 the same synchronizer by Pierce and Vouillon in \cite{PV}.)
 
@@ -61,20 +61,20 @@ not all conflicts detected based on the above definition
 entails a conflict based on our system; that is, \cite{BP} describes a more
 conservative policy.
 We use the example we described in \cite{NREC},
-where $\nn=\parent(n)$ and $\FS(\nn)$ is a directory and $\FS(n)$ is a file, and
+where $\FS(\pn)$ is a directory and $\FS(n)$ is a file, and
 the two replicas are derived in the following way:
 \begin{gather*}
-\FS_A = \cfba{n} \cc \cdba{\nn} \aFS \\
+\FS_A = (\cfba{n} \cc \cdba{\pn}) \aFS \\
 \FS_B = \cfba{n} \aFS.
 \end{gather*}
-Then, $\nn$ is dirty in both replicas:
+Then, $\pn$ is dirty in both replicas:
 in $\FS_A$ it was modified, and in $\FS_B$ one of its descendants was modified.
-Moreover, $\FS_A(\nn)\neq\FS_B(\nn)$ and $\FS_A(\nn)=\empt\not\in\setd$,
-and therefore a conflict is detected at $\nn$.
+Moreover, $\FS_A(\pn)\neq\FS_B(\pn)$ and $[\FS_A(\pn)]\neq[\vald]$ as it is empty.
+Therefore, a conflict is detected at $\pn$.
 (This behaviour is preserved in the more recent Harmony synchronizer.
 See ``delete/delete conflicts'' in \cite{PSG,FGKPS}.)
 Our reconciliation algorithm detects no conflicts;
-instead, it propagates $\cdba{\nn}$ to $\FS_B$, which we think is as expected
+instead, it propagates $\cdba{\pn}$ to $\FS_B$, which we think is as expected
 and desired.
 
 At the same time, it can be shown that if our command-based reconciler
@@ -101,13 +101,15 @@ Now we only need to show that $\FS_A(n)\neq\FS_B(n)$, because from this
 and $|\setd|=1$ we will also
 know that at least one of these values is not a directory,
 and therefore there is a conflict at $n$ in the state-based reconciler.
+
 If $n=m$, this follows from the fact that $\cxynv\neq\czwmv$ 
 (because they are not in $A\cap B$),
-as from \cref{worksinputmatch} we have $X=Z$,
-and therefore the above can only be true
-if $\FS_A(n)=\valvy\neq\valvw=\FS_B(n)$.
-If $n\descendant m$ and there is no command on $n$ in $B$, then it is also
-true as $\cxynv$ is not an assertion command, and therefore 
+as from \cref{worksinputmatch} we have $[x]=[z]$,
+and therefore necessarily $y\neq w$,
+that is, $\FS_A(n)=y\neq w=\FS_B(n)$.
+
+If $n\descendant m$ and there is no command on $n$ in $B$, then 
+because $\cxynv$ is not an assertion command, we again have
 $\FS_A(n)\neq\FS(n)=\FS_B(n)$, where $\FS$ is the common ancestor of the replicas.
 Finally, if there is a command on $n$ in $B$, then 
 from $\cxynv\in A\setminus B$ we know
