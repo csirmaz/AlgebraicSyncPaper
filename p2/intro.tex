@@ -21,7 +21,7 @@ and reconciliation, where we identify commands that can be propagated to other r
 The remaining commands, which could not be propagated, represent conflicting updates;
 resolving these requires a separate system or human intervention.
 
-In this paper we build on our previous work done 
+We extend significantly the results of the previous work done
 with Prof. Norman Ramsey
 on an algebraic approach to synchronization
 \cite{NREC},
@@ -45,7 +45,7 @@ to the filesystems.
 In fact, an insight in \cite{NREC} is that
 if the ordering changes the effect of two commands,
 then under certain circumstances they are not compatible and will give rise to conflicts.
-Accordingly, in this paper the commutativity of command pairs and their other properties
+Accordingly, in this paper command pairs, their commutativity and other properties
 play a special role.
 
 In terms of the usual classification of synchronizers \cite{TSR, PV, SSH},
@@ -65,31 +65,8 @@ and, as examples,
 to IceCube, where multiple orders are tested to find an acceptable one (\cite{KRSD}, see also \cite{MPV}),
 or Bayou, where reconciling updates happens by redoing them in a globally determined order \cite{TTPDSH}.
 
-We start by defining a model of filesystems and a set of commands
-that we will use to describe updates and modifications in \cref{sec_def}.
-This is followed by investigating the properties and behaviors
-of command pairs in \cref{section_axioms}.
-\Cref{sec_update} describes update detection, and it is
-in \cref{ordering} that we describe how commands can be ordered
-and prove that under some simple conditions all valid orders
-have the same effect.
-
-\Cref{sec_rec} defines our reconciliation 
-and conflict detection algorithms.
-We then proceed to prove that the output of reconciliation
-is correct in the sense that 
-it can be applied to the replicas without causing an error,
-and it is maximal
-inasmuch as no further updates can be applied under any circumstances.
-In order to be able to do this, we introduce
-the concept of \emph{conditional operation} of sequences of commands,
-and show that it has a number of highly convenient properties.
-We finish by comparing our results to other research
-and outlining directions for further work
-on the introduced algebraic system.
-
-The approach in the present paper offers an improvement
-over results presented in \cite{NREC} in multiple ways.
+The approach presented in this paper offers an improvement
+over results desribed in \cite{NREC} in multiple ways.
 We introduce a new set of commands that is symmetric and
 captures more information about the updates.
 This has the effect that reasoning about commands
@@ -99,8 +76,7 @@ predictions made by the reasoning are more accurate
 due to the additional information content.
 In fact, the new command set not only simplifies
 our reconciliation algorithm, but also makes it maximal.
-
-The previous work also lacked proofs that the update detection
+\cite{NREC} also lacked proofs that the update detection
 and reconciliation algorithms it presented work as intended,
 which we provide in the current paper.
 While the results are intuitive, providing rigorous proofs
@@ -109,4 +85,29 @@ During the process, we define a number of useful concepts
 and show their relationships and the properties they possess.
 In our view these construct a special algebraic model
 that is worthy of interest and of further research on its own.
+
+The paper is organised as follows.
+We start by defining a model of filesystems and a set of commands
+that we will use to describe updates and modifications in \cref{sec_def}.
+This is followed by investigating the properties and behaviors
+of command pairs in \cref{section_axioms}.
+\Cref{sec_update} describes update detection and ordering filesystem commands.
+The main result of this section if that under some simple conditions,
+a set of filesystem commands executed in any feasible order leads
+to the same changes in the filesystem.
+The reconciliation and conflict detection algorithm is defined in
+\cref{sec_rec}, which merges two sets of commands.
+We then proceed to prove that the output of reconciliation
+is correct in the sense that 
+it can be applied to the replicas without causing an error,
+and it is maximal
+inasmuch as no further updates can be applied under any circumstances.
+In order to be able to do this, we introduce
+domains of sets of command sequences,
+and show that it has a number of highly convenient properties.
+\Cref{sec_relatedwork,sec_algebra,sec_conclusion}
+discuss related work, comparing our results to other research,
+outlining directions for further work
+on the introduced algebraic system, and provide the conclusion.
+\Cref{axiom_proof} contains technical proofs for propositions on the behavior of command pairs.
 
