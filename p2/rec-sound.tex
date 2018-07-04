@@ -122,16 +122,14 @@ Our theorem is therefore proven if we prove the following lemma.
 \newcommand{\condApr}{(c3)}
 \begin{mylem}\mlabel{reconciliation_correct_part}
 If
-{\condSimple} $S$ and $T$ are simple sequences,
-{\condDisj} $S\cap T=\emptyset$,
-and {\condApr} $S^*$ is the largest subset of $S$ where $S^*\indep T$,
+{\rm\condSimple} $S$ and $T$ are simple sequences,
+{\rm\condDisj} $S\cap T=\emptyset$,
+and {\rm\condApr} $S^*$ is the largest subset of $S$ where $S^*\indep T$,
 then
 $\worksmbx{S,T}{S^*}$.
 \end{mylem}
-
 \begin{proof}
 This is trivial unless $\worksmnilb{S,T}$, so we assume that it is the case.
-
 The proof is similar to that of \cref{can_move_intersection}.
 We mark all commands in $S$ that are in its subset $S^*$, and
 we prove that $S$ can be transformed into $S'$
@@ -152,16 +150,16 @@ As $S$ is simple and $\wrks{S}$, from
 \cref{ax_distantrel_breaks,simple_distant_pairs}
 we know that these commands can only be on incomparable nodes or form a construction or destruction pair.
 In the first case, swapping the commands results in a sequence equivalent to $S$,
-and we show that the other two cases are not possible as they would lead to a contradiction.
+and we show that the other two cases are not possible as they would lead to contradiction.
 
 In the last two cases, we know that either $m=\parent(n)$ or $n=\parent(m)$.
 We also know that because of {\condApr} there must be 
 a command $\cqrov$ in $T$ which is not independent of $\czwmv$
 as $\czwmv$ is not part of $S^*$.
-\begin{gather*}
-S = \cdots\cc  \czwmv\cc  \cxynv\cc  \cdots \\
-T = \cdots\cc  \cqrov\cc \cdots
-\end{gather*}
+% \begin{gather*}
+% S = \cdots\cc  \czwmv\cc  \cxynv\cc  \cdots \\
+% T = \cdots\cc  \cqrov\cc \cdots
+% \end{gather*}
 Based on \cref{incomparable_is_independent} we know this means that
 either $m\descendantEq o$ or $o\descendantEq m$.
 From {\condApr} we also know that $\cxynv\indep \cqrov$,

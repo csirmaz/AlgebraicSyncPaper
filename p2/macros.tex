@@ -19,7 +19,6 @@
 \newcommand{\valvy}{::v_Y::} % TODO DELETE
 \newcommand{\valvw}{::v_W::} % TODO DELETE
 
-\newcommand{\setfs}{\mathbb{F}} % TODO DELETE Set of filesystems
 \newcommand{\setv}{\mathbb{V}} % Set of values
 \newcommand{\setn}{\mathbb{N}} % Set of nodes / paths
 \newcommand{\setd}{[\vald]} % Set of directory values
@@ -42,19 +41,8 @@
 
 \newcommand{\cbrk}{\epsilon_\varnothing} % 'break' / empty command
 
-\newcommand{\caa}[2]{::\langle{[#1],[#2]}\rangle::} % Command template
 \newcommand{\caaa}[3]{\langle{[#1],#2,#3}\rangle}
 \newcommand{\caaaa}[3]{\langle{[#1],#2,#3}\rangle}
-
-\newcommand{\cbb}{\caa{::\empt}{\empt}} % TODO delete
-\newcommand{\cbf}{\caa{::\empt}{\valf}} % TODO delete
-\newcommand{\cbd}{\caa{::\empt}{\vald}} % TODO delete
-\newcommand{\cfb}{\caa{::\valf}{\empt}} % TODO delete
-\newcommand{\cff}{\caa{::\valf}{\valf}} % TODO delete
-\newcommand{\cfd}{\caa{::\valf}{\vald}} % TODO delete
-\newcommand{\cdb}{\caa{::\vald}{\empt}} % TODO delete
-\newcommand{\cdf}{\caa{\vald}{\valfx}} % TODO delete
-\newcommand{\cdd}{\caa{::\vald}{\vald}} % TODO delete
 
 \newcommand{\cbba}[1]{\caaa{\empt}{\empt}{#1}}
 \newcommand{\cbfa}[1]{\caaa{\empt}{\valfx}{#1}}
@@ -66,14 +54,11 @@
 \newcommand{\cdfa}[1]{\caaa{\vald}{\valfx}{#1}}
 \newcommand{\cdda}[1]{\caaa{\vald}{\vald}{#1}}
 
-\newcommand{\cxy}{\caa{x}{y}} % TODO delete
 \newcommand{\cxyaa}[1]{\caaa{x}{y}{#1}}
 \newcommand{\cxynv}{\caaa{x}{y}{n}}
 \newcommand{\cxynnv}{\caaa{x}{y}{\nn}}
 \newcommand{\cxypnv}{\caaa{x}{y}{\pn}}
-\newcommand{\cxw}{\caa{x}{w}} % TODO delete
 \newcommand{\cxwnv}{\caaa{x}{w}{n}}
-\newcommand{\czw}{\caa{z}{w}} % TODO delete
 \newcommand{\czwnv}{\caaa{z}{w}{n}}
 \newcommand{\czwnnv}{\caaa{z}{w}{\nn}}
 \newcommand{\czwpnv}{\caaa{z}{w}{\pn}}

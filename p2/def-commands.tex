@@ -61,9 +61,8 @@ We describe a filesystem commands using its input, output, and
 the node it is applied to.
 
 \begin{mydef}[Filesystem commands]
-Filesystem commands are partial endofunctions on filesystems:
-\[ \alpha: \setfs \nrightarrow \setfs \]
-A command $\alpha$ is not defined on filesystems where it returns an error.
+Filesystem commands are partial endofunctions on filesystems,
+which are not defined on filesystems where they return an error.
 The commands are represented using triplets of the form
 \[ \alpha = \caaaa{x}{y}{n}, \]
 where $x,y\in\setv$ and $n\in\setn$.
