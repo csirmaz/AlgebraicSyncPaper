@@ -53,12 +53,10 @@ we use a special value, $\empt\in\setv$, to indicate that the filesystem
 is empty at a particular node, that is, there are no files or directories there.
 We also assume that a filesystem has finitely many non-empty nodes.
 
-\begin{mydef}[Filesystem values: $\vald$, $\valfx$, $\empt$, $\typeeq$, $\eqclass{v}$]
+\begin{mydef}[Filesystem values: $\vald$, $\valfx$, $\empt$, $\eqclass{v}$]
 The set of values $\setv$ is partitioned into files, directories, and the empty value $\empt$.
-% TODO May be able to delete \typeeq
-For $v_1,v_2\in\setv$ we write $v_1\typeeq v_2$ iff
-$v_1$ and $v_2$ are both files, are both directories, or are both $\empt$.
-As usual, we write $[v]$ for the the equivalence class of $v\in\setv$, which represents its type.
+As usual, we write $[v]$ for the the equivalence class of $v\in\setv$ according to this partition,
+which represents its type.
 File and directory values are also denoted by $\valfx$ and $\vald$, respectively,
 with or without indices.
 \end{mydef}
@@ -72,7 +70,7 @@ Using the notation introduced above, we can formally express this as follows.
 \begin{mydef}[Tree property]
 A filesystem $\FS:\setn \rightarrow \setv$ has the tree property iff
 \[ \forall n\in\setn
-\FS(n) \neq \empt \Rightarrow \FS(\parentf{n}) \typeeq \vald \]
+\FS(n) \neq \empt \; \Longrightarrow \; [\FS(\parentf{n})] = [\vald] \]
 wherever $\parent(n)$ is defined, that is, $n$ has a parent.
 \end{mydef}
 

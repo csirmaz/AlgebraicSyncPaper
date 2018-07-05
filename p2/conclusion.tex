@@ -1,7 +1,7 @@
 
 \section{Conclusions and Further Research}\mlabel{sec_conclusion}
 
-Apart from constructing an algebra,
+Apart from constructing a filesystem-free algebra,
 there are many other ways in which further work can extend the current results.
 An important extension would be to
 consider reconciling not only two, but more replicas in a single step and
@@ -16,7 +16,7 @@ or if only a subset of the replicas are reconciled
 both of which would result in a state where different replicas
 have different common ancestors, that is,
 the updates specific to the replicas start from different points
-in the update history of the filesystem.
+in the update history of the filesystems.
 Existing research can offer pointers as to how such cases can be modelled
 in our algebraic system.
 Parker et al. \cite{PPRS} and Cox and Josephson \cite{CJ}
@@ -29,11 +29,13 @@ conflicting updates and resolve partial reconciliations.
 
 An extension of our results could also entail relaxing
 the simplifying assumptions we used.
+% TODO TODO TODO
 Identifying which results depend on the assumption that $|\setd|=1$
 and devising updated proofs and algorithms for when $|\setd|>1$,
 or specifying a pre-processing step that reconciles meta-information in directories
 can enable the synchronizer
 to identify and resolve a wider range of conflicts.
+
 Similarly, designing pre- and post-processors that
 present removing and creating a node
 not as separate updates but as a single rename (move),
@@ -49,6 +51,6 @@ This, in turn, can offer formal verification of the algorithms underlying
 specific implementations in a variety of synchronizers.
 Alternatively, by generalizing the parent--child relationships between filesystem nodes,
 the demonstrated properties of minimal sequences of commands
-and conditional operation of sequences ($\worksmeqsign$) % TODO
+and domains of sets of sequences ($\worksmeqsign$)
 may also contribute to future research into algebraic structures
 constrained by predefined sparse connections between their elements.

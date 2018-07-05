@@ -4,8 +4,8 @@
 
 \newcommand{\myskip}{\bigskip\noindent}
 
-\newcommand{\typeeq}{\simeq} % Type equal ~_
-\newcommand{\ntypeeq}{\not\typeeq} % Not type equal
+% \newcommand{\typeeq}{\simeq} % Type equal ~_
+% \newcommand{\ntypeeq}{\not\typeeq} % Not type equal
 \newcommand{\eqclass}[1]{[{#1}]} % only used to be able to write $[]$ inside [...]
 
 \newcommand{\vald}{\mathsf{D}} % Directory value
@@ -133,31 +133,27 @@
 \newcommand{\undersc}{\texttt{\detokenize{_}}}
 
 
-\theoremstyle{definition}
-\newtheorem{mydefaux}{Definition}
-\crefname{mydefaux}{Definition}{Definitions}
-\newenvironment{mydef}{\renewcommand\qedsymbol{$\blacktriangleright$}\pushQED{\qed}\mydefaux}{\popQED\endmydefaux}
-
-\theoremstyle{plain}
-\newtheorem{myax}{Rule**}
-\crefname{myax}{Rule**}{Rules**} % TODO delete
-
-\crefname{rulecounter}{Rule}{Rules}
-
-\theoremstyle{plain}
-\newtheorem{mylem}{Lemma}
-\crefname{mylem}{Lemma}{Lemmas}
-
 \theoremstyle{plain}
 \newtheorem{myth}{Theorem}
 \crefname{myth}{Theorem}{Theorems}
 
-\theoremstyle{plain}
-\newtheorem{mycor}{Corollary}
-\crefname{mycor}{Corollary}{Corollaries}
+\theoremstyle{definition}
+\newtheorem{mydefaux}[myth]{Definition}
+\crefname{mydefaux}{Definition}{Definitions}
+\newenvironment{mydef}{\renewcommand\qedsymbol{$\blacktriangleright$}\pushQED{\qed}\mydefaux}{\popQED\endmydefaux}
+
+\crefname{rulecounter}{Rule}{Rules}
 
 \theoremstyle{plain}
-\newtheorem{myclm}{Claim}
+\newtheorem{mylem}[myth]{Lemma}
+\crefname{mylem}{Lemma}{Lemmas}
+
+\theoremstyle{plain}
+\newtheorem{mycor}[myth]{Corollary}
+\crefname{mycor}{Corollary}{Corollaries} % TODO Delete?
+
+\theoremstyle{plain}
+\newtheorem{myclm}[myth]{Claim}
 \crefname{myclm}{Claim}{Claims}
 
 \theoremstyle{plain}

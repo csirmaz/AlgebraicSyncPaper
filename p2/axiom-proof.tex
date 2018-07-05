@@ -1,20 +1,20 @@
-TODO From filesystem definition
 
-
-In this section we offer proofs for the \namecrefs{ax_separate_commute} listed in
-\cref{rules_lemma}.
+In this section we derive the \namecrefs{ax_separate_commute} listed in
+\cref{rules_lemma} from our filesystem model.
 For the purposes of the proofs we extend the notion of filesystems 
 to the full set of functions mapping $\setn$ to $\setv$, even if they
 do not have the tree property.
-In such cases we continue to say that the filsystem is broken,
-but we also continue to describe the filesystem values at nodes in $\setn$.
-Also, in order to pinpoint the region that violates the tree property,
-we say that the filesystem is \emph{broken at $n$} if 
+This is so that we can describe the values they would acquire under certain nodes,
+and pinpoint where they may be violating the tree property.
+If they do, we continue to say that the filesystem is broken,
+and say that the filesystem is \emph{broken at $n$} if 
 $n$ is not a dictionary, but has at least one non-empty child.
+We continue to require that filesystems are not empty at finitely many nodes.
 
 Accordingly, where needed, we also implicitly extend filesystem commands
 so that they would return a filesystem even if it violates the tree property.
-They continue to be undefined in cases where their input types are incompatible
+We continue to say that they break the filesystem in these cases,
+and commands continue to be undefined where their input types are incompatible
 with the input filesystem.
 We note that once a filesystem is broken, it stays broken, even if
 after a subsequent command it would no longer violate the tree property.

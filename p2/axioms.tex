@@ -55,14 +55,14 @@ We can also see that $A\eqext B$ and $S\eqext T$ implies $A\cc S\eqext B\cc T$.
 % equivalence:   reflexive, transitive, symmetric
 % congruence:    https://en.wikipedia.org/wiki/Congruence_relation
 % precongruence: congruence of a preorder
-In other words, $\eqext$ is a preorder, and also a precongruence. % TODO
+In other words, $\eqext$ is a preorder, and also a precongruence.
 
 % Relation in the algebra
 We write $A\equiv B$,
 or say that $A$ and $B$ are \emph{equivalent,}
 iff $A\eqext B$ and $B\eqext A$;
 that is, $\equiv$ is the intersection of the preorder $\eqext$ with its inverse,
-and so it is a congruence. % TODO
+and so it is a congruence.
 % old inference rule: $ A\equiv B \Rightarrow S\cc A\cc T\equiv S\cc B\cc T $.
 
 Finally, we write $A\strext B$ to mean $A\eqext B$ and $A\nequiv B$.
@@ -133,7 +133,7 @@ while destruction pairs consist of destruction commands.
 The claims listed are named \emph{\namecrefs{ax_separate_commute}}
 as they can also be interpreted as inference rules in a pure
 algebraic treatment of filesystem synchronization.
-TODO elaborates this approach.
+\Cref{sec_algebra} elaborates this approach.
 In \cref{axiom_proof} we offer proofs of each of the
 \emph{\namecrefs{ax_separate_commute}} based on our model of filesystems.
 
@@ -228,7 +228,6 @@ If $n=m$, then from \cref{ax_same_breaks} we must have $[y]=[z]$ and $[w]=[x]$
 as otherwise the commands, in one order or the other, would break all filesystems.
 The commands are not assertion commands, so from \cref{ax_same_singlec}
 we know that $\cxynv\cc\czwnv\equiv\czwnv\cc\cxynv$ can only happen if $y=w$.
-% TODO Does this depend on |[D]|=1?
 Therefore $[x]=[y]=[z]=[w]$ which with $y=w$ contradicts our assumption that the commands are different.
 
 The remaining case is that $n\descendant m$ or $m\descendant n$.

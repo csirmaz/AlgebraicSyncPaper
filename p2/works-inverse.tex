@@ -59,16 +59,15 @@ if $\Dom{\sqs{A}}\subseteq\Dom{\sqs{B}}$, then $\Dom{S\cc\sqs{A}}\subseteq\Dom{S
 
 We proceed by proving the following lemmas.
 
-\begin{myax}\mlabel{combine_independent_commands}
+\begin{mylem}\mlabel{combine_independent_commands}
 The combination of independent commands is defined on all filesystems
 where both of the commands are defined:
 \[ \alpha\indep \beta \Rightarrow \worksmbx{\alpha, \beta}{\alpha\cc \beta}. \]
-\end{myax}
+\end{mylem}
 \begin{proof}
 TODO: they are the same? FF?
 
-We name this proposition a \namecref{combine_independent_commands} 
-because to prove it, we must reach back to our filesystem model.
+In the following proof we reach back to our filesystem model.
 Let $\alpha=\cxynv$ and $\beta=\czwmv$.
 The proof is by contradiction;
 assume that there is a filesystem $\FS$ for which
