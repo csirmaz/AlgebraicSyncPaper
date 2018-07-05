@@ -226,14 +226,13 @@ we know that $n=m$, $n\descendant m$ or $m\descendant n$.
 
 If $n=m$, then from \cref{ax_same_breaks} we must have $[y]=[z]$ and $[w]=[x]$
 as otherwise the commands, in one order or the other, would break all filesystems.
-The commands are not assertion commands, so from \cref{ax_same_singlec}
-we know that $\cxynv\cc\czwnv\equiv\czwnv\cc\cxynv$ can only happen if $y=w$.
-Therefore $[x]=[y]=[z]=[w]$ which with $y=w$ contradicts our assumption that the commands are different.
+We also see that $\cxynv\cc\czwnv\equiv\czwnv\cc\cxynv$ can only happen if $w=y$.
+Therefore $n=m$, $[x]=[y]=[z]=[w]$ and $w=y$, which contradicts our assumption that the commands are different.
 
 The remaining case is that $n\descendant m$ or $m\descendant n$.
 If they are not directly related,
 then from \cref{ax_distantrel_breaks} we know that
-$\cxynv\cc\czwmv$ breaks all filesystems,
+$\cxynv\cc\czwmv$ breaks all filesystems as they are not assertion commands,
 which contradicts the assumption that the commands are independent.
 From the construction and destruction pairs and 
 \cref{ax_directchild_breaks,ax_directparent_breaks} we also see that
