@@ -65,9 +65,30 @@ where both of the commands are defined:
 \[ \alpha\indep \beta \Rightarrow \worksmbx{\alpha, \beta}{\alpha\cc \beta}. \]
 \end{mylem}
 \begin{proof}
-TODO: they are the same? FF? assertion commands?
+% In the following proof we reach back to our filesystem model.
+The proposition follows from \cref{independent_details},
+and we follow the three cases listed there.
 
-In the following proof we reach back to our filesystem model.
+The first case is that $n\unrel m$ where $\alpha=\cxynv$, $\beta=\czwmv$.
+
+TODO CONTINUE
+
+Using an inverse proof we assume that for a filesystem $\FS$
+both $\cxynv\aFS$ and $\czwmv\aFS$ are defined, but $(\cxynv\cc\czwmv)\FS$ is broken.
+We know a command breaks a filesystem either if
+its input type is not compatible with the filesystem,
+or if the filesystem ceases to have the tree property.
+
+We also know that whether a filesystem has the tree property
+depends 
+
+The second case is that the two commands are the same and are assertion or replacement
+commands, when the proposition is trivially true.
+Finally, the third case is that the two commands are on comparable nodes and one of them
+is an assertion command, when the proposition is again trivially true.
+
+TODO END
+
 Let $\alpha=\cxynv$ and $\beta=\czwmv$.
 The proof is by contradiction;
 assume that there is a filesystem $\FS$ for which
@@ -85,8 +106,6 @@ $[\cxynv\aFS(m)]=[\FS(m)]$ even if $n=m$.
 This means $\czwmv$ cannot break $\cxynv\aFS(m)$, which is a contradiction.
 
 In the remaining cases neither command is an assertion command.
-
-TODO continue here. Require not replacement?
 
 Applying a command can only result in a broken filesystem in two cases.
 First, if the input type does not match the filesystem,

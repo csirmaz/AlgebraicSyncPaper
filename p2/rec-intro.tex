@@ -37,10 +37,11 @@ $\recb$ can be obtained in a similar way by reversing $A$ and $B$
 in the definition.
 \end{mydef}
 
-Whether two commands are independent is easy to determine programmatically
-either based on \cref{def_indep} and the rules listed in \cref{section_axioms},
-or based on \cref{incomparable_is_independent} 
-in at most $O(x^2)$ time, where $x$ is the number of commands.
+Note that $\alpha$ is not an assertion command, and $\bmanp$ contains no assertion commands;
+also, $\alpha\not\in\bmanp$, so independence in this case is equivalent to
+the node $\alpha$ affects being incomparable to the nodes commands in $\bmanp$ affect.
+Therefore whether two commands are independent is easy to determine programmatically
+in at most $O(x^2)$ time, where $x$ is the number of commands. % TODO
 Then, to generate the sequence $\reca$ from the resulting set, 
 we can order the commands using the algorithm described in
 \cref{ordering} as $\reca$, being a subset of $A$, is also simple.

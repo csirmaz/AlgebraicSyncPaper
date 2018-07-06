@@ -206,40 +206,54 @@ We also write $\alpha\indep B$ for $\{\alpha\}\indep B$.
 \end{mydef}
 
 It is intentional that we use the same symbol for independent commands
-and sequences as for incomparable nodes. As the next
+and sequences as for incomparable nodes. As
 \namecref{incomparable_is_independent},
 shows, these concepts are closely related.
 
-\begin{mylem}\mlabel{incomparable_is_independent}
-Two $\cxynv$ and $\czwmv$ are different commands,
+\begin{mycor}\mlabel{incomparable_is_independent}
+If $\cxynv$ and $\czwmv$ are different commands,
 and none of them is an assertion command, then
 $\cxynv\indep\czwmv$ if and only if $n\unrel m$.
-\end{mylem}
-\begin{proof}
-The right-to-left part is a restatement of
-\cref{ax_separate_commute,ax_separate_nobreaks}.
+\end{mycor}
 
-We prove the left-to-right part by contradiction,
-assuming that both $\cxynv\indep\czwmv$ and $n\nunrel m$.
-From $n\nunrel m$
-we know that $n=m$, $n\descendant m$ or $m\descendant n$.
+To prove this, we are going to prove the following lemma,
+which characterizes independent commands in a more detailed way.
+
+\begin{mylem}\mlabel{independent_details}
+For two commands $\cxynv\indep\czwmv$ if and only if
+one of the following holds:
+\begin{itemize}
+\item $n\unrel m$;
+\item or $n=m$ and the commands are equivalent assertion or replacement commands;
+\item or $n\descendant m$ or $m\descendant n$,
+and either the command on the ancestor asserts a directory,
+or the command on the descendant asserts an empty node (or both).
+\end{itemize}
+\end{mylem}
+
+\begin{proof}
+By definition we know that $\cxynv\cc\czwmv\equiv\wrksx{\czwmv\cc\cxynv}$.
+The first case is a restatement of
+\cref{ax_separate_commute,ax_separate_nobreaks}.
+Otherwise $n\nunrel m$, in which case either $n=m$, or, without loss of generality, $n\descendant m$.
 
 If $n=m$, then from \cref{ax_same_breaks} we must have $[y]=[z]$ and $[w]=[x]$
 as otherwise the commands, in one order or the other, would break all filesystems.
-We also see that $\cxynv\cc\czwnv\equiv\czwnv\cc\cxynv$ can only happen if $w=y$.
-Therefore $n=m$, $[x]=[y]=[z]=[w]$ and $w=y$, which contradicts our assumption that the commands are different.
+The equivalence also implies $[x]=[z]$ as otherwise the two sides would not be defined on the same filesystem,
+as well as $y=w$ as their effects is the same.
+The two commands are therefore the same, and they are either assertion or replacement commands.
 
-TODO say not assertion and not replacement?
-
-The remaining case is that $n\descendant m$ or $m\descendant n$.
-If they are not directly related,
-then from \cref{ax_distantrel_breaks} we know that
-$\cxynv\cc\czwmv$ breaks all filesystems as they are not assertion commands,
-which contradicts the assumption that the commands are independent.
-From the construction and destruction pairs and 
-\cref{ax_directchild_breaks,ax_directparent_breaks} we also see that
-even if the nodes are directly related, either
-$\cxynv\cc\czwmv$ or $\czwmv\cc\cxynv$ 
-breaks all filesystems, so they again cannot be independent.
+The remaining case is that $n\descendant m$.
+If the nodes are not directly related, then \cref{ax_distantrel_breaks} gives
+the conditions in the third case in the lemma.
+If they are directly related, 
+\cref{ax_directchild_breaks,ax_directparent_breaks}
+gives the same conditions, while they also allow the commands being
+a construction or destruction pair.
+However, the reversals of construction and destruction pairs break all filesystems.
 \end{proof}
 
+\Cref{incomparable_is_independent} follows directly from \cref{independent_details}.
+While equivalent commands can hardly be thought of as independent,
+we retain this name for this relation as in most
+cases we use it on pairs of different commands that are also not assertion commands.
