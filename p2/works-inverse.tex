@@ -70,51 +70,34 @@ The proposition follows from \cref{independent_details},
 and we follow the three cases listed there.
 
 The first case is that $n\unrel m$ where $\alpha=\cxynv$, $\beta=\czwmv$.
-
-TODO CONTINUE
-
 Using an inverse proof we assume that for a filesystem $\FS$
 both $\cxynv\aFS$ and $\czwmv\aFS$ are defined, but $(\cxynv\cc\czwmv)\FS$ is broken.
-We know a command breaks a filesystem either if
-its input type is not compatible with the filesystem,
-or if the filesystem ceases to have the tree property.
+Since $n\neq m$, we know the input types of the command are compatible with $\FS$,
+so $\FS$ must be broken because it violates the tree property.
 
-We also know that whether a filesystem has the tree property
-depends 
+We know that applying $\czwmv$ breaks $\cxynv\aFS$. As it changes the filesystem
+at $m$, this can be because either $m$ would no longer be a directory but has non-empty children,
+or $\parentf{m}$ is not a directory but acquired non-empty children.
+Let us look at the first case.
+Since $n\indep m$, we know the parent and children of $m$ have the same value
+in $\FS$ as in $\cxynv\aFS$. However, this leads to contradiction
+as applying $\czwmv$ to $\cxynv\aFS$ leads to a broken filesystem, but
+applying it to $\FS$ does not.
+
+Therefore $\parentf{m}$ must not be a directory in $\FS$ but acquire non-empty children.
+Since $\czwmv\aFS$ is defined, it must be $\cxynv$ that changes the children of
+$\parentf{m}$ in this way, which means that $n$ and $m$ must be siblings.
+As then the value at $\parentf{n}=\parentf{m}$ is not changed by either command,
+we know it cannot be a directory in $\FS$, either, and that therefore
+$\FS$ is empty at all children of the parent node.
+This means that $[x]=[z]=[\empt]$, and
+since both $\cxynv\aFS$ and $\czwmv\aFS$ are defined, $y=w=\empt$ must also hold.
+However, this contradicts our assumption that $(\cxynv\cc\czwmv)\FS$ is broken.
 
 The second case is that the two commands are the same and are assertion or replacement
 commands, when the proposition is trivially true.
 Finally, the third case is that the two commands are on comparable nodes and one of them
 is an assertion command, when the proposition is again trivially true.
-
-TODO END
-
-Let $\alpha=\cxynv$ and $\beta=\czwmv$.
-The proof is by contradiction;
-assume that there is a filesystem $\FS$ for which
-$\cxynv\aFS\neq\fsbroken$ and $\czwmv\aFS\neq\fsbroken$, but
-$(\cxynv\cc \czwmv)\aFS=\fsbroken$.
-We know $\cxynv\aFS\neq\fsbroken$ so it must be applying 
-$\czwmv$ that breaks it.
-
-We note that as the two commands are independent, they commute, and so
-the proposition is symmetric.
-Therefore, if either of the commands is an assertion command,
-without loss of generality we can assume $\cxynv$ is an assertion command.
-If so, 
-$[\cxynv\aFS(m)]=[\FS(m)]$ even if $n=m$.
-This means $\czwmv$ cannot break $\cxynv\aFS(m)$, which is a contradiction.
-
-In the remaining cases neither command is an assertion command.
-
-Applying a command can only result in a broken filesystem in two cases.
-First, if the input type does not match the filesystem,
-but we know $[\FS(m)]=[w]$ and so
-$[\cxynv\aFS(m)]=[w]$ as based on \cref{incomparable_is_independent}, $n\neq m$.
-Second, if the new filesystem violates the tree property.
-This again cannot be the case because we also know that $n\unrel m$
-and the tree property only depends on the types of values at the parent and children of $m$,
-which therefore cannot be changed by $\cxynv$.
 \end{proof}
 
 \cref{combine_independent_commands} extends to sequences as well:
