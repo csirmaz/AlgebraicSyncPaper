@@ -15,7 +15,8 @@ sub readfile {
   return $contents;
 }
 
-my %References; # 'From' => ['To', ... ]
+my %Types; # 'Label' => 'Type'
+my %References; # 'From' => [['To', ConnectionType], ... ]
 
 sub process_file {
   my $filename = shift;
@@ -38,12 +39,13 @@ sub process_file {
 
     my $label;
     unless($type1 eq 'proof') {
-      if($contents =~ /\\label\{([^\}]+)\}/){ $label = $1; }
+      if($contents =~ /\\mlabel\{([^\}]+)\}/){ $label = $1; }
     }
     
     print "Found '$type1' '$label' '$contents2'\n";
+    $Types{$label} = $type1 if $label;
     
-    die "without label" if $type1 =~ /^my(cor|lem|th|ax)$/ && ! $label;
+    die "without label" if $type1 =~ /^my(cor|lem|th)$/ && ! $label;
     
     $LastLabel = $label if $label;
     $NonCorLabel = $label if $label && $type1 ne 'mycor';
@@ -57,13 +59,13 @@ sub process_file {
     $contents =~ s/\\cref\{([^\}]+)\}/do{
       my $refs = $1;
       my @refs = split(m!,!, $refs);
-      push @{$References{$LastLabel}}, @refs;
+      push @{$References{$LastLabel}}, map{[$_, 'normal']} @refs;
     }/ge;
     
     # A corollary depends on the previous result
     if($type1 eq 'mycor'){
       die "corollary without previous result" unless $NonCorLabel;
-      push @{$References{$LastLabel}}, $NonCorLabel;
+      push @{$References{$LastLabel}}, [$NonCorLabel, 'corollary'];
     }
     
   };
@@ -89,15 +91,15 @@ process_index('paper.tex');
 
 my %Backreferences; # To => From
 keys %References;
-while(my($from, $tos) = each %References) {
+while(my($from, $todata) = each %References) {
   $Backreferences{$from} //= [];
-  foreach my $to (@$tos) {
-    push @{$Backreferences{$to} //= []}, $from;
+  foreach my $td (@$todata) {
+    push @{$Backreferences{$td->[0]} //= []}, [$from, $td->[1]];
   }
 }
 
 foreach my $to (sort keys %Backreferences){
-  my $from = $Backreferences{$to};
-  print "$to From:\n";
-  print join('', map { "  ".$_."\n" } @$from) . "\n";
+  my $fromdata = $Backreferences{$to};
+  print "$to (".$Types{$to}.") From:\n";
+  print join('', map { "  ".$_->[0]." (".$Types{$_->[0]}.")".($_->[1] ne 'normal' ? ' <'.$_->[1].'>'  : '')."\n" } @$fromdata) . "\n";
 }

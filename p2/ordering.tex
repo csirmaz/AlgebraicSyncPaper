@@ -1,6 +1,4 @@
 
-% TODO Commuting commands important as we need to establish order
-
 \subsection{Ordering commands}\mlabel{ordering}
 
 We often encounter the case where we only have a set of commands without a specified order.
@@ -83,7 +81,7 @@ In fact, this \namecref{simple_distant_pairs} is the general case
 of \cref{ax_directchild_breaks,ax_directparent_breaks} when there are no assertion commands.
 
 \begin{proof}
-% BACK_TO_THE_FS TODO
+% BACK_TO_FS
 Formally, we prove our proposition by contradiction,
 and in this version of the proof we reach back to our filesystem model.
 We assume $\wrks{S}$ and therefore there is a $\FS$ for which $S\aFS\neq\fsbroken$,
@@ -184,8 +182,7 @@ and do not break all filesystems ($A\equiv \wrksx{B}$),
 then they must contain the same commands.
 \end{mylem}
 \begin{proof}
-% BACK_TO_THE_FS
-% TODO Rule?
+% BACK_TO_FS
 Let $A$ and $B$ be simple sequences
 such that $A\equiv \wrksx{B}$,
 and $\FS$ be a filesystem that they are defined on.
@@ -214,7 +211,6 @@ $\cffa{n}$ becomes an assertion command.)
 From here the proof concludes in the same way as above.
 \end{proof}
 
-% TODO delete unused results
 
 \begin{mylem}\mlabel{simple_reorder_equiv}
 For a simple sequence $\wrksx{S}$,
