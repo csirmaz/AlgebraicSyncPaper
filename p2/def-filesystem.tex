@@ -76,12 +76,20 @@ wherever $\parent(n)$ is defined, that is, $n$ has a parent.
 
 % SINGLEDIR
 
-To avoid the proliferation of edge cases, we will furthermore suppose that
-$|\setd|=1$, that is, there is only one directory value $\vald\in\setv$, and so
-apart from their location, all directories are equal.
-In appendix TODO we describe why it can be a sensible choice
-for actual synchronizers, and we also present an encoding that makes it possible
-to extend our results to the $|\setd|>1$ case.
+An essential assumption in our model is that there is only
+a \emph{single directory value} ($|\setd|=1$).
+The realisation that
+this creates a symmetry between directories and empty nodes
+that allows formulating a correct and complete reconciliation algorithm
+is one of the main contributions of this paper.
+This assumption does not hinder the applicability of our results
+(in fact, many real-life synchronizers make the same assumption),
+but makes it possible to exploit a hidden symmetry in filesystem commands.
+
+% TODO To avoid the proliferation of edge cases
+% TODO In appendix TODO we describe why it can be a sensible choice
+% TODO for actual synchronizers, and we also present an encoding that makes it possible
+% TODO to extend our results to the $|\setd|>1$ case.
 
 % % We do this because, as Bill Zissimopoulos pointed 
 % % out \cite{BZ},
@@ -95,7 +103,7 @@ to extend our results to the $|\setd|>1$ case.
 % Notation
 
 \myskip
-In the rest of this paper,
+In this paper
 we fix the skeleton $\langle\setn,\parent\rangle$,
 and the set of values $\setv$.
 $\FS$ (with or without indices) denotes a filesystem,
