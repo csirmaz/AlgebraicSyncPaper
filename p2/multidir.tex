@@ -1,24 +1,26 @@
 
-\section{Extending the Synchronizer for Directory Metadata}\mlabel{sec_multidir}
+\section{Extending the Synchronizer}\mlabel{sec_multidir}
 
-As suggested above, one of the central assumptions of our model is that
+The two assumptions we used to increase the symmetry of our model were
+that there is no move command,
+and that
 there is only one directory value, that is, directories are not differentiated
 by the meta-information they contain.
-In this section we describe reasons why this may not limit the applicability
-of even the current model, and we describe pre- and post-processing steps
-to overcome this limitation.
+In this section we describe reasons why the latter assumption may not limit the applicability
+of even the current model, and we also describe pre- and post-processing steps
+to overcome the two restrictions.
 
 We note that commercial designs for synchronizers 
 often avoid considering metadata in directories as
 as these are generally not understood well by users,
 and, if needed, conflict resolution on these settings can be easily automated.
-See, for example, the seminal work of Balasubramaniam and Pierce and the Unison synchronizer \cite{BP} or \cite{BZ}.
+See, for example, the seminal work of Balasubramaniam and Pierce and the Unison synchronizer \cite{BP} and \cite{BZ}.
 
 Despite the above, there can be applications where directory metadata
 is considered important.
 Synchronizers based on our model can be readily extended to handle them
 by duplicating $\setn$. 
-Given the input filesystems, we add a special node as an extra child under each original node,
+Given the input filesystems over $\setn$, we add a special node as an extra child under each original node,
 and we encode directory metadata in a file under each directory.
 It is easy to see that update detection and conflict resolution can continue as expected,
 with the only exception of a potential conflict detected on one of these special nodes.
@@ -28,3 +30,22 @@ as creating a directory entails specifying its metadata as well.
 In these cases, the synchronizer can either fall back to default values and flag the issue
 for review later, or if, as suggested above, conflicts on the metadata (e.g. readable, writeable and executable flags)
 can be easily automated, then it could form part of the implementation.
+
+Reintroducing the \emph{move} command can happen in a similar fashion.
+Its main advantages include that 
+\emph{move} commands are easier to review,
+and if the synchronizer sugegsts or performs a move instead
+of deleting a file and recreating it somewhere else, the user
+can be assured that no information is lost.
+During pre-processing, if an update detector is used,
+\emph{move} commands still do not need to be part of the command sequences
+the synchronizer operates on.
+If the command sequences are derived from filesystem journals, they
+can be broken into two updates to allow the existing reconciliation
+algorithm to operate.
+
+In a post-processing stage, deleted or overwritten file contents
+can be paired up with created ones to reintroduce \emph{move}
+commands in the output sequences and take advantage of their benefits.
+The renaming of whole filesystem subtrees can also be detected
+to further aid the user.
