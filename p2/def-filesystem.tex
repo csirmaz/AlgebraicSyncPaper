@@ -47,7 +47,7 @@ $\descendant$ is indeed a strict partial ordering.
 
 The combination of the set of nodes and the parent function,
 $\langle \setn, \parent \rangle$, forms a \emph{skeleton}
-which the filesytems populate with values from $\setv$.
+which the filesystems populate with values from $\setv$.
 As we require filesystem functions to be total,
 we use a special value, $\empt\in\setv$, to indicate that the filesystem
 is empty at a particular node, that is, there are no files or directories there.
@@ -78,7 +78,7 @@ wherever $\parent(n)$ is defined, that is, $n$ has a parent.
 
 An essential assumption in our model is that there is only
 a \emph{single directory value} ($|\setd|=1$).
-The realisation that
+The realization that
 this creates a symmetry between directories and empty nodes
 and makes it possible to exploit a hidden symmetry in filesystem commands
 that allows formulating a correct and complete reconciliation algorithm

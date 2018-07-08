@@ -28,13 +28,13 @@ In these cases the synchronizer may prescribe creating a directory without creat
 the special metadata file, which is clearly not possible to do on the target filesystem,
 as creating a directory entails specifying its metadata as well.
 In these cases, the synchronizer can either fall back to default values and flag the issue
-for review later, or if, as suggested above, conflicts on the metadata (e.g. readable, writeable and executable flags)
+for review later, or if, as suggested above, conflicts on the metadata (e.g. readable, writable and executable flags)
 can be easily automated, then it could form part of the implementation.
 
 Reintroducing the \emph{move} command can happen in a similar fashion.
 Its main advantages include that 
 \emph{move} commands are easier to review,
-and if the synchronizer sugegsts or performs a move instead
+and if the synchronizer suggests or performs a move instead
 of deleting a file and recreating it somewhere else, the user
 can be assured that no information is lost.
 During pre-processing, if an update detector is used,

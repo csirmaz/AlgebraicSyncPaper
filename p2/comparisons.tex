@@ -71,7 +71,7 @@ Then, $\pn$ is dirty in both replicas:
 in $\FS_A$ it was modified, and in $\FS_B$ one of its descendants was modified.
 Moreover, $\FS_A(\pn)\neq\FS_B(\pn)$ and $[\FS_A(\pn)]\neq[\vald]$ as it is empty.
 Therefore, a conflict is detected at $\pn$.
-(This behaviour is preserved in the more recent Harmony synchronizer.
+(This behavior is preserved in the more recent Harmony synchronizer.
 See ``delete/delete conflicts'' in \cite{PSG,FGKPS}.)
 Our reconciliation algorithm detects no conflicts;
 instead, it propagates $\cdba{\pn}$ to $\FS_B$, which we think is as expected

@@ -46,10 +46,10 @@ on any filesystem $A$ does not break:
 $\forall \FS\in\Dom{A}:\,A\aFS=B\aFS$.
 % old inference rule: $ A\eqext B \Rightarrow S\cc A\cc T\eqext S\cc B\cc T$,
 We can also see that $A\eqext B$ and $S\eqext T$ implies $A\cc S\eqext B\cc T$.
-% symmetric:     aRb <=> bRa
-% antisymmetric: aRb & bRa => a=b
-% reflexive:     aRa
-% transitive:    aRb & bRC => aRc
+% symmetric:     a R b <=> b R a
+% antisymmetric: a R b & b R a => a = b
+% reflexive:     a R a
+% transitive:    a R b & b R C => a R c
 % preorder:      reflexive, transitive
 % partial order: reflexive, transitive, antisymmetric
 % equivalence:   reflexive, transitive, symmetric
@@ -98,7 +98,7 @@ how a set of commands can be re-ordered to be applied to a filesystem
 during synchronization, and what command pairs will never be compatible.
 
 \myskip
-Command pairs in genral have the form
+Command pairs in general have the form
 \[ \cxynv\cc  \czwmv \]
 where $x,y,z,w\in\setv$ and $n,m\in\setn$. 
 Extending \cref{def:command_categories}, we call certain pairs
@@ -123,7 +123,7 @@ The pair is a \emph{destruction pair} if the types match one of the following:
    \end{align*}
 \end{mydef}
 
-We can see that construction pairs consist of construction comands,
+We can see that construction pairs consist of construction commands,
 while destruction pairs consist of destruction commands.
 
 
