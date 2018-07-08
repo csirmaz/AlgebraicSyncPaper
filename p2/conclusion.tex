@@ -29,17 +29,14 @@ conflicting updates and resolve partial reconciliations.
 
 An extension of our results could also entail relaxing
 the simplifying assumptions we used.
-% TODO TODO TODO
-Identifying which results depend on the assumption that $|\setd|=1$
-and devising updated proofs and algorithms for when $|\setd|>1$,
-or specifying a pre-processing step that reconciles meta-information in directories
-can enable the synchronizer
+The model and algorithms could be extended to the $|\setd|>1$ case, % TODO write this
+to enable the synchronizer
 to identify and resolve a wider range of conflicts.
-
-Similarly, designing pre- and post-processors that
-present removing and creating a node
-not as separate updates but as a single rename (move),
-could contribute to the user-friendliness of the reconciler
+Also, pre- and post-processors could be designed that
+reconcile meta-information in directories or encode them as files, % TODO write this
+or present removing and creating the same content at a different node
+not as separate updates but as a single rename (move).
+These could contribute to the user-friendliness of the reconciler
 and help avoid human error.
 
 And finally, we hope that this work, together with \cite{NREC}, provides

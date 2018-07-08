@@ -89,14 +89,18 @@ In our view these construct a special algebraic model
 that is worthy of interest and of further research on its own.
 
 The paper is organised as follows.
+%
 We start by defining a model of filesystems and a set of commands
 that we will use to describe updates and modifications in \cref{sec_def}.
+%
 This is followed by investigating the properties and behaviors
 of command pairs in \cref{section_axioms}.
+%
 \Cref{sec_update} describes update detection and ordering filesystem commands.
 The main result of this section if that under some simple conditions,
 a set of filesystem commands executed in any feasible order leads
 to the same changes in the filesystem.
+%
 The reconciliation and conflict detection algorithm is defined in
 \cref{sec_rec}, which merges two sets of commands.
 We then proceed to prove that the output of reconciliation
@@ -107,9 +111,13 @@ inasmuch as no further updates can be applied under any circumstances.
 In order to be able to do this, we introduce
 domains of sets of command sequences,
 and show that it has a number of highly convenient properties.
-\Cref{sec_relatedwork,sec_algebra,sec_conclusion}
-discuss related work, comparing our results to other research,
-outlining directions for further work
-on the introduced algebraic system, and provide the conclusion.
-\Cref{axiom_proof} contains technical proofs for propositions on the behavior of command pairs.
+%
+\Cref{sec_multidir,sec_algebra,sec_conclusion}
+describe extending our model to widen its applicability;
+outline directions for further work on the introduced algebraic system,\
+and provide the conclusion.
+%
+We discuss related work, comparing our results to other research in \cref{sec_relatedwork},
+while
+\cref{axiom_proof} contains technical proofs for propositions on the behavior of command pairs.
 

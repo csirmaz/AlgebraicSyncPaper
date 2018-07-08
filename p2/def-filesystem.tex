@@ -80,25 +80,16 @@ An essential assumption in our model is that there is only
 a \emph{single directory value} ($|\setd|=1$).
 The realisation that
 this creates a symmetry between directories and empty nodes
+and makes it possible to exploit a hidden symmetry in filesystem commands
 that allows formulating a correct and complete reconciliation algorithm
 is one of the main contributions of this paper.
-This assumption does not hinder the applicability of our results
-(in fact, many real-life synchronizers make the same assumption),
-but makes it possible to exploit a hidden symmetry in filesystem commands.
 
-% TODO To avoid the proliferation of edge cases
-% TODO In appendix TODO we describe why it can be a sensible choice
-% TODO for actual synchronizers, and we also present an encoding that makes it possible
-% TODO to extend our results to the $|\setd|>1$ case.
-
-% % We do this because, as Bill Zissimopoulos pointed 
-% % out \cite{BZ},
-% % we often do not want to consider metadata stored in
-% % directories (e.g. permission settings) during synchronization,
-% % as these are not generally understood well by users,
-% % and, if needed, conflict resolution on these settings can be easily automated.
-% % We will also see that this assumption makes it possible
-% % to define a maximal reconciliation algorithm.
+This assumption does not hinder the applicability of our results.
+In fact, commercial designs for synchronizers 
+often avoid considering metadata in directories as % TODO expand
+as these are generally not understood well by users,
+and, if needed, conflict resolution on these settings can be easily automated
+\cite{BZ}.
 
 % Notation
 
