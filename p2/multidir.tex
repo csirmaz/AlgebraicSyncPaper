@@ -8,4 +8,23 @@ In this section we describe reasons why this may not limit the applicability
 of even the current model, and we describe pre- and post-processing steps
 to overcome this limitation.
 
-% TODO
+We note that commercial designs for synchronizers 
+often avoid considering metadata in directories as
+as these are generally not understood well by users,
+and, if needed, conflict resolution on these settings can be easily automated.
+See, for example, the seminal work of Balasubramaniam and Pierce and the Unison synchronizer \cite{BP} or \cite{BZ}.
+
+Despite the above, there can be applications where directory metadata
+is considered important.
+Synchronizers based on our model can be readily extended to handle them
+by duplicating $\setn$. 
+Given the input filesystems, we add a special node as an extra child under each original node,
+and we encode directory metadata in a file under each directory.
+It is easy to see that update detection and conflict resolution can continue as expected,
+with the only exception of a potential conflict detected on one of these special nodes.
+In these cases the synchronizer may prescribe creating a directory without creating
+the special metadata file, which is clearly not possible to do on the target filesystem,
+as creating a directory entails specifying its metadata as well.
+In these cases, the synchronizer can either fall back to default values and flag the issue
+for review later, or if, as suggested above, conflicts on the metadata (e.g. readable, writeable and executable flags)
+can be easily automated, then it could form part of the implementation.
