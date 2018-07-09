@@ -1,34 +1,39 @@
 
 In this section we derive the \namecrefs{ax_separate_commute} listed in
 \cref{rules_lemma} from our filesystem model.
-For the purposes of the proofs we extend the notion of filesystems % TODO review if needed
-to the full set of functions mapping $\setn$ to $\setv$, even if they
-do not have the tree property.
-This is so that we can describe the values they would acquire under certain nodes,
-and pinpoint where they may be violating the tree property.
-If they do, we continue to say that the filesystem is broken,
-and say that the filesystem is \emph{broken at $n$} if 
+In the proofs, we may say that a filesystem
+is \emph{broken at $n$}
+if after applying a command, it violates the tree property
+because
 $n$ is not a dictionary, but has at least one non-empty child.
-We continue to require that filesystems are not empty at finitely many nodes.
 
-Accordingly, where needed, we also implicitly extend filesystem commands
-so that they would return a filesystem even if it violates the tree property.
-We continue to say that they break the filesystem in these cases,
-and commands continue to be undefined where their input types are incompatible
-with the input filesystem.
-We note that once a filesystem is broken, it stays broken, even if
-after a subsequent command it would no longer violate the tree property.
+% For the purposes of the proofs we extend the notion of filesystems
+% to the full set of functions mapping $\setn$ to $\setv$, even if they
+% do not have the tree property.
+% This is so that we can describe the values they would acquire under certain nodes,
+% and pinpoint where they may be violating the tree property.
+% If they do, we continue to say that the filesystem is broken,
+% and say that the filesystem  if 
+% We continue to require that filesystems are not empty at finitely many nodes.
+% 
+% Accordingly, where needed, we also implicitly extend filesystem commands
+% so that they would return a filesystem even if it violates the tree property.
+% We continue to say that they break the filesystem in these cases,
+% and commands continue to be undefined where their input types are incompatible
+% with the input filesystem.
+% We note that once a filesystem is broken, it stays broken, even if
+% after a subsequent command it would no longer violate the tree property.
 
 It follows from the definition of the tree property that
 whether a filesystem is \emph{broken at a node $n$} is determined only
 by the values at $n$ and the children of $n$.
-In other words,
-
-\begin{myclm}[Locality of tree property violations]\mlabel{broken_local}
-If two filesystems over $\setn$ have the same values at a node $n$,
-and at all children of $n$ (if they exist),
-then either both filesystems are broken at $n$, or none of them are.
-\end{myclm}
+% In other words,
+% 
+% \begin{myclm}[Locality of tree property violations]\mlabel{broken_local}
+% If two filesystems over $\setn$ have the same values at a node $n$,
+% and at all children of $n$ (if they exist),
+% then either both filesystems are broken at $n$, or none of them are.
+% \end{myclm}
 
 Below we restate the \namecrefs{ax_separate_commute} defined in
 \cref{rules_lemma}.
@@ -51,7 +56,7 @@ $(\cxynv\cc\czwmv)\aFS$ is not broken, but $(\czwmv\cc\cxynv)\aFS$ is.
 This means that either $\czwmv\aFS$ is already broken, or it is not, and applying $\cxynv$
 breaks the filesystem.
 
-In the former case, based on \cref{broken_local}, 
+In the former case 
 $\czwmv\aFS$ must be broken at $m$ or $\parentf{m}$, since it only changed at $m$.
 Let us look at the first case.
 Since $n\indep m$, we know that the parent and children of $m$ have the same value
@@ -179,9 +184,10 @@ using destruction pairs instead of construction pairs.
 \end{myaxproof}
 
 \begin{proof}
-Suppose $\cxynnv$ and $\czwnv$ satisfy the conditions,
+We use an inverse proof and
+suppose $\cxynnv$ and $\czwnv$ satisfy the conditions,
 and there is an $\FS$ for which $(\cxynnv\cc\czwnv)\aFS\neq\fsbroken$.
-If $\czwnv\neq\cbba{n}$, then either $\FS(n)\neq\empty$ or $\czwnv\aFS(n)\neq\empty$,
+If $\czwnv\neq\cbba{n}$, then either $\FS(n)\neq\empt$ or $\czwnv\aFS(n)\neq\empt$,
 and therefore $\FS(\parentf{n})$ must be a directory for the filesystem to satisfy
 the tree property at all times.
 However, from $\cxynnv\neq\cdda{\nn}$ we also know that either $\FS(\nn)$ 
@@ -221,6 +227,6 @@ This proof follows the same logic as that of \cref{ax_child_assert}.
 \end{myaxproof}
 
 \begin{proof}
-As for an assertion command $\cxynv$, $x=y$, we see that it either
+The two assertion commands $\cdda{n}$ and $\cbba{n}$ either
 breaks a filesystem, or leaves it in the same state.
 \end{proof}
