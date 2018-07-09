@@ -136,14 +136,12 @@ belong to exactly one of the following four categories:
 % --------------
 
 \myskip
-For reasons also listed in \cite{NREC}, in this paper we will not consider
+For reasons also listed in \cite{NREC}, in this model we will not consider
 a \textit{move} or \textit{rename} command.
 This turns out to be useful because this would be the only command that affects
 filesystems at two nodes at once, therefore describing 
 the dependencies for \textit{move} would call for a more complicated model.
-From a pragmatic perspective, this restriction does not mean that in an application
+As \cref{sec_multidir} details, this restriction does not mean that in an application
 implementing conflict resolution using the algorithm described here would not be
 able to handle renames by pre- and post-processing changes in the filesystem to
-discover them, which can enhance usability, but which
-(especially when a rename is combined with changes to the content)
-is a non-trivial problem in itself.
+discover them, which can enhance usability.

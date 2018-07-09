@@ -85,8 +85,9 @@ follows that $A$ and $B$, as partial functions, are identical.
 % -----
 
 \myskip
-Our aim is to derive information about the effects of sequences
-of commands independently of the actual filesystems.
+One aim of our algebraic model is to
+derive as much information about the effects of sequences
+of commands independently of the actual filesystems as possible.
 In order to make this possible, we investigate the smallest building
 blocks of sequences: pairs of commands that act on a filesystem directly one after the other.
 This approach is useful as there are a limited number of command pairs,
@@ -97,7 +98,6 @@ These properties of command pairs are crucial as they determine
 how a set of commands can be re-ordered to be applied to a filesystem
 during synchronization, and what command pairs will never be compatible.
 
-\myskip
 Command pairs in general have the form
 \[ \cxynv\cc  \czwmv \]
 where $x,y,z,w\in\setv$ and $n,m\in\setn$. 
