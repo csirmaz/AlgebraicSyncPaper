@@ -1,7 +1,7 @@
 
 In a command-based reconciliation solution we assume that we have two sequences of commands
 $A$ and $B$ that have modified a single filesystem $\FS$ 
-yielding two different replicas $\FS_1$ and $\FS_2$ that we
+yielding two different replicas $\FS_1$ and $\FS_2$ which we
 need to reconcile. While it is conceivable that the sequences are based on a record of
 all operations that modified the two filesystems, in most filesystem implementations
 such records are not implemented, and therefore we must construct suitable sequences
@@ -9,15 +9,13 @@ by comparing $\FS_1$ (and $\FS_2$) to their common ancestor, $\FS$.
 This is called \emph{update detection.}
 
 The set of commands $U$ necessary to transform $\FS$ into $\FS_1$ can be collected
-by inspecting the union of non-empty nodes in the two filesystems.
+by inspecting the (necessarily finite) union of non-empty nodes in the two filesystems.
 If at node $n$, $\FS(n)=x$ and $\FS_1(n)=y\neq x$, then we add the command $\cxyaa{n}$ to $U$.
 We can always do so as there is a command available for all combinations of input and output types and values.
 We see that any suitable $U$ necessarily contains commands on all nodes at which the values have changed.
 
 
 To be able to reason about sets and sequences of commands, let us introduce the following properties:
-
-% TODO Define, spell out update decetion algorithm
 
 \begin{mydef}[Minimal and simple command sets and command sequences]
 A sequence or set of commands is \emph{minimal} if it contains at most one command on each node.

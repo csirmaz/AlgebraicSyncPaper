@@ -11,16 +11,15 @@ in which updates from different replicas can be applied to a filesystem.
 As we recognize that multiple orders may be possible,
 let us describe our ordering algorithm by
 defining a subset of the permutations, $\ordersetsign$.
-The simplicity of the definition means that enumerating
-all sequences in $\ordersetsign$ can be implemented by a straightforward
-algorithm.
-
 As we will see, $\ordersetsign$ contains all possible
 sequences of commands that do not break all filesystems.
 In \cref{simple_reorder_equiv}, we offer a formal proof of this.
 The facts that all valid reorderings of simple sequences are equivalent,
-and all equivalent sequences are reorderings are important 
+and all equivalent sequences are reorderings, are important 
 properties of simple sequences.
+
+% Define this with the help or a relation / partial order? But then all sequences
+% could be ordered while this definition rules out illegal ones.
 
 \begin{mydef}[$\ordersetsign$]\mlabel{def_orderset}
 For a simple set or sequence of commands $S$,
@@ -29,12 +28,16 @@ permutations of the commands in $S$
 for which the following holds:
 for any subsequence $\cxynv\cc\czwmv$,
 \begin{itemize}
-\item if $n=\parentf{m}$, then $[y]=[\vald]$
+\item if $n=\parentf{m}$, then $y=\vald$,
 \item if $\parentf{n}=m$, then $y=\empt$.
 \end{itemize}
 \end{mydef}
 
 As usual, by subsequence we mean a subset of the commands in $S$ in the same order as they are found in $S$.
+The simplicity of the definition means that sorting the commands
+and enumerating
+all sequences in $\ordersetsign$ can be implemented by a straightforward
+algorithm.
 
 The principal ideas behind these conditions are 
 \cref{ax_separate_commute}, from which we know that commands on incomparable
@@ -143,8 +146,7 @@ then the set must also contain a command
 on each node between $n$ and $\nn$.
 \end{mylem}
 \begin{proof}
-TODO: If something changes, everything changes up to the leaves.
-
+% If something changes, everything changes up to the leaves.
 Without loss of generality, we can assume that $\nn\neq\parent(n)$.
 We prove that under the given conditions, the set must contain a command on $\parent(n)$.
 Then, by reapplying this result, we know that the set must contain commands on every
@@ -309,3 +311,66 @@ $\ordp{S}$ is the unique partial endofunction on filesystems
 defined by any order in $\orderset{S}$.
 We leave $\ordp{S}$ undefined if such an order does not exist.
 \end{mydef}
+
+
+Building on the results above, we finish by proving an important result,
+namely, that command sequences can be made simple using syntactical operations.
+
+\begin{mylem}\mlabel{can_simplify}
+Each sequence of commands $\wkrsx{S}$
+can be transformed into a simple sequence
+$T\equiv S$ by applying repeatedly the following transformations:
+{\rm(i)} swap neighboring commands on incomparable nodes;
+{\rm(ii)} simplify neighboring commands on the same node;
+{\rm(iii)} delete assertion commands.
+\end{mylem}
+\begin{proof}
+We can remove all assertion commands, as based on
+\cref{ax_assert} the resulting sequence extends the original one.
+We therefore assume that $S$ contains no assertion commands.
+
+\newcommand{\ucx}{\alpha}
+\newcommand{\ucy}{\beta}
+\newcommand{\ucz}{\gamma}
+
+We aim to find a simple sequence that is equivalent to $S$.
+If $S$ is already simple, there is nothing to do.
+If it is not simple, let $\ucx$ be the first command
+on a node $n$ that is already present in $S$,
+and let $\ucy$ be the previous command on $n$.
+Splitting $S$ around these commands we get
+\[ S = S_0 \cc \ucy \cc S_1 \cc \ucx \cc S_2. \]
+
+We now show that $S_1\indep\ucx$,
+which is equivalent to $S_1\indep\ucy$ as both commands are on $n$.
+We use an inverse proof and assume that there is a command on $m$ in $S_1$
+where $m\descendant n$ or $m\ancestor n$.
+We know both $\ucy\cc S_1$ and $S_1\cc\ucx$ are simple,
+and both are defined on a filesystem
+(on $S_0\aFS$ and $(S_0\cc\beta)\FS$, respectively).
+Therefore from \cref{connected_changes} we know that
+$S_1$ must also contain a command on $m'$ where
+$m'=\parentf{n}$ or $n=\parentf{m'}$.
+Let this command be $\ucz$.
+
+If $n=\parentf{m'}$,
+from \cref{simple_distant_pairs} 
+and the relationship of nodes in construction and destruction pairs
+we know that the subsequence
+$\ucy\cc\ucz$ must be a construction pair,
+and both $\ucy$ and $\ucz$ must be construction commands.
+But we also know that $\ucz\cc\ucx$ must be a destruction pair,
+and both $\ucz$ and $\ucx$ must be destruction commands.
+This is a contradiction as a command cannot be both.
+We arrive at the same contradiction if $m'=\parentf{n}$.
+
+We therefore know that $S_1\indep\ucx$ and so
+from \cref{ax_separate_commute}
+\[ S \equiv S_0\cc\ucy\cc\ucx\cc S_1 \cc S_2. \]
+We can apply \cref{ax_same_emptyseq,ax_same_singlec} to
+$\ucy\cc\ucx$ and get a $S'\eqext S$ that contains one or two less commands on $n$.
+Repeating the swap and the simplification we
+can convert $S$ into an equivalent simple sequence $S^*$.
+\end{proof}
+
+

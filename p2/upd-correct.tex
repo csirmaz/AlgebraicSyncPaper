@@ -1,21 +1,34 @@
 
 \subsection{The Correctness of Update Detection}
 
-Based on \cref{connected_changes} we can also show that
-the update detector does function as intended as:
+With $\ordersetsign$ we can now define our update detection algorithm.
+Its inputs are the original filesystem $\FS$ which has been modified to yield $\FS_1$.
+\begin{mydef}[Update detection]\mlabel{def_upddetect}
+\begin{enumerate}
+    \item For each node $n$ where the value in $\FS$ and $\FS_1$ differ, add the command $\cxynv$ to
+        a set of commands $U$.
+    \item % TODO
+\end{enumerate}
+\end{mydef}
+% TODO from journal? Simplify sequence?
 
-% TODO
+
 TODO ENSURE UPDATE DETECTOR IS DEFINED.
 
-TODO There is a sequence between any two states: destroy one completely and construct the other one. (finite FS)
+% There is a sequence between any two states: destroy one completely and construct the other one. (finite FS)
 
-TODO What is not trivial here is that $U$ works at all.
+
 
 \begin{myth}\mlabel{update_works}
 For a sequence of commands $U$ returned by the update detector
 when comparing the non-broken $\FS^*$ to the original $\FS$,
 $U\aFS = \FS^*$.
 \end{myth}
+
+TODO What is not trivial here is that $U$ works at all.
+
+TODO And that it can be ordered?
+
 \begin{proof}
 Let $\FS$ be the original filesystem, and $\FS^*$
 be the filesystem after the changes we intend to detect.
@@ -25,54 +38,12 @@ Our set of commands is sufficient to record any change, as
 there are commands for every input and output type pair, therefore
 we know that the changes can be recorded as a sequence of commands $S$
 where $S\aFS=\FS^*$.
-Note that $S$ will not contain assertion commands, as they do not
-represent an actual change in the filesystem.
+($S$ will not contain assertion commands, as they do not
+represent an actual change in the filesystem.)
+Based on \cref{can_simplify}, there is a simple sequence $S^*$
+that is equivalent to $S$.
 
-\newcommand{\ucx}{\alpha}
-\newcommand{\ucy}{\beta}
-\newcommand{\ucz}{\gamma}
-
-We aim to find a simple sequence that is equivalent to $S$.
-If $S$ is already simple, there is nothing to do.
-If it is not simple, let $\ucx$ be the first command
-on a node $n$ that is already present in $S$,
-and let $\ucy$ be the previous command on $n$.
-Splitting $S$ around these commands we get
-\[ S = S_0 \cc \ucy \cc S_1 \cc \ucx \cc S_2. \]
-
-We now show that $S_1\indep\ucx$,
-which is equivalent to $S_1\indep\ucy$ as both commands are on $n$.
-We use an inverse proof and assume that there is a command on $m$ in $S_1$
-where $m\descendant n$ or $m\ancestor n$.
-We know both $\ucy\cc S_1$ and $S_1\cc\ucx$ are simple,
-and both are defined on a filesystem
-(on $S_0\aFS$ and $(S_0\cc\beta)\FS$, respectively).
-Therefore from \cref{connected_changes} we know that
-$S_1$ must also contain a command on $m'$ where
-$m'=\parentf{n}$ or $n=\parentf{m'}$.
-Let this command be $\ucz$.
-
-If $n=\parentf{m'}$,
-from \cref{simple_distant_pairs} 
-and the relationship of nodes in construction and destruction pairs
-we know that the subsequence
-$\ucy\cc\ucz$ must be a construction pair,
-and both $\ucy$ and $\ucz$ must be construction commands.
-But we also know that $\ucz\cc\ucx$ must be a destruction pair,
-and both $\ucz$ and $\ucx$ must be destruction commands.
-This is a contradiction as a command cannot be both.
-We arrive at the same contradiction if $m'=\parentf{n}$.
-
-We therefore know that $S_1\indep\ucx$ and so
-from \cref{ax_separate_commute}
-\[ S \equiv S_0\cc\ucy\cc\ucx\cc S_1 \cc S_2. \]
-We can apply \cref{ax_same_emptyseq,ax_same_singlec} to
-$\ucy\cc\ucx$ and get a $S'\eqext S$ that contains one or two less commands on $n$.
-Repeating the swap and the simplification we
-can convert $S$ into an equivalent simple sequence.
-Let this sequence be $S^*$.
-
-As $S^*\equiv S$, we know $S^*\aFS=\FS^*$, and that
+Therefore we know $S^*\aFS=\FS^*$, and that
 $\FS^*$ and $\FS$ differ at exactly those nodes that $S^*$ has commands on.
 If $U$ is the simple sequence returned by the update detector
 when comparing $\FS^*$ to $\FS$, it must also contain commands on the same set of nodes,
@@ -80,8 +51,7 @@ and it must contain the same commands,
 as for the command $\cxynv$, $[x]$ must be $[\FS(n)]$, and $y$ must be $\FS^*(n)$.
 From this we know that $U$ is a permutation of $S^*$ and so $\orderset{U}=\orderset{S^*}$.
 
-As the update detector uses $\ordersetsign$ to order the commands in $U$,
-trivially $U\in\orderset{U}$,
+As the update detector uses $\ordersetsign$ to order the commands in $U$, trivially $U\in\orderset{U}$, % TODO
 and as $S^*$ is defined on $\FS$,
 from \cref{order_is_only_possible} we know $S^* \in \orderset{S^*}$.
 This means $U\in\orderset{S^*}$,

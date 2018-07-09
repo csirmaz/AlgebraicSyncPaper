@@ -27,22 +27,16 @@ in their modification histories (as described in \cite{CJ})
 as separate commands could also enable an algebraic synchronizer to reconcile otherwise
 conflicting updates and resolve partial reconciliations.
 
-An extension of our results could also entail relaxing
-the simplifying assumptions we used.
-The model and algorithms could be extended to the $|\setd|>1$ case, % TODO write this
-to enable the synchronizer
-to identify and resolve a wider range of conflicts.
-Also, pre- and post-processors could be designed that
-reconcile meta-information in directories or encode them as files, % TODO write this
-or present removing and creating the same content at a different node
-not as separate updates but as a single rename (move).
-These could contribute to the user-friendliness of the reconciler
-and help avoid human error.
+Future work could also investigate extending the 
+model and algorithms to the $|\setd|>1$ case
+so that directory metadata could be represented directly
+as opposed to through pre- and post-processing as described
+in \cref{sec_multidir}.
 
 And finally, we hope that this work, together with \cite{NREC}, provides
 a blueprint of constructing an algebra of commands for different storage protocols
 (e.g. XML trees, mailbox folders, generic relational databases, etc.),
-and of demonstrating the adequacy and completeness of update and conflict detection and reconciliation
+and of demonstrating the adequacy and completeness of the update and conflict detection and reconciliation
 algorithms defined over it.
 This, in turn, can offer formal verification of the algorithms underlying
 specific implementations in a variety of synchronizers.
