@@ -18,28 +18,40 @@ The facts that all valid reorderings of simple sequences are equivalent,
 and all equivalent sequences are reorderings, are important 
 properties of simple sequences.
 
-% Define this with the help or a relation / partial order? But then all sequences
-% could be ordered while this definition rules out illegal ones.
-
-\begin{mydef}[$\ordersetsign$]\mlabel{def_orderset}
-For a simple set or sequence of commands $S$,
-we use $\orderset{S}$ to denote the set of 
-permutations of the commands in $S$
-for which the following holds:
-for any subsequence $\cxynv\cc\czwmv$,
+We define $\ordersetsign$ with the help of a partial order.
+\begin{mydef}[$\orderrel$]\mlabel{def_orderrel}
+The binary relation $\orderrel$ holds for some command pairs
+on directly related nodes if they are
+of the following form:
 \begin{itemize}
-\item if $n=\parentf{m}$, then $y=\vald$,
-\item if $\parentf{n}=m$, then $y=\empt$.
+\item $\caaa{x}{\vald}{\parentf{n}}\orderrel\caaa{z}{w}{n}$, and
+\item $\caaa{x}{\empt}{n}\orderrel\caaa{z}{w}{\parentf{n}}$.
 \end{itemize}
 \end{mydef}
+This relation is clearly irreflexive and asymmetric,
+and thus defines a partial order.
 
-As usual, by subsequence we mean a subset of the commands in $S$ in the same order as they are found in $S$.
-The simplicity of the definition means that sorting the commands
+\begin{mydef}[$\ordersetsign$]\mlabel{def_orderset}
+For a simple sequence of commands $\wrksx{S}$,
+$\orderset{S}$ is the set of permutations satisfying the partial order defined by $\orderrel$.
+% For a simple set or sequence of commands $S$,
+% we use $\orderset{S}$ to denote the set of 
+% permutations of the commands in $S$
+% for which the following holds:
+% for any subsequence $\cxynv\cc\czwmv$,
+% \begin{itemize}
+% \item if $n=\parentf{m}$, then $y=\vald$,
+% \item if $\parentf{n}=m$, then $y=\empt$.
+% \end{itemize}
+\end{mydef}
+
+% As usual, by subsequence we mean a subset of the commands in $S$ in the same order as they are found in $S$.
+The simplicity of the definitions mean that sorting the commands
 and enumerating
 all sequences in $\ordersetsign$ can be implemented by a straightforward
 algorithm.
 
-The principal ideas behind these conditions are 
+The principal ideas behind the ordering are 
 \cref{ax_separate_commute}, from which we know that commands on incomparable
 nodes can be applied in any order, so we only need to focus on the order of commands
 with comparable nodes;
@@ -53,18 +65,13 @@ which in turn determines whether the command on the parent or the child must pre
 
 To prove \cref{simple_reorder_equiv}, we need the following simple results.
 
-\begin{myclm}\mlabel{subseq_in_orderset}
+\begin{mycor}\mlabel{subseq_in_orderset}
 For simple sequences $S$ and $T$,
 if $T\in\orderset{S}$, then for any subsequence of $S$, $S_0$,
 and for the corresponding subsequence of $T$, $T_0$, which
 contains the same commands but in the order they are found in $T$,
 $T_0\in\orderset{S_0}$ must hold.
-\end{myclm}
-\begin{proof}
-This is because
-if there are no command pairs in $T$ not conforming to \cref{def_orderset},
-then there cannot be any in $T_0$.
-\end{proof}
+\end{mycor}
 
 
 
@@ -121,13 +128,13 @@ means that $\cxynv\cc\czwmv$ is a destruction pair, which is a contradiction.
 
 
 \begin{mycor}\mlabel{order_is_only_possible}
-For any simple sequence $S$ and its permutation $S'$, 
+For any simple sequence $\wrksx{S}$ and its permutation $S'$, 
 \[ S'\not\in\orderset{S} \Longrightarrow S'\equiv\cbrk. \]
 \end{mycor}
 \begin{proof}
 This follows directly from \cref{simple_distant_pairs}.
 We use an inverse proof and assume $\wrksx{S'}$.
-If $S'\not\in\orderset{S}$ then by \cref{def_orderset}
+If $S'\not\in\orderset{S}$ then by \cref{def_orderrel,def_orderset}
 it contains two commands on a node $n$ and its parent
 that, as a subsequence,
 do not form a construction or destruction pair.
@@ -277,24 +284,35 @@ decreasing, but cannot change direction.
 And as $S$ begins with $\cxynv$ and so $I^S_0=1$, we know they are monotone increasing,
 and the commands on $n_\indx$ are construction commands.
 If we denote the command on $n_\indx$ with $\caaa{x_\indx}{y_\indx}{n_\indx}$,
-by definition this means that $[y_\indx]\neq[\empt]$ for all $\indx$.
+by definition this means that
+% $[y_\indx]\neq[\empt]$ for all $\indx$.
+$y_\indx=\vald$ for all $\indx<k$.
 
 Let us turn to the location of these commands in $T$,
 and denote their indices in $T$ with $I^T_\indx$.
 We know $I^T_k=I^T_0-1$ as $\czwmv$ precedes $\cxynv$.
-This means there must exist a $\indx$ for which $I^T_{\indx+1}<I^T_\indx$.
+This means there must exist a $1\leq \indx<k$ for which $I^T_{\indx+1}<I^T_\indx$.
 We therefore know that
 $\caaa{x_{\indx+1}}{y_{\indx+1}}{n_{\indx+1}} \cc \caaa{x_\indx}{y_\indx}{n_\indx}$
-is a subsequence of $T$, and by assumption $\parentf{n_{\indx+1}}=n_\indx$.
-By definition of $\ordersetsign$, therefore $y_{\indx+1}=\empt$ must be true,
-which is a contradiction.
+is a subsequence of $T$.
+Because we know $y_\indx=\vald$ and by assumption $\parentf{n_{\indx+1}}=n_\indx$,
+this has the form
+$\caaa{x_{\indx+1}}{y_{\indx+1}}{n_{\indx+1}} \cc \caaa{x_\indx}{\vald}{\parentf{n_{\indx+1}}}$.
+If so, the inverse of $\orderrel$ holds for this subsequence, which is a contradiction.
+% By definition of $\ordersetsign$, therefore $y_{\indx+1}=\empt$ must be true,
+% which is a contradiction.
+
 
 It can be shown in the same way
 that the case when the $n_\indx$ nodes ascend the tree,
 that is, $n_{\indx+1}=\parentf{n_\indx}$ is true, also leads to a contradiction.
 In this case we find that all commands are destruction commands,
-and so $[y_\indx]\neq[\vald]$, while in a subsequence of $T$ for a given $\indx$,
-$[y_\indx]=[\vald]$ must be true by definition of $\ordersetsign$.
+and so 
+% $[y_\indx]\neq[\vald]$, 
+$y_\indx=\empt$ for all $1<\indx\leq k$,
+which again leads to a subsequence in $T$ violating $\orderrel$.
+% while in a subsequence of $T$ for a given $\indx$,
+% $[y_\indx]=[\vald]$ must be true by definition of $\ordersetsign$.
 \end{proof}
 
 
@@ -306,10 +324,10 @@ represent the same partial endofunction on filesystems.
 This allows us to treat such a set as a sequence for any purpose
 where the internal order of the commands is irrelevant.
 \begin{mydef}[$\ordp{S}$]
-For a simple set or sequence of commands $S$,
+For a simple set or sequence of commands $\wrksx{S}$,
 $\ordp{S}$ is the unique partial endofunction on filesystems
 defined by any order in $\orderset{S}$.
-We leave $\ordp{S}$ undefined if such an order does not exist.
+% We leave $\ordp{S}$ undefined if such an order does not exist.
 \end{mydef}
 
 
@@ -317,7 +335,7 @@ Building on the results above, we finish by proving an important result,
 namely, that command sequences can be made simple using syntactical operations.
 
 \begin{mylem}\mlabel{can_simplify}
-Each sequence of commands $\wkrsx{S}$
+Each sequence of commands $\wrksx{S}$
 can be transformed into a simple sequence
 $T\equiv S$ by applying repeatedly the following transformations:
 {\rm(i)} swap neighboring commands on incomparable nodes;
@@ -370,7 +388,7 @@ from \cref{ax_separate_commute}
 We can apply \cref{ax_same_emptyseq,ax_same_singlec} to
 $\ucy\cc\ucx$ and get a $S'\eqext S$ that contains one or two less commands on $n$.
 Repeating the swap and the simplification we
-can convert $S$ into an equivalent simple sequence $S^*$.
+can convert $S$ into an equivalent simple sequence.
 \end{proof}
 
 

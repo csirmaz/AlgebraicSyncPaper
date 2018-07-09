@@ -2,36 +2,35 @@
 \subsection{The Correctness of Update Detection}
 
 With $\ordersetsign$ we can now define our update detection algorithm.
-Its inputs are the original filesystem $\FS$ which has been modified to yield $\FS_1$.
-\begin{mydef}[Update detection]\mlabel{def_upddetect}
+Its inputs are the original filesystem $\FS$ which has been modified to yield $\FS^*$.
+\begin{mydef}[Update detection]\mlabel{def_upddetect}~
 \begin{enumerate}
-    \item For each node $n$ where the value in $\FS$ and $\FS_1$ differ, add the command $\cxynv$ to
-        a set of commands $U$.
-    \item % TODO
+    \item For each node $n$ where the value in $\FS$ and $\FS^*$ differ, add the command $\caaa{\FS(n)}{\FS^*(n)}{n}$ to
+        a set of commands $U_S$. The result is a simple set of commands.
+    \item Order the commands according to $\orderrel$, that is, 
+        return any sequence $U$ from $\orderset{U_S}$.
 \end{enumerate}
 \end{mydef}
-% TODO from journal? Simplify sequence?
 
+\Cref{update_works} proves that $U$ functions as expected, that is, $U\aFS=\FS^*$.
+While this is trivial if we know that $U$ does not break $\FS$, we
+still need to show that it is defined.
 
-TODO ENSURE UPDATE DETECTOR IS DEFINED.
+On systems where filesystem updates a recorded,
+an alternative update detection algorithm is to
+omit step 1, and use \cref{can_simplify} to simplify the series of recorded updates into a simple sequence containing the necessary
+updates.
+In fact, we use such a hypothetical record in the proof \cref{update_works}.
 
 % There is a sequence between any two states: destroy one completely and construct the other one. (finite FS)
 
-
-
 \begin{myth}\mlabel{update_works}
-For a sequence of commands $U$ returned by the update detector
+For a simple sequence of commands $U$ returned by the update detector
 when comparing the non-broken $\FS^*$ to the original $\FS$,
 $U\aFS = \FS^*$.
 \end{myth}
 
-TODO What is not trivial here is that $U$ works at all.
-
-TODO And that it can be ordered?
-
 \begin{proof}
-Let $\FS$ be the original filesystem, and $\FS^*$
-be the filesystem after the changes we intend to detect.
 Let us assume that some mechanism recorded all changes that occurred
 to $\FS$ until it reached the state $\FS^*$.
 Our set of commands is sufficient to record any change, as
@@ -45,16 +44,13 @@ that is equivalent to $S$.
 
 Therefore we know $S^*\aFS=\FS^*$, and that
 $\FS^*$ and $\FS$ differ at exactly those nodes that $S^*$ has commands on.
-If $U$ is the simple sequence returned by the update detector
-when comparing $\FS^*$ to $\FS$, it must also contain commands on the same set of nodes,
+$U$ must also contain commands on the same set of nodes,
 and it must contain the same commands,
 as for the command $\cxynv$, $[x]$ must be $[\FS(n)]$, and $y$ must be $\FS^*(n)$.
 From this we know that $U$ is a permutation of $S^*$ and so $\orderset{U}=\orderset{S^*}$.
 
-As the update detector uses $\ordersetsign$ to order the commands in $U$, trivially $U\in\orderset{U}$, % TODO
-and as $S^*$ is defined on $\FS$,
-from \cref{order_is_only_possible} we know $S^* \in \orderset{S^*}$.
-This means $U\in\orderset{S^*}$,
+As the update detector uses $\orderrel$ to order the commands in $U$, trivially $U\in\orderset{U}$,
+which means $U\in\orderset{S^*}$,
 and so from \cref{simple_reorder_equiv} we know that $U\equiv S^*$,
 from which $U\aFS=\FS^*$.
 \end{proof}
