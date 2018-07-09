@@ -21,14 +21,15 @@ properties of simple sequences.
 We define $\ordersetsign$ with the help of a partial order.
 \begin{mydef}[$\orderrel$]\mlabel{def_orderrel}
 The binary relation $\orderrel$ holds for some command pairs
-on directly related nodes if they are
-of the following form:
+on directly related nodes in the following cases:
 \begin{itemize}
-\item $\caaa{x}{\vald}{\parentf{n}}\orderrel\caaa{z}{w}{n}$, and
-\item $\caaa{x}{\empt}{n}\orderrel\caaa{z}{w}{\parentf{n}}$.
+\item $\caaa{x}{y}{\parentf{n}} \orderrel \caaa{z}{w}{n}$ if both commands are construction commands, and
+\item $\caaa{x}{y}{n} \orderrel \caaa{z}{w}{\parentf{n}}$ if both commands are destruction commands.
 \end{itemize}
 \end{mydef}
-This relation is clearly irreflexive and asymmetric,
+This relation is clearly irreflexive and anti-symmetric,
+and as a command cannot be both a construction and a destruction command and
+the relation follows the tree of nodes, it is acyclic,
 and thus defines a partial order.
 
 \begin{mydef}[$\ordersetsign$]\mlabel{def_orderset}
@@ -60,8 +61,8 @@ nodes, then it contains commands on all nodes in between, so it is enough to spe
 the order of commands on directly related nodes;
 and finally, \cref{simple_distant_pairs}, from which we know
 that commands on parent--child pairs must be construction or destruction pairs.
-Investigating these pairs we see that they are identified by the output value of the first command ($y$),
-which in turn determines whether the command on the parent or the child must precede the other.
+% Investigating these pairs we see that they are identified by the output value of the first command ($y$),
+% which in turn determines whether the command on the parent or the child must precede the other.
 
 To prove \cref{simple_reorder_equiv}, we need the following simple results.
 
@@ -137,7 +138,7 @@ We use an inverse proof and assume $\wrksx{S'}$.
 If $S'\not\in\orderset{S}$ then by \cref{def_orderrel,def_orderset}
 it contains two commands on a node $n$ and its parent
 that, as a subsequence,
-do not form a construction or destruction pair.
+cannot form a construction or destruction pair.
 However, this contradicts \cref{simple_distant_pairs}
 which means that no such subsequence exists.
 \end{proof}
@@ -283,10 +284,11 @@ this means that the indices $I^S$ are either monotone increasing, or monotone
 decreasing, but cannot change direction.
 And as $S$ begins with $\cxynv$ and so $I^S_0=1$, we know they are monotone increasing,
 and the commands on $n_\indx$ are construction commands.
-If we denote the command on $n_\indx$ with $\caaa{x_\indx}{y_\indx}{n_\indx}$,
-by definition this means that
+% If we denote the command on $n_\indx$ with $\caaa{x_\indx}{y_\indx}{n_\indx}$,
+% by definition this means that
 % $[y_\indx]\neq[\empt]$ for all $\indx$.
-$y_\indx=\vald$ for all $\indx<k$.
+% -----
+% $y_\indx=\vald$ for all $\indx<k$.
 
 Let us turn to the location of these commands in $T$,
 and denote their indices in $T$ with $I^T_\indx$.
@@ -295,10 +297,13 @@ This means there must exist a $1\leq \indx<k$ for which $I^T_{\indx+1}<I^T_\indx
 We therefore know that
 $\caaa{x_{\indx+1}}{y_{\indx+1}}{n_{\indx+1}} \cc \caaa{x_\indx}{y_\indx}{n_\indx}$
 is a subsequence of $T$.
-Because we know $y_\indx=\vald$ and by assumption $\parentf{n_{\indx+1}}=n_\indx$,
-this has the form
-$\caaa{x_{\indx+1}}{y_{\indx+1}}{n_{\indx+1}} \cc \caaa{x_\indx}{\vald}{\parentf{n_{\indx+1}}}$.
-If so, the inverse of $\orderrel$ holds for this subsequence, which is a contradiction.
+However, because we know these are construction commands, and by assumption $\parentf{n_{\indx+1}}=n_\indx$,
+the inverse of $\orderrel$ holds for this subsequence, which is a contradiction.
+% Because we know $y_\indx=\vald$ and by assumption $\parentf{n_{\indx+1}}=n_\indx$,
+% this has the form
+% $\caaa{x_{\indx+1}}{y_{\indx+1}}{n_{\indx+1}} \cc \caaa{x_\indx}{\vald}{\parentf{n_{\indx+1}}}$.
+% If so, the inverse of $\orderrel$ holds for this subsequence, which is a contradiction.
+% -----
 % By definition of $\ordersetsign$, therefore $y_{\indx+1}=\empt$ must be true,
 % which is a contradiction.
 
@@ -307,10 +312,11 @@ It can be shown in the same way
 that the case when the $n_\indx$ nodes ascend the tree,
 that is, $n_{\indx+1}=\parentf{n_\indx}$ is true, also leads to a contradiction.
 In this case we find that all commands are destruction commands,
-and so 
+% and so 
 % $[y_\indx]\neq[\vald]$, 
-$y_\indx=\empt$ for all $1<\indx\leq k$,
-which again leads to a subsequence in $T$ violating $\orderrel$.
+% $y_\indx=\empt$ for all $1<\indx\leq k$,
+and a subsequence in $T$ again violates $\orderrel$.
+% which again leads to a subsequence in $T$ violating $\orderrel$.
 % while in a subsequence of $T$ for a given $\indx$,
 % $[y_\indx]=[\vald]$ must be true by definition of $\ordersetsign$.
 \end{proof}

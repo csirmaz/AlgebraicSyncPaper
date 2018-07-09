@@ -14,13 +14,13 @@ Its inputs are the original filesystem $\FS$ which has been modified to yield $\
 
 \Cref{update_works} proves that $U$ functions as expected, that is, $U\aFS=\FS^*$.
 While this is trivial if we know that $U$ does not break $\FS$, we
-still need to show that it is defined.
+still need to show that it is defined on $\FS$.
 
-On systems where filesystem updates a recorded,
+On systems where filesystem updates are recorded,
 an alternative update detection algorithm is to
-omit step 1, and use \cref{can_simplify} to simplify the series of recorded updates into a simple sequence containing the necessary
-updates.
-In fact, we use such a hypothetical record in the proof \cref{update_works}.
+omit step 1, and use \cref{can_simplify} to simplify the series of recorded updates
+into a simple sequence containing the necessary updates.
+In fact, we use such a hypothetical record in the proof of \cref{update_works}.
 
 % There is a sequence between any two states: destroy one completely and construct the other one. (finite FS)
 
@@ -54,8 +54,3 @@ which means $U\in\orderset{S^*}$,
 and so from \cref{simple_reorder_equiv} we know that $U\equiv S^*$,
 from which $U\aFS=\FS^*$.
 \end{proof}
-
-An important consequence of this proof is that any sequence
-of recorded updates that were applied to a filesystem can be
-converted to a simple sequence using the rules listed in
-\cref{section_axioms} alone.
