@@ -1,28 +1,31 @@
 
 \subsection{Filesystems}
 
-\begin{mydef}[Filesystems, $\FS$]
-We model a filesystem
-using a function $\FS$ with a set of nodes (potential filesystem paths) $\setn$ as its domain,
-and a set of possible contents or values $\setv$ as its codomain:
-\[ \FS: \setn \rightarrow \setv. \]
-We consider metadata to be part of the values in $\setv$.
-In this model, $\setn$ 
-serves as a namespace for the filesystem:
+We model filesystems using functions with a set of potential filesystem paths or \emph{nodes} ($\setn$) as their domain,
+and a set of possible contents or values ($\setv$) as their codomain.
+$\setn$  serves as a namespace for the filesystem:
 it contains all possible nodes, including the ones 
-where the file system contains no file or directory.
+where the file system contains no file or directory,
+and so for most filesystems it is infinite.
+Nodes in $\setn$ are also arranged in trees by a parent function ($\parent$) as described in \cref{def_noderel}.
+
+\begin{mydef}[Filesystems, $\FS$]
+A filesystem $\FS$ is a function
+mapping the set of nodes $\setn$ to values in $\setv$:
+\[ \FS: \setn \rightarrow \setv. \]
 \end{mydef}
 
 % Ordering nodes
 
-There is an ancestor / descendant relation defined over the nodes in $\setn$
+The tree-like structure of $\setn$ is determined by
+an ancestor / descendant relation defined over the nodes
 which arranges them in a disjoint union of rooted directed trees,
 and which can be derived from the partial function $\parent$ yielding
 the parent of a node in $\setn$ provided it exists.
 Tao et al. \cite{TSR} describe a similar filesystem model, although
 they also model inodes and restrict the filesystem to just a single tree.
 
-\begin{mydef}[Ordering on $\setn$: $\parent$, $\descendant$, $\descendantEq$, $\unrel$]
+\begin{mydef}[Ordering on $\setn$: $\parent$, $\descendant$, $\descendantEq$, $\unrel$]\mlabel{def_noderel}
 The partial function $\parent:\setn\nrightarrow\setn$
 returns the parent node of $n$,
 and is undefined if $n$ is the root of a tree.
@@ -39,7 +42,7 @@ iff $n\not\descendantEq m$ and $n\not\ancestorEq m$;
 that is, incomparable nodes are on different branches or on different trees.
 % none of the path names describing their location is an initial segment of the other.
 \end{mydef}
-We assume that the $\parent$ function does not induce loops, and so
+By assumption that the $\parent$ function does not induce loops, and so
 $\descendant$ is indeed a strict partial ordering.
 
 % Values
@@ -50,32 +53,33 @@ which the filesystems populate with values from $\setv$.
 As we require filesystem functions to be total,
 we use a special value, $\empt\in\setv$, to indicate that the filesystem
 is empty at a particular node, that is, there are no files or directories there.
-We also assume that a filesystem has finitely many non-empty nodes.
+We also assume that a filesystem has finitely many non-empty nodes,
+and we consider any kind of metadata to be part of the values in $\setv$.
 
 \begin{mydef}[Filesystem values: $\vald$, $\valfx$, $\empt$, $\eqclass{v}$]
-The set of values $\setv$ is partitioned into files, directories, and the empty value $\empt$.
+The set of values $\setv$ is partitioned into directories, files, and the empty value $\empt$.
 As usual, we write $[v]$ for the the equivalence class of $v\in\setv$ according to this partition,
-which represents its type.
-File and directory values are also denoted by $\valfx$ and $\vald$, respectively,
-with or without indices.
+which represents the type of the value.
+File and directory values are denoted by $\valfx$ and $\vald$, respectively,
+with or without indices, and so the partitioning is in fact $[\vald], [\valfx], [\empt]$.
 \end{mydef}
 
 % Tree property
 
-Every filesystem has a so-called \emph{tree property}, which means that
+Every filesystem must have a so-called \emph{tree property}, which means that
 if the filesystem is not empty at a node, and the node has a parent,
 then there must be a directory at the parent node.
 Using the notation introduced above, we can formally express this as follows.
 \begin{mydef}[Tree property]
-A filesystem $\FS:\setn \rightarrow \setv$ has the tree property iff
-\[ \forall n\in\setn
-\FS(n) \neq \empt \; \Longrightarrow \; [\FS(\parentf{n})] = [\vald] \]
+A filesystem $\FS$ has the tree property iff
+\[ \forall n\in\setn:
+\FS(n) \neq \empt \: \Longrightarrow \: \Big[\FS\big(\parentf{n}\big)\Big] = [\vald] \]
 wherever $\parent(n)$ is defined, that is, $n$ has a parent.
 \end{mydef}
 
 % SINGLEDIR
 
-An essential assumption in our model is that there is only
+An essential additional assumption in our model is that there is only
 a \emph{single directory value} ($|\setd|=1$).
 The realization that
 this creates a symmetry between directories and empty nodes
@@ -87,7 +91,7 @@ why applicability may not be affected and ways to relax this restriction.
 
 % Notation
 
-In this paper
+In the rest of paper
 we fix the skeleton $\langle\setn,\parent\rangle$,
 and the set of values $\setv$.
 $\FS$ (with or without indices) denotes a filesystem,
