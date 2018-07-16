@@ -46,13 +46,14 @@ and in order to resolve this asymmetry,
 we propose a set of commands that encode
 the type of the input value $\FS(n)$ as well.
 (Some real-life filesystem commands like \textit{rmdir} do this already.)
-Because the success of failure of commands depends on types of values,
+Because the success or failure of commands depends on types of values,
 it is not necessary to encode the actual input value.
 
 % Definition
 % Break / empty command
 
-We model filesystem commands as partial functions 
+According to the above,
+we model filesystem commands with partial functions 
 that map filesystems to filesystems, but which
 are only defined where the commands succeed.
 As usual, if the function is not defined, we say that that it returns the bottom element, $\fsbroken$,
@@ -70,7 +71,7 @@ The equivalence class $[x]$ is the \emph{input type} of the function;
 $y$ is its \emph{output value} implicitly specifying the \emph{output type} $[y]$,
 and $n$ is the node the command is applied to.
 \end{mydef}
-For example, $\cbfa{n}$ represents \textit{create}$(n,\valf)$,
+For example, $\cbfa{n}$ represents \textit{create}$(n,\valfx)$,
 and $\cdba{n}$ represents \textit{rmdir}$(n)$.
 
 We write $\cbrk$ for the empty partial function which is not defined anywhere.
@@ -105,11 +106,13 @@ The effect of the command $\cxynv$ is defined as follows:
 \end{mydef}
 In other words, the command $\cxynv$ breaks a filesystem if the input type $[x]$
 does not match the type of the value in the filesystem at $n$, or if after replacing
-the value at $n$ with $y$, the resulting filesystem ceases to satisfy the tree property.
+the value at $n$ with $y$, the resulting filesystem ceases to satisfy the tree property
+in \cref{def_treeprop}.
 
 \myskip
-Depending on their input and output types, there are nine types of commands,
-which we separate into four categories depending on the overall effect of the command.
+There are nine groups of commands considering their input and output types.
+Based on these groups we separate commands into four categories 
+that reflect their overall effect.
 Constructions commands extend the filesystem,
 while destruction commands shrink it;
 the replacement command replaces a file value with a file value
@@ -137,11 +140,12 @@ belong to exactly one of the following four categories:
 
 \myskip
 For reasons also listed in \cite{NREC}, in this model we will not consider
-a \textit{move} or \textit{rename} command.
+a \textit{move (rename)} command.
 This turns out to be useful because this would be the only command that affects
 filesystems at two nodes at once, therefore describing 
 the dependencies for \textit{move} would call for a more complicated model.
-As \cref{sec_multidir} details, this restriction does not mean that in an application
-implementing conflict resolution using the algorithm described here would not be
-able to handle renames by post-processing changes in the filesystem to
-discover them, which can enhance usability.
+As \cref{sec_multidir} details, even with this restriction,
+an implementation of the reconciliation algorithm presented here
+can still handle \emph{move} commands in its input and output
+by splitting them into \emph{delete} and \emph{create} commands,
+and merging them later.
