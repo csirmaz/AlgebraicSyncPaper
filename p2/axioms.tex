@@ -67,7 +67,7 @@ and so it is a congruence.
 
 Finally, we write $A\strext B$ to mean $A\eqext B$ and $A\nequiv B$.
 In particular, we write $\wrks{A}$
-to mean that $\Dom{A}$ is not empty, that is, if $A$ is defined on some filesystems.
+to mean that $\Dom{A}$ is not empty, that is, $A$ is defined on some filesystems.
 \end{mydef}
 
 It is easy to see that the equivalence $\equiv$ holds on the level of filesystems:
@@ -111,13 +111,13 @@ one of the following patterns:
    \begin{align*}
             \cbda{\pn}&\cc  \cbfa{n} \\
             \cbda{\pn}&\cc  \cbda{n} \\
-            \cfda{\pn}&\cc  \caaa{\empt}{\valff}{n} \\
+            \cfda{\pn}&\cc  \caaa{\empt}{\valf}{n} \\
             \cfda{\pn}&\cc  \cbda{n}
    \end{align*}
 The pair is a \emph{destruction pair} if the types match one of the following:
    \begin{align*}
             \cfba{n}&\cc  \cdba{\pn} \\
-            \cfba{n}&\cc  \caaa{\vald}{\valff}{\pn} \\
+            \cfba{n}&\cc  \caaa{\vald}{\valf}{\pn} \\
             \cdba{n}&\cc  \cdba{\pn} \\
             \cdba{n}&\cc  \cdfa{\pn} \qedhere
    \end{align*}
@@ -133,8 +133,6 @@ The claims listed are named \emph{\namecrefs{ax_separate_commute}}
 as they can also be interpreted as inference rules in a pure
 algebraic treatment of filesystem synchronization.
 \Cref{sec_algebra} elaborates this approach.
-In \cref{axiom_proof} we offer proofs of each of the
-\emph{\namecrefs{ax_separate_commute}} based on our model of filesystems.
 
 \begin{mylem}\mlabel{rules_lemma}
 \newcounter{rulecounter}

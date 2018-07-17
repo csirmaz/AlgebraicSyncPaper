@@ -107,17 +107,17 @@ The effect of the command $\cxynv$ is defined as follows:
 In other words, the command $\cxynv$ breaks a filesystem if the input type $[x]$
 does not match the type of the value in the filesystem at $n$, or if after replacing
 the value at $n$ with $y$, the resulting filesystem ceases to satisfy the tree property
-in \cref{def_treeprop}.
+as described in \cref{def_treeprop}.
 
 \myskip
 There are nine groups of commands considering their input and output types.
 Based on these groups we separate commands into four categories 
-that reflect their overall effect.
-Constructions commands extend the filesystem,
+that reflect their overall effect:
+construction commands extend the filesystem,
 while destruction commands shrink it;
 the replacement command replaces a file value with a file value
 (which may or may not be different from the original value),
-and assertion commands either break the filesystem, or assert the type of the value at a node.
+and assertion commands simply assert the type of the value at a node.
 \begin{mydef}[Command categories]\mlabel{def:command_categories}
 Depending on their input and output types, filesystem commands
 belong to exactly one of the following four categories:
@@ -129,7 +129,7 @@ belong to exactly one of the following four categories:
 \item[]\emph{Assertion commands:}
     $\cbba{n}$ and $\cdda{n}$;
 \item[]\emph{Replacement command:}
-    $\caaa{\valfx}{\valff}{n}$.
+    $\caaa{\valfx}{\valf}{n}$.
 \qedhere
 \end{itemize}
 \end{mydef}
@@ -144,7 +144,7 @@ a \textit{move (rename)} command.
 This turns out to be useful because this would be the only command that affects
 filesystems at two nodes at once, therefore describing 
 the dependencies for \textit{move} would call for a more complicated model.
-As \cref{sec_multidir} details, even with this restriction,
+As detailed in \cref{sec_multidir}, even with this restriction,
 an implementation of the reconciliation algorithm presented here
 can still handle \emph{move} commands in its input and output
 by splitting them into \emph{delete} and \emph{create} commands,
