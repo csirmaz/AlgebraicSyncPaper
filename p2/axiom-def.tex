@@ -2,37 +2,41 @@
 
 % ax_separate_commute
 \newcommand{\axaxseparatecommute}{
-Commands on incomparable nodes commute: $\cxynv\cc\czwmv \equiv \czwmv\cc\cxynv$ where $n\unrel m$.
+Commands on incomparable nodes commute:
+$\cxynv\cc\czwmv \equiv \czwmv\cc\cxynv$
+when $n\unrel m$.
 }
 
 % ax_separate_nobreaks
 \newcommand{\axaxseparatenobreaks}{
 Commands on incomparable nodes also do not break all filesystems:
-$\wrksx{\cxynv\cc\czwmv}$ where $n\unrel m$.
+$\wrksx{\cxynv\cc\czwmv}$
+when $n\unrel m$.
 }
 
 % ax_same_breaks
 \newcommand{\axaxsamebreaks}{
 Commands on the same node break every filesystem if their types are incompatible:
-$\cxynv\cc\czwnv \equiv \cbrk$ where $[y]\ne [z]$.
+$\cxynv\cc\czwnv \equiv \cbrk$
+when $[y]\ne [z]$.
 }
 
 % ax_same_emptyseq
 \newcommand{\axaxsameemptyseq}{
 Commands on the same node are extended by an empty sequence if their types are compatible,
 and their outer types represent an assertion command:
-$\cxynv\cc\czwnv \eqext \emptyseq$ where $[y]=[z]$; and 
-$[x]=[\empt]$ and $[w]=[\empt]$,
-or $[x]=[\vald]$ and $[w]=[\vald]$.
+$\cxynv\cc\czwnv \eqext \emptyseq$ 
+when $[y]=[z]$, and
+$[x]$ and $[w]$ are either both $[\empt]$ or both $[\vald]$.
 }
 
 % ax_same_singlec
 \newcommand{\axaxsamesinglec}{
 Command pairs on the same node are equivalent to a single command if their types are compatible,
 and their outer types do not represent an assertion command:
-$\cxynv\cc \czwnv \equiv \cxwnv$ where $[y]=[z]$; and
-neither $[x]=[\empt]$ and $[w]=[\empt]$,
-nor $[x]=[\vald]$ and $[w]=[\vald]$.
+$\cxynv\cc \czwnv \equiv \cxwnv$
+when $[y]=[z]$, and
+$[x]$ and $[w]$ are neither both $[\empt]$ nor both $[\vald]$.
 }
 
 % ax_directchild_breaks
@@ -41,7 +45,7 @@ Commands on a parent and a child node break every filesystem
 if the pair is not a construction pair
 and the commands do not simply assert a directory at the parent
 or an empty node at the child:
-$\cxypnv\cc\czwnv \equiv \cbrk$ where $\cxypnv\cc\czwnv$ is not a construction pair, 
+$\cxypnv\cc\czwnv \equiv \cbrk$ when $\cxypnv\cc\czwnv$ is not a construction pair, 
 $\cxypnv\neq\cdda{\pn}$ and $\czwnv\neq\cbba{n}$.
 }
 
@@ -51,7 +55,7 @@ Commands on a child and parent node break every filesystem
 if the pair is not a destruction pair
 and the commands do not simply assert an empty node at the child
 or a directory at the parent:
-$\cxynv\cc\czwpnv \equiv \cbrk$ where $\cxynv\cc\czwpnv$ is not a destruction pair,
+$\cxynv\cc\czwpnv \equiv \cbrk$ when $\cxynv\cc\czwpnv$ is not a destruction pair,
 $\cxynv\neq\cbba{n}$ and $\czwpnv\neq\cdda{\pn}$.
 }
 
@@ -62,7 +66,7 @@ if the commands do not simply assert a directory at the ancestor
 or an empty node at the descendant:
 $\cxynnv\cc\czwnv \equiv \cbrk$
 and $\czwnv\cc\cxynnv \equiv\cbrk$
-where $\nn\descendant n$ and $\nn\neq\parent(n)$, and $\cxynnv\neq\cdda{\nn}$ and $\czwnv\neq\cbba{n}$.
+when $\nn\descendant n$ and $\nn\neq\parent(n)$, and $\cxynnv\neq\cdda{\nn}$ and $\czwnv\neq\cbba{n}$.
 }
 
 % ax_child_assert
@@ -70,7 +74,7 @@ where $\nn\descendant n$ and $\nn\neq\parent(n)$, and $\cxynnv\neq\cdda{\nn}$ an
 An assertion command can be freely added on a descendant node
 next to a command that does not simply assert a directory:
 \[ \cbba{n}\cc\cxynnv \equiv \cxynnv \equiv \cxynnv\cc\cbba{n} \] 
-where $\nn\descendant n$ and $\cxynnv\neq\cdda{\nn}$.
+when $\nn\descendant n$ and $\cxynnv\neq\cdda{\nn}$.
 }
 
 % ax_parent_assert
@@ -78,7 +82,7 @@ where $\nn\descendant n$ and $\cxynnv\neq\cdda{\nn}$.
 An assertion command can be freely added on an ancestor node
 next to a command that does not simply assert an empty node:
 \[ \cdda{\nn}\cc\cxynv \equiv \cxynv \equiv \cxynv\cc\cdda{\nn} \]
-where $\nn\descendant n$ and $\cxynv\neq\cbba{n}$.
+when $\nn\descendant n$ and $\cxynv\neq\cbba{n}$.
 }
 
 % ax_assert

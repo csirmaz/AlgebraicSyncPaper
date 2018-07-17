@@ -182,7 +182,8 @@ We have included \cref{ax_directchild_breaks,ax_directparent_breaks}
 for completeness, but we will use the more generic \cref{simple_distant_pairs},
 which extends these rules to non-adjacent commands, although only in the case
 of command sequences without any assertion commands.
-
+The \namecrefs{ax_separate_commute} can be derived from the filesystem model
+relatively easily. Proofs are included in \cref{axiom_proof}.
 
 
 
@@ -194,7 +195,7 @@ We also define the concept of two commands being independent.
 
 \begin{mydef}[$A\indep B$: Independent commands, sequences and sets of commands]\mlabel{def_indep}
 Two commands $\alpha$ and $\beta$ 
-are independent, and we write $\alpha\indep\beta$ if 
+are independent, written as $\alpha\indep\beta$, if 
 they commute and do not break all filesystems:
 \[ \alpha\cc\beta \equiv \wrksx{\beta\cc\alpha}. \]
 For two sequences or unordered sets of commands $A$ and $B$ we write $A\indep B$ if
@@ -203,8 +204,8 @@ We also write $\alpha\indep B$ for $\{\alpha\}\indep B$.
 \end{mydef}
 
 It is intentional that we use the same symbol for independent commands
-and sequences as for incomparable nodes. As
-\namecref{incomparable_is_independent},
+as for incomparable nodes. As the
+\namecref{incomparable_is_independent} below
 shows, these concepts are closely related.
 
 \begin{mycor}\mlabel{incomparable_is_independent}
@@ -213,17 +214,18 @@ and none of them is an assertion command, then
 $\cxynv\indep\czwmv$ if and only if $n\unrel m$.
 \end{mycor}
 
-To prove this, we are going to prove the following lemma,
+\Cref{incomparable_is_independent} follows independently from
+the following lemma,
 which characterizes independent commands in a more detailed way.
 
 \begin{mylem}\mlabel{independent_details}
 For two commands $\cxynv\indep\czwmv$ if and only if
 one of the following holds:
 \begin{itemize}
-\item $n\unrel m$;
-\item or $n=m$ and the commands are equivalent assertion or replacement commands;
-\item or $n\descendant m$ or $m\descendant n$,
-and either the command on the ancestor asserts a directory,
+\item $n\unrel m$,
+\item $n=m$ and the commands are equivalent assertion or replacement commands,
+\item either $n\descendant m$ or $m\descendant n$,
+\emph{and} either the command on the ancestor asserts a directory,
 or the command on the descendant asserts an empty node (or both).
 \end{itemize}
 \end{mylem}
@@ -250,7 +252,6 @@ a construction or destruction pair.
 However, the reversals of construction and destruction pairs break all filesystems.
 \end{proof}
 
-\Cref{incomparable_is_independent} follows directly from \cref{independent_details}.
-While equivalent commands can hardly be thought of as independent,
+While equivalent commands can hardly be considered independent,
 we retain this name for this relation as in most
 cases we use it on pairs of different commands that are also not assertion commands.
