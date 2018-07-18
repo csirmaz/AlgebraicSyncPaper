@@ -8,14 +8,13 @@ it is actually the task of the reconciler to determine whether there is an order
 and if yes, what order,
 in which updates from different replicas can be applied to a filesystem.
 
-As we recognize that multiple orders may be possible,
-let us describe our ordering algorithm by
-defining a subset of the permutations, $\ordersetsign$.
-As we will see, $\ordersetsign$ contains all possible
+As multiple orders may be possible,
+we describe our ordering algorithm by
+defining a subset of the permutations of the commands, $\ordersetsign$.
+\Cref{simple_reorder_equiv} proves that $\ordersetsign$ indeed contains all possible
 sequences of commands that do not break all filesystems.
-In \cref{simple_reorder_equiv}, we offer a formal proof of this.
 The facts that all valid reorderings of simple sequences are equivalent,
-and all equivalent sequences are reorderings, are important 
+and all equivalent sequences are reorderings follow from this \namecref{simple_reorder_equiv}, and are important 
 properties of simple sequences.
 
 We define $\ordersetsign$ with the help of a partial order.
@@ -29,12 +28,15 @@ on directly related nodes in the following cases:
 \end{mydef}
 This relation is clearly irreflexive and anti-symmetric,
 and as a command cannot be both a construction and a destruction command and
-the relation follows the tree of nodes, it is acyclic,
-and thus defines a partial order.
+the relation follows the tree of nodes, it is acyclic.
+Therefore its transitive closure, also denoted by $\orderrel$, is a partial order.
 
 \begin{mydef}[$\ordersetsign$]\mlabel{def_orderset}
 For a simple sequence of commands $\wrksx{S}$,
-$\orderset{S}$ is the set of permutations satisfying the partial order defined by $\orderrel$.
+$\orderset{S}$ is the set of permutations of the commands in $S$ respecting the partial order defined by $\orderrel$,
+that is,
+for any $T\in\orderset{S}$ and any $\alpha,\beta\in T$, if $\alpha\orderrel\beta$ then $\alpha$
+precedes $\beta$ in $T$.
 % For a simple set or sequence of commands $S$,
 % we use $\orderset{S}$ to denote the set of 
 % permutations of the commands in $S$
@@ -47,12 +49,11 @@ $\orderset{S}$ is the set of permutations satisfying the partial order defined b
 \end{mydef}
 
 % As usual, by subsequence we mean a subset of the commands in $S$ in the same order as they are found in $S$.
-The simplicity of the definitions mean that sorting the commands
-and enumerating
-all sequences in $\ordersetsign$ can be implemented by a straightforward
-algorithm.
+Returning a valid $T\in\orderset{S}$ order for a set of commands $S$
+can be implemented using any well-known algorithm for topological sorting,
+where the directed acyclic graph that is the input of the algorithm is defined by $\orderrel$.
 
-The principal ideas behind the ordering are 
+The principal ideas behind the definition of $\orderrel$ are 
 \cref{ax_separate_commute}, from which we know that commands on incomparable
 nodes can be applied in any order, so we only need to focus on the order of commands
 with comparable nodes;
@@ -74,7 +75,7 @@ contains the same commands but in the order they are found in $T$,
 $T_0\in\orderset{S_0}$ must hold.
 \end{mycor}
 
-
+This follows directly from \cref{def_orderset}.
 
 \begin{mylem}\mlabel{simple_distant_pairs}
 For any simple sequence $\wrksx{S}$,
