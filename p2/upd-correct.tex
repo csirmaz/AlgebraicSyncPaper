@@ -1,18 +1,18 @@
 
 \subsection{The Correctness of Update Detection}
 
-With $\orderrel$ we can now define our update detection algorithm.
+With the relation $\orderrel$ we can now define our update detection algorithm.
 Its inputs are the original filesystem $\FS$ which has been modified to yield $\FS^*$.
 \begin{mydef}[Update detection]\mlabel{def_upddetect}~
 \begin{enumerate}
     \item For each node $n$ where the value in $\FS$ and $\FS^*$ differ, add the command $\caaa{\FS(n)}{\FS^*(n)}{n}$ to
-        a set of commands $U_S$. The result is a simple set of commands.
+        a set of commands $U^*$. The result is a simple set of commands.
     \item Order the commands according to $\orderrel$, that is, 
-        return any sequence $U$ from $\orderset{U_S}$. \qedhere
+        return any sequence $U$ from $\orderset{U^*}$. \qedhere
 \end{enumerate}
 \end{mydef}
 
-\Cref{update_works} proves that $U$ functions as expected, that is, $U\aFS=\FS^*$.
+\Cref{update_works} below proves that $U$ functions as expected, that is, $U\aFS=\FS^*$.
 While this is trivial if we know that $U$ does not break $\FS$, we
 still need to show that it is defined on $\FS$.
 
@@ -40,7 +40,7 @@ where $S\aFS=\FS^*$.
 ($S$ will not contain assertion commands, as they do not
 represent an actual change in the filesystem.)
 Based on \cref{can_simplify}, there is a simple sequence $S^*$
-that is equivalent to $S$.
+that extends $S$.
 
 Therefore we know $S^*\aFS=\FS^*$, and that
 $\FS^*$ and $\FS$ differ at exactly those nodes that $S^*$ has commands on.

@@ -168,7 +168,7 @@ applied to a filesystem.
 Let $A$ be a sequence that satisfies the conditions;
 we therefore know that it contains a command $\cxynv$ on $n$
 and another command $\czwnnv$ on $\nn$.
-We use a proof by contradiction and assume that there are no commands on $\parent(n)$ in $A$.
+By contradiction assume that there are no commands on $\parent(n)$ in $A$.
 Next, we create a new sequence $A'\equiv A$ in which $\cxynv$ and $\czwnnv$ are next to each other.
 If they are already next to each other in $A$, there is nothing to do.
 Otherwise, consider the command next to $\cxynv$ in the direction where $\czwnnv$ is.
@@ -179,7 +179,7 @@ If $n\unrel m$, then swap $\cxynv$ and $\cqrmv$. Based on \cref{ax_separate_comm
 sequence is equivalent to $A$.
 Otherwise, we know $m\neq\parent(n)$ as there are no commands on $\parent(n)$, and so
 from \cref{ax_distantrel_breaks} we get $A\equiv\cbrk$ which contradicts our assumptions.
-(Note that $A$ cannot contain assertion commands.)
+(Note that $A$ does not contain assertion commands.)
 By repeating this step we can therefore convert $A$ into $A'$ where $\cxynv$ and $\czwnnv$ are neighboring commands.
 However, then \cref{ax_distantrel_breaks} applies to the sequence and therefore $A\equiv A'\equiv\cbrk$ which
 is again a contradiction.
@@ -228,22 +228,22 @@ $\orderset{S}$ is the set of all simple sequences equivalent to $S$.
 
 \begin{proof}
 First, we prove, by contradiction, that if $T$ is a simple sequence and $T\equiv S$, then $T\in\orderset{S}$.
-We use an inverse proof and assume $T\equiv S$ and $T\not\in\orderset{S}$.
+Assume $T\equiv S$ but $T\not\in\orderset{S}$.
 Then, from \cref{equiv_simple_same_commands} we know $T$ is a permutation of $S$,
 and from \cref{order_is_only_possible} we know $T\equiv\cbrk$ which
 is a contradiction as $T\equiv \wrksx{S}$.
 
 Next, we prove that if $T\in\orderset{S}$, then $T\equiv S$.
 We proceed by induction on the length of $S$.
-Our base cases are $\emptyseq$, where $\orderset{\emptyseq}=\{\emptyseq\}$,
-and one-long sequences, where this is trivially true.
+Our base cases are $\emptyseq$, when $\orderset{\emptyseq}=\{\emptyseq\}$,
+and one-long sequences, when this is trivially true.
 In our induction step we assume that $T^*\in\orderset{S^*}\Rightarrow T^*\equiv S^*$ holds
 for all sequences of length $i$ or less, where $i\geq 1$.
 
 Let us consider $T\in\orderset{S}$ where $T$ and $S$ are of length $i+1$.
 Let the first command in $S$ be $\cxynv$, that is, $S=\cxynv\cc S_0$.
-We proceed by a nested induction on the number of commands before $\cxynv$ in $T$.
-Our base case is when it is the first command, which means $T=\cxynv\cc T_0$.
+We proceed by a nested induction on $j$, the number of commands before $\cxynv$ in $T$.
+Our base case is $j=0$, when it is the first command, which means $T=\cxynv\cc T_0$.
 Then from \cref{subseq_in_orderset} we know $T_0\in\orderset{S_0}$
 and from the induction hypothesis $T_0\equiv S_0$ from which we get $T\equiv S$.
 
@@ -272,10 +272,9 @@ or $n_{\indx+1}=\parentf{n_\indx}$ for all $\indx$.
 We assume that $n_\indx=\parentf{n_{\indx+1}}$ is true.
 
 Also, let $I^S_\indx$ be the index of the command on $n_\indx$ in $S$.
-For all $\indx$, both the commands on $n_\indx$ and $n_{\indx+1}$ must be either
+By \cref{simple_distant_pairs}, for all $\indx$, both the commands on $n_\indx$ and on $n_{\indx+1}$ must be either
 construction commands, or destruction commands, depending on
 whether $I^S_\indx<I^S_{\indx+1}$ or $I^S_{\indx+1}<I^S_\indx$.
-This is because otherwise, \cref{simple_distant_pairs} would not hold for $S$.
 
 As a command cannot be both a construction and a destruction command,
 this means that the indices $I^S$ are either monotone increasing, or monotone
@@ -330,22 +329,22 @@ where the internal order of the commands is irrelevant.
 \begin{mydef}[$\ordp{S}$]
 For a simple set or sequence of commands $\wrksx{S}$,
 $\ordp{S}$ is the unique partial endofunction on filesystems
-defined by any order in $\orderset{S}$.
+defined by any sequence in $\orderset{S}$.
 % We leave $\ordp{S}$ undefined if such an order does not exist.
 \end{mydef}
 
 
 Building on the results above, we finish by proving an important result,
-namely, that command sequences can be made simple using syntactical operations.
+which states that command sequences can be made simple using syntactical operations only.
 
-\begin{mylem}\mlabel{can_simplify}
+\begin{myth}\mlabel{can_simplify}
 Each sequence of commands $\wrksx{S}$
 can be transformed into a simple sequence
-$T\equiv S$ by applying repeatedly the following transformations:
+$S^*\eqnrv S$ by applying repeatedly the following transformations:
 {\rm(i)} swap neighboring commands on incomparable nodes;
 {\rm(ii)} simplify neighboring commands on the same node;
 {\rm(iii)} delete assertion commands.
-\end{mylem}
+\end{myth}
 \begin{proof}
 We can remove all assertion commands, as based on
 \cref{ax_assert} the resulting sequence extends the original one.
@@ -355,7 +354,7 @@ We therefore assume that $S$ contains no assertion commands.
 \newcommand{\ucy}{\beta}
 \newcommand{\ucz}{\gamma}
 
-We aim to find a simple sequence that is equivalent to $S$.
+We aim to find a simple sequence that extends $S$.
 If $S$ is already simple, there is nothing to do.
 If it is not simple, let $\ucx$ be the first command
 on a node $n$ that is already present in $S$,
@@ -384,15 +383,15 @@ and both $\ucy$ and $\ucz$ must be construction commands.
 But we also know that $\ucz\cc\ucx$ must be a destruction pair,
 and both $\ucz$ and $\ucx$ must be destruction commands.
 This is a contradiction as a command cannot be both.
-We arrive at the same contradiction if $m'=\parentf{n}$.
+We arrive at the same contradiction when $m'=\parentf{n}$.
 
 We therefore know that $S_1\indep\ucx$ and so
 from \cref{ax_separate_commute}
 \[ S \equiv S_0\cc\ucy\cc\ucx\cc S_1 \cc S_2. \]
 We can apply \cref{ax_same_emptyseq,ax_same_singlec} to
-$\ucy\cc\ucx$ and get a $S'\eqext S$ that contains one or two less commands on $n$.
+$\ucy\cc\ucx$ and get a $S^*\eqext S$ that contains one or two less commands on $n$.
 Repeating the swap and the simplification we
-can convert $S$ into an equivalent simple sequence.
+can convert $S$ into a simple sequence.
 \end{proof}
 
 

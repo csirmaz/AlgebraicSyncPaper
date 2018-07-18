@@ -2,7 +2,7 @@
 \section{Extending the Synchronizer}\mlabel{sec_multidir}
 
 The two assumptions we used to increase the symmetry of our model were
-that there is no move command,
+that there is no \emph{move} command,
 and that
 there is only one directory value, that is, directories are not differentiated
 by the meta-information they contain.
@@ -28,7 +28,7 @@ In these cases the synchronizer may prescribe creating a directory without creat
 the special metadata file, which is clearly not possible to do on the target filesystem,
 as creating a directory entails specifying its metadata as well.
 In these cases, the synchronizer can either fall back to default values and flag the issue
-for review later, or if, as suggested above, conflicts on the metadata (e.g. readable, writable and executable flags)
+for review later, or if, as suggested above, resolution of conflicts on the metadata (e.g. readable, writable and executable flags)
 can be easily automated, then it could form part of the implementation.
 
 Reintroducing the \emph{move} command can happen in a similar fashion.
@@ -41,7 +41,7 @@ During pre-processing, if an update detector is used,
 \emph{move} commands still do not need to be part of the command sequences
 the synchronizer operates on.
 If the command sequences are derived from filesystem journals, they
-can be broken into two updates to allow the existing reconciliation
+can be encoded as separate delete and create operations to allow the existing reconciliation
 algorithm to operate.
 
 In a post-processing stage, deleted or overwritten file contents
