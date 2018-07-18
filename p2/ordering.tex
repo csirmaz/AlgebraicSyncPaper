@@ -78,9 +78,9 @@ $T_0\in\orderset{S_0}$ must hold.
 This follows directly from \cref{def_orderset}.
 
 \begin{mylem}\mlabel{simple_distant_pairs}
-For any simple sequence $\wrksx{S}$,
-if $\cxynv\cc\czwmv$ is a subsequence of $S$ and $n=\parent(m)$ or $\parent(n)=m$,
-then $\cxynv\cc\czwmv$ is either a construction or a destruction pair.
+For any simple sequence $\wrksx{S}$ and its subsequence $\cxynv\cc\allowbreak\czwmv$,
+if $n=\parent(m)$, then the subsequence is a construction pair;
+and if $\parent(n)=m$, then the subsequence is a destruction pair.
 \end{mylem}
 
 Informally speaking, the proposition means that
@@ -96,36 +96,36 @@ of \cref{ax_directchild_breaks,ax_directparent_breaks} when there are no asserti
 % BACK_TO_FS
 Formally, we prove our proposition by contradiction,
 and in this version of the proof we reach back to our filesystem model.
-We assume $\wrks{S}$ and therefore there is a $\FS$ for which $S\aFS\neq\fsbroken$,
-but $S$ contains commands on a node and its parent that do not form a construction or destruction pair.
-Select two such commands, $\cxynv$ and $\czwmv$,
+By assumption $\wrks{S}$ and therefore there is a $\FS$ for which $S\aFS\neq\fsbroken$.
+Select two commands on a node and its parent, $\cxynv$ and $\czwmv$,
 and split $S$ around them into three parts:
-\[ S = S_0 \cc \cxynv \cc S_1 \cc \czwmv \cc S_2. \]
-As $S$ is simple, there cannot be any commands on $n$ or $m$ in $S_1$,
-and therefore $(S_0\cc\cxynv\cc S_1)\FS(n) = y$,
-and $[(S_0\cc\cxynv\cc S_1)\FS(m)] = [S_0\FS(m)]$.
-If $[z]\neq[S_0\FS(m)]$, then $S\aFS=\fsbroken$, which is a contradiction.
+\[ S = S_0 \cc \cxynv \cc S_1 \cc \czwmv \cc S_2, \]
+where any of the three parts can be empty.
+As $S$ is simple, there are no commands on $n$ or $m$ in $S_0$, $S_1$, or $S_2$,
+and therefore $(S_0\cc\cxynv\cc S_1)\aFS(n) = y$,
+and $[(S_0\cc\cxynv\cc S_1)\aFS(m)] = [S_0\aFS(m)]$,
+and so $[z]$ must be $[S_0\aFS(m)]$.
 
 If $n=\parent(m)$, then 
-we know $(S_0\cc\cxynv\cc S_1)\FS(n) = y$, and as $[z]\neq[w]$, either
-$[(S_0\cc\cxynv\cc S_1)\FS(m)]=[z]\neq[\empt]$,
-or $[(S_0\cc\cxynv\cc S_1\cc\czwmv)\FS(m)]=[w]\neq[\empt]$.
+we know $(S_0\cc\cxynv\cc S_1)\aFS(n) = y$, and as $[z]\neq[w]$, either
+$[(S_0\cc\cxynv\cc S_1)\allowbreak\aFS(m)]=[z]\neq[\empt]$,
+or $[(S_0\cc\cxynv\cc S_1\cc\czwmv)\allowbreak\aFS(m)]=[w]\neq[\empt]$.
 Therefore $y$ must be $\vald$, as otherwise the tree property would be violated
 when applying $\czwmv$,
 and $[x]\neq[\vald]$ as $\cxynv$ is not an assertion command.
-As $[S_0\FS(n)]=[x]\neq[\vald]$, we know
-$S_0\FS(m)=\empt$ as otherwise the tree property would be violated.
-Therefore $[S_0\FS(m)]=[z]=[\empt]$, which, combined with $y=\vald$
-means that $\cxynv\cc\czwmv$ is a construction pair, which is a contradiction.
+As $[S_0\aFS(n)]=[x]\neq[\vald]$, we know
+$S_0\aFS(m)=\empt$ as otherwise the tree property would be violated.
+Therefore $[S_0\aFS(m)]=[z]=[\empt]$, which, combined with $y=\vald$
+means that $\cxynv\cc\czwmv$ is a construction pair.
 
 If $\parent(n)=m$, then 
-as $(S_0\cc\cxynv\cc S_1)\FS(n) = y$, and either
-$[(S_0\cc\cxynv\cc S_1)\FS(m)]=[z]\neq[\vald]$
-or $[(S_0\cc\cxynv\cc S_1\cc\czwmv)\FS(m)]=[w]\neq[\vald]$,
+as $(S_0\cc\cxynv\cc S_1)\aFS(n) = y$, and either
+$[(S_0\cc\cxynv\cc S_1)\allowbreak\aFS(m)]=[z]\neq[\vald]$
+or $[(S_0\cc\cxynv\cc S_1\cc\czwmv)\allowbreak\aFS(m)]=[w]\neq[\vald]$,
 $y$ must be $\empt$, and $[x]\neq[\empt]$.
-As $[S_0\FS(n)]=[x]\neq[\empt]$, we know $S_0\FS(m)=\vald$.
-Therefore $[S_0\FS(m)]=[z]=[\vald]$, which, combined with $y=\empt$
-means that $\cxynv\cc\czwmv$ is a destruction pair, which is a contradiction.
+As $[S_0\aFS(n)]=[x]\neq[\empt]$, we know $S_0\aFS(m)=\vald$.
+Therefore $[S_0\aFS(m)]=[z]=[\vald]$, which, combined with $y=\empt$
+means that $\cxynv\cc\czwmv$ is a destruction pair.
 \end{proof}
 
 
@@ -135,13 +135,12 @@ For any simple sequence $\wrksx{S}$ and its permutation $S'$,
 \end{mycor}
 \begin{proof}
 This follows directly from \cref{simple_distant_pairs}.
-We use an inverse proof and assume $\wrksx{S'}$.
 If $S'\not\in\orderset{S}$ then by \cref{def_orderrel,def_orderset}
-it contains two commands on a node $n$ and its parent
+$S'$ contains two commands on a node $n$ and its parent
 that, as a subsequence,
-cannot form a construction or destruction pair.
-However, this contradicts \cref{simple_distant_pairs}
-which means that no such subsequence exists.
+form a construction or destruction pair in the wrong order.
+\Cref{simple_distant_pairs} implies that no such subsequence exists
+if $\wrksx{S'}$, and therefore $S'\equiv\cbrk$.
 \end{proof}
 
 
@@ -150,9 +149,9 @@ which means that no such subsequence exists.
 Given a set of commands that
 does not contain assertion commands,
 and which can be applied to a filesystem in some order without breaking it,
-and which contains commands on $n$ and $\nn$ where $\nn\descendant n$,
+and which contains commands on $\nn$ and $n$ where $\nn\descendant n$,
 then the set must also contain a command
-on each node between $n$ and $\nn$.
+on each node between $\nn$ and $n$.
 \end{mylem}
 \begin{proof}
 % If something changes, everything changes up to the leaves.

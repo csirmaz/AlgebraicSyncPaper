@@ -65,7 +65,7 @@ the node it is applied to.
 Filesystem commands are partial endofunctions on filesystems,
 which are not defined on filesystems where they return an error.
 The commands are represented using triplets of the form
-\[ \alpha = \caaaa{x}{y}{n}, \]
+\[ \caaaa{x}{y}{n}, \]
 where $x,y\in\setv$ and $n\in\setn$.
 The equivalence class $[x]$ is the \emph{input type} of the function;
 $y$ is its \emph{output value} implicitly specifying the \emph{output type} $[y]$,
@@ -73,6 +73,8 @@ and $n$ is the node the command is applied to.
 \end{mydef}
 For example, $\cbfa{n}$ represents \textit{create}$(n,\valfx)$,
 and $\cdba{n}$ represents \textit{rmdir}$(n)$.
+Where it is convenient, in addition to the triplets we will also use $\alpha$ and $\beta$
+to denote unknown commands.
 
 We write $\cbrk$ for the empty partial function which is not defined anywhere.
 This does not naturally occur in sequences of commands we will investigate,
