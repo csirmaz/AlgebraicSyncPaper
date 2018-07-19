@@ -73,9 +73,9 @@
 %   {\compcent\scriptscriptstyle}{\compcent\scriptscriptstyle}}}
 \newcommand{\cc}{\,}
 
-\newcommand{\descendant}{\prec}
+\newcommand{\descendant}{\prec} % <
 \newcommand{\descendantEq}{\preceq}
-\newcommand{\ancestor}{\succ}
+\newcommand{\ancestor}{\succ} % >
 \newcommand{\ancestorEq}{\succeq}
 
 \newcommand{\eqext}{\sqsubseteq} % extended by "[="
@@ -113,9 +113,9 @@
 \newcommand{\seqset}[1]{\mathcal{#1}} % Set of sequences
 \newcommand{\sqs}[1]{\seqset{#1}}
 
-\newcommand{\recchar}[3]{{#1}^{#3}_{\mathcal{R}|{#2}}}
-\newcommand{\reca}{\recchar{A}{B}{}} % Reconciled from A
-\newcommand{\recb}{\recchar{B}{A}{}} % Reconciled from B
+\newcommand{\recchar}[2]{\mathcal{R}({#1}|{#2})}
+\newcommand{\reca}{\recchar{A}{B}} % Reconciled from A
+\newcommand{\recb}{\recchar{B}{A}} % Reconciled from B
 
 \newcommand{\mynegsp}{\nobreak\hspace{-1pt plus 1pt}\nobreak}
 \newcommand{\acbnp}{A\mynegsp\cap\mynegsp B} % A^B

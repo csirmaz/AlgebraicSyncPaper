@@ -31,26 +31,31 @@ $U\aFS = \FS^*$.
 \end{myth}
 
 \begin{proof}
-Let us assume that some mechanism recorded all changes that occurred
-to $\FS$ until it reached the state $\FS^*$.
-Our set of commands is sufficient to record any change, as
-there are commands for every input and output type pair, therefore
-we know that the changes can be recorded as a sequence of commands $S$
-where $S\aFS=\FS^*$.
-($S$ will not contain assertion commands, as they do not
-represent an actual change in the filesystem.)
-Based on \cref{can_simplify}, there is a simple sequence $S^*$
-that extends $S$.
+First, we create a sequence of commands $S$ for which $S\aFS=\FS^*$.
+First, create a topological sort of all nodes in $\setn$ that are
+not empty in $\FS$ so that children come first,
+that is, if $n'\descendant n$, then $n$ precedes $n'$.
+For each node in the given order, add a destruction command to a sequence $S_0$
+that deletes the value at $n$.
+We know that the commands will never break the filesystem, as the types of nodes
+with empty children can be freely changed, and that $S_0\aFS$ is empty at all nodes.
+Next, order nodes in $\setn$ that re not empty in $\FS^*$ in the reverse order,
+that is, if $n'\descendant n$, then $n'$ precedes $n$.
+Add a construction command to a sequence $S_1$ for each node that changes an empty value
+to $\FS^*(n)$.
+We know that $S_1$ is defined on an empty filesystem for the same reason,
+and clearly $(S_0\cc S_1)\aFS=\FS^*$.
+By \cref{can_simplify} there exists a simple $S$ for which $S\eqnrw (S_0\cc S_1)$.
 
-Therefore we know $S^*\aFS=\FS^*$, and that
-$\FS^*$ and $\FS$ differ at exactly those nodes that $S^*$ has commands on.
+Therefore we know $S\aFS=\FS^*$, and that
+$\FS^*$ and $\FS$ differ at exactly those nodes that $S$ has commands on.
 $U$ must also contain commands on the same set of nodes,
 and it must contain the same commands,
 as for the command $\cxynv$, $[x]$ must be $[\FS(n)]$, and $y$ must be $\FS^*(n)$.
-From this we know that $U$ is a permutation of $S^*$ and so $\orderset{U}=\orderset{S^*}$.
+From this we know that $U$ is a permutation of $S$ and so $\orderset{U}=\orderset{S}$.
 
-As the update detector uses $\orderrel$ to order the commands in $U$, trivially $U\in\orderset{U}$,
-which means $U\in\orderset{S^*}$,
-and so from \cref{simple_reorder_equiv} we know that $U\equiv S^*$,
+As the update detector uses the $\orderrel$ relation to order the commands in $U$, trivially $U\in\orderset{U}$,
+which means $U\in\orderset{S}$,
+and so from \cref{simple_reorder_equiv} we know that $U\equiv S$,
 from which $U\aFS=\FS^*$.
 \end{proof}
