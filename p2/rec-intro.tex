@@ -14,12 +14,11 @@ Our aim is therefore to provide an algorithm that selects the commands
 $\reca \subset A\setminus B$
 and $\recb \subset B\setminus A$ 
 so that $\reca\aFS_B\neq\fsbroken$ and $\recb\aFS_A\neq\fsbroken$,
-and show that these are maximal in the sense that
-adding any further command to $\reca$ or $\recb$ will break the filesystems.
+and show that these are the longest sequences with this property.
 
 We will work based on update sequences $A$ and $B$ that are simple.
 If the reconciliation algorithm is to work on arbitrary sequences,
-\cref{can_simplify} can be used to convert those sequences to simple ones.
+\cref{can_simplify} can be used to convert these sequences to simple ones.
 
 \begin{mydef}[Reconciliation]\mlabel{def:reconciliation}
 For two simple sequences $A$ and $B$,
@@ -46,5 +45,5 @@ We aim prove that $\reca$ and $\recb$ can be applied to the replicas,
 that is, without loss of generality,
 \[ \reca\aFS_B\neq\fsbroken. \]
 So that we can formalize statements needed to prove this,
-we introduce the partial order $\worksmeqsign$ that describes under what conditions
+we introduce the partial order $\worksmeqsign$ that describes conditions under which
 sequences of commands work, that is, do not break a filesystem.

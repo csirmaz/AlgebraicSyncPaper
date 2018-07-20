@@ -20,9 +20,6 @@ On systems where filesystem updates are recorded,
 an alternative update detection algorithm is to
 omit step 1, and use \cref{can_simplify} to simplify the series of recorded updates
 into a simple sequence containing the necessary updates.
-In fact, we use such a hypothetical record in the proof of \cref{update_works}.
-
-% There is a sequence between any two states: destroy one completely and construct the other one. (finite FS)
 
 \begin{myth}\mlabel{update_works}
 For a simple sequence of commands $U$ returned by the update detector
@@ -32,16 +29,16 @@ $U\aFS = \FS^*$.
 
 \begin{proof}
 First, we create a sequence of commands $S$ for which $S\aFS=\FS^*$.
-First, create a topological sort of all nodes in $\setn$ that are
+We create a topological sort of all nodes in $\setn$ that are
 not empty in $\FS$ so that children come first,
 that is, if $n'\descendant n$, then $n$ precedes $n'$.
-For each node in the given order, add a destruction command to a sequence $S_0$
+For each node in the given order, we add a destruction command to a sequence $S_0$
 that deletes the value at $n$.
 We know that the commands will never break the filesystem, as the types of nodes
 with empty children can be freely changed, and that $S_0\aFS$ is empty at all nodes.
-Next, order nodes in $\setn$ that re not empty in $\FS^*$ in the reverse order,
+Next, we order nodes in $\setn$ that are not empty in $\FS^*$ in the reverse order,
 that is, if $n'\descendant n$, then $n'$ precedes $n$.
-Add a construction command to a sequence $S_1$ for each node that changes an empty value
+We add a construction command to a sequence $S_1$ for each node that changes an empty value
 to $\FS^*(n)$.
 We know that $S_1$ is defined on an empty filesystem for the same reason,
 and clearly $(S_0\cc S_1)\aFS=\FS^*$.

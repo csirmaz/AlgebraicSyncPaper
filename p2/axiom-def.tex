@@ -41,22 +41,26 @@ $[x]$ and $[w]$ are neither both $[\empt]$ nor both $[\vald]$.
 
 % ax_directchild_breaks
 \newcommand{\axaxdirectchildbreaks}{
+\begin{sloppypar}
 Commands on a parent and a child node break every filesystem
 if the pair is not a construction pair
 and the commands do not simply assert a directory at the parent
 or an empty node at the child:
 $\cxypnv\cc\czwnv \equiv \cbrk$ when $\cxypnv\cc\czwnv$ is not a construction pair, 
 $\cxypnv\neq\cdda{\pn}$ and $\czwnv\neq\cbba{n}$.
+\end{sloppypar}
 }
 
 % ax_directparent_breaks
 \newcommand{\axaxdirectparentbreaks}{
+\begin{sloppypar}
 Commands on a child and parent node break every filesystem
 if the pair is not a destruction pair
 and the commands do not simply assert an empty node at the child
 or a directory at the parent:
 $\cxynv\cc\czwpnv \equiv \cbrk$ when $\cxynv\cc\czwpnv$ is not a destruction pair,
 $\cxynv\neq\cbba{n}$ and $\czwpnv\neq\cdda{\pn}$.
+\end{sloppypar}
 }
 
 % ax_distantrel_breaks
