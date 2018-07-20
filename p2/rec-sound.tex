@@ -28,12 +28,11 @@ Mark those commands in $A$ that are also in $B$.
 We show that
 there is an $A'$ in $\orderset{A}$ in which all marked commands are at the beginning.
 
-We show that $A$ can be transformed into $A'$ for which this is true.
 We know that if the marked commands are not at the beginning, then
 the sequence contains an unmarked command followed by a marked command.
 We show that these can be swapped resulting in an equivalent sequence.
 Then, by repeating this process similarly to bubble sorting, we arrive at 
-a suitable permutation of $A$, which is also equivalent to $A$, and therefore in $\orderset{A}$.
+a suitable permutation of $A$, which is also equivalent to $A$, and therefore is in $\orderset{A}$.
 
 Let us consider therefore the marked command preceded by an unmarked command in $A$,
 and let the marked command be $\cxynv$, 
@@ -84,18 +83,16 @@ from which $[z]=[w]$ (as $[z]=[q]=[r]=[w]$), which is a contradiction
 as $A$ contains no assertion commands.
 \end{proof}
 
-We would like to prove that $\worksmbx{A,B}{B\cc \reca}$.
+We aim to prove that $\worksmbx{A,B}{B\cc \reca}$.
 From \cref{can_move_intersection} above we know that we can move commands in $\acbnp$
-to the beginning of $A$ and $B$, and so this is equivalent to
+to the beginning of $A$ and $B$, and so this claim is equivalent to
 \[ \worksm{\big\{\acb\cc\amb,~ \acb\cc\bma\big\}}{\acb\cc \bma\cc \reca}. \]
 
 For ease of reading, let us rename
-\begin{itemize}
-\item $\amb$ to $S$,
-\item $\reca$ to $S^*$,
-\item $\bma$ to $T$,
-\item and $\acb$ to $U$.
-\end{itemize}
+ $\amb$ to $S$,
+ $\reca$ to $S^*$,
+ $\bma$ to $T$,
+ and $\acb$ to $U$.
 In this notation, we intend to prove that
 \[ \worksmbx{U\cc S,U\cc T}{U\cc T\cc S^*}. \]
 We can do so if we can show that
@@ -111,8 +108,8 @@ $\worksmbx{U\cc S,U\cc T}{U\cc T\cc S^*}$.
 
 To restate some results above, we therefore already know the following:
 \begin{itemize}
-\item $S=\amb$ and $T=\bma$ are simple as $A$ and $B$ are simple
-\item $S\cap T = \amb \cap \bma = \emptyset$
+\item $S=\amb$ and $T=\bma$ are simple as $A$ and $B$ are simple;
+\item $S\cap T = \amb \cap \bma = \emptyset$;
 \item $S^*$ is the largest subset of $S$ for which $S^*\indep T$, as
 $\reca$ is the largest subset of $\amb$ for which $\reca\indep\bma$.
 \end{itemize}

@@ -7,22 +7,19 @@ so that $\recb\aFS_A$ and $\reca\aFS_B$ would be as close to each other as possi
 We work based on the assumption that to achieve this, we need
 to apply to $\FS_B$ the commands that have been applied to $\FS_A$, and \emph{vice versa}.
 As some commands may have been applied to both filesystems, our first approximation
-is $\reca = \amb$ and $\recb = \bma$.
+is to apply the commands in $\bmanp$ to $\FS_A$ and those in $\ambnp$ to $\FS_B$.
 This, however, will break both filesystems if there have been incompatible updates
 in $A$ and $B$. 
 Our aim is therefore to provide an algorithm that selects the commands 
 $\reca \subset A\setminus B$
 and $\recb \subset B\setminus A$ 
 so that $\reca\aFS_B\neq\fsbroken$ and $\recb\aFS_A\neq\fsbroken$,
-and show that these are the longest sequences with this property, that is,
+and show that these are maximal in the sense that
 adding any further command to $\reca$ or $\recb$ will break the filesystems.
 
-We assume that $A$ and $B$ are returned by an update detector,
-and so they are simple sequences.
-(Otherwise, they can be simplified to become simple sequences; see \cref{can_simplify}.)
-We also assume that $\FS$, $\FS_A$ and $\FS_B$ are not broken.
-With these assumptions,
-we can now define our reconciliation algorithm.
+We will work based on update sequences $A$ and $B$ that are simple.
+If the reconciliation algorithm is to work on arbitrary sequences,
+\cref{can_simplify} can be used to convert those sequences to simple ones.
 
 \begin{mydef}[Reconciliation]\mlabel{def:reconciliation}
 For two simple sequences $A$ and $B$,
@@ -36,17 +33,18 @@ in the definition.
 
 Note that $\alpha\in\reca$ is not an assertion command, and $\bmanp$ contains no assertion commands,
 and $\alpha\not\in\bmanp$, therefore $\alpha\indep\bmanp$ is equivalent to
-the node $\alpha$ affects being incomparable to the nodes commands in $\bmanp$ affect.
-Therefore whether two commands are independent is easy to determine programmatically
-in at most $O(x^2)$ time, where $x$ is the number of commands. % TODO
+the node of $\alpha$ being incomparable to the nodes of the commands in $\bmanp$.
+Therefore whether two commands are independent 
+for the purposes of reconciliation
+is easy to determine programmatically.
 Then, to generate the sequence $\reca$ from the resulting set, 
 apply topological sorting according to $\orderrel$ as defined in \cref{ordering}.
 
 
 \myskip
-Next, we would now like to prove that $\reca$ and $\recb$ can be applied to the replicas,
+We aim prove that $\reca$ and $\recb$ can be applied to the replicas,
 that is, without loss of generality,
 \[ \reca\aFS_B\neq\fsbroken. \]
 So that we can formalize statements needed to prove this,
-let us introduce partial orders that describe under what conditions
+we introduce the partial order $\worksmeqsign$ that describes under what conditions
 sequences of commands work, that is, do not break a filesystem.

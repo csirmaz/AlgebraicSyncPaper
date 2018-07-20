@@ -20,6 +20,7 @@ For two sets of sequences $\sqs{A}$ and $\sqs{B}$
 we write $\worksm{\sqs{A}}{\sqs{B}}$ iff $\Dom{\sqs{A}} \subseteq \Dom{\sqs{B}}$;
 that is, iff all sequences in $\sqs{B}$ are defined on (do not break)
 all filesystems on which sequences in $\sqs{A}$ are defined.
+We write $\sqs{A}\worksmsign\sqs{B}$ iff $\Dom{\sqs{A}} \subset \Dom{\sqs{B}}$.
 \end{mydef}
 
 When $\sqs{A}$ or $\sqs{B}$ contains a single sequence,
@@ -27,7 +28,7 @@ we leave out the curly brackets and write,
 e.g. $A\cc\sqs{B}$ to mean $\{A\}\cc\sqs{B}$,
 or $\worksm{A}{B}$ to mean $\worksmbb{A}{B}$.
 Also, we write $\worksmnil{\sqs{A}}$ to mean that
-there are filesystems on which all sequences in $\sqs{A}$ are defined.
+there is at least one filesystem on which all sequences in $\sqs{A}$ are defined.
 If $\sqs{A}$ contains a single sequence only, $A$, this is equivalent to $\wrks{A}$.
 
 We can see that $A\eqext B$ implies $\worksm{A}{B}$, as the latter
@@ -50,7 +51,7 @@ the relationship between the domains of the sets $\sqs{A}$ and $\sqs{B}$
 does not change if both are prefixed by a sequence $S$.
 \end{myclm}
 \begin{proof}
-This is because the function $S$ is a binary relation between filesystems,
+This is because the sequence $S$, as an endofunction on filesystems, is a binary relation,
 and we can treat its inverse relation as a one-to-many mapping between filesystems
 that maps $\Dom{\sqs{A}}$ to $\Dom{S\cc\sqs{A}}$ and $\Dom{\sqs{B}}$ to $\Dom{S\cc\sqs{B}}$.
 As such a one-to-many mapping maps a subset of a set to a subset of the image of the set,
@@ -67,14 +68,15 @@ where both of the commands are defined:
 \begin{proof}
 % BACK_TO_FS
 % In the following proof we reach back to our filesystem model.
-The proposition follows from \cref{independent_details},
+The proposition uses \cref{independent_details},
 and we follow the three cases listed there.
+Let $\alpha=\cxynv$ and $\beta=\czwmv$.
 
 The first case is that $n\unrel m$ where $\alpha=\cxynv$, $\beta=\czwmv$.
-Using an inverse proof we assume that for a filesystem $\FS$
-both $\cxynv\aFS$ and $\czwmv\aFS$ are defined, but $(\cxynv\cc\czwmv)\FS$ is broken.
+Assume, by contradiction, that for a filesystem $\FS$
+both $\cxynv\aFS$ and $\czwmv\aFS$ are defined, but $(\cxynv\cc\czwmv)\aFS$ is broken.
 Since $n\neq m$, we know the input types of the command are compatible with $\FS$,
-so $\FS$ must be broken because it violates the tree property.
+so $(\cxynv\cc\czwmv)\aFS$ must be broken because it violates the tree property.
 
 We know that applying $\czwmv$ breaks $\cxynv\aFS$. As it changes the filesystem
 at $m$, this can be because either $m$ would no longer be a directory but has non-empty children,
@@ -109,11 +111,11 @@ where both of the sequences are defined:
 \[ S\indep T \Longrightarrow \worksmbx{S,T}{S\cc T}. \]
 \end{mylem}
 \begin{proof}
-Assume that there is a filesystem $\FS$ so that
+Assume, by contradiction, that there is a filesystem $\FS$ so that
 $S\aFS\neq\fsbroken$ and $T\aFS\neq\fsbroken$, but
 $(S\cc T)\FS=\fsbroken$.
 
-From \cref{def_indep} we know that
+From \cref{def_indep}
 the commands in $S$ and $T$ pairwise commute, and so any sequence
 that contains the commands from $S$ and $T$ and preserve their original partial order
 is equivalent to $S\cc T$ on all filesystems.
@@ -152,9 +154,9 @@ and there are commands $\cxynv\in S$ and $\czwnv\in T$ on the same node $n$,
 then the input types of these commands must match, i.e. $[x]=[z]$.
 \end{mylem}
 \begin{proof}
-This result is similar to \cref{equiv_simple_same_commands} and
-is easily shown using a proof by contradiction: if $[x]\neq [z]$, then there is no filesystem that
+This result is similar to \cref{equiv_simple_same_commands}.
+If, by contradiction, $[x]\neq [z]$, then there would be no filesystem that
 either $\cxynv$ or $\czwnv$ would not break, 
-and consequently $S$ and $T$ cannot work on the same filesystem.
+and consequently $S$ and $T$ could not work on the same filesystem.
 \end{proof}
 
