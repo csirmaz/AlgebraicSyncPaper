@@ -11,7 +11,9 @@ Norman Ramsey and Elod Csirmaz. An Algebraic Approach to File Synchronization.
 In _Proceedings of the Joint 8th European Software Engineering Conference and 
 9th ACM SIGSOFT Symposium on the Foundations of Software Engineering._ ACM Press, 2001. 175–185.
 
-See http://www.epcsirmaz.com/algsyn for more and to download a PDF version.
+See http://www.epcsirmaz.com/algsyn for more and a PDF version, or
+download the PDF from the latest release at https://github.com/csirmaz/AlgebraicSyncPaper/releases/latest
+.
 
 ## Algebraic File Synchronization: Adequacy and Completeness
 
@@ -19,7 +21,7 @@ Directory p2 holds the latest source of a new paper that introduces a novel set 
 and presents rigorous proofs that update detection and reconciliation 
 not only work as intended, but also cannot be improved on.
 
-Use `latex paper.tex` to compile the latest version of the paper.
-
 See http://www.epcsirmaz.com/algebraic-file-synchronization-2 for more 
-or read an early draft version on arXiv at https://arxiv.org/abs/1601.01736 .
+or read the paper on arXiv at https://arxiv.org/abs/1601.01736 .
+Alternatively, download the PDF from the latest release at https://github.com/csirmaz/AlgebraicSyncPaper/releases/latest
+.
